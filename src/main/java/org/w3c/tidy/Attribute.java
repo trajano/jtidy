@@ -62,7 +62,8 @@ package org.w3c.tidy;
  */
 public class Attribute
 {
-
+	private AttrId id;
+	
     /**
      * attribute name.
      */
@@ -71,12 +72,8 @@ public class Attribute
     /**
      * don't wrap attribute.
      */
+    @Deprecated
     private boolean nowrap;
-
-    /**
-     * unmodifiable attribute?
-     */
-    private boolean literal;
 
     /**
      * html versions for this attribute.
@@ -102,15 +99,6 @@ public class Attribute
     }
 
     /**
-     * Is this a literal (unmodifiable) attribute?
-     * @param isLiteral boolean <code>true</code> for a literal attribute
-     */
-    public void setLiteral(boolean isLiteral)
-    {
-        this.literal = isLiteral;
-    }
-
-    /**
      * Don't wrap this attribute?
      * @param isNowrap boolean <code>true</code>= don't wrap
      */
@@ -126,15 +114,6 @@ public class Attribute
     public AttrCheck getAttrchk()
     {
         return this.attrchk;
-    }
-
-    /**
-     * Is this a literal (unmodifiable) attribute?
-     * @return <code>true</code> for a literal attribute
-     */
-    public boolean isLiteral()
-    {
-        return this.literal;
     }
 
     /**
