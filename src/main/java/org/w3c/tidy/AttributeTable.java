@@ -391,38 +391,6 @@ public class AttributeTable
     }
 
     /**
-     * Does the given attibute contains a literal attribute?
-     * @param attrname attribute name
-     * @return <code>true</code> if the given attribute is expected to contain a literal attribute
-     */
-    public boolean isLiteralAttribute(String attrname)
-    {
-        Attribute np;
-
-        np = lookup(attrname);
-        return (np != null && np.isLiteral());
-    }
-
-    /**
-     * Declare a new literal attribute.
-     * @param name atribute name
-     */
-    public void declareLiteralAttrib(String name)
-    {
-        // Henry Zrepa reports that some folk are using embed with script attributes where newlines are signficant.
-        // These
-        // need to be declared and handled specially!
-        Attribute attrib = lookup(name);
-
-        if (attrib == null)
-        {
-            attrib = install(new Attribute(name, Dict.VERS_PROPRIETARY, null));
-        }
-
-        attrib.setLiteral(true);
-    }
-
-    /**
      * Returns the default attribute table instance.
      * @return AttributeTable instance
      */
