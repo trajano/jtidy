@@ -53,6 +53,8 @@
  */
 package org.w3c.tidy;
 
+import java.util.Map;
+
 /**
  * Tag dictionary node. If the document uses just HTML 2.0 tags and attributes described it as HTML 2.0 Similarly for
  * HTML 3.2 and the 3 flavors of HTML 4.0. If there are proprietary tags and attributes then describe it as HTML
@@ -301,6 +303,8 @@ public class Dict
      */
     public static final short TAGTYPE_PRE = 8;
 
+    protected TagId id;
+    
     /**
      * Tag name.
      */
@@ -311,6 +315,7 @@ public class Dict
      */
     protected short versions;
 
+    protected Map<AttrId, Integer> attrvers;
     /**
      * model (CM_* constants).
      */
