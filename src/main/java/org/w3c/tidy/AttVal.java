@@ -424,4 +424,21 @@ public class AttVal extends Object implements Cloneable
     public boolean hasId(final AttrId id) {
     	return dict != null && dict.id == id;
     }
+    
+    public boolean hasValue() {
+    	return value != null;
+    }
+    
+    public boolean valueIs(final String val) {
+    	return hasValue() && value.equalsIgnoreCase(val);
+    }
+    
+    public boolean valueIsAmong(final String list[]) {
+        for (String v : list) {
+            if (valueIs(v)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
