@@ -244,18 +244,7 @@ public final class TagCheckImpl
         public void check(Lexer lexer, Node node)
         {
             AttVal attval;
-            Attribute attribute;
-            boolean hasSummary = false;
-
-            for (attval = node.attributes; attval != null; attval = attval.next)
-            {
-                attribute = attval.checkAttribute(lexer, node);
-
-                if (attribute == AttributeTable.attrSummary)
-                {
-                    hasSummary = true;
-                }
-            }
+            boolean hasSummary = node.getAttrById(AttrId.SUMMARY) != null;
 
             /* suppress warning for missing summary for HTML 2.0 and HTML 3.2 */
             if (!hasSummary && lexer.doctype != VERS_HTML20 && lexer.doctype != VERS_HTML32)
@@ -368,43 +357,11 @@ public final class TagCheckImpl
          */
         public void check(Lexer lexer, Node node)
         {
-            AttVal attval;
-            Attribute attribute;
-            boolean hasAlt = false;
-            boolean hasSrc = false;
-            boolean hasUseMap = false;
-            boolean hasIsMap = false;
-            boolean hasDataFld = false;
-
-            for (attval = node.attributes; attval != null; attval = attval.next)
-            {
-                attribute = attval.checkAttribute(lexer, node);
-
-                if (attribute == AttributeTable.attrAlt)
-                {
-                    hasAlt = true;
-                }
-                else if (attribute == AttributeTable.attrSrc)
-                {
-                    hasSrc = true;
-                }
-                else if (attribute == AttributeTable.attrUsemap)
-                {
-                    hasUseMap = true;
-                }
-                else if (attribute == AttributeTable.attrIsmap)
-                {
-                    hasIsMap = true;
-                }
-                else if (attribute == AttributeTable.attrDatafld)
-                {
-                    hasDataFld = true;
-                }
-                else if (attribute == AttributeTable.attrWidth || attribute == AttributeTable.attrHeight)
-                {
-                    lexer.constrainVersion(~VERS_HTML20);
-                }
-            }
+            boolean hasAlt = node.getAttrById(AttrId.ALT) != null;
+            boolean hasSrc = node.getAttrById(AttrId.SRC) != null;
+            boolean hasUseMap = node.getAttrById(AttrId.USEMAP) != null;
+            boolean hasIsMap = node.getAttrById(AttrId.ISMAP) != null;
+            boolean hasDataFld = node.getAttrById(AttrId.DATAFLD) != null;
 
             if (!hasAlt)
             {
@@ -443,24 +400,9 @@ public final class TagCheckImpl
          */
         public void check(Lexer lexer, Node node)
         {
-            AttVal attval;
-            Attribute attribute;
-            boolean hasAlt = false;
-            boolean hasHref = false;
-
-            for (attval = node.attributes; attval != null; attval = attval.next)
-            {
-                attribute = attval.checkAttribute(lexer, node);
-
-                if (attribute == AttributeTable.attrAlt)
-                {
-                    hasAlt = true;
-                }
-                else if (attribute == AttributeTable.attrHref)
-                {
-                    hasHref = true;
-                }
-            }
+            boolean hasAlt = node.getAttrById(AttrId.ALT) != null;
+            boolean hasHref = node.getAttrById(AttrId.HREF) != null;
+            boolean hasNoHref = node.getAttrById(AttrId.NOHREF) != null;
 
             if (!hasAlt)
             {
@@ -468,7 +410,7 @@ public final class TagCheckImpl
                 AttVal missingAlt = new AttVal(null, null, '"', "alt", "");
                 lexer.report.attrError(lexer, node, missingAlt, Report.MISSING_ATTRIBUTE);
             }
-            if (!hasHref)
+            if (!hasHref && !hasNoHref)
             {
                 AttVal missingHref = new AttVal(null, null, '"', "href", "");
                 lexer.report.attrError(lexer, node, missingHref, Report.MISSING_ATTRIBUTE);

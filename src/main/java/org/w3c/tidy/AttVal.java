@@ -256,7 +256,7 @@ public class AttVal extends Object implements Cloneable
                 }
             }
             // title first appeared in HTML 4.0 except for a/link
-            else if (attr != AttributeTable.attrTitle || !(node.tag == tt.tagA || node.tag == tt.tagLink))
+            else if (attr.id != AttrId.TITLE || !(node.tag == tt.tagA || node.tag == tt.tagLink))
             {
                 lexer.constrainVersion(attr.getVersions());
             }

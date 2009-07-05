@@ -67,97 +67,6 @@ import static org.w3c.tidy.Versions.*;
  */
 public class AttributeTable
 {
-
-    /**
-     * href attribute.
-     */
-    protected static Attribute attrHref;
-
-    /**
-     * src attribute.
-     */
-    protected static Attribute attrSrc;
-
-    /**
-     * id attribute.
-     */
-    protected static Attribute attrId;
-
-    /**
-     * name attribute.
-     */
-    protected static Attribute attrName;
-
-    /**
-     * summary attribute.
-     */
-    protected static Attribute attrSummary;
-
-    /**
-     * alt attribute.
-     */
-    protected static Attribute attrAlt;
-
-    /**
-     * logdesc attribute.
-     */
-    protected static Attribute attrLongdesc;
-
-    /**
-     * usemap attribute.
-     */
-    protected static Attribute attrUsemap;
-
-    /**
-     * ismap attribute.
-     */
-    protected static Attribute attrIsmap;
-
-    /**
-     * language attribute.
-     */
-    protected static Attribute attrLanguage;
-
-    /**
-     * type attribute.
-     */
-    protected static Attribute attrType;
-
-    /**
-     * title attribute.
-     */
-    protected static Attribute attrTitle;
-
-    /**
-     * xmlns attribute.
-     */
-    protected static Attribute attrXmlns;
-
-    /**
-     * value attribute.
-     */
-    protected static Attribute attrValue;
-
-    /**
-     * content attribute.
-     */
-    protected static Attribute attrContent;
-
-    /**
-     * datafld attribute.
-     */
-    protected static Attribute attrDatafld;
-
-    /**
-     * width attribute.
-     */
-    protected static Attribute attrWidth;
-
-    /**
-     * height attribute.
-     */
-    protected static Attribute attrHeight;
-
     /**
      * attribute table instance.
      */
@@ -404,28 +313,6 @@ public class AttributeTable
             {
                 defaultAttributeTable.install(ATTRS[i]);
             }
-            attrHref = defaultAttributeTable.lookup("href");
-            attrSrc = defaultAttributeTable.lookup("src");
-            attrId = defaultAttributeTable.lookup("id");
-            attrName = defaultAttributeTable.lookup("name");
-            attrSummary = defaultAttributeTable.lookup("summary");
-            attrAlt = defaultAttributeTable.lookup("alt");
-            attrLongdesc = defaultAttributeTable.lookup("longdesc");
-            attrUsemap = defaultAttributeTable.lookup("usemap");
-            attrIsmap = defaultAttributeTable.lookup("ismap");
-            attrLanguage = defaultAttributeTable.lookup("language");
-            attrType = defaultAttributeTable.lookup("type");
-            attrTitle = defaultAttributeTable.lookup("title");
-            attrXmlns = defaultAttributeTable.lookup("xmlns");
-            attrValue = defaultAttributeTable.lookup("value");
-            attrContent = defaultAttributeTable.lookup("content");
-            attrDatafld = defaultAttributeTable.lookup("datafld");
-            attrWidth = defaultAttributeTable.lookup("width");
-            attrHeight = defaultAttributeTable.lookup("height");
-
-            attrAlt.setNowrap(true);
-            attrValue.setNowrap(true);
-            attrContent.setNowrap(true);
         }
         return defaultAttributeTable;
     }
