@@ -362,6 +362,15 @@ public class Node implements Cloneable
 
         return attr;
     }
+    
+    public AttVal getAttrById(final AttrId id) {
+		for (AttVal av = attributes; av != null; av = av.next) {
+			if (av.hasId(id)) {
+				return av;
+			}
+		}
+		return null;
+	}
 
     /**
      * Default method for checking an element's attributes.
