@@ -62,7 +62,7 @@ package org.w3c.tidy;
  */
 public class Attribute
 {
-	private AttrId id;
+	protected AttrId id;
 	
     /**
      * attribute name.
