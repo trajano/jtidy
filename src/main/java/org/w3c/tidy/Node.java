@@ -1568,4 +1568,8 @@ public class Node implements Cloneable
 
         return true;
     }
+    
+    public boolean is(final TagId id) {
+    	return tag != null && tag.id == id;
+    }
 }
