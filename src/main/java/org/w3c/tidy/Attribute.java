@@ -78,7 +78,7 @@ public class Attribute
     /**
      * html versions for this attribute.
      */
-    private short versions;
+    private int versions;
 
     /**
      * checker for the attribute.
@@ -91,7 +91,7 @@ public class Attribute
      * @param htmlVersions versions in which this attribute is supported
      * @param check AttrCheck instance
      */
-    public Attribute(String attributeName, short htmlVersions, AttrCheck check)
+    public Attribute(String attributeName, int htmlVersions, AttrCheck check)
     {
         this.name = attributeName;
         this.versions = htmlVersions;
@@ -139,7 +139,7 @@ public class Attribute
      * @return html versions for this attribute.
      * @see Dict
      */
-    public short getVersions()
+    public int getVersions()
     {
         return this.versions;
     }

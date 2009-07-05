@@ -57,6 +57,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import static org.w3c.tidy.Versions.*;
 
 /**
  * Check attribute values implementations.
@@ -449,7 +450,7 @@ public final class AttrCheckImpl
             }
             else if (TidyUtils.isInValuesIgnoreCase(VALID_VALUES_PROPRIETARY, value))
             {
-                lexer.constrainVersion(Dict.VERS_PROPRIETARY);
+                lexer.constrainVersion(VERS_PROPRIETARY);
                 lexer.report.attrError(lexer, node, attval, Report.PROPRIETARY_ATTR_VALUE);
             }
             else
@@ -549,7 +550,7 @@ public final class AttrCheckImpl
         {
 
             // No target attribute in strict HTML versions
-            lexer.constrainVersion(~Dict.VERS_HTML40_STRICT);
+            lexer.constrainVersion(~VERS_HTML40_STRICT);
 
             if (attval.value == null || attval.value.length() == 0)
             {
@@ -836,7 +837,7 @@ public final class AttrCheckImpl
             }
             else if (lexer.configuration.tt.isAnchorElement(node))
             {
-                lexer.constrainVersion(~Dict.VERS_XHTML11);
+                lexer.constrainVersion(~VERS_XHTML11);
 
                 if (((old = lexer.configuration.tt.getNodeByAnchor(attval.value)) != null) && old != node)
                 {
@@ -1090,7 +1091,7 @@ public final class AttrCheckImpl
 
             if ("lang".equals(attval.attribute))
             {
-                lexer.constrainVersion(~Dict.VERS_XHTML11);
+                lexer.constrainVersion(~VERS_XHTML11);
             }
 
             if (attval.value == null)

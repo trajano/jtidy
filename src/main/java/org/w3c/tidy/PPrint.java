@@ -1277,7 +1277,7 @@ public class PPrint
                 Attribute attribute = attr.dict;
 
                 if (!this.configuration.dropProprietaryAttributes
-                    || !(attribute == null || TidyUtils.toBoolean(attribute.getVersions() & Dict.VERS_PROPRIETARY)))
+                    || !(attribute == null || TidyUtils.toBoolean(attribute.getVersions() & Versions.VERS_PROPRIETARY)))
                 {
                     printAttribute(fout, indent, node, attr);
                 }

@@ -53,8 +53,9 @@
  */
 package org.w3c.tidy;
 
-import org.w3c.dom.Attr;
+import static org.w3c.tidy.Versions.*;
 
+import org.w3c.dom.Attr;
 
 /**
  * Attribute/Value linked list node.
@@ -247,7 +248,7 @@ public class AttVal extends Object implements Cloneable
         {
 
             // if attribute looks like <foo/> check XML is ok
-            if (TidyUtils.toBoolean(attr.getVersions() & Dict.VERS_XML))
+            if (TidyUtils.toBoolean(attr.getVersions() & VERS_XML))
             {
                 if (!(lexer.configuration.xmlTags || lexer.configuration.xmlOut))
                 {
@@ -264,7 +265,7 @@ public class AttVal extends Object implements Cloneable
             {
                 attr.getAttrchk().check(lexer, node, this);
             }
-            else if (TidyUtils.toBoolean(this.dict.getVersions() & Dict.VERS_PROPRIETARY))
+            else if (TidyUtils.toBoolean(this.dict.getVersions() & VERS_PROPRIETARY))
             {
                 lexer.report.attrError(lexer, node, this, Report.PROPRIETARY_ATTRIBUTE);
             }
@@ -273,7 +274,7 @@ public class AttVal extends Object implements Cloneable
         else if (!lexer.configuration.xmlTags
             && !(node.tag == null)
             && this.asp == null
-            && !(node.tag != null && (TidyUtils.toBoolean(node.tag.versions & Dict.VERS_PROPRIETARY))))
+            && !(node.tag != null && (TidyUtils.toBoolean(node.tag.versions & VERS_PROPRIETARY))))
         {
             lexer.report.attrError(lexer, node, this, Report.UNKNOWN_ATTRIBUTE);
         }

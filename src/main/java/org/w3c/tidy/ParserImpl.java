@@ -53,6 +53,8 @@
  */
 package org.w3c.tidy;
 
+import static org.w3c.tidy.Versions.*;
+
 /**
  * HTML Parser implementation.
  * @author Dave Raggett <a href="mailto:dsr@w3.org">dsr@w3.org </a>
@@ -374,7 +376,7 @@ public final class ParserImpl
                         continue;
                     }
 
-                    lexer.constrainVersion(~Dict.VERS_FRAMESET);
+                    lexer.constrainVersion(~VERS_FRAMESET);
                     break; // to parse body
                 }
 
@@ -468,13 +470,13 @@ public final class ParserImpl
                         lexer.report.warning(lexer, html, node, Report.NOFRAMES_CONTENT);
                     }
 
-                    lexer.constrainVersion(Dict.VERS_FRAMESET);
+                    lexer.constrainVersion(VERS_FRAMESET);
                     parseTag(lexer, noframes, mode);
                     continue;
                 }
 
                 node = lexer.inferredTag("body");
-                lexer.constrainVersion(~Dict.VERS_FRAMESET);
+                lexer.constrainVersion(~VERS_FRAMESET);
                 break;
             }
 
@@ -815,7 +817,7 @@ public final class ParserImpl
                     }
 
                     // HTML2 and HTML4 strict doesn't allow text here
-                    lexer.constrainVersion(~(Dict.VERS_HTML40_STRICT | Dict.VERS_HTML20));
+                    lexer.constrainVersion(~(VERS_HTML40_STRICT | VERS_HTML20));
 
                     if (checkstack)
                     {
@@ -940,11 +942,11 @@ public final class ParserImpl
                         // but HTML2 does allow img elements as children of body
                         if (node.tag == tt.tagImg)
                         {
-                            lexer.constrainVersion(~Dict.VERS_HTML40_STRICT);
+                            lexer.constrainVersion(~VERS_HTML40_STRICT);
                         }
                         else
                         {
-                            lexer.constrainVersion(~(Dict.VERS_HTML40_STRICT | Dict.VERS_HTML20));
+                            lexer.constrainVersion(~(VERS_HTML40_STRICT | VERS_HTML20));
                         }
 
                         if (checkstack && !node.implicit)
@@ -2189,7 +2191,7 @@ public final class ParserImpl
                         || element.tag == tt.tagForm
                         || element.tag == tt.tagNoscript)
                     {
-                        lexer.constrainVersion(~Dict.VERS_HTML40_STRICT);
+                        lexer.constrainVersion(~VERS_HTML40_STRICT);
                     }
                     continue;
                 }

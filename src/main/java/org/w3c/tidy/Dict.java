@@ -184,106 +184,6 @@ public class Dict
     public static final int CM_OMITST = (1 << 21);
 
     /**
-     * Version: unknown.
-     */
-    public static final short VERS_UNKNOWN = 0;
-
-    /**
-     * Version: html 2.0.
-     */
-    public static final short VERS_HTML20 = 1;
-
-    /**
-     * Version: html 3.2.
-     */
-    public static final short VERS_HTML32 = 2;
-
-    /**
-     * Version: html 4.0 strict.
-     */
-    public static final short VERS_HTML40_STRICT = 4;
-
-    /**
-     * Version: html 4.0 transitional.
-     */
-    public static final short VERS_HTML40_LOOSE = 8;
-
-    /**
-     * Version: html 4.0 frameset.
-     */
-    public static final short VERS_FRAMESET = 16;
-
-    /**
-     * Version: xml.
-     */
-    public static final short VERS_XML = 32;
-
-    /**
-     * Version: netscape.
-     */
-    public static final short VERS_NETSCAPE = 64;
-
-    /**
-     * Version: microsoft.
-     */
-    public static final short VERS_MICROSOFT = 128;
-
-    /**
-     * Version: sun.
-     */
-    public static final short VERS_SUN = 256;
-
-    /**
-     * Version: malformed.
-     */
-    public static final short VERS_MALFORMED = 512;
-
-    /**
-     * Version: xhtml 1.1.
-     */
-    public static final short VERS_XHTML11 = 1024;
-
-    /**
-     * Version: xhtml basic.
-     */
-    public static final short VERS_BASIC = 2048;
-
-    /**
-     * all tags and attributes are ok in proprietary version of HTML.
-     */
-    public static final short VERS_PROPRIETARY = (VERS_NETSCAPE | VERS_MICROSOFT | VERS_SUN);
-
-    /**
-     * tags/attrs in HTML4 but not in earlier version.
-     */
-    public static final short VERS_HTML40 = (VERS_HTML40_STRICT | VERS_HTML40_LOOSE | VERS_FRAMESET);
-
-    /**
-     * tags/attrs which are in all versions of HTML except strict.
-     */
-    public static final short VERS_LOOSE = (VERS_HTML32 | VERS_HTML40_LOOSE | VERS_FRAMESET);
-
-    /**
-     * tags/attrs in HTML 4 loose and frameset.
-     */
-    public static final short VERS_IFRAME = (VERS_HTML40_LOOSE | VERS_FRAMESET);
-
-    /**
-     * tags/attrs in all versions from HTML 3.2 onwards.
-     */
-    public static final short VERS_FROM32 = (VERS_HTML40_STRICT | VERS_LOOSE);
-
-    /**
-     * versions with on... attributes.
-     */
-    public static final short VERS_EVENTS = (VERS_HTML40 | VERS_XHTML11);
-
-    /**
-     * tags/attrs in any version.
-     */
-    public static final short VERS_ALL = (VERS_HTML20 | VERS_HTML32 | VERS_HTML40 | VERS_XHTML11 | VERS_BASIC);
-
-    /**
      * types of tags that the user can define: empty tag.
      */
     public static final short TAGTYPE_EMPTY = 1;
@@ -313,7 +213,7 @@ public class Dict
     /**
      * Version in which this tag is defined.
      */
-    protected short versions;
+    protected int versions;
 
     protected Map<AttrId, Integer> attrvers;
     /**
@@ -339,7 +239,7 @@ public class Dict
      * @param parser parser for this tag
      * @param chkattrs validator for this tag (can be null)
      */
-    public Dict(String name, short versions, int model, Parser parser, TagCheck chkattrs)
+    public Dict(String name, int versions, int model, Parser parser, TagCheck chkattrs)
     {
         this.name = name;
         this.versions = versions;
@@ -396,7 +296,7 @@ public class Dict
      * Getter for <code>versions</code>.
      * @return Returns the versions.
      */
-    public short getVersions()
+    public int getVersions()
     {
         return this.versions;
     }

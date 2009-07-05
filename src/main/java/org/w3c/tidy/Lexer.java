@@ -58,6 +58,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.Vector;
 
+import static org.w3c.tidy.Versions.*;
 
 /**
  * Lexer for html parser.
@@ -130,17 +131,17 @@ public class Lexer
      * lists all the known versions.
      */
     private static final Lexer.W3CVersionInfo[] W3CVERSION = {
-        new W3CVersionInfo("HTML 4.01", "XHTML 1.0 Strict", VOYAGER_STRICT, Dict.VERS_HTML40_STRICT),
-        new W3CVersionInfo("HTML 4.01 Transitional", "XHTML 1.0 Transitional", VOYAGER_LOOSE, Dict.VERS_HTML40_LOOSE),
-        new W3CVersionInfo("HTML 4.01 Frameset", "XHTML 1.0 Frameset", VOYAGER_FRAMESET, Dict.VERS_FRAMESET),
-        new W3CVersionInfo("HTML 4.0", "XHTML 1.0 Strict", VOYAGER_STRICT, Dict.VERS_HTML40_STRICT),
-        new W3CVersionInfo("HTML 4.0 Transitional", "XHTML 1.0 Transitional", VOYAGER_LOOSE, Dict.VERS_HTML40_LOOSE),
-        new W3CVersionInfo("HTML 4.0 Frameset", "XHTML 1.0 Frameset", VOYAGER_FRAMESET, Dict.VERS_FRAMESET),
-        new W3CVersionInfo("HTML 3.2", "XHTML 1.0 Transitional", VOYAGER_LOOSE, Dict.VERS_HTML32),
-        new W3CVersionInfo("HTML 3.2 Final", "XHTML 1.0 Transitional", VOYAGER_LOOSE, Dict.VERS_HTML32),
-        new W3CVersionInfo("HTML 3.2 Draft", "XHTML 1.0 Transitional", VOYAGER_LOOSE, Dict.VERS_HTML32),
-        new W3CVersionInfo("HTML 2.0", "XHTML 1.0 Strict", VOYAGER_STRICT, Dict.VERS_HTML20),
-        new W3CVersionInfo("HTML 4.01", "XHTML 1.1", VOYAGER_STRICT, Dict.VERS_XHTML11)};
+        new W3CVersionInfo("HTML 4.01", "XHTML 1.0 Strict", VOYAGER_STRICT, VERS_HTML40_STRICT),
+        new W3CVersionInfo("HTML 4.01 Transitional", "XHTML 1.0 Transitional", VOYAGER_LOOSE, VERS_HTML40_LOOSE),
+        new W3CVersionInfo("HTML 4.01 Frameset", "XHTML 1.0 Frameset", VOYAGER_FRAMESET, VERS_FRAMESET),
+        new W3CVersionInfo("HTML 4.0", "XHTML 1.0 Strict", VOYAGER_STRICT, VERS_HTML40_STRICT),
+        new W3CVersionInfo("HTML 4.0 Transitional", "XHTML 1.0 Transitional", VOYAGER_LOOSE, VERS_HTML40_LOOSE),
+        new W3CVersionInfo("HTML 4.0 Frameset", "XHTML 1.0 Frameset", VOYAGER_FRAMESET, VERS_FRAMESET),
+        new W3CVersionInfo("HTML 3.2", "XHTML 1.0 Transitional", VOYAGER_LOOSE, VERS_HTML32),
+        new W3CVersionInfo("HTML 3.2 Final", "XHTML 1.0 Transitional", VOYAGER_LOOSE, VERS_HTML32),
+        new W3CVersionInfo("HTML 3.2 Draft", "XHTML 1.0 Transitional", VOYAGER_LOOSE, VERS_HTML32),
+        new W3CVersionInfo("HTML 2.0", "XHTML 1.0 Strict", VOYAGER_STRICT, VERS_HTML20),
+        new W3CVersionInfo("HTML 4.01", "XHTML 1.1", VOYAGER_STRICT, VERS_XHTML11)};
 
     /**
      * getToken state: content.
@@ -290,7 +291,7 @@ public class Lexer
     /**
      * bit vector of HTML versions.
      */
-    protected short versions;
+    protected int versions;
 
     /**
      * version as given by doctype (if any).
@@ -406,8 +407,8 @@ public class Lexer
         this.lines = 1;
         this.columns = 1;
         this.state = LEX_CONTENT;
-        this.versions = (Dict.VERS_ALL | Dict.VERS_PROPRIETARY);
-        this.doctype = Dict.VERS_UNKNOWN;
+        this.versions = (VERS_ALL | VERS_PROPRIETARY);
+        this.doctype = VERS_UNKNOWN;
         this.insert = -1;
         this.istack = new Stack();
         this.configuration = configuration;
@@ -914,36 +915,36 @@ public class Lexer
      */
     public short htmlVersion()
     {
-        if (TidyUtils.toBoolean(versions & Dict.VERS_HTML20))
+        if (TidyUtils.toBoolean(versions & VERS_HTML20))
         {
-            return Dict.VERS_HTML20;
+            return VERS_HTML20;
         }
 
         if (!(this.configuration.xmlOut | this.configuration.xmlTags | this.isvoyager)
-            && TidyUtils.toBoolean(versions & Dict.VERS_HTML32))
+            && TidyUtils.toBoolean(versions & VERS_HTML32))
         {
-            return Dict.VERS_HTML32;
+            return VERS_HTML32;
         }
-        if (TidyUtils.toBoolean(versions & Dict.VERS_XHTML11))
+        if (TidyUtils.toBoolean(versions & VERS_XHTML11))
         {
-            return Dict.VERS_XHTML11;
+            return VERS_XHTML11;
         }
-        if (TidyUtils.toBoolean(versions & Dict.VERS_HTML40_STRICT))
+        if (TidyUtils.toBoolean(versions & VERS_HTML40_STRICT))
         {
-            return Dict.VERS_HTML40_STRICT;
-        }
-
-        if (TidyUtils.toBoolean(versions & Dict.VERS_HTML40_LOOSE))
-        {
-            return Dict.VERS_HTML40_LOOSE;
+            return VERS_HTML40_STRICT;
         }
 
-        if (TidyUtils.toBoolean(versions & Dict.VERS_FRAMESET))
+        if (TidyUtils.toBoolean(versions & VERS_HTML40_LOOSE))
         {
-            return Dict.VERS_FRAMESET;
+            return VERS_HTML40_LOOSE;
         }
 
-        return Dict.VERS_UNKNOWN;
+        if (TidyUtils.toBoolean(versions & VERS_FRAMESET))
+        {
+            return VERS_FRAMESET;
+        }
+
+        return VERS_UNKNOWN;
     }
 
     /**
@@ -1042,7 +1043,7 @@ public class Lexer
      * @param doctype doctype node
      * @return version code
      */
-    public short findGivenVersion(Node doctype)
+    public int findGivenVersion(Node doctype)
     {
         String p, s;
         int i, j;
@@ -1250,24 +1251,24 @@ public class Lexer
         if (this.configuration.docTypeMode == Configuration.DOCTYPE_AUTO)
         {
             // see what flavor of XHTML this document matches
-            if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML40_STRICT))
+            if (TidyUtils.toBoolean(this.versions & VERS_HTML40_STRICT))
             {
                 // use XHTML strict
                 fpi = "-//W3C//DTD XHTML 1.0 Strict//EN";
                 sysid = VOYAGER_STRICT;
             }
-            else if (TidyUtils.toBoolean(this.versions & Dict.VERS_FRAMESET))
+            else if (TidyUtils.toBoolean(this.versions & VERS_FRAMESET))
             {
                 // use XHTML frames
                 fpi = "-//W3C//DTD XHTML 1.0 Frameset//EN";
                 sysid = VOYAGER_FRAMESET;
             }
-            else if (TidyUtils.toBoolean(this.versions & Dict.VERS_LOOSE))
+            else if (TidyUtils.toBoolean(this.versions & VERS_LOOSE))
             {
                 fpi = "-//W3C//DTD XHTML 1.0 Transitional//EN";
                 sysid = VOYAGER_LOOSE;
             }
-            else if (TidyUtils.toBoolean(this.versions & Dict.VERS_XHTML11))
+            else if (TidyUtils.toBoolean(this.versions & VERS_XHTML11))
             {
                 // use XHTML 1.1
                 fpi = "-//W3C//DTD XHTML 1.1//EN";
@@ -1393,53 +1394,53 @@ public class Lexer
     {
         switch (this.doctype)
         {
-            case Dict.VERS_UNKNOWN :
+            case VERS_UNKNOWN :
                 return htmlVersion();
 
-            case Dict.VERS_HTML20 :
-                if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML20))
+            case VERS_HTML20 :
+                if (TidyUtils.toBoolean(this.versions & VERS_HTML20))
                 {
-                    return Dict.VERS_HTML20;
+                    return VERS_HTML20;
                 }
 
                 break;
 
-            case Dict.VERS_HTML32 :
-                if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML32))
+            case VERS_HTML32 :
+                if (TidyUtils.toBoolean(this.versions & VERS_HTML32))
                 {
-                    return Dict.VERS_HTML32;
+                    return VERS_HTML32;
                 }
 
                 break; // to replace old version by new
 
-            case Dict.VERS_HTML40_STRICT :
-                if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML40_STRICT))
+            case VERS_HTML40_STRICT :
+                if (TidyUtils.toBoolean(this.versions & VERS_HTML40_STRICT))
                 {
-                    return Dict.VERS_HTML40_STRICT;
+                    return VERS_HTML40_STRICT;
                 }
 
                 break;
 
-            case Dict.VERS_HTML40_LOOSE :
-                if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML40_LOOSE))
+            case VERS_HTML40_LOOSE :
+                if (TidyUtils.toBoolean(this.versions & VERS_HTML40_LOOSE))
                 {
-                    return Dict.VERS_HTML40_LOOSE;
+                    return VERS_HTML40_LOOSE;
                 }
 
                 break; // to replace old version by new
 
-            case Dict.VERS_FRAMESET :
-                if (TidyUtils.toBoolean(this.versions & Dict.VERS_FRAMESET))
+            case VERS_FRAMESET :
+                if (TidyUtils.toBoolean(this.versions & VERS_FRAMESET))
                 {
-                    return Dict.VERS_FRAMESET;
+                    return VERS_FRAMESET;
                 }
 
                 break;
 
-            case Dict.VERS_XHTML11 :
-                if (TidyUtils.toBoolean(this.versions & Dict.VERS_XHTML11))
+            case VERS_XHTML11 :
+                if (TidyUtils.toBoolean(this.versions & VERS_XHTML11))
                 {
-                    return Dict.VERS_XHTML11;
+                    return VERS_XHTML11;
                 }
 
                 break;
@@ -1467,7 +1468,7 @@ public class Lexer
     public boolean fixDocType(Node root)
     {
         Node doctype;
-        int guessed = Dict.VERS_HTML40_STRICT, i;
+        int guessed = VERS_HTML40_STRICT, i;
 
         if (this.badDoctype)
         {
@@ -1494,70 +1495,70 @@ public class Lexer
         {
             Node.discardElement(doctype);
             doctype = null;
-            guessed = Dict.VERS_HTML40_STRICT;
+            guessed = VERS_HTML40_STRICT;
         }
         else if (this.configuration.docTypeMode == Configuration.DOCTYPE_LOOSE)
         {
             Node.discardElement(doctype);
             doctype = null;
-            guessed = Dict.VERS_HTML40_LOOSE;
+            guessed = VERS_HTML40_LOOSE;
         }
         else if (this.configuration.docTypeMode == Configuration.DOCTYPE_AUTO)
         {
             if (doctype != null)
             {
-                if (this.doctype == Dict.VERS_UNKNOWN)
+                if (this.doctype == VERS_UNKNOWN)
                 {
                     return false;
                 }
 
                 switch (this.doctype)
                 {
-                    case Dict.VERS_UNKNOWN :
+                    case VERS_UNKNOWN :
                         return false;
 
-                    case Dict.VERS_HTML20 :
-                        if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML20))
+                    case VERS_HTML20 :
+                        if (TidyUtils.toBoolean(this.versions & VERS_HTML20))
                         {
                             return true;
                         }
 
                         break; // to replace old version by new
 
-                    case Dict.VERS_HTML32 :
-                        if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML32))
+                    case VERS_HTML32 :
+                        if (TidyUtils.toBoolean(this.versions & VERS_HTML32))
                         {
                             return true;
                         }
 
                         break; // to replace old version by new
 
-                    case Dict.VERS_HTML40_STRICT :
-                        if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML40_STRICT))
+                    case VERS_HTML40_STRICT :
+                        if (TidyUtils.toBoolean(this.versions & VERS_HTML40_STRICT))
                         {
                             return true;
                         }
 
                         break; // to replace old version by new
 
-                    case Dict.VERS_HTML40_LOOSE :
-                        if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML40_LOOSE))
+                    case VERS_HTML40_LOOSE :
+                        if (TidyUtils.toBoolean(this.versions & VERS_HTML40_LOOSE))
                         {
                             return true;
                         }
 
                         break; // to replace old version by new
 
-                    case Dict.VERS_FRAMESET :
-                        if (TidyUtils.toBoolean(this.versions & Dict.VERS_FRAMESET))
+                    case VERS_FRAMESET :
+                        if (TidyUtils.toBoolean(this.versions & VERS_FRAMESET))
                         {
                             return true;
                         }
 
                         break; // to replace old version by new
 
-                    case Dict.VERS_XHTML11 :
-                        if (TidyUtils.toBoolean(this.versions & Dict.VERS_XHTML11))
+                    case VERS_XHTML11 :
+                        if (TidyUtils.toBoolean(this.versions & VERS_XHTML11))
                         {
                             return true;
                         }
@@ -1575,7 +1576,7 @@ public class Lexer
             guessed = htmlVersion();
         }
 
-        if (guessed == Dict.VERS_UNKNOWN)
+        if (guessed == VERS_UNKNOWN)
         {
             return false;
         }
@@ -1634,7 +1635,7 @@ public class Lexer
                 addStringLiteral("\""); // #431889 - fix by Dave Bryan 04 Jan 2001
             }
         }
-        else if (guessed == Dict.VERS_HTML20)
+        else if (guessed == VERS_HTML20)
         {
             addStringLiteral("\"-//IETF//DTD HTML 2.0//EN\"");
         }
@@ -2419,7 +2420,7 @@ public class Lexer
                     {
                         constrainVersion(this.token.tag.versions);
 
-                        if (TidyUtils.toBoolean(this.token.tag.versions & Dict.VERS_PROPRIETARY))
+                        if (TidyUtils.toBoolean(this.token.tag.versions & VERS_PROPRIETARY))
                         {
                             // #427810 - fix by Gary Deschaines 24 May 00
                             if (this.configuration.makeClean && (this.token.tag != this.configuration.tt.tagNobr && //
@@ -3996,7 +3997,7 @@ public class Lexer
      */
     void constrainVersion(int vers)
     {
-        this.versions &= (vers | Dict.VERS_PROPRIETARY);
+        this.versions &= (vers | VERS_PROPRIETARY);
     }
 
     /**
@@ -4045,7 +4046,7 @@ public class Lexer
         /**
          * code.
          */
-        short code;
+        int code;
 
         /**
          * Instantiates a new W3CVersionInfo.
@@ -4054,7 +4055,7 @@ public class Lexer
          * @param profile VOYAGER_STRICT | VOYAGER_LOOSE | VOYAGER_FRAMESET
          * @param code unique code for this version info
          */
-        public W3CVersionInfo(String name, String voyagerName, String profile, short code)
+        public W3CVersionInfo(String name, String voyagerName, String profile, int code)
         {
             this.name = name;
             this.voyagerName = voyagerName;

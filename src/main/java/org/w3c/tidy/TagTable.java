@@ -59,6 +59,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import static org.w3c.tidy.Versions.*;
 
 /**
  * Tag dictionary node hash table.
@@ -73,7 +74,7 @@ public final class TagTable
     /**
      * dummy entry for all xml tags.
      */
-    public static final Dict XML_TAGS = new Dict(null, Dict.VERS_ALL, Dict.CM_BLOCK, null, null);
+    public static final Dict XML_TAGS = new Dict(null, VERS_ALL, Dict.CM_BLOCK, null, null);
 
     /**
      * all the known tags.
@@ -81,236 +82,236 @@ public final class TagTable
     private static final Dict[] TAGS = {
         new Dict(
             "html",
-            Dict.VERS_ALL,
+            VERS_ALL,
             (Dict.CM_HTML | Dict.CM_OPT | Dict.CM_OMITST),
             ParserImpl.HTML,
             TagCheckImpl.HTML),
-        new Dict("head", Dict.VERS_ALL, (Dict.CM_HTML | Dict.CM_OPT | Dict.CM_OMITST), ParserImpl.HEAD, null),
-        new Dict("title", Dict.VERS_ALL, Dict.CM_HEAD, ParserImpl.TITLE, null),
-        new Dict("base", Dict.VERS_ALL, (Dict.CM_HEAD | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
-        new Dict("link", Dict.VERS_ALL, (Dict.CM_HEAD | Dict.CM_EMPTY), ParserImpl.EMPTY, TagCheckImpl.LINK),
-        new Dict("meta", Dict.VERS_ALL, (Dict.CM_HEAD | Dict.CM_EMPTY), ParserImpl.EMPTY, TagCheckImpl.META),
+        new Dict("head", VERS_ALL, (Dict.CM_HTML | Dict.CM_OPT | Dict.CM_OMITST), ParserImpl.HEAD, null),
+        new Dict("title", VERS_ALL, Dict.CM_HEAD, ParserImpl.TITLE, null),
+        new Dict("base", VERS_ALL, (Dict.CM_HEAD | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
+        new Dict("link", VERS_ALL, (Dict.CM_HEAD | Dict.CM_EMPTY), ParserImpl.EMPTY, TagCheckImpl.LINK),
+        new Dict("meta", VERS_ALL, (Dict.CM_HEAD | Dict.CM_EMPTY), ParserImpl.EMPTY, TagCheckImpl.META),
         new Dict(
             "style",
-            (short) (Dict.VERS_HTML40 & ~Dict.VERS_BASIC),
+            (short) (VERS_HTML40 & ~VERS_BASIC),
             Dict.CM_HEAD,
             ParserImpl.SCRIPT,
             TagCheckImpl.STYLE),
         new Dict(
             "script",
-            (short) (Dict.VERS_HTML40 & ~Dict.VERS_BASIC),
+            (short) (VERS_HTML40 & ~VERS_BASIC),
             (Dict.CM_HEAD | Dict.CM_MIXED | Dict.CM_BLOCK | Dict.CM_INLINE),
             ParserImpl.SCRIPT,
             TagCheckImpl.SCRIPT),
         new Dict(
             "server",
-            Dict.VERS_NETSCAPE,
+            VERS_NETSCAPE,
             (Dict.CM_HEAD | Dict.CM_MIXED | Dict.CM_BLOCK | Dict.CM_INLINE),
             ParserImpl.SCRIPT,
             null),
-        new Dict("body", Dict.VERS_ALL, (Dict.CM_HTML | Dict.CM_OPT | Dict.CM_OMITST), ParserImpl.BODY, null),
-        new Dict("frameset", Dict.VERS_FRAMESET, (Dict.CM_HTML | Dict.CM_FRAMES), ParserImpl.FRAMESET, null),
-        new Dict("p", Dict.VERS_ALL, (Dict.CM_BLOCK | Dict.CM_OPT), ParserImpl.INLINE, null),
-        new Dict("h1", Dict.VERS_ALL, (Dict.CM_BLOCK | Dict.CM_HEADING), ParserImpl.INLINE, null),
-        new Dict("h2", Dict.VERS_ALL, (Dict.CM_BLOCK | Dict.CM_HEADING), ParserImpl.INLINE, null),
-        new Dict("h3", Dict.VERS_ALL, (Dict.CM_BLOCK | Dict.CM_HEADING), ParserImpl.INLINE, null),
-        new Dict("h4", Dict.VERS_ALL, (Dict.CM_BLOCK | Dict.CM_HEADING), ParserImpl.INLINE, null),
-        new Dict("h5", Dict.VERS_ALL, (Dict.CM_BLOCK | Dict.CM_HEADING), ParserImpl.INLINE, null),
-        new Dict("h6", Dict.VERS_ALL, (Dict.CM_BLOCK | Dict.CM_HEADING), ParserImpl.INLINE, null),
-        new Dict("ul", Dict.VERS_ALL, Dict.CM_BLOCK, ParserImpl.LIST, null),
-        new Dict("ol", Dict.VERS_ALL, Dict.CM_BLOCK, ParserImpl.LIST, null),
-        new Dict("dl", Dict.VERS_ALL, Dict.CM_BLOCK, ParserImpl.DEFLIST, null),
-        new Dict("dir", Dict.VERS_LOOSE, (Dict.CM_BLOCK | Dict.CM_OBSOLETE), ParserImpl.LIST, null),
-        new Dict("menu", Dict.VERS_LOOSE, (Dict.CM_BLOCK | Dict.CM_OBSOLETE), ParserImpl.LIST, null),
-        new Dict("pre", Dict.VERS_ALL, Dict.CM_BLOCK, ParserImpl.PRE, null),
-        new Dict("listing", Dict.VERS_ALL, (Dict.CM_BLOCK | Dict.CM_OBSOLETE), ParserImpl.PRE, null),
-        new Dict("xmp", Dict.VERS_ALL, (Dict.CM_BLOCK | Dict.CM_OBSOLETE), ParserImpl.PRE, null),
-        new Dict("plaintext", Dict.VERS_ALL, (Dict.CM_BLOCK | Dict.CM_OBSOLETE), ParserImpl.PRE, null),
-        new Dict("address", Dict.VERS_ALL, Dict.CM_BLOCK, ParserImpl.BLOCK, null),
-        new Dict("blockquote", Dict.VERS_ALL, Dict.CM_BLOCK, ParserImpl.BLOCK, null),
-        new Dict("form", Dict.VERS_ALL, Dict.CM_BLOCK, ParserImpl.BLOCK, TagCheckImpl.FORM),
-        new Dict("isindex", Dict.VERS_LOOSE, (Dict.CM_BLOCK | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
-        new Dict("fieldset", (short) (Dict.VERS_HTML40 & ~Dict.VERS_BASIC), Dict.CM_BLOCK, ParserImpl.BLOCK, null),
-        new Dict("table", Dict.VERS_FROM32, Dict.CM_BLOCK, ParserImpl.TABLETAG, TagCheckImpl.TABLE),
+        new Dict("body", VERS_ALL, (Dict.CM_HTML | Dict.CM_OPT | Dict.CM_OMITST), ParserImpl.BODY, null),
+        new Dict("frameset", VERS_FRAMESET, (Dict.CM_HTML | Dict.CM_FRAMES), ParserImpl.FRAMESET, null),
+        new Dict("p", VERS_ALL, (Dict.CM_BLOCK | Dict.CM_OPT), ParserImpl.INLINE, null),
+        new Dict("h1", VERS_ALL, (Dict.CM_BLOCK | Dict.CM_HEADING), ParserImpl.INLINE, null),
+        new Dict("h2", VERS_ALL, (Dict.CM_BLOCK | Dict.CM_HEADING), ParserImpl.INLINE, null),
+        new Dict("h3", VERS_ALL, (Dict.CM_BLOCK | Dict.CM_HEADING), ParserImpl.INLINE, null),
+        new Dict("h4", VERS_ALL, (Dict.CM_BLOCK | Dict.CM_HEADING), ParserImpl.INLINE, null),
+        new Dict("h5", VERS_ALL, (Dict.CM_BLOCK | Dict.CM_HEADING), ParserImpl.INLINE, null),
+        new Dict("h6", VERS_ALL, (Dict.CM_BLOCK | Dict.CM_HEADING), ParserImpl.INLINE, null),
+        new Dict("ul", VERS_ALL, Dict.CM_BLOCK, ParserImpl.LIST, null),
+        new Dict("ol", VERS_ALL, Dict.CM_BLOCK, ParserImpl.LIST, null),
+        new Dict("dl", VERS_ALL, Dict.CM_BLOCK, ParserImpl.DEFLIST, null),
+        new Dict("dir", VERS_LOOSE, (Dict.CM_BLOCK | Dict.CM_OBSOLETE), ParserImpl.LIST, null),
+        new Dict("menu", VERS_LOOSE, (Dict.CM_BLOCK | Dict.CM_OBSOLETE), ParserImpl.LIST, null),
+        new Dict("pre", VERS_ALL, Dict.CM_BLOCK, ParserImpl.PRE, null),
+        new Dict("listing", VERS_ALL, (Dict.CM_BLOCK | Dict.CM_OBSOLETE), ParserImpl.PRE, null),
+        new Dict("xmp", VERS_ALL, (Dict.CM_BLOCK | Dict.CM_OBSOLETE), ParserImpl.PRE, null),
+        new Dict("plaintext", VERS_ALL, (Dict.CM_BLOCK | Dict.CM_OBSOLETE), ParserImpl.PRE, null),
+        new Dict("address", VERS_ALL, Dict.CM_BLOCK, ParserImpl.BLOCK, null),
+        new Dict("blockquote", VERS_ALL, Dict.CM_BLOCK, ParserImpl.BLOCK, null),
+        new Dict("form", VERS_ALL, Dict.CM_BLOCK, ParserImpl.BLOCK, TagCheckImpl.FORM),
+        new Dict("isindex", VERS_LOOSE, (Dict.CM_BLOCK | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
+        new Dict("fieldset", (short) (VERS_HTML40 & ~VERS_BASIC), Dict.CM_BLOCK, ParserImpl.BLOCK, null),
+        new Dict("table", VERS_FROM32, Dict.CM_BLOCK, ParserImpl.TABLETAG, TagCheckImpl.TABLE),
         new Dict(
             "hr",
-            (short) (Dict.VERS_ALL & ~Dict.VERS_BASIC),
+            (short) (VERS_ALL & ~VERS_BASIC),
             (Dict.CM_BLOCK | Dict.CM_EMPTY),
             ParserImpl.EMPTY,
             TagCheckImpl.HR),
-        new Dict("div", Dict.VERS_FROM32, Dict.CM_BLOCK, ParserImpl.BLOCK, null),
-        new Dict("multicol", Dict.VERS_NETSCAPE, Dict.CM_BLOCK, ParserImpl.BLOCK, null),
-        new Dict("nosave", Dict.VERS_NETSCAPE, Dict.CM_BLOCK, ParserImpl.BLOCK, null),
-        new Dict("layer", Dict.VERS_NETSCAPE, Dict.CM_BLOCK, ParserImpl.BLOCK, null),
-        new Dict("ilayer", Dict.VERS_NETSCAPE, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("div", VERS_FROM32, Dict.CM_BLOCK, ParserImpl.BLOCK, null),
+        new Dict("multicol", VERS_NETSCAPE, Dict.CM_BLOCK, ParserImpl.BLOCK, null),
+        new Dict("nosave", VERS_NETSCAPE, Dict.CM_BLOCK, ParserImpl.BLOCK, null),
+        new Dict("layer", VERS_NETSCAPE, Dict.CM_BLOCK, ParserImpl.BLOCK, null),
+        new Dict("ilayer", VERS_NETSCAPE, Dict.CM_INLINE, ParserImpl.INLINE, null),
         new Dict(
             "nolayer",
-            Dict.VERS_NETSCAPE,
+            VERS_NETSCAPE,
             (Dict.CM_BLOCK | Dict.CM_INLINE | Dict.CM_MIXED),
             ParserImpl.BLOCK,
             null),
-        new Dict("align", Dict.VERS_NETSCAPE, Dict.CM_BLOCK, ParserImpl.BLOCK, null),
-        new Dict("center", Dict.VERS_LOOSE, Dict.CM_BLOCK, ParserImpl.BLOCK, null),
+        new Dict("align", VERS_NETSCAPE, Dict.CM_BLOCK, ParserImpl.BLOCK, null),
+        new Dict("center", VERS_LOOSE, Dict.CM_BLOCK, ParserImpl.BLOCK, null),
         new Dict(
             "ins",
-            (short) (Dict.VERS_HTML40 & ~Dict.VERS_BASIC),
+            (short) (VERS_HTML40 & ~VERS_BASIC),
             (Dict.CM_INLINE | Dict.CM_BLOCK | Dict.CM_MIXED),
             ParserImpl.INLINE,
             null),
         new Dict(
             "del",
-            (short) (Dict.VERS_HTML40 & ~Dict.VERS_BASIC),
+            (short) (VERS_HTML40 & ~VERS_BASIC),
             (Dict.CM_INLINE | Dict.CM_BLOCK | Dict.CM_MIXED),
             ParserImpl.INLINE,
             null),
-        new Dict("li", Dict.VERS_ALL, (Dict.CM_LIST | Dict.CM_OPT | Dict.CM_NO_INDENT), ParserImpl.BLOCK, null),
-        new Dict("dt", Dict.VERS_ALL, (Dict.CM_DEFLIST | Dict.CM_OPT | Dict.CM_NO_INDENT), ParserImpl.INLINE, null),
-        new Dict("dd", Dict.VERS_ALL, (Dict.CM_DEFLIST | Dict.CM_OPT | Dict.CM_NO_INDENT), ParserImpl.BLOCK, null),
-        new Dict("caption", Dict.VERS_FROM32, Dict.CM_TABLE, ParserImpl.INLINE, TagCheckImpl.CAPTION),
-        new Dict("colgroup", Dict.VERS_HTML40, (Dict.CM_TABLE | Dict.CM_OPT), ParserImpl.COLGROUP, null),
-        new Dict("col", Dict.VERS_HTML40, (Dict.CM_TABLE | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
+        new Dict("li", VERS_ALL, (Dict.CM_LIST | Dict.CM_OPT | Dict.CM_NO_INDENT), ParserImpl.BLOCK, null),
+        new Dict("dt", VERS_ALL, (Dict.CM_DEFLIST | Dict.CM_OPT | Dict.CM_NO_INDENT), ParserImpl.INLINE, null),
+        new Dict("dd", VERS_ALL, (Dict.CM_DEFLIST | Dict.CM_OPT | Dict.CM_NO_INDENT), ParserImpl.BLOCK, null),
+        new Dict("caption", VERS_FROM32, Dict.CM_TABLE, ParserImpl.INLINE, TagCheckImpl.CAPTION),
+        new Dict("colgroup", VERS_HTML40, (Dict.CM_TABLE | Dict.CM_OPT), ParserImpl.COLGROUP, null),
+        new Dict("col", VERS_HTML40, (Dict.CM_TABLE | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
         new Dict(
             "thead",
-            (short) (Dict.VERS_HTML40 & ~Dict.VERS_BASIC),
+            (short) (VERS_HTML40 & ~VERS_BASIC),
             (Dict.CM_TABLE | Dict.CM_ROWGRP | Dict.CM_OPT),
             ParserImpl.ROWGROUP,
             null),
         new Dict(
             "tfoot",
-            (short) (Dict.VERS_HTML40 & ~Dict.VERS_BASIC),
+            (short) (VERS_HTML40 & ~VERS_BASIC),
             (Dict.CM_TABLE | Dict.CM_ROWGRP | Dict.CM_OPT),
             ParserImpl.ROWGROUP,
             null),
         new Dict(
             "tbody",
-            (short) (Dict.VERS_HTML40 & ~Dict.VERS_BASIC),
+            (short) (VERS_HTML40 & ~VERS_BASIC),
             (Dict.CM_TABLE | Dict.CM_ROWGRP | Dict.CM_OPT),
             ParserImpl.ROWGROUP,
             null),
-        new Dict("tr", Dict.VERS_FROM32, (Dict.CM_TABLE | Dict.CM_OPT), ParserImpl.ROW, null),
+        new Dict("tr", VERS_FROM32, (Dict.CM_TABLE | Dict.CM_OPT), ParserImpl.ROW, null),
         new Dict(
             "td",
-            Dict.VERS_FROM32,
+            VERS_FROM32,
             (Dict.CM_ROW | Dict.CM_OPT | Dict.CM_NO_INDENT),
             ParserImpl.BLOCK,
             TagCheckImpl.TABLECELL),
         new Dict(
             "th",
-            Dict.VERS_FROM32,
+            VERS_FROM32,
             (Dict.CM_ROW | Dict.CM_OPT | Dict.CM_NO_INDENT),
             ParserImpl.BLOCK,
             TagCheckImpl.TABLECELL),
-        new Dict("q", Dict.VERS_HTML40, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("a", Dict.VERS_ALL, Dict.CM_INLINE, ParserImpl.INLINE, TagCheckImpl.ANCHOR),
-        new Dict("br", Dict.VERS_ALL, (Dict.CM_INLINE | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
+        new Dict("q", VERS_HTML40, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("a", VERS_ALL, Dict.CM_INLINE, ParserImpl.INLINE, TagCheckImpl.ANCHOR),
+        new Dict("br", VERS_ALL, (Dict.CM_INLINE | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
         new Dict(
             "img",
-            Dict.VERS_ALL,
+            VERS_ALL,
             (Dict.CM_INLINE | Dict.CM_IMG | Dict.CM_EMPTY),
             ParserImpl.EMPTY,
             TagCheckImpl.IMG),
         new Dict(
             "object",
-            Dict.VERS_HTML40,
+            VERS_HTML40,
             (Dict.CM_OBJECT | Dict.CM_HEAD | Dict.CM_IMG | Dict.CM_INLINE | Dict.CM_PARAM),
             ParserImpl.BLOCK,
             null),
         new Dict(
             "applet",
-            Dict.VERS_LOOSE,
+            VERS_LOOSE,
             (Dict.CM_OBJECT | Dict.CM_IMG | Dict.CM_INLINE | Dict.CM_PARAM),
             ParserImpl.BLOCK,
             null),
         new Dict(
             "servlet",
-            Dict.VERS_SUN,
+            VERS_SUN,
             (Dict.CM_OBJECT | Dict.CM_IMG | Dict.CM_INLINE | Dict.CM_PARAM),
             ParserImpl.BLOCK,
             null),
-        new Dict("param", Dict.VERS_FROM32, (Dict.CM_INLINE | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
-        new Dict("embed", Dict.VERS_NETSCAPE, (Dict.CM_INLINE | Dict.CM_IMG | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
-        new Dict("noembed", Dict.VERS_NETSCAPE, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("iframe", Dict.VERS_HTML40_LOOSE, Dict.CM_INLINE, ParserImpl.BLOCK, null),
-        new Dict("frame", Dict.VERS_FRAMESET, (Dict.CM_FRAMES | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
-        new Dict("noframes", Dict.VERS_IFRAME, (Dict.CM_BLOCK | Dict.CM_FRAMES), ParserImpl.NOFRAMES, null),
+        new Dict("param", VERS_FROM32, (Dict.CM_INLINE | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
+        new Dict("embed", VERS_NETSCAPE, (Dict.CM_INLINE | Dict.CM_IMG | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
+        new Dict("noembed", VERS_NETSCAPE, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("iframe", VERS_HTML40_LOOSE, Dict.CM_INLINE, ParserImpl.BLOCK, null),
+        new Dict("frame", VERS_FRAMESET, (Dict.CM_FRAMES | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
+        new Dict("noframes", VERS_IFRAME, (Dict.CM_BLOCK | Dict.CM_FRAMES), ParserImpl.NOFRAMES, null),
         new Dict(
             "noscript",
-            (short) (Dict.VERS_HTML40 & ~Dict.VERS_BASIC),
+            (short) (VERS_HTML40 & ~VERS_BASIC),
             (Dict.CM_BLOCK | Dict.CM_INLINE | Dict.CM_MIXED),
             ParserImpl.BLOCK,
             null),
-        new Dict("b", (short) (Dict.VERS_ALL & ~Dict.VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("i", (short) (Dict.VERS_ALL & ~Dict.VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("u", Dict.VERS_LOOSE, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("tt", (short) (Dict.VERS_ALL & ~Dict.VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("s", Dict.VERS_LOOSE, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("strike", Dict.VERS_LOOSE, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("big", (short) (Dict.VERS_HTML40 & ~Dict.VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("small", (short) (Dict.VERS_HTML40 & ~Dict.VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("sub", (short) (Dict.VERS_HTML40 & ~Dict.VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("sup", (short) (Dict.VERS_HTML40 & ~Dict.VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("em", Dict.VERS_ALL, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("strong", Dict.VERS_ALL, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("dfn", Dict.VERS_ALL, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("code", Dict.VERS_ALL, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("samp", Dict.VERS_ALL, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("kbd", Dict.VERS_ALL, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("var", Dict.VERS_ALL, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("cite", Dict.VERS_ALL, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("abbr", Dict.VERS_HTML40, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("acronym", Dict.VERS_HTML40, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("span", Dict.VERS_FROM32, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("blink", Dict.VERS_PROPRIETARY, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("nobr", Dict.VERS_PROPRIETARY, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("wbr", Dict.VERS_PROPRIETARY, (Dict.CM_INLINE | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
-        new Dict("marquee", Dict.VERS_MICROSOFT, (Dict.CM_INLINE | Dict.CM_OPT), ParserImpl.INLINE, null),
-        new Dict("bgsound", Dict.VERS_MICROSOFT, (Dict.CM_HEAD | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
-        new Dict("comment", Dict.VERS_MICROSOFT, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("spacer", Dict.VERS_NETSCAPE, (Dict.CM_INLINE | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
-        new Dict("keygen", Dict.VERS_NETSCAPE, (Dict.CM_INLINE | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
+        new Dict("b", (short) (VERS_ALL & ~VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("i", (short) (VERS_ALL & ~VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("u", VERS_LOOSE, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("tt", (short) (VERS_ALL & ~VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("s", VERS_LOOSE, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("strike", VERS_LOOSE, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("big", (short) (VERS_HTML40 & ~VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("small", (short) (VERS_HTML40 & ~VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("sub", (short) (VERS_HTML40 & ~VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("sup", (short) (VERS_HTML40 & ~VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("em", VERS_ALL, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("strong", VERS_ALL, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("dfn", VERS_ALL, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("code", VERS_ALL, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("samp", VERS_ALL, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("kbd", VERS_ALL, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("var", VERS_ALL, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("cite", VERS_ALL, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("abbr", VERS_HTML40, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("acronym", VERS_HTML40, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("span", VERS_FROM32, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("blink", VERS_PROPRIETARY, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("nobr", VERS_PROPRIETARY, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("wbr", VERS_PROPRIETARY, (Dict.CM_INLINE | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
+        new Dict("marquee", VERS_MICROSOFT, (Dict.CM_INLINE | Dict.CM_OPT), ParserImpl.INLINE, null),
+        new Dict("bgsound", VERS_MICROSOFT, (Dict.CM_HEAD | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
+        new Dict("comment", VERS_MICROSOFT, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("spacer", VERS_NETSCAPE, (Dict.CM_INLINE | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
+        new Dict("keygen", VERS_NETSCAPE, (Dict.CM_INLINE | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
         new Dict(
             "nolayer",
-            Dict.VERS_NETSCAPE,
+            VERS_NETSCAPE,
             (Dict.CM_BLOCK | Dict.CM_INLINE | Dict.CM_MIXED),
             ParserImpl.BLOCK,
             null),
-        new Dict("ilayer", Dict.VERS_NETSCAPE, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("ilayer", VERS_NETSCAPE, Dict.CM_INLINE, ParserImpl.INLINE, null),
         new Dict(
             "map",
-            (short) (Dict.VERS_HTML40 & ~Dict.VERS_BASIC),
+            (short) (VERS_HTML40 & ~VERS_BASIC),
             Dict.CM_INLINE,
             ParserImpl.BLOCK,
             TagCheckImpl.MAP),
         new Dict(
             "area",
-            (short) (Dict.VERS_ALL & ~Dict.VERS_BASIC),
+            (short) (VERS_ALL & ~VERS_BASIC),
             (Dict.CM_BLOCK | Dict.CM_EMPTY),
             ParserImpl.EMPTY,
             TagCheckImpl.AREA),
-        new Dict("input", Dict.VERS_ALL, (Dict.CM_INLINE | Dict.CM_IMG | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
-        new Dict("select", Dict.VERS_ALL, (Dict.CM_INLINE | Dict.CM_FIELD), ParserImpl.SELECT, null),
-        new Dict("option", Dict.VERS_ALL, (Dict.CM_FIELD | Dict.CM_OPT), ParserImpl.TEXT, null),
+        new Dict("input", VERS_ALL, (Dict.CM_INLINE | Dict.CM_IMG | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
+        new Dict("select", VERS_ALL, (Dict.CM_INLINE | Dict.CM_FIELD), ParserImpl.SELECT, null),
+        new Dict("option", VERS_ALL, (Dict.CM_FIELD | Dict.CM_OPT), ParserImpl.TEXT, null),
         new Dict(
             "optgroup",
-            (short) (Dict.VERS_HTML40 & ~Dict.VERS_BASIC),
+            (short) (VERS_HTML40 & ~VERS_BASIC),
             (Dict.CM_FIELD | Dict.CM_OPT),
             ParserImpl.OPTGROUP,
             null),
-        new Dict("textarea", Dict.VERS_ALL, (Dict.CM_INLINE | Dict.CM_FIELD), ParserImpl.TEXT, null),
-        new Dict("label", Dict.VERS_HTML40, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("legend", (short) (Dict.VERS_HTML40 & ~Dict.VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("button", (short) (Dict.VERS_HTML40 & ~Dict.VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("basefont", Dict.VERS_LOOSE, (Dict.CM_INLINE | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
-        new Dict("font", Dict.VERS_LOOSE, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("bdo", (short) (Dict.VERS_HTML40 & ~Dict.VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("textarea", VERS_ALL, (Dict.CM_INLINE | Dict.CM_FIELD), ParserImpl.TEXT, null),
+        new Dict("label", VERS_HTML40, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("legend", (short) (VERS_HTML40 & ~VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("button", (short) (VERS_HTML40 & ~VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("basefont", VERS_LOOSE, (Dict.CM_INLINE | Dict.CM_EMPTY), ParserImpl.EMPTY, null),
+        new Dict("font", VERS_LOOSE, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("bdo", (short) (VERS_HTML40 & ~VERS_BASIC), Dict.CM_INLINE, ParserImpl.INLINE, null),
         // elements for XHTML 1.1
-        new Dict("ruby", Dict.VERS_XHTML11, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("rbc", Dict.VERS_XHTML11, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("rtc", Dict.VERS_XHTML11, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("rb", Dict.VERS_XHTML11, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("rt", Dict.VERS_XHTML11, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("", Dict.VERS_XHTML11, Dict.CM_INLINE, ParserImpl.INLINE, null),
-        new Dict("rp", Dict.VERS_XHTML11, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("ruby", VERS_XHTML11, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("rbc", VERS_XHTML11, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("rtc", VERS_XHTML11, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("rb", VERS_XHTML11, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("rt", VERS_XHTML11, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("", VERS_XHTML11, Dict.CM_INLINE, ParserImpl.INLINE, null),
+        new Dict("rp", VERS_XHTML11, Dict.CM_INLINE, ParserImpl.INLINE, null),
     //
     };
 
@@ -865,7 +866,7 @@ public final class TagTable
                 break;
         }
 
-        install(new Dict(name, Dict.VERS_PROPRIETARY, model, tagParser, null));
+        install(new Dict(name, VERS_PROPRIETARY, model, tagParser, null));
     }
 
     /**
@@ -888,7 +889,7 @@ public final class TagTable
                 {
                     // defined tags can be empty + inline
                     case Dict.TAGTYPE_EMPTY :
-                        if ((curDictEntry.versions == Dict.VERS_PROPRIETARY)
+                        if ((curDictEntry.versions == VERS_PROPRIETARY)
                             && ((curDictEntry.model & Dict.CM_EMPTY) == Dict.CM_EMPTY)
                             && // (curDictEntry.parser == ParseBlock) &&
                             (curDictEntry != tagWbr))
@@ -899,7 +900,7 @@ public final class TagTable
 
                     // defined tags can be empty + inline
                     case Dict.TAGTYPE_INLINE :
-                        if ((curDictEntry.versions == Dict.VERS_PROPRIETARY)
+                        if ((curDictEntry.versions == VERS_PROPRIETARY)
                             && ((curDictEntry.model & Dict.CM_INLINE) == Dict.CM_INLINE)
                             && // (curDictEntry.parser == ParseInline) &&
                             (curDictEntry != tagBlink)
@@ -912,7 +913,7 @@ public final class TagTable
 
                     // defined tags can be empty + block
                     case Dict.TAGTYPE_BLOCK :
-                        if ((curDictEntry.versions == Dict.VERS_PROPRIETARY)
+                        if ((curDictEntry.versions == VERS_PROPRIETARY)
                             && ((curDictEntry.model & Dict.CM_BLOCK) == Dict.CM_BLOCK)
                             && (curDictEntry.getParser() == ParserImpl.BLOCK))
                         {
@@ -921,7 +922,7 @@ public final class TagTable
                         break;
 
                     case Dict.TAGTYPE_PRE :
-                        if ((curDictEntry.versions == Dict.VERS_PROPRIETARY)
+                        if ((curDictEntry.versions == VERS_PROPRIETARY)
                             && ((curDictEntry.model & Dict.CM_BLOCK) == Dict.CM_BLOCK)
                             && (curDictEntry.getParser() == ParserImpl.PRE))
                         {

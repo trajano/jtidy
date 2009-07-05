@@ -53,6 +53,8 @@
  */
 package org.w3c.tidy;
 
+import static org.w3c.tidy.Versions.*;
+
 /**
  * Check HTML attributes implementation.
  * @author Dave Raggett <a href="mailto:dsr@w3.org">dsr@w3.org </a>
@@ -256,7 +258,7 @@ public final class TagCheckImpl
             }
 
             /* suppress warning for missing summary for HTML 2.0 and HTML 3.2 */
-            if (!hasSummary && lexer.doctype != Dict.VERS_HTML20 && lexer.doctype != Dict.VERS_HTML32)
+            if (!hasSummary && lexer.doctype != VERS_HTML20 && lexer.doctype != VERS_HTML32)
             {
                 lexer.badAccess |= Report.MISSING_SUMMARY;
 
@@ -282,7 +284,7 @@ public final class TagCheckImpl
             if ((attval = node.getAttrByName("height")) != null)
             {
                 lexer.report.attrError(lexer, node, attval, Report.PROPRIETARY_ATTRIBUTE);
-                lexer.versions &= Dict.VERS_PROPRIETARY;
+                lexer.versions &= VERS_PROPRIETARY;
             }
 
         }
@@ -318,11 +320,11 @@ public final class TagCheckImpl
             {
                 if ("left".equalsIgnoreCase(value) || "right".equalsIgnoreCase(value))
                 {
-                    lexer.constrainVersion(Dict.VERS_HTML40_LOOSE);
+                    lexer.constrainVersion(VERS_HTML40_LOOSE);
                 }
                 else if ("top".equalsIgnoreCase(value) || "bottom".equalsIgnoreCase(value))
                 {
-                    lexer.constrainVersion(~(Dict.VERS_HTML20 | Dict.VERS_HTML32));
+                    lexer.constrainVersion(~(VERS_HTML20 | VERS_HTML32));
                 }
                 else
                 {
@@ -400,7 +402,7 @@ public final class TagCheckImpl
                 }
                 else if (attribute == AttributeTable.attrWidth || attribute == AttributeTable.attrHeight)
                 {
-                    lexer.constrainVersion(~Dict.VERS_HTML20);
+                    lexer.constrainVersion(~VERS_HTML20);
                 }
             }
 
@@ -599,7 +601,7 @@ public final class TagCheckImpl
 
             if (node.getAttrByName("width") != null || node.getAttrByName("height") != null)
             {
-                lexer.constrainVersion(~Dict.VERS_HTML40_STRICT);
+                lexer.constrainVersion(~VERS_HTML40_STRICT);
             }
         }
     }
