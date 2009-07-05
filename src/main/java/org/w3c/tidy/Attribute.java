@@ -62,7 +62,7 @@ package org.w3c.tidy;
  */
 public class Attribute
 {
-	protected AttrId id;
+	protected final AttrId id;
 	
     /**
      * attribute name.
@@ -91,8 +91,8 @@ public class Attribute
      * @param htmlVersions versions in which this attribute is supported
      * @param check AttrCheck instance
      */
-    public Attribute(String attributeName, int htmlVersions, AttrCheck check)
-    {
+    public Attribute(final AttrId id, final String attributeName, final int htmlVersions, final AttrCheck check) {
+    	this.id = id;
         this.name = attributeName;
         this.versions = htmlVersions;
         this.attrchk = check;
