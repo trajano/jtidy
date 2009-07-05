@@ -420,5 +420,8 @@ public class AttVal extends Object implements Cloneable
     {
         this.value = value;
     }
-
+    
+    public boolean hasId(final AttrId id) {
+    	return dict != null && dict.id == id;
+    }
 }
