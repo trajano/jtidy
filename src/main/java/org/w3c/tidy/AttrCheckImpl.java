@@ -68,27 +68,40 @@ import static org.w3c.tidy.Versions.*;
  */
 public final class AttrCheckImpl
 {
-
+	public static final AttrCheck PCDATA = null;
+	
+	/**
+     * checker for "charset" attribute. Actually null (no validation).
+     */
+    public static final AttrCheck CHARSET = null;
+    
+    /**
+     * checker for "type" attribute
+     */
+    public static final AttrCheck TYPE = new CheckType();
+    
+    public static final AttrCheck XTYPE = null;
+    
+    /**
+     * checker for attributes that can contain a single character. Actually null (no validation).
+     */
+    public static final AttrCheck CHARACTER = null;
+    
+    /**
+     * checker for attributes which contain a list of urls. Actually null (no validation).
+     */
+    public static final AttrCheck URLS = null;
+    
     /**
      * checker for URLs.
      */
     public static final AttrCheck URL = new CheckUrl();
-
+    
     /**
      * checker for scripts.
      */
     public static final AttrCheck SCRIPT = new CheckScript();
-
-    /**
-     * checker for "name" attribute.
-     */
-    public static final AttrCheck NAME = new CheckName();
-
-    /**
-     * checker for ids.
-     */
-    public static final AttrCheck ID = new CheckId();
-
+    
     /**
      * checker for "align" attribute.
      */
@@ -98,117 +111,76 @@ public final class AttrCheckImpl
      * checker for "valign" attribute.
      */
     public static final AttrCheck VALIGN = new CheckValign();
-
-    /**
-     * checker for boolean attributes.
-     */
-    public static final AttrCheck BOOL = new CheckBool();
-
-    /**
-     * checker for "lenght" attribute.
-     */
-    public static final AttrCheck LENGTH = new CheckLength();
-
-    /**
-     * checker for "target" attribute.
-     */
-    public static final AttrCheck TARGET = new CheckTarget();
-
-    /**
-     * checker for "submit" attribute.
-     */
-    public static final AttrCheck FSUBMIT = new CheckFsubmit();
-
-    /**
-     * checker for "clear" attribute.
-     */
-    public static final AttrCheck CLEAR = new CheckClear();
-
-    /**
-     * checker for "shape" attribute.
-     */
-    public static final AttrCheck SHAPE = new CheckShape();
-
-    /**
-     * checker for "number" attribute.
-     */
-    public static final AttrCheck NUMBER = new CheckNumber();
-
-    /**
-     * checker for "scope" attribute.
-     */
-    public static final AttrCheck SCOPE = new CheckScope();
-
+    
     /**
      * checker for "color" attribute.
      */
     public static final AttrCheck COLOR = new CheckColor();
-
+    
     /**
-     * checker for "vtype" attribute.
+     * checker for "clear" attribute.
      */
-    public static final AttrCheck VTYPE = new CheckVType();
-
-    /**
-     * checker for "scroll" attribute.
-     */
-    public static final AttrCheck SCROLL = new CheckScroll();
-
-    /**
-     * checker for "dir" attribute.
-     */
-    public static final AttrCheck TEXTDIR = new CheckTextDir();
-
+    public static final AttrCheck CLEAR = new CheckClear();
+    
+    public static final AttrCheck BORDER = new CheckBool(); // kludge
+    
     /**
      * checker for "lang" and "xml:lang" attributes.
      */
     public static final AttrCheck LANG = new CheckLang();
-
+    
     /**
-     * checker for text attributes. Actually null (no validation).
+     * checker for boolean attributes.
      */
-    public static final AttrCheck TEXT = null;
-
-    /**
-     * checker for "charset" attribute. Actually null (no validation).
-     */
-    public static final AttrCheck CHARSET = null;
-
-    /**
-     * checker for "type" attribute. Actually null (no validation).
-     */
-    public static final AttrCheck TYPE = null;
-
-    /**
-     * checker for attributes that can contain a single character. Actually null (no validation).
-     */
-    public static final AttrCheck CHARACTER = null;
-
-    /**
-     * checker for attributes which contain a list of urls. Actually null (no validation).
-     */
-    public static final AttrCheck URLS = null;
-
+    public static final AttrCheck BOOL = new CheckBool();
+    
     /**
      * checker for "cols" attribute. Actually null (no validation).
      */
     public static final AttrCheck COLS = null;
-
+    
+    /**
+     * checker for "number" attribute.
+     */
+    public static final AttrCheck NUMBER = new CheckNumber();
+    
+    /**
+     * checker for "length" attribute.
+     */
+    public static final AttrCheck LENGTH = new CheckLength();
+    
     /**
      * checker for "coords" attribute. Actually null (no validation).
      */
     public static final AttrCheck COORDS = null;
-
+    
     /**
      * checker for attributes containing dates. Actually null (no validation).
      */
     public static final AttrCheck DATE = null;
-
+    
     /**
-     * checker for attributes referencng an id. Actually null (no validation).
+     * checker for "dir" attribute.
+     */
+    public static final AttrCheck TEXTDIR = new CheckTextDir();
+    
+    public static final AttrCheck IDREFS = null;
+    
+    /**
+     * checker for attributes referencing an id. Actually null (no validation).
      */
     public static final AttrCheck IDREF = null;
-
+    
+    /**
+     * checker for ids.
+     */
+    public static final AttrCheck IDDEF = new CheckId();
+    
+    /**
+     * checker for "name" attribute.
+     */
+    public static final AttrCheck NAME = new CheckName();
+    
     /**
      * checker for table "frame" attribute. Actually null (no validation).
      */
@@ -218,12 +190,17 @@ public final class AttrCheckImpl
      * checker for "frameborder" attribute. Actually null (no validation).
      */
     public static final AttrCheck FBORDER = null;
-
+    
     /**
      * checker for "media" attribute. Actually null (no validation).
      */
     public static final AttrCheck MEDIA = null;
-
+    
+    /**
+     * checker for "submit" attribute.
+     */
+    public static final AttrCheck FSUBMIT = new CheckFsubmit();
+    
     /**
      * checker for "rel" and "rev" attributes. Actually null (no validation).
      */
@@ -233,6 +210,37 @@ public final class AttrCheckImpl
      * checker for table "rules" attribute. Actually null (no validation).
      */
     public static final AttrCheck TRULES = null;
+    
+    /**
+     * checker for "scope" attribute.
+     */
+    public static final AttrCheck SCOPE = new CheckScope();
+    
+    /**
+     * checker for "shape" attribute.
+     */
+    public static final AttrCheck SHAPE = new CheckShape();
+    
+    /**
+     * checker for "scroll" attribute.
+     */
+    public static final AttrCheck SCROLL = new CheckScroll();
+    
+    /**
+     * checker for "target" attribute.
+     */
+    public static final AttrCheck TARGET = new CheckTarget();
+
+    /**
+     * checker for "vtype" attribute.
+     */
+    public static final AttrCheck VTYPE = new CheckVType();
+
+    /**
+     * checker for text attributes.
+     */
+    public static final AttrCheck ACTION = new CheckAction();
+    
 
     /**
      * utility class, don't instantiate.
@@ -1102,4 +1110,71 @@ public final class AttrCheckImpl
         }
     }
 
+    /* RFC 2396, section 4.2 states:
+	    "[...] in the case of HTML's FORM element, [...] an
+	    empty URI reference represents the base URI of the
+	    current document and should be replaced by that URI
+	    when transformed into a request."
+     */
+    public static class CheckAction implements AttrCheck {
+		@Override
+		public void check(final Lexer lexer, final Node node, final AttVal attval) {
+			if (attval.hasValue()) {
+				URL.check(lexer, node, attval);
+			}
+		}
+    }
+    
+    private static void CheckAttrValidity(final Lexer lexer, final Node node, final AttVal attval,
+            final String list[]) {
+    	if (!attval.hasValue()) {
+    		lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+    		return;
+    	}
+
+    	attval.checkLowerCaseAttrValue(lexer, node);
+
+    	if (!attval.valueIsAmong(list)) {
+    		lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+    	}
+    }
+    
+    private static final String valuesINPUT[] = {"text", "password", "checkbox", "radio",
+        "submit", "reset", "file", "hidden", "image", "button"};
+    private static final String valuesBUTTON[] = {"button", "submit", "reset"};
+    private static final String valuesUL[] = {"disc", "square", "circle"};
+    private static final String valuesOL[] = {"1", "a", "i"};
+    
+    /* checks type attribute */
+    public static class CheckType implements AttrCheck {
+		@Override
+		public void check(final Lexer lexer, final Node node, final AttVal attval) {
+	        if (node.is(TagId.INPUT)) {
+	            CheckAttrValidity(lexer, node, attval, valuesINPUT);
+	        } else if (node.is(TagId.BUTTON)) {
+	            CheckAttrValidity(lexer, node, attval, valuesBUTTON);
+	        } else if (node.is(TagId.UL)) {
+	            CheckAttrValidity(lexer, node, attval, valuesUL);
+	        } else if (node.is(TagId.OL)) {
+	            if (!attval.hasValue()) {
+	            	lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+	                return;
+	            }
+	            if (!attval.valueIsAmong(valuesOL)) {
+	            	lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+	            }
+	        } else if (node.is(TagId.LI)) {
+	            if (!attval.hasValue()) {
+	            	lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+	                return;
+	            }
+	            if (attval.valueIsAmong(valuesUL)) {
+	            	attval.checkLowerCaseAttrValue(lexer, node);
+	            } else if (!attval.valueIsAmong(valuesOL)) {
+	            	lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+	            }
+	        }
+	        return;
+		}
+    }
 }
