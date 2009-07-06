@@ -2216,18 +2216,18 @@ public class Clean
                     || (atrStyle != null && (atrStyle.value.indexOf("mso-list:") != -1)))) // 463066 - fix by Joel
                 // Shafer 19 Sep 01
                 {
-                    Dict listType = tt.tagUl;
+                    TagId listType = TagId.UL;
 
                     if (attr.value.equals("MsoListNumber"))
                     {
-                        listType = tt.tagOl;
+                        listType = TagId.OL;
                     }
 
                     Node.coerceNode(lexer, node, TagId.LI);
 
-                    if (list == null || list.tag != listType)
+                    if (list == null || !list.is(listType))
                     {
-                        list = lexer.inferredTag(listType.id);
+                        list = lexer.inferredTag(listType);
                         Node.insertNodeBeforeElement(node, list);
                     }
 
