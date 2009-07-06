@@ -441,4 +441,8 @@ public class AttVal extends Object implements Cloneable
         }
         return false;
     }
+    
+    public boolean is(final AttrId id) {
+    	return dict != null && dict.id == id;
+    }
 }
