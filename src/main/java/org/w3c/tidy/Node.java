@@ -314,7 +314,8 @@ public class Node implements Cloneable
      * Used to clone heading nodes when split by an hr.
      * @see java.lang.Object#clone()
      */
-    protected Object clone()
+    @Override
+	protected Object clone()
     {
         Node node;
         try
@@ -1051,10 +1052,9 @@ public class Node implements Cloneable
 
     /**
      * Find the body node.
-     * @param tt tag table
      * @return body node
      */
-    public Node findBody(TagTable tt)
+    public Node findBody()
     {
         Node node;
 
@@ -1113,9 +1113,8 @@ public class Node implements Cloneable
      * assumes that node hasn't been inserted into the row.
      * @param row Row node
      * @param node Node which should be moved before the table
-     * @param tt tag table
      */
-    public static void moveBeforeTable(Node row, Node node, TagTable tt)
+    public static void moveBeforeTable(Node row, Node node)
     {
         Node table;
 
@@ -1262,10 +1261,9 @@ public class Node implements Cloneable
 
     /**
      * Find the "html" element.
-     * @param tt tag table
      * @return html node
      */
-    public Node findHTML(TagTable tt)
+    public Node findHTML()
     {
         Node node;
 
@@ -1279,14 +1277,13 @@ public class Node implements Cloneable
 
     /**
      * Find the head tag.
-     * @param tt tag table
      * @return head node
      */
-    public Node findHEAD(TagTable tt)
+    public Node findHEAD()
     {
         Node node;
 
-        node = this.findHTML(tt);
+        node = this.findHTML();
 
         if (node != null)
         {
@@ -1384,7 +1381,8 @@ public class Node implements Cloneable
     /**
      * @see java.lang.Object#toString()
      */
-    public String toString()
+    @Override
+	public String toString()
     {
         String s = "";
         Node n = this;

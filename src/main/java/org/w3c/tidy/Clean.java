@@ -497,7 +497,7 @@ public class Clean
      */
     private boolean niceBody(Lexer lexer, Node doc)
     {
-        Node body = doc.findBody(lexer.configuration.tt);
+        Node body = doc.findBody();
 
         if (body != null)
         {
@@ -540,7 +540,7 @@ public class Clean
         av.dict = AttributeTable.getDefaultAttributeTable().findAttribute(av);
         node.attributes = av;
 
-        body = doc.findBody(lexer.configuration.tt);
+        body = doc.findBody();
 
         lexer.txtstart = lexer.lexsize;
 
@@ -569,7 +569,7 @@ public class Clean
         // now insert style element into document head doc is root node. search its children for html node the head
         // node should be first child of html node
 
-        head = doc.findHEAD(lexer.configuration.tt);
+        head = doc.findHEAD();
 
         if (head != null)
         {
@@ -2297,7 +2297,7 @@ public class Clean
         AttVal attval;
         Node node;
         Node head;
-        Node html = root.findHTML(this.tt);
+        Node html = root.findHTML();
 
         if (html != null && html.getAttrByName("xmlns:o") != null)
         {
@@ -2305,7 +2305,7 @@ public class Clean
         }
 
         // search for <meta name="GENERATOR" content="Microsoft ...">
-        head = root.findHEAD(tt);
+        head = root.findHEAD();
 
         if (head != null)
         {

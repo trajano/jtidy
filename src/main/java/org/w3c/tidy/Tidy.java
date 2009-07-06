@@ -87,7 +87,7 @@ public class Tidy implements Serializable
     /**
      * Alias for configuration options accepted in command line.
      */
-    private static final Map CMDLINE_ALIAS = new HashMap();
+    private static final Map<String, String> CMDLINE_ALIAS = new HashMap<String, String>();
 
     static
     {
@@ -562,7 +562,7 @@ public class Tidy implements Serializable
                 }
 
                 // find the body element which may be implicit
-                body = document.findBody(configuration.tt);
+                body = document.findBody();
 
                 if (body != null)
                 {
@@ -801,7 +801,7 @@ public class Tidy implements Serializable
                 }
 
                 // handle "special" aliases
-                String alias = (String) CMDLINE_ALIAS.get(argName);
+                String alias = CMDLINE_ALIAS.get(argName);
                 if (alias != null)
                 {
                     argName = alias;

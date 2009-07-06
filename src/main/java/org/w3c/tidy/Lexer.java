@@ -352,7 +352,7 @@ public class Lexer
     /**
      * stack.
      */
-    protected Stack istack;
+    protected Stack<IStack> istack;
 
     /**
      * start of frame.
@@ -392,7 +392,7 @@ public class Lexer
     /**
      * node list.
      */
-    private List nodeList;
+    private List<Node> nodeList;
 
     /**
      * Instantiates a new Lexer.
@@ -410,9 +410,9 @@ public class Lexer
         this.versions = (VERS_ALL | VERS_PROPRIETARY);
         this.doctype = VERS_UNKNOWN;
         this.insert = -1;
-        this.istack = new Stack();
+        this.istack = new Stack<IStack>();
         this.configuration = configuration;
-        this.nodeList = new Vector();
+        this.nodeList = new Vector<Node>();
     }
 
     /**
@@ -516,7 +516,7 @@ public class Lexer
         Node node;
         for (int i = 0; i < this.nodeList.size(); i++)
         {
-            node = (Node) (this.nodeList.get(i));
+            node = this.nodeList.get(i);
             if (node.textarray == oldtextarray)
             {
                 node.textarray = newtextarray;
@@ -983,7 +983,7 @@ public class Lexer
     {
         AttVal attval;
         Node node;
-        Node head = root.findHEAD(this.configuration.tt);
+        Node head = root.findHEAD();
 
         if (head != null)
         {
@@ -1192,7 +1192,7 @@ public class Lexer
      */
     Node newXhtmlDocTypeNode(Node root)
     {
-        Node html = root.findHTML(this.configuration.tt);
+        Node html = root.findHTML();
         if (html == null)
         {
             return null;
@@ -3758,7 +3758,7 @@ public class Lexer
 
                 while (this.istack.size() > 0)
                 {
-                    is = (IStack) this.istack.pop();
+                    is = this.istack.pop();
                     if (is.tag.id == TagId.A)
                     {
                         break;
@@ -3775,7 +3775,7 @@ public class Lexer
 
         if (this.istack.size() > 0)
         {
-            is = (IStack) this.istack.pop();
+            is = this.istack.pop();
             if (this.insert >= this.istack.size())
             {
                 this.insert = -1;
@@ -3795,7 +3795,7 @@ public class Lexer
 
         for (i = this.istack.size() - 1; i >= 0; --i)
         {
-            is = (IStack) this.istack.elementAt(i);
+            is = this.istack.elementAt(i);
             if (is.tag == node.tag)
             {
                 return true;
@@ -3856,7 +3856,7 @@ public class Lexer
 
         // GLP: Bugfix 126261. Remove when this change is fixed in istack.c in the original Tidy
         node.implicit = true;
-        is = (IStack) this.istack.elementAt(this.insert);
+        is = this.istack.elementAt(this.insert);
         node.element = is.element;
         node.tag = is.tag;
         if (is.attributes != null)

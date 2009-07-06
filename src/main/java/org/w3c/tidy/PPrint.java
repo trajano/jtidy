@@ -1333,13 +1333,12 @@ public class PPrint
     }
 
     /**
-     * @param lexer
      * @param fout
      * @param mode
      * @param indent
      * @param node
      */
-    private void printTag(Lexer lexer, Out fout, short mode, int indent, Node node)
+    private void printTag(Out fout, short mode, int indent, Node node)
     {
         String p;
 
@@ -1466,10 +1465,9 @@ public class PPrint
     /**
      * @param fout
      * @param indent
-     * @param lexer
      * @param node
      */
-    private void printDocType(Out fout, int indent, Lexer lexer, Node node)
+    private void printDocType(Out fout, int indent, Node node)
     {
         int i, c = 0;
         short mode = 0;
@@ -1785,11 +1783,10 @@ public class PPrint
     /**
      * Is text node and already ends w/ a newline? Used to pretty print CDATA/PRE text content. If it already ends on a
      * newline, it is not necessary to print another before printing end tag.
-     * @param lexer Lexer
      * @param node text node
      * @return text indent
      */
-    private int textEndsWithNewline(Lexer lexer, Node node)
+    private int textEndsWithNewline(Node node)
     {
         if (node.type == Node.TEXT_NODE && node.end > node.start)
         {
@@ -1812,11 +1809,10 @@ public class PPrint
 
     /**
      * Does the current node contain a CDATA section?
-     * @param lexer Lexer
      * @param node Node
      * @return <code>true</code> if node contains a CDATA section
      */
-    static boolean hasCDATA(Lexer lexer, Node node)
+    static boolean hasCDATA(Node node)
     {
         // Scan forward through the textarray. Since the characters we're
         // looking for are < 0x7f, we don't have to do any UTF-8 decoding.
@@ -1877,7 +1873,7 @@ public class PPrint
         indent = 0;
 
         // start script
-        printTag(lexer, fout, mode, indent, node);
+        printTag(fout, mode, indent, node);
         // flushLine(fout, indent); // extra newline
 
         if (lexer.configuration.xHTML && node.content != null)
@@ -1902,7 +1898,7 @@ public class PPrint
                 }
             }
 
-            hasCData = hasCDATA(lexer, node.content);
+            hasCData = hasCDATA(node.content);
             if (!hasCData)
             {
                 // disable wrapping
@@ -1925,7 +1921,7 @@ public class PPrint
 
             if (content.next == null)
             {
-                contentIndent = textEndsWithNewline(lexer, content);
+                contentIndent = textEndsWithNewline(content);
             }
 
         }
@@ -2052,7 +2048,7 @@ public class PPrint
 
         // Feature request #434940 - fix by Dave Raggett/Ignacio Vazquez-Abrams 21 Jun 01
         // Sebastiano Vigna <vigna@dsi.unimi.it>
-        Node body = root.findBody(lexer.configuration.tt);
+        Node body = root.findBody();
 
         if (body != null)
         {
@@ -2104,7 +2100,7 @@ public class PPrint
         }
         else if (node.type == Node.DOCTYPE_TAG)
         {
-            printDocType(fout, indent, lexer, node);
+            printDocType(fout, indent, node);
         }
         else if (node.type == Node.PROC_INS_TAG)
         {
@@ -2156,7 +2152,7 @@ public class PPrint
             }
             else
             {
-                printTag(lexer, fout, mode, indent, node);
+                printTag(fout, mode, indent, node);
             }
 
             if (node.is(TagId.PARAM) || node.is(TagId.AREA))
@@ -2182,7 +2178,7 @@ public class PPrint
 
                 indent = 0;
                 condFlushLine(fout, indent);
-                printTag(lexer, fout, mode, indent, node);
+                printTag(fout, mode, indent, node);
                 flushLine(fout, indent);
 
                 for (content = node.content; content != null; content = content.next)
@@ -2230,7 +2226,7 @@ public class PPrint
 
                 // otherwise a normal inline element
 
-                printTag(lexer, fout, mode, indent, node);
+                printTag(fout, mode, indent, node);
 
                 // indent content for SELECT, TEXTAREA, MAP, OBJECT and APPLET
 
@@ -2274,7 +2270,7 @@ public class PPrint
                     || !(node.tag != null && TidyUtils.toBoolean(node.tag.model & Dict.CM_OMITST))
                     || node.attributes != null)
                 {
-                    printTag(lexer, fout, mode, indent, node);
+                    printTag(fout, mode, indent, node);
 
                     if (shouldIndent(node))
                     {
@@ -2404,7 +2400,7 @@ public class PPrint
         }
         else if (node.type == Node.DOCTYPE_TAG)
         {
-            printDocType(fout, indent, lexer, node);
+            printDocType(fout, indent, node);
         }
         else if (node.type == Node.PROC_INS_TAG)
         {
@@ -2439,7 +2435,7 @@ public class PPrint
             && !configuration.xHTML)
         {
             condFlushLine(fout, indent);
-            printTag(lexer, fout, mode, indent, node);
+            printTag(fout, mode, indent, node);
             // fgiust: Remove empty lines between tags in XML.
             // flushLine(fout, indent);
 
@@ -2480,7 +2476,7 @@ public class PPrint
                 cindent = indent + this.configuration.spaces;
             }
 
-            printTag(lexer, fout, mode, indent, node);
+            printTag(fout, mode, indent, node);
 
             if (!mixed && node.content != null)
             {
@@ -2725,7 +2721,7 @@ public class PPrint
      */
     public void addTransitionEffect(Lexer lexer, Node root, double duration)
     {
-        Node head = root.findHEAD(lexer.configuration.tt);
+        Node head = root.findHEAD();
         String transition;
 
         transition = "blendTrans(Duration=" + (new Double(duration)).toString() + ")";
@@ -2752,7 +2748,7 @@ public class PPrint
         NumberFormat numberFormat = NumberFormat.getInstance();
         numberFormat.setMinimumIntegerDigits(3);
 
-        body = root.findBody(lexer.configuration.tt);
+        body = root.findBody();
         count = countSlides(body);
         slidecontent = body.content;
 

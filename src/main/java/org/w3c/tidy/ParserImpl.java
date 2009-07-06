@@ -253,7 +253,7 @@ public final class ParserImpl
     static void moveNodeToBody(Lexer lexer, Node node)
     {
         node.removeNode();
-        Node body = lexer.root.findBody(lexer.configuration.tt);
+        Node body = lexer.root.findBody();
         body.insertNodeAtEnd(node);
     }
 
@@ -2724,7 +2724,6 @@ public final class ParserImpl
         public void parse(Lexer lexer, Node rowgroup, short mode)
         {
             Node node, parent;
-            TagTable tt = lexer.configuration.tt;
 
             if ((rowgroup.tag.model & Dict.CM_EMPTY) != 0)
             {
@@ -2780,7 +2779,7 @@ public final class ParserImpl
                     }
                     else if (node.type == Node.TEXT_NODE || (node.tag.model & (Dict.CM_BLOCK | Dict.CM_INLINE)) != 0)
                     {
-                        Node.moveBeforeTable(rowgroup, node, tt);
+                        Node.moveBeforeTable(rowgroup, node);
                         lexer.report.warning(lexer, rowgroup, node, Report.TAG_NOT_ALLOWED_IN);
                         lexer.exiled = true;
 
@@ -2882,7 +2881,6 @@ public final class ParserImpl
         {
             Node node, parent;
             boolean excludeState;
-            TagTable tt = lexer.configuration.tt;
 
             if ((row.tag.model & Dict.CM_EMPTY) != 0)
             {
@@ -2982,7 +2980,7 @@ public final class ParserImpl
                     }
                     else if (node.type == Node.TEXT_NODE || (node.tag.model & (Dict.CM_BLOCK | Dict.CM_INLINE)) != 0)
                     {
-                        Node.moveBeforeTable(row, node, tt);
+                        Node.moveBeforeTable(row, node);
                         lexer.report.warning(lexer, row, node, Report.TAG_NOT_ALLOWED_IN);
                         lexer.exiled = true;
 
@@ -3040,7 +3038,6 @@ public final class ParserImpl
         public void parse(Lexer lexer, Node noframes, short mode)
         {
             Node node;
-            TagTable tt = lexer.configuration.tt;
 
             lexer.badAccess |= Report.USING_NOFRAMES;
             mode = Lexer.IGNORE_WHITESPACE;
@@ -3109,7 +3106,7 @@ public final class ParserImpl
                 {
                     if (lexer.seenEndBody)
                     {
-                        Node body = lexer.root.findBody(tt);
+                        Node body = lexer.root.findBody();
 
                         if (node.type == Node.TEXT_NODE)
                         {
