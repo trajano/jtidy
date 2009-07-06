@@ -786,8 +786,6 @@ public class Node implements Cloneable
         // empty element can be needed in css sites
         if (lexer.configuration.trimEmpty)
         {
-            TagTable tt = lexer.configuration.tt;
-
             if (lexer.canPrune(element))
             {
                 if (element.type != TEXT_NODE)
@@ -801,7 +799,7 @@ public class Node implements Cloneable
             {
                 // replace <p></p> by <br><br> to preserve formatting
                 Node node = lexer.inferredTag(TagId.BR);
-                Node.coerceNode(lexer, element, tt.tagBr);
+                Node.coerceNode(lexer, element, TagId.BR);
                 element.insertNodeAfterElement(node);
             }
         }
@@ -1170,8 +1168,8 @@ public class Node implements Cloneable
      * @param node Node
      * @param tag tag dictionary reference
      */
-    public static void coerceNode(Lexer lexer, Node node, Dict tag)
-    {
+    public static void coerceNode(final Lexer lexer, final Node node, final TagId tid) {
+    	final Dict tag = lexer.configuration.tt.lookup(tid);
         Node tmp = lexer.inferredTag(tag.id);
         lexer.report.warning(lexer, node, tmp, Report.OBSOLETE_ELEMENT);
         node.was = node.tag;

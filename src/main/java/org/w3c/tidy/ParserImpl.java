@@ -703,7 +703,6 @@ public final class ParserImpl
 
             mode = Lexer.IGNORE_WHITESPACE;
             checkstack = true;
-            TagTable tt = lexer.configuration.tt;
 
             Clean.bumpObject(lexer, body.parent);
 
@@ -920,7 +919,7 @@ public final class ParserImpl
                     }
                     else if (node.is(TagId.P))
                     {
-                        Node.coerceNode(lexer, node, tt.tagBr);
+                        Node.coerceNode(lexer, node, TagId.BR);
                         body.insertNodeAtEnd(node);
                         node = lexer.inferredTag(TagId.BR);
                     }
@@ -1280,7 +1279,7 @@ public final class ParserImpl
                         // coerce unmatched </p> to <br><br>
                         if (!element.isDescendantOf(TagId.P))
                         {
-                            Node.coerceNode(lexer, node, tt.tagBr);
+                            Node.coerceNode(lexer, node, TagId.BR);
                             Node.trimSpaces(lexer, element);
                             element.insertNodeAtEnd(node);
                             node = lexer.inferredTag(TagId.BR);
@@ -1608,7 +1607,6 @@ public final class ParserImpl
         {
             Node node;
             Node parent;
-            TagTable tt = lexer.configuration.tt;
 
             if ((list.tag.model & Dict.CM_EMPTY) != 0)
             {
@@ -1623,7 +1621,7 @@ public final class ParserImpl
                 {
                     if ((list.tag.model & Dict.CM_OBSOLETE) != 0)
                     {
-                        Node.coerceNode(lexer, list, tt.tagUl);
+                        Node.coerceNode(lexer, list, TagId.UL);
                     }
 
                     list.closed = true;
@@ -1670,7 +1668,7 @@ public final class ParserImpl
 
                             if ((list.tag.model & Dict.CM_OBSOLETE) != 0)
                             {
-                                Node.coerceNode(lexer, list, tt.tagUl);
+                                Node.coerceNode(lexer, list, TagId.UL);
                             }
 
                             Node.trimEmptyElement(lexer, list);
@@ -1705,7 +1703,7 @@ public final class ParserImpl
 
             if ((list.tag.model & Dict.CM_OBSOLETE) != 0)
             {
-                Node.coerceNode(lexer, list, tt.tagUl);
+                Node.coerceNode(lexer, list, TagId.UL);
             }
 
             lexer.report.warning(lexer, list, node, Report.MISSING_ENDTAG_FOR);
@@ -1885,7 +1883,6 @@ public final class ParserImpl
         public void parse(Lexer lexer, Node pre, short mode)
         {
             Node node;
-            TagTable tt = lexer.configuration.tt;
 
             if ((pre.tag.model & Dict.CM_EMPTY) != 0)
             {
@@ -1894,7 +1891,7 @@ public final class ParserImpl
 
             if ((pre.tag.model & Dict.CM_OBSOLETE) != 0)
             {
-                Node.coerceNode(lexer, pre, tt.tagPre);
+                Node.coerceNode(lexer, pre, TagId.PRE);
             }
 
             lexer.inlineDup(null); // tell lexer to insert inlines if needed
@@ -1966,7 +1963,7 @@ public final class ParserImpl
                         Node.trimSpaces(lexer, pre);
 
                         // coerce both <p> and </p> to <br>
-                        Node.coerceNode(lexer, node, tt.tagBr);
+                        Node.coerceNode(lexer, node, TagId.BR);
                         pre.insertNodeAtEnd(node);
                     }
                     else
@@ -2095,7 +2092,7 @@ public final class ParserImpl
                     }
                     else if (node.is(TagId.P))
                     {
-                        Node.coerceNode(lexer, node, tt.tagBr);
+                        Node.coerceNode(lexer, node, TagId.BR);
                         element.insertNodeAtEnd(node);
                         node = lexer.inferredTag(TagId.BR);
                     }
@@ -3101,7 +3098,7 @@ public final class ParserImpl
 
                     if (seenbody)
                     {
-                        Node.coerceNode(lexer, node, tt.tagDiv);
+                        Node.coerceNode(lexer, node, TagId.DIV);
                         moveNodeToBody(lexer, node);
                     }
                     continue;
