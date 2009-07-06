@@ -1102,7 +1102,7 @@ public class Clean
 
                     discardContainer(node, pnode);
 
-                    node = lexer.inferredTag("br");
+                    node = lexer.inferredTag(TagId.BR);
 
                     if (last.next != null)
                     {
@@ -1127,7 +1127,7 @@ public class Clean
                     Node parent = node.parent;
                     discardContainer(node, pnode);
 
-                    node = lexer.inferredTag("br");
+                    node = lexer.inferredTag(TagId.BR);
                     node.next = next;
                     node.prev = prev;
                     node.parent = parent;
@@ -2229,7 +2229,7 @@ public class Clean
 
                     if (list == null || list.tag != listType)
                     {
-                        list = lexer.inferredTag(listType.name);
+                        list = lexer.inferredTag(listType.id);
                         Node.insertNodeBeforeElement(node, list);
                     }
 
@@ -2253,7 +2253,7 @@ public class Clean
 
                     if (list == null || list.tag != this.tt.tagPre)
                     {
-                        list = lexer.inferredTag("pre");
+                        list = lexer.inferredTag(TagId.PRE);
                         Node.insertNodeBeforeElement(node, list);
                     }
 

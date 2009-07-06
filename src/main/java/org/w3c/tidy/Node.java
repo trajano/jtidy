@@ -800,7 +800,7 @@ public class Node implements Cloneable
             else if (element.tag == tt.tagP && element.content == null)
             {
                 // replace <p></p> by <br><br> to preserve formatting
-                Node node = lexer.inferredTag("br");
+                Node node = lexer.inferredTag(TagId.BR);
                 Node.coerceNode(lexer, element, tt.tagBr);
                 element.insertNodeAfterElement(node);
             }
@@ -1162,7 +1162,7 @@ public class Node implements Cloneable
 
         if (row.content == null)
         {
-            cell = lexer.inferredTag("td");
+            cell = lexer.inferredTag(TagId.TD);
             row.insertNodeAtEnd(cell);
             lexer.report.warning(lexer, row, cell, Report.MISSING_STARTTAG);
         }
@@ -1176,7 +1176,7 @@ public class Node implements Cloneable
      */
     public static void coerceNode(Lexer lexer, Node node, Dict tag)
     {
-        Node tmp = lexer.inferredTag(tag.name);
+        Node tmp = lexer.inferredTag(tag.id);
         lexer.report.warning(lexer, node, tmp, Report.OBSOLETE_ELEMENT);
         node.was = node.tag;
         node.tag = tag;

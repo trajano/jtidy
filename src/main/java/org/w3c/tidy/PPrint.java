@@ -2739,7 +2739,7 @@ public class PPrint
 
         if (head != null)
         {
-            Node meta = lexer.inferredTag("meta");
+            Node meta = lexer.inferredTag(TagId.META);
             meta.addAttribute("http-equiv", "Page-Enter");
             meta.addAttribute("content", transition);
             head.insertNodeAtStart(meta);

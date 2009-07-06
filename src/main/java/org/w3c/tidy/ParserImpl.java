@@ -284,7 +284,7 @@ public final class ParserImpl
 
                 if (node == null)
                 {
-                    node = lexer.inferredTag("head");
+                    node = lexer.inferredTag(TagId.HEAD);
                     break;
                 }
 
@@ -306,7 +306,7 @@ public final class ParserImpl
                 }
 
                 lexer.ungetToken();
-                node = lexer.inferredTag("head");
+                node = lexer.inferredTag(TagId.HEAD);
                 break;
             }
 
@@ -323,7 +323,7 @@ public final class ParserImpl
                     if (frameset == null)
                     {
                         // implied body
-                        node = lexer.inferredTag("body");
+                        node = lexer.inferredTag(TagId.BODY);
                         html.insertNodeAtEnd(node);
                         BODY.parse(lexer, node, mode);
                     }
@@ -367,7 +367,7 @@ public final class ParserImpl
 
                         if (noframes == null)
                         {
-                            noframes = lexer.inferredTag("noframes");
+                            noframes = lexer.inferredTag(TagId.NOFRAMES);
                             frameset.insertNodeAtEnd(noframes);
                             lexer.report.warning(lexer, html, noframes, Report.INSERTING_TAG);
                         }
@@ -425,7 +425,7 @@ public final class ParserImpl
                     if (frameset == null)
                     {
                         lexer.report.warning(lexer, html, node, Report.DISCARDING_UNEXPECTED);
-                        node = lexer.inferredTag("body");
+                        node = lexer.inferredTag(TagId.BODY);
                         break;
                     }
 
@@ -462,7 +462,7 @@ public final class ParserImpl
                 {
                     if (noframes == null)
                     {
-                        noframes = lexer.inferredTag("noframes");
+                        noframes = lexer.inferredTag(TagId.NOFRAMES);
                         frameset.insertNodeAtEnd(noframes);
                     }
                     else
@@ -475,7 +475,7 @@ public final class ParserImpl
                     continue;
                 }
 
-                node = lexer.inferredTag("body");
+                node = lexer.inferredTag(TagId.BODY);
                 lexer.constrainVersion(~VERS_FRAMESET);
                 break;
             }
@@ -589,7 +589,7 @@ public final class ParserImpl
                 {
                     lexer.report.warning(lexer, head, null, Report.MISSING_TITLE_ELEMENT);
                 }
-                head.insertNodeAtEnd(lexer.inferredTag("title"));
+                head.insertNodeAtEnd(lexer.inferredTag(TagId.TITLE));
             }
         }
 
@@ -809,7 +809,7 @@ public final class ParserImpl
                         Node para;
 
                         lexer.ungetToken();
-                        para = lexer.inferredTag("p");
+                        para = lexer.inferredTag(TagId.P);
                         body.insertNodeAtEnd(para);
                         parseTag(lexer, para, mode);
                         mode = Lexer.MIXED_CONTENT;
@@ -881,26 +881,26 @@ public final class ParserImpl
                     if ((node.tag.model & Dict.CM_LIST) != 0)
                     {
                         lexer.ungetToken();
-                        node = lexer.inferredTag("ul");
+                        node = lexer.inferredTag(TagId.UL);
                         node.addClass("noindent");
                         lexer.excludeBlocks = true;
                     }
                     else if ((node.tag.model & Dict.CM_DEFLIST) != 0)
                     {
                         lexer.ungetToken();
-                        node = lexer.inferredTag("dl");
+                        node = lexer.inferredTag(TagId.DL);
                         lexer.excludeBlocks = true;
                     }
                     else if ((node.tag.model & (Dict.CM_TABLE | Dict.CM_ROWGRP | Dict.CM_ROW)) != 0)
                     {
                         lexer.ungetToken();
-                        node = lexer.inferredTag("table");
+                        node = lexer.inferredTag(TagId.TABLE);
                         lexer.excludeBlocks = true;
                     }
                     else if (node.tag == tt.tagInput)
                     {
                         lexer.ungetToken();
-                        node = lexer.inferredTag("form");
+                        node = lexer.inferredTag(TagId.FORM);
                         lexer.excludeBlocks = true;
                     }
                     else
@@ -926,7 +926,7 @@ public final class ParserImpl
                     {
                         Node.coerceNode(lexer, node, tt.tagBr);
                         body.insertNodeAtEnd(node);
-                        node = lexer.inferredTag("br");
+                        node = lexer.inferredTag(TagId.BR);
                     }
                     else if ((node.tag.model & Dict.CM_INLINE) != 0)
                     {
@@ -1033,7 +1033,7 @@ public final class ParserImpl
                 if (node.tag == tt.tagBody)
                 {
                     lexer.ungetToken();
-                    node = lexer.inferredTag("noframes");
+                    node = lexer.inferredTag(TagId.NOFRAMES);
                     lexer.report.warning(lexer, frameset, node, Report.INSERTING_TAG);
                 }
 
@@ -1288,7 +1288,7 @@ public final class ParserImpl
                             Node.coerceNode(lexer, node, tt.tagBr);
                             Node.trimSpaces(lexer, element);
                             element.insertNodeAtEnd(node);
-                            node = lexer.inferredTag("br");
+                            node = lexer.inferredTag(TagId.BR);
                             continue;
                         }
                     }
@@ -1465,7 +1465,7 @@ public final class ParserImpl
                         }
 
                         lexer.report.warning(lexer, element, node, Report.TAG_NOT_ALLOWED_IN);
-                        dd = lexer.inferredTag("dd");
+                        dd = lexer.inferredTag(TagId.DD);
 
                         // insert hr within dd before dt if dt is empty
                         if (element.content == null)
@@ -1698,7 +1698,7 @@ public final class ParserImpl
                         return;
                     }
 
-                    node = lexer.inferredTag("li");
+                    node = lexer.inferredTag(TagId.LI);
                     node.addAttribute("style", "list-style: none");
                     lexer.report.warning(lexer, list, node, Report.MISSING_STARTTAG);
                 }
@@ -1781,7 +1781,7 @@ public final class ParserImpl
                 if (node.type == Node.TEXT_NODE)
                 {
                     lexer.ungetToken();
-                    node = lexer.inferredTag("dt");
+                    node = lexer.inferredTag(TagId.DT);
                     lexer.report.warning(lexer, list, node, Report.MISSING_STARTTAG);
                 }
 
@@ -1835,7 +1835,7 @@ public final class ParserImpl
                     parseTag(lexer, node, mode);
 
                     // now create a new dl element
-                    list = lexer.inferredTag("dl");
+                    list = lexer.inferredTag(TagId.DL);
                     node.insertNodeAfterElement(list);
                     continue;
                 }
@@ -1858,7 +1858,7 @@ public final class ParserImpl
                         return;
                     }
 
-                    node = lexer.inferredTag("dd");
+                    node = lexer.inferredTag(TagId.DD);
                     lexer.report.warning(lexer, list, node, Report.MISSING_STARTTAG);
                 }
 
@@ -2103,7 +2103,7 @@ public final class ParserImpl
                     {
                         Node.coerceNode(lexer, node, tt.tagBr);
                         element.insertNodeAtEnd(node);
-                        node = lexer.inferredTag("br");
+                        node = lexer.inferredTag(TagId.BR);
                     }
                     else
                     {
@@ -2161,7 +2161,7 @@ public final class ParserImpl
                     if (lexer.configuration.encloseBlockText && !iswhitenode)
                     {
                         lexer.ungetToken();
-                        node = lexer.inferredTag("p");
+                        node = lexer.inferredTag(TagId.P);
                         element.insertNodeAtEnd(node);
                         parseTag(lexer, node, Lexer.MIXED_CONTENT);
                         continue;
@@ -2287,14 +2287,14 @@ public final class ParserImpl
                         if ((node.tag.model & Dict.CM_LIST) != 0)
                         {
                             lexer.ungetToken();
-                            node = lexer.inferredTag("ul");
+                            node = lexer.inferredTag(TagId.UL);
                             node.addClass("noindent");
                             lexer.excludeBlocks = true;
                         }
                         else if ((node.tag.model & Dict.CM_DEFLIST) != 0)
                         {
                             lexer.ungetToken();
-                            node = lexer.inferredTag("dl");
+                            node = lexer.inferredTag(TagId.DL);
                             lexer.excludeBlocks = true;
                         }
 
@@ -2375,7 +2375,7 @@ public final class ParserImpl
                                 return;
                             }
 
-                            node = lexer.inferredTag("ul");
+                            node = lexer.inferredTag(TagId.UL);
                             node.addClass("noindent");
                         }
                         else if ((node.tag.model & Dict.CM_DEFLIST) != 0)
@@ -2387,11 +2387,11 @@ public final class ParserImpl
                                 return;
                             }
 
-                            node = lexer.inferredTag("dl");
+                            node = lexer.inferredTag(TagId.DL);
                         }
                         else if ((node.tag.model & Dict.CM_TABLE) != 0 || (node.tag.model & Dict.CM_ROW) != 0)
                         {
-                            node = lexer.inferredTag("table");
+                            node = lexer.inferredTag(TagId.TABLE);
                         }
                         else if ((element.tag.model & Dict.CM_OBJECT) != 0)
                         {
@@ -2425,7 +2425,7 @@ public final class ParserImpl
                         // if (lexer.configuration.encloseBlockText)
                         // {
                         // lexer.ungetToken();
-                        // node = lexer.inferredTag("p");
+                        // node = lexer.inferredTag(TagId.P);
                         // element.insertNodeAtEnd(node);
                         // parseTag(lexer, node, Lexer.MIXED_CONTENT);
                         // continue;
@@ -2551,7 +2551,7 @@ public final class ParserImpl
                     if (node.tag == tt.tagTd || node.tag == tt.tagTh || node.tag == tt.tagTable)
                     {
                         lexer.ungetToken();
-                        node = lexer.inferredTag("tr");
+                        node = lexer.inferredTag(TagId.TR);
                         lexer.report.warning(lexer, table, node, Report.MISSING_STARTTAG);
                     }
                     else if (node.type == Node.TEXT_NODE || (node.tag.model & (Dict.CM_BLOCK | Dict.CM_INLINE)) != 0)
@@ -2786,7 +2786,7 @@ public final class ParserImpl
                     if (node.tag == tt.tagTd || node.tag == tt.tagTh)
                     {
                         lexer.ungetToken();
-                        node = lexer.inferredTag("tr");
+                        node = lexer.inferredTag(TagId.TR);
                         lexer.report.warning(lexer, rowgroup, node, Report.MISSING_STARTTAG);
                     }
                     else if (node.type == Node.TEXT_NODE || (node.tag.model & (Dict.CM_BLOCK | Dict.CM_INLINE)) != 0)
@@ -2867,7 +2867,7 @@ public final class ParserImpl
 
                 if (!(node.tag == tt.tagTr))
                 {
-                    node = lexer.inferredTag("tr");
+                    node = lexer.inferredTag(TagId.TR);
                     lexer.report.warning(lexer, rowgroup, node, Report.MISSING_STARTTAG);
                     lexer.ungetToken();
                 }
@@ -2988,7 +2988,7 @@ public final class ParserImpl
                     if (node.tag == tt.tagForm)
                     {
                         lexer.ungetToken();
-                        node = lexer.inferredTag("td");
+                        node = lexer.inferredTag(TagId.TD);
                         lexer.report.warning(lexer, row, node, Report.MISSING_STARTTAG);
                     }
                     else if (node.type == Node.TEXT_NODE || (node.tag.model & (Dict.CM_BLOCK | Dict.CM_INLINE)) != 0)
@@ -3125,7 +3125,7 @@ public final class ParserImpl
                         if (node.type == Node.TEXT_NODE)
                         {
                             lexer.ungetToken();
-                            node = lexer.inferredTag("p");
+                            node = lexer.inferredTag(TagId.P);
                             lexer.report.warning(lexer, noframes, node, Report.CONTENT_AFTER_BODY);
                         }
 
@@ -3134,7 +3134,7 @@ public final class ParserImpl
                     else
                     {
                         lexer.ungetToken();
-                        node = lexer.inferredTag("body");
+                        node = lexer.inferredTag(TagId.BODY);
                         if (lexer.configuration.xmlOut)
                         {
                             lexer.report.warning(lexer, noframes, node, Report.INSERTING_TAG);
@@ -3383,7 +3383,7 @@ public final class ParserImpl
             if (node.type != Node.START_TAG || node.tag != tt.tagHtml)
             {
                 lexer.ungetToken();
-                html = lexer.inferredTag("html");
+                html = lexer.inferredTag(TagId.HTML);
             }
             else
             {

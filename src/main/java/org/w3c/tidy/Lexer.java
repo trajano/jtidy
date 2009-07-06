@@ -1011,7 +1011,7 @@ public class Lexer
                 }
             }
 
-            node = this.inferredTag("meta");
+            node = this.inferredTag(TagId.META);
             node.addAttribute("content", meta);
             node.addAttribute("name", "generator");
             head.insertNodeAtStart(node);
@@ -1727,11 +1727,12 @@ public class Lexer
      * @param name tag name
      * @return generated node
      */
-    public Node inferredTag(String name)
-    {
-        Node node;
-
-        node = newNode(Node.START_TAG, this.lexbuf, this.txtstart, this.txtend, name);
+    public Node inferredTag(final TagId id) {
+    	final Dict dict = configuration.tt.lookup(id);
+        if (dict == null) {
+        	throw new RuntimeException();
+        }
+        Node node = newNode(Node.START_TAG, this.lexbuf, this.txtstart, this.txtend, dict.name);
         node.implicit = true;
         return node;
     }
