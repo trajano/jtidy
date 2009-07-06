@@ -1572,4 +1572,8 @@ public class Node implements Cloneable
     public boolean is(final TagId id) {
     	return tag != null && tag.id == id;
     }
+    
+    public TagId getId() {
+    	return tag == null ? TagId.UNKNOWN : tag.id;
+    }
 }
