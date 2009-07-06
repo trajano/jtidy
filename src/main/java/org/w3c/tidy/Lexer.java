@@ -991,7 +991,7 @@ public class Lexer
 
             for (node = head.content; node != null; node = node.next)
             {
-                if (node.tag == this.configuration.tt.tagMeta)
+                if (node.is(TagId.META))
                 {
                     attval = node.getAttrByName("name");
 
@@ -1150,7 +1150,7 @@ public class Lexer
         AttVal attr;
 
         node = root.content;
-        while (node != null && node.tag != this.configuration.tt.tagHtml)
+        while (node != null && !node.is(TagId.HTML))
         {
             node = node.next;
         }
@@ -2385,7 +2385,7 @@ public class Lexer
                     if (
 
                     (mode != PREFORMATTED || preContent(this.token))
-                        && (this.token.expectsContent() || this.token.tag == this.configuration.tt.tagBr))
+                        && (this.token.expectsContent() || this.token.is(TagId.BR)))
                     {
 
                         c = this.in.readChar();
@@ -2424,8 +2424,8 @@ public class Lexer
                         if (TidyUtils.toBoolean(this.token.tag.versions & VERS_PROPRIETARY))
                         {
                             // #427810 - fix by Gary Deschaines 24 May 00
-                            if (this.configuration.makeClean && (this.token.tag != this.configuration.tt.tagNobr && //
-                                this.token.tag != this.configuration.tt.tagWbr))
+                            if (this.configuration.makeClean && (!this.token.is(TagId.NOBR) && //
+                                !this.token.is(TagId.WBR)))
                             {
                                 report.warning(this, null, this.token, Report.PROPRIETARY_ELEMENT);
                             }
@@ -3710,7 +3710,7 @@ public class Lexer
             return;
         }
 
-        if (node.tag != this.configuration.tt.tagFont && isPushed(node))
+        if (!node.is(TagId.FONT) && isPushed(node))
         {
             return;
         }
@@ -3753,7 +3753,7 @@ public class Lexer
             }
 
             // if node is </a> then pop until we find an <a>
-            if (node.tag == this.configuration.tt.tagA)
+            if (node.is(TagId.A))
             {
 
                 while (this.istack.size() > 0)
@@ -3897,12 +3897,12 @@ public class Lexer
             return false;
         }
 
-        if (element.tag == this.configuration.tt.tagA && element.attributes != null)
+        if (element.is(TagId.A) && element.attributes != null)
         {
             return false;
         }
 
-        if (element.tag == this.configuration.tt.tagP && !this.configuration.dropEmptyParas)
+        if (element.is(TagId.P) && !this.configuration.dropEmptyParas)
         {
             return false;
         }
@@ -3922,29 +3922,29 @@ public class Lexer
             return false;
         }
 
-        if (element.tag == this.configuration.tt.tagApplet)
+        if (element.is(TagId.APPLET))
         {
             return false;
         }
 
-        if (element.tag == this.configuration.tt.tagObject)
+        if (element.is(TagId.OBJECT))
         {
             return false;
         }
 
-        if (element.tag == this.configuration.tt.tagScript && element.getAttrByName("src") != null)
+        if (element.is(TagId.SCRIPT) && element.getAttrByName("src") != null)
         {
             return false;
         }
 
         // #540555 Empty title tag is trimmed
-        if (element.tag == this.configuration.tt.tagTitle)
+        if (element.is(TagId.TITLE))
         {
             return false;
         }
 
         // #433359 - fix by Randy Waki 12 Mar 01 - Empty iframe is trimmed
-        if (element.tag == this.configuration.tt.tagIframe)
+        if (element.is(TagId.IFRAME))
         {
             return false;
         }
@@ -4009,13 +4009,13 @@ public class Lexer
     protected boolean preContent(Node node)
     {
         // p is coerced to br's
-        if (node.tag == this.configuration.tt.tagP)
+        if (node.is(TagId.P))
         {
             return true;
         }
 
         if (node.tag == null
-            || node.tag == this.configuration.tt.tagP
+            || node.is(TagId.P)
             || !TidyUtils.toBoolean(node.tag.model & (Dict.CM_INLINE | Dict.CM_NEW)))
         {
             return false;

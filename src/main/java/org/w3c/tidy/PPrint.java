@@ -1342,7 +1342,6 @@ public class PPrint
     private void printTag(Lexer lexer, Out fout, short mode, int indent, Node node)
     {
         String p;
-        TagTable tt = this.configuration.tt;
 
         addC('<', linelen++);
 
@@ -1383,7 +1382,7 @@ public class PPrint
                 // wrap after start tag if is <br/> or if it's not inline
                 // fix for [514348]
                 if (!TidyUtils.toBoolean(mode & NOWRAP)
-                    && (!TidyUtils.toBoolean(node.tag.model & Dict.CM_INLINE) || (node.tag == tt.tagBr))
+                    && (!TidyUtils.toBoolean(node.tag.model & Dict.CM_INLINE) || (node.is(TagId.BR)))
                     && afterSpace(node))
                 {
                     wraphere = linelen;
@@ -1771,7 +1770,7 @@ public class PPrint
      */
     private boolean insideHead(Node node)
     {
-        if (node.tag == this.configuration.tt.tagHead)
+        if (node.is(TagId.HEAD))
         {
             return true;
         }
@@ -1988,8 +1987,6 @@ public class PPrint
      */
     private boolean shouldIndent(Node node)
     {
-        TagTable tt = this.configuration.tt;
-
         if (!this.configuration.indentContent)
         {
             return false;
@@ -2015,12 +2012,12 @@ public class PPrint
                 return false;
             }
 
-            if (node.tag == tt.tagP)
+            if (node.is(TagId.P))
             {
                 return false;
             }
 
-            if (node.tag == tt.tagTitle)
+            if (node.is(TagId.TITLE))
             {
                 return false;
             }
@@ -2031,7 +2028,7 @@ public class PPrint
             return true;
         }
 
-        if (node.tag == tt.tagMap)
+        if (node.is(TagId.MAP))
         {
             return true;
         }
@@ -2084,7 +2081,6 @@ public class PPrint
     public void printTree(Out fout, short mode, int indent, Lexer lexer, Node node)
     {
         Node content, last;
-        TagTable tt = this.configuration.tt;
 
         if (node == null)
         {
@@ -2146,15 +2142,15 @@ public class PPrint
                 condFlushLine(fout, indent);
             }
 
-            if (node.tag == tt.tagBr
+            if (node.is(TagId.BR)
                 && node.prev != null
-                && node.prev.tag != tt.tagBr
+                && !node.prev.is(TagId.BR)
                 && this.configuration.breakBeforeBR)
             {
                 flushLine(fout, indent);
             }
 
-            if (this.configuration.makeClean && node.tag == tt.tagWbr)
+            if (this.configuration.makeClean && node.is(TagId.WBR))
             {
                 printString(" ");
             }
@@ -2163,11 +2159,11 @@ public class PPrint
                 printTag(lexer, fout, mode, indent, node);
             }
 
-            if (node.tag == tt.tagParam || node.tag == tt.tagArea)
+            if (node.is(TagId.PARAM) || node.is(TagId.AREA))
             {
                 condFlushLine(fout, indent);
             }
-            else if (node.tag == tt.tagBr || node.tag == tt.tagHr)
+            else if (node.is(TagId.BR) || node.is(TagId.HR))
             {
                 flushLine(fout, indent);
             }
@@ -2203,7 +2199,7 @@ public class PPrint
                     flushLine(fout, indent);
                 }
             }
-            else if (node.tag == tt.tagStyle || node.tag == tt.tagScript)
+            else if (node.is(TagId.STYLE) || node.is(TagId.SCRIPT))
             {
                 printScriptStyle(fout, (short) (mode | PREFORMATTED | NOWRAP | CDATA), indent, lexer, node);
             }
@@ -2212,7 +2208,7 @@ public class PPrint
                 if (this.configuration.makeClean)
                 {
                     // discards <font> and </font> tags
-                    if (node.tag == tt.tagFont)
+                    if (node.is(TagId.FONT))
                     {
                         for (content = node.content; content != null; content = content.next)
                         {
@@ -2222,7 +2218,7 @@ public class PPrint
                     }
 
                     // replace <nobr> ... </nobr> by &nbsp; or &#160; etc.
-                    if (node.tag == tt.tagNobr)
+                    if (node.is(TagId.NOBR))
                     {
                         for (content = node.content; content != null; content = content.next)
                         {
@@ -2285,14 +2281,14 @@ public class PPrint
                         condFlushLine(fout, indent);
                     }
                     else if (TidyUtils.toBoolean(node.tag.model & Dict.CM_HTML)
-                        || node.tag == tt.tagNoframes
-                        || (TidyUtils.toBoolean(node.tag.model & Dict.CM_HEAD) && !(node.tag == tt.tagTitle)))
+                        || node.is(TagId.NOFRAMES)
+                        || (TidyUtils.toBoolean(node.tag.model & Dict.CM_HEAD) && !node.is(TagId.TITLE)))
                     {
                         flushLine(fout, indent);
                     }
                 }
 
-                if (node.tag == tt.tagBody && this.configuration.burstSlides)
+                if (node.is(TagId.BODY) && this.configuration.burstSlides)
                 {
                     printSlide(fout, mode, (this.configuration.indentContent
                         ? indent + this.configuration.spaces
@@ -2327,8 +2323,8 @@ public class PPrint
 
                 // don't flush line for td and th
                 if (shouldIndent(node)
-                    || ((TidyUtils.toBoolean(node.tag.model & Dict.CM_HTML) || node.tag == tt.tagNoframes || //
-                    (TidyUtils.toBoolean(node.tag.model & Dict.CM_HEAD) && !(node.tag == tt.tagTitle))) && //
+                    || ((TidyUtils.toBoolean(node.tag.model & Dict.CM_HTML) || node.is(TagId.NOFRAMES) || //
+                    (TidyUtils.toBoolean(node.tag.model & Dict.CM_HEAD) && !node.is(TagId.TITLE))) && //
                     !this.configuration.hideEndTags))
                 {
                     condFlushLine(
@@ -2520,10 +2516,8 @@ public class PPrint
         // assume minimum of 1 slide
         int n = 1;
 
-        TagTable tt = this.configuration.tt;
-
         // fix for [431716] avoid empty slides
-        if (node != null && node.content != null && node.content.tag == tt.tagH2)
+        if (node != null && node.content != null && node.content.is(TagId.H2))
         {
             // "first" slide is empty, so ignore it
             n--;
@@ -2533,7 +2527,7 @@ public class PPrint
         {
             for (node = node.content; node != null; node = node.next)
             {
-                if (node.tag == tt.tagH2)
+                if (node.is(TagId.H2))
                 {
                     ++n;
                 }
@@ -2601,7 +2595,6 @@ public class PPrint
     public void printSlide(Out fout, short mode, int indent, Lexer lexer)
     {
         Node content, last;
-        TagTable tt = this.configuration.tt;
 
         NumberFormat numberFormat = NumberFormat.getInstance();
         numberFormat.setMinimumIntegerDigits(3);
@@ -2616,7 +2609,7 @@ public class PPrint
         condFlushLine(fout, indent);
 
         /* first print the h2 element and navbar */
-        if (slidecontent != null && slidecontent.tag == tt.tagH2)
+        if (slidecontent != null && slidecontent.is(TagId.H2))
         {
             printNavBar(fout, indent);
 
@@ -2663,7 +2656,7 @@ public class PPrint
 
         for (; content != null; content = content.next)
         {
-            if (content.tag == tt.tagH2)
+            if (content.is(TagId.H2))
             {
                 break;
             }

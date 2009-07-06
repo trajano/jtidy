@@ -797,7 +797,7 @@ public class Node implements Cloneable
 
                 discardElement(element);
             }
-            else if (element.tag == tt.tagP && element.content == null)
+            else if (element.is(TagId.P) && element.content == null)
             {
                 // replace <p></p> by <br><br> to preserve formatting
                 Node node = lexer.inferredTag(TagId.BR);
@@ -817,7 +817,6 @@ public class Node implements Cloneable
     public static void trimTrailingSpace(Lexer lexer, Node element, Node last)
     {
         byte c;
-        TagTable tt = lexer.configuration.tt;
 
         if (last != null && last.type == Node.TEXT_NODE)
         {
@@ -830,7 +829,7 @@ public class Node implements Cloneable
                 {
                     // take care with <td> &nbsp; </td>
                     // fix for [435920]
-                    if (c == 160 && (element.tag == tt.tagTd || element.tag == tt.tagTh))
+                    if (c == 160 && (element.is(TagId.TD) || element.is(TagId.TH)))
                     {
                         if (last.end > last.start + 1)
                         {
@@ -1008,9 +1007,8 @@ public class Node implements Cloneable
     public static void trimSpaces(Lexer lexer, Node element)
     {
         Node text = element.content;
-        TagTable tt = lexer.configuration.tt;
 
-        if (text != null && text.type == Node.TEXT_NODE && element.tag != tt.tagPre)
+        if (text != null && text.type == Node.TEXT_NODE && !element.is(TagId.PRE))
         {
             trimInitialSpace(lexer, element, text);
         }
@@ -1043,11 +1041,9 @@ public class Node implements Cloneable
      */
     public static void insertDocType(Lexer lexer, Node element, Node doctype)
     {
-        TagTable tt = lexer.configuration.tt;
-
         lexer.report.warning(lexer, element, doctype, Report.DOCTYPE_AFTER_TAGS);
 
-        while (element.tag != tt.tagHtml)
+        while (!element.is(TagId.HTML))
         {
             element = element.parent;
         }
@@ -1066,7 +1062,7 @@ public class Node implements Cloneable
 
         node = this.content;
 
-        while (node != null && node.tag != tt.tagHtml)
+        while (node != null && !node.is(TagId.HTML))
         {
             node = node.next;
         }
@@ -1078,16 +1074,16 @@ public class Node implements Cloneable
 
         node = node.content;
 
-        while (node != null && node.tag != tt.tagBody && node.tag != tt.tagFrameset)
+        while (node != null && !node.is(TagId.BODY) && !node.is(TagId.FRAMESET))
         {
             node = node.next;
         }
 
-        if (node.tag == tt.tagFrameset)
+        if (node.is(TagId.FRAMESET))
         {
             node = node.content;
 
-            while (node != null && node.tag != tt.tagNoframes)
+            while (node != null && !node.is(TagId.NOFRAMES))
             {
                 node = node.next;
             }
@@ -1095,7 +1091,7 @@ public class Node implements Cloneable
             if (node != null)
             {
                 node = node.content;
-                while (node != null && node.tag != tt.tagBody)
+                while (node != null && !node.is(TagId.BODY))
                 {
                     node = node.next;
                 }
@@ -1128,7 +1124,7 @@ public class Node implements Cloneable
         /* first find the table element */
         for (table = row.parent; table != null; table = table.parent)
         {
-            if (table.tag == tt.tagTable)
+            if (table.is(TagId.TABLE))
             {
                 if (table.parent.content == table)
                 {
@@ -1275,7 +1271,7 @@ public class Node implements Cloneable
     {
         Node node;
 
-        for (node = this.content; node != null && node.tag != tt.tagHtml; node = node.next)
+        for (node = this.content; node != null && !node.is(TagId.HTML); node = node.next)
         {
             //
         }
@@ -1296,7 +1292,7 @@ public class Node implements Cloneable
 
         if (node != null)
         {
-            for (node = node.content; node != null && node.tag != tt.tagHead; node = node.next)
+            for (node = node.content; node != null && !node.is(TagId.HEAD); node = node.next)
             {
                 //
             }
