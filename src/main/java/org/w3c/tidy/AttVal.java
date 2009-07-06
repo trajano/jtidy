@@ -239,8 +239,6 @@ public class AttVal extends Object implements Cloneable
      */
     public Attribute checkAttribute(Lexer lexer, Node node)
     {
-        TagTable tt = lexer.configuration.tt;
-
         Attribute attr = this.dict;
 
         // ignore unknown attributes for proprietary elements
@@ -256,7 +254,7 @@ public class AttVal extends Object implements Cloneable
                 }
             }
             // title first appeared in HTML 4.0 except for a/link
-            else if (attr.id != AttrId.TITLE || !(node.tag == tt.tagA || node.tag == tt.tagLink))
+            else if (attr.id != AttrId.TITLE || !(node.is(TagId.A) || node.is(TagId.LINK)))
             {
                 lexer.constrainVersion(attr.getVersions());
             }

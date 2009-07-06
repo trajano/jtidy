@@ -1207,8 +1207,6 @@ public final class Report
      */
     public void warning(Lexer lexer, Node element, Node node, short code)
     {
-
-        TagTable tt = lexer.configuration.tt;
         if (!((code == DISCARDING_UNEXPECTED) && lexer.badForm != 0)) // lexer->errors++; already done in BadForm()
         {
             lexer.warnings++;
@@ -1331,15 +1329,15 @@ public final class Report
                 case PROPRIETARY_ELEMENT :
                     printMessage(code, lexer, "proprietary_element", new Object[]{getTagName(node)}, Level.WARNING);
 
-                    if (node.tag == tt.tagLayer)
+                    if (node.is(TagId.LAYER))
                     {
                         lexer.badLayout |= USING_LAYER;
                     }
-                    else if (node.tag == tt.tagSpacer)
+                    else if (node.is(TagId.SPACER))
                     {
                         lexer.badLayout |= USING_SPACER;
                     }
-                    else if (node.tag == tt.tagNobr)
+                    else if (node.is(TagId.NOBR))
                     {
                         lexer.badLayout |= USING_NOBR;
                     }

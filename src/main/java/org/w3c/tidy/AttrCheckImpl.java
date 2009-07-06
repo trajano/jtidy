@@ -510,7 +510,7 @@ public final class AttrCheckImpl
 
             // don't check for <col width=...> and <colgroup width=...>
             if ("width".equalsIgnoreCase(attval.attribute)
-                && (node.tag == lexer.configuration.tt.tagCol || node.tag == lexer.configuration.tt.tagColgroup))
+                && (node.is(TagId.COL) || node.is(TagId.COLGROUP)))
             {
                 return;
             }
@@ -523,13 +523,10 @@ public final class AttrCheckImpl
             }
             else
             {
-
-                TagTable tt = lexer.configuration.tt;
-
                 for (int j = 1; j < p.length(); j++)
                 {
                     // elements th and td must not use percentages
-                    if ((!Character.isDigit(p.charAt(j)) && (node.tag == tt.tagTd || node.tag == tt.tagTh))
+                    if ((!Character.isDigit(p.charAt(j)) && (node.is(TagId.TD) || node.is(TagId.TH)))
                         || (!Character.isDigit(p.charAt(j)) && p.charAt(j) != '%'))
                     {
                         lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
@@ -731,7 +728,7 @@ public final class AttrCheckImpl
 
             // don't check <frameset cols=... rows=...>
             if (("cols".equalsIgnoreCase(attval.attribute) || "rows".equalsIgnoreCase(attval.attribute))
-                && node.tag == lexer.configuration.tt.tagFrameset)
+                && node.is(TagId.FRAMESET))
             {
                 return;
             }
@@ -741,7 +738,7 @@ public final class AttrCheckImpl
             int j = 0;
 
             // font size may be preceded by + or -
-            if (node.tag == lexer.configuration.tt.tagFont && (value.startsWith("+") || value.startsWith("-")))
+            if (node.is(TagId.FONT) && (value.startsWith("+") || value.startsWith("-")))
             {
                 ++j;
             }
