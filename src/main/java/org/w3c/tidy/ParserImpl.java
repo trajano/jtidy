@@ -1248,7 +1248,7 @@ public final class ParserImpl
                     && node.type == Node.START_TAG
                     && ((mode & Lexer.PREFORMATTED) != 0 || element.is(TagId.DT) || element.isDescendantOf(TagId.DT)))
                 {
-                    node.tag = tt.tagBr;
+                    node.tag = tt.lookup(TagId.BR);
                     node.element = "br";
                     Node.trimSpaces(lexer, element);
                     element.insertNodeAtEnd(node);
@@ -2343,7 +2343,7 @@ public final class ParserImpl
                                 lexer.report.warning(lexer, element, node, Report.DISCARDING_UNEXPECTED);
                                 node = element.parent;
                                 node.element = "th";
-                                node.tag = tt.tagTh;
+                                node.tag = tt.lookup(TagId.TH);
                                 continue;
                             }
                         }

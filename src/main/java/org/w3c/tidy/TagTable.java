@@ -315,326 +315,6 @@ public final class TagTable
     };
 
     /**
-     * html tag.
-     */
-    protected Dict tagHtml;
-
-    /**
-     * head tag.
-     */
-    protected Dict tagHead;
-
-    /**
-     * body tag.
-     */
-    protected Dict tagBody;
-
-    /**
-     * frameset tag.
-     */
-    protected Dict tagFrameset;
-
-    /**
-     * frame tag.
-     */
-    protected Dict tagFrame;
-
-    /**
-     * iframe tag.
-     */
-    protected Dict tagIframe;
-
-    /**
-     * noframes tag.
-     */
-    protected Dict tagNoframes;
-
-    /**
-     * meta tag.
-     */
-    protected Dict tagMeta;
-
-    /**
-     * title tag.
-     */
-    protected Dict tagTitle;
-
-    /**
-     * base tag.
-     */
-    protected Dict tagBase;
-
-    /**
-     * hr tag.
-     */
-    protected Dict tagHr;
-
-    /**
-     * pre tag.
-     */
-    protected Dict tagPre;
-
-    /**
-     * listing tag.
-     */
-    protected Dict tagListing;
-
-    /**
-     * h1 tag.
-     */
-    protected Dict tagH1;
-
-    /**
-     * h2 tag.
-     */
-    protected Dict tagH2;
-
-    /**
-     * p tag.
-     */
-    protected Dict tagP;
-
-    /**
-     * ul tag.
-     */
-    protected Dict tagUl;
-
-    /**
-     * ol tag.
-     */
-    protected Dict tagOl;
-
-    /**
-     * dir tag.
-     */
-    protected Dict tagDir;
-
-    /**
-     * li tag.
-     */
-    protected Dict tagLi;
-
-    /**
-     * dt tag.
-     */
-    protected Dict tagDt;
-
-    /**
-     * dd tag.
-     */
-    protected Dict tagDd;
-
-    /**
-     * dl tag.
-     */
-    protected Dict tagDl;
-
-    /**
-     * td tag.
-     */
-    protected Dict tagTd;
-
-    /**
-     * th tag.
-     */
-    protected Dict tagTh;
-
-    /**
-     * tr tag.
-     */
-    protected Dict tagTr;
-
-    /**
-     * col tag.
-     */
-    protected Dict tagCol;
-
-    /**
-     * colgroup tag.
-     */
-    protected Dict tagColgroup;
-
-    /**
-     * br tag.
-     */
-    protected Dict tagBr;
-
-    /**
-     * a tag.
-     */
-    protected Dict tagA;
-
-    /**
-     * link tag.
-     */
-    protected Dict tagLink;
-
-    /**
-     * b tag.
-     */
-    protected Dict tagB;
-
-    /**
-     * i tag.
-     */
-    protected Dict tagI;
-
-    /**
-     * strong tag.
-     */
-    protected Dict tagStrong;
-
-    /**
-     * em tag.
-     */
-    protected Dict tagEm;
-
-    /**
-     * big tag.
-     */
-    protected Dict tagBig;
-
-    /**
-     * small tag.
-     */
-    protected Dict tagSmall;
-
-    /**
-     * param tag.
-     */
-    protected Dict tagParam;
-
-    /**
-     * option tag.
-     */
-    protected Dict tagOption;
-
-    /**
-     * optgroup tag.
-     */
-    protected Dict tagOptgroup;
-
-    /**
-     * img tag.
-     */
-    protected Dict tagImg;
-
-    /**
-     * map tag.
-     */
-    protected Dict tagMap;
-
-    /**
-     * area tag.
-     */
-    protected Dict tagArea;
-
-    /**
-     * nobr tag.
-     */
-    protected Dict tagNobr;
-
-    /**
-     * wbr tag.
-     */
-    protected Dict tagWbr;
-
-    /**
-     * font tag.
-     */
-    protected Dict tagFont;
-
-    /**
-     * spacer tag.
-     */
-    protected Dict tagSpacer;
-
-    /**
-     * layer tag.
-     */
-    protected Dict tagLayer;
-
-    /**
-     * center tag.
-     */
-    protected Dict tagCenter;
-
-    /**
-     * style tag.
-     */
-    protected Dict tagStyle;
-
-    /**
-     * script tag.
-     */
-    protected Dict tagScript;
-
-    /**
-     * noscript tag.
-     */
-    protected Dict tagNoscript;
-
-    /**
-     * table tag.
-     */
-    protected Dict tagTable;
-
-    /**
-     * caption tag.
-     */
-    protected Dict tagCaption;
-
-    /**
-     * form tag.
-     */
-    protected Dict tagForm;
-
-    /**
-     * textarea tag.
-     */
-    protected Dict tagTextarea;
-
-    /**
-     * blockquote tag.
-     */
-    protected Dict tagBlockquote;
-
-    /**
-     * applet tag.
-     */
-    protected Dict tagApplet;
-
-    /**
-     * object tag.
-     */
-    protected Dict tagObject;
-
-    /**
-     * div tag.
-     */
-    protected Dict tagDiv;
-
-    /**
-     * span tag.
-     */
-    protected Dict tagSpan;
-
-    /**
-     * input tag.
-     */
-    protected Dict tagInput;
-
-    /**
-     * tag.
-     */
-    protected Dict tagQ;
-
-    /**
-     * a proprietary tag added by Tidy, along with tag_nobr, tag_wbr.
-     */
-    protected Dict tagBlink;
-
-    /**
      * anchor/node hash.
      */
     protected Anchor anchorList;
@@ -658,70 +338,6 @@ public final class TagTable
         {
             install(TAGS[i]);
         }
-        tagHtml = lookup("html");
-        tagHead = lookup("head");
-        tagBody = lookup("body");
-        tagFrameset = lookup("frameset");
-        tagFrame = lookup("frame");
-        tagIframe = lookup("iframe");
-        tagNoframes = lookup("noframes");
-        tagMeta = lookup("meta");
-        tagTitle = lookup("title");
-        tagBase = lookup("base");
-        tagHr = lookup("hr");
-        tagPre = lookup("pre");
-        tagListing = lookup("listing");
-        tagH1 = lookup("h1");
-        tagH2 = lookup("h2");
-        tagP = lookup("p");
-        tagUl = lookup("ul");
-        tagOl = lookup("ol");
-        tagDir = lookup("dir");
-        tagLi = lookup("li");
-        tagDt = lookup("dt");
-        tagDd = lookup("dd");
-        tagDl = lookup("dl");
-        tagTd = lookup("td");
-        tagTh = lookup("th");
-        tagTr = lookup("tr");
-        tagCol = lookup("col");
-        tagColgroup = lookup("colgroup");
-        tagBr = lookup("br");
-        tagA = lookup("a");
-        tagLink = lookup("link");
-        tagB = lookup("b");
-        tagI = lookup("i");
-        tagStrong = lookup("strong");
-        tagEm = lookup("em");
-        tagBig = lookup("big");
-        tagSmall = lookup("small");
-        tagParam = lookup("param");
-        tagOption = lookup("option");
-        tagOptgroup = lookup("optgroup");
-        tagImg = lookup("img");
-        tagMap = lookup("map");
-        tagArea = lookup("area");
-        tagNobr = lookup("nobr");
-        tagWbr = lookup("wbr");
-        tagFont = lookup("font");
-        tagSpacer = lookup("spacer");
-        tagLayer = lookup("layer");
-        tagCenter = lookup("center");
-        tagStyle = lookup("style");
-        tagScript = lookup("script");
-        tagNoscript = lookup("noscript");
-        tagTable = lookup("table");
-        tagCaption = lookup("caption");
-        tagForm = lookup("form");
-        tagTextarea = lookup("textarea");
-        tagBlockquote = lookup("blockquote");
-        tagApplet = lookup("applet");
-        tagObject = lookup("object");
-        tagDiv = lookup("div");
-        tagSpan = lookup("span");
-        tagInput = lookup("input");
-        tagQ = lookup("q");
-        tagBlink = lookup("blink");
     }
 
     /**
@@ -833,13 +449,13 @@ public final class TagTable
      */
     boolean isAnchorElement(Node node)
     {
-        return node.tag == this.tagA
-            || node.tag == this.tagApplet
-            || node.tag == this.tagForm
-            || node.tag == this.tagFrame
-            || node.tag == this.tagIframe
-            || node.tag == this.tagImg
-            || node.tag == this.tagMap;
+        return node.is(TagId.A)
+            || node.is(TagId.APPLET)
+            || node.is(TagId.FORM)
+            || node.is(TagId.FRAME)
+            || node.is(TagId.IFRAME)
+            || node.is(TagId.IMG)
+            || node.is(TagId.MAP);
     }
 
     /**
@@ -900,7 +516,7 @@ public final class TagTable
                         if ((curDictEntry.versions == VERS_PROPRIETARY)
                             && ((curDictEntry.model & Dict.CM_EMPTY) == Dict.CM_EMPTY)
                             && // (curDictEntry.parser == ParseBlock) &&
-                            (curDictEntry != tagWbr))
+                            (curDictEntry.id != TagId.WBR))
                         {
                             tagNames.add(curDictEntry.name);
                         }
@@ -911,9 +527,9 @@ public final class TagTable
                         if ((curDictEntry.versions == VERS_PROPRIETARY)
                             && ((curDictEntry.model & Dict.CM_INLINE) == Dict.CM_INLINE)
                             && // (curDictEntry.parser == ParseInline) &&
-                            (curDictEntry != tagBlink)
-                            && (curDictEntry != tagNobr)
-                            && (curDictEntry != tagWbr))
+                            (curDictEntry.id != TagId.BLINK)
+                            && (curDictEntry.id != TagId.NOBR)
+                            && (curDictEntry.id != TagId.WBR))
                         {
                             tagNames.add(curDictEntry.name);
                         }

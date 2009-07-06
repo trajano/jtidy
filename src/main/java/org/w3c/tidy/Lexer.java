@@ -3759,7 +3759,7 @@ public class Lexer
                 while (this.istack.size() > 0)
                 {
                     is = (IStack) this.istack.pop();
-                    if (is.tag == this.configuration.tt.tagA)
+                    if (is.tag.id == TagId.A)
                     {
                         break;
                     }
