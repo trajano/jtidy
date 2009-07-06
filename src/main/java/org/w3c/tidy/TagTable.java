@@ -55,7 +55,6 @@ package org.w3c.tidy;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -648,7 +647,7 @@ public final class TagTable
     /**
      * hashTable containing tags.
      */
-    private Map tagHashtable = new Hashtable();
+    private Map<String, Dict> tagHashtable = new Hashtable<String, Dict>();
 
     /**
      * Instantiates a new tag table with known tags.
@@ -741,7 +740,19 @@ public final class TagTable
      */
     public Dict lookup(String name)
     {
-        return (Dict) tagHashtable.get(name);
+        return tagHashtable.get(name);
+    }
+    
+    public Dict lookup(final TagId tid) {
+    	if (tid == TagId.UNKNOWN) {
+    		return null;
+    	}
+        for (Dict np : tagHashtable.values()) {
+            if (np.id == tid) {
+                return np;
+            }
+        }
+        return null;
     }
 
     /**
@@ -751,7 +762,7 @@ public final class TagTable
      */
     public Dict install(Dict dict)
     {
-        Dict d = (Dict) tagHashtable.get(dict.name);
+        Dict d = tagHashtable.get(dict.name);
         if (d != null)
         {
             d.versions = dict.versions;
@@ -874,15 +885,12 @@ public final class TagTable
      * @param tagType one of Dict.TAGTYPE_EMPTY | Dict.TAGTYPE_INLINE | Dict.TAGTYPE_BLOCK | Dict.TAGTYPE_PRE
      * @return List containing all the user-defined tag names
      */
-    List findAllDefinedTag(short tagType)
+    List<String> findAllDefinedTag(short tagType)
     {
-        List tagNames = new ArrayList();
+        List<String> tagNames = new ArrayList<String>();
 
-        Iterator iterator = tagHashtable.values().iterator();
-        while (iterator.hasNext())
+        for (Dict curDictEntry : tagHashtable.values())
         {
-            Dict curDictEntry = (Dict) iterator.next();
-
             if (curDictEntry != null)
             {
                 switch (tagType)
