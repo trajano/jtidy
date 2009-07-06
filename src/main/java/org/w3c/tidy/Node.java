@@ -1025,21 +1025,13 @@ public class Node implements Cloneable
 
     /**
      * Is this node contained in a given tag?
-     * @param tag descendant tag
-     * @return <code>true</code> if node is contained in tag
      */
-    public boolean isDescendantOf(Dict tag)
-    {
-        Node parent;
-
-        for (parent = this.parent; parent != null; parent = parent.parent)
-        {
-            if (parent.tag == tag)
-            {
+    public boolean isDescendantOf(final TagId id) {
+        for (Node parent = this.parent; parent != null; parent = parent.parent) {
+            if (parent.is(id)) {
                 return true;
             }
         }
-
         return false;
     }
 

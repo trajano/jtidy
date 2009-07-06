@@ -1252,7 +1252,7 @@ public final class ParserImpl
                 // within <dt> or <pre> map <p> to <br>
                 if (node.tag == tt.tagP
                     && node.type == Node.START_TAG
-                    && ((mode & Lexer.PREFORMATTED) != 0 || element.tag == tt.tagDt || element.isDescendantOf(tt.tagDt)))
+                    && ((mode & Lexer.PREFORMATTED) != 0 || element.tag == tt.tagDt || element.isDescendantOf(TagId.DT)))
                 {
                     node.tag = tt.tagBr;
                     node.element = "br";
@@ -1283,7 +1283,7 @@ public final class ParserImpl
                     else if (node.tag == tt.tagP)
                     {
                         // coerce unmatched </p> to <br><br>
-                        if (!element.isDescendantOf(tt.tagP))
+                        if (!element.isDescendantOf(TagId.P))
                         {
                             Node.coerceNode(lexer, node, tt.tagBr);
                             Node.trimSpaces(lexer, element);
@@ -1359,7 +1359,7 @@ public final class ParserImpl
                 // if (node.tag == tt.tagA && !node.implicit && lexer.isPushed(node))
                 if (node.tag == tt.tagA
                     && !node.implicit
-                    && (element.tag == tt.tagA || element.isDescendantOf(tt.tagA)))
+                    && (element.tag == tt.tagA || element.isDescendantOf(TagId.A)))
                 {
                     // coerce <a> to </a> unless it has some attributes
                     // #427827 - fix by Randy Waki and Bjoern Hoehrmann 23 Aug 00
@@ -2030,7 +2030,7 @@ public final class ParserImpl
                 return;
             }
 
-            if (element.tag == tt.tagForm && element.isDescendantOf(tt.tagForm))
+            if (element.tag == tt.tagForm && element.isDescendantOf(TagId.FORM))
             {
                 lexer.report.warning(lexer, element, null, Report.ILLEGAL_NESTING);
             }
