@@ -103,6 +103,12 @@ public class Clean
     {
         this.tt = tagTable;
     }
+    
+    private void renameElem(final Node node, final TagId tid) {
+        final Dict dict = tt.lookup(tid);
+        node.element = dict.name;
+        node.tag = dict;
+    }
 
     /**
      * Insert a css style property.
@@ -1065,8 +1071,7 @@ public class Clean
             }
 
             // coerce dir to div
-            node.tag = this.tt.tagDiv;
-            node.element = "div";
+            renameElem(node, TagId.DIV);
             addStyleProperty(node, "margin-left: 2em");
             stripOnlyChild(node);
             return true;
@@ -1153,8 +1158,7 @@ public class Clean
 
                 return true;
             }
-            node.tag = this.tt.tagDiv;
-            node.element = "div";
+            renameElem(node, TagId.DIV);
             addStyleProperty(node, "text-align: center");
             return true;
         }
@@ -1479,9 +1483,7 @@ public class Clean
 
             node.attributes = style;
 
-            node.tag = this.tt.tagSpan;
-            node.element = "span";
-
+            renameElem(node, TagId.SPAN);
             return true;
         }
 
@@ -1679,13 +1681,11 @@ public class Clean
         {
             if (node.is(TagId.I))
             {
-                node.element = this.tt.tagEm.name;
-                node.tag = this.tt.tagEm;
+            	renameElem(node, TagId.EM);
             }
             else if (node.is(TagId.B))
             {
-                node.element = this.tt.tagStrong.name;
-                node.tag = this.tt.tagStrong;
+            	renameElem(node, TagId.STRONG);
             }
 
             if (node.content != null)
@@ -1717,8 +1717,7 @@ public class Clean
                 && node.content.implicit)
             {
                 stripOnlyChild(node);
-                node.element = this.tt.tagBlockquote.name;
-                node.tag = this.tt.tagBlockquote;
+                renameElem(node, TagId.BLOCKQUOTE);
                 node.implicit = true;
             }
 
@@ -1756,8 +1755,7 @@ public class Clean
 
                 indentBuf = "margin-left: " + (new Integer(2 * indent)).toString() + "em";
 
-                node.element = this.tt.tagDiv.name;
-                node.tag = this.tt.tagDiv;
+                renameElem(node, TagId.DIV);
 
                 attval = node.getAttrByName("style");
 
@@ -2251,7 +2249,7 @@ public class Clean
                     Node br = lexer.newLineNode();
                     normalizeSpaces(lexer, node);
 
-                    if (list == null || list.tag != this.tt.tagPre)
+                    if (list == null || !list.is(TagId.PRE))
                     {
                         list = lexer.inferredTag(TagId.PRE);
                         Node.insertNodeBeforeElement(node, list);
