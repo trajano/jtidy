@@ -509,9 +509,7 @@ public final class AttrCheckImpl
             }
 
             // don't check for <col width=...> and <colgroup width=...>
-            if ("width".equalsIgnoreCase(attval.attribute)
-                && (node.is(TagId.COL) || node.is(TagId.COLGROUP)))
-            {
+            if (attval.is(AttrId.WIDTH) && (node.is(TagId.COL) || node.is(TagId.COLGROUP))) {
                 return;
             }
 
@@ -840,7 +838,7 @@ public final class AttrCheckImpl
                 lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
                 return;
             }
-            else if (lexer.configuration.tt.isAnchorElement(node))
+            else if (node.isAnchorElement())
             {
                 lexer.constrainVersion(~VERS_XHTML11);
 

@@ -1562,4 +1562,12 @@ public class Node implements Cloneable
     public TagId getId() {
     	return tag == null ? TagId.UNKNOWN : tag.id;
     }
+
+	/** May id or name serve as anchor? */    
+    public boolean isAnchorElement() {
+		final TagId tid = getId();
+		return tid == TagId.A || tid == TagId.APPLET || tid == TagId.FORM
+				|| tid == TagId.FRAME || tid == TagId.IFRAME
+				|| tid == TagId.IMG || tid == TagId.MAP;
+	}
 }

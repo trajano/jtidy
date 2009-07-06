@@ -443,22 +443,6 @@ public final class TagTable
     }
 
     /**
-     * May id or name serve as anchor?
-     * @param node Node
-     * @return <code>true</code> if tag can serve as an anchor
-     */
-    boolean isAnchorElement(Node node)
-    {
-        return node.is(TagId.A)
-            || node.is(TagId.APPLET)
-            || node.is(TagId.FORM)
-            || node.is(TagId.FRAME)
-            || node.is(TagId.IFRAME)
-            || node.is(TagId.IMG)
-            || node.is(TagId.MAP);
-    }
-
-    /**
      * Defines a new tag.
      * @param tagType tag type. Can be TAGTYPE_BLOCK | TAGTYPE_EMPTY | TAGTYPE_PRE | TAGTYPE_INLINE
      * @param name tag name
@@ -569,7 +553,7 @@ public final class TagTable
         while (node.attributes != null)
         {
             AttVal av = node.attributes;
-            if ("id".equalsIgnoreCase(av.attribute) || "name".equalsIgnoreCase(av.attribute) && isAnchorElement(node))
+            if ("id".equalsIgnoreCase(av.attribute) || "name".equalsIgnoreCase(av.attribute) && node.isAnchorElement())
             {
                 removeAnchorByNode(node);
             }
