@@ -216,6 +216,7 @@ public class Dict
     protected int versions;
 
     protected Map<AttrId, Integer> attrvers;
+    
     /**
      * model (CM_* constants).
      */
@@ -233,16 +234,21 @@ public class Dict
 
     /**
      * Instantiates a new Tag definition.
+     * @param id tag id
      * @param name tag name
      * @param versions version in which this tag is defined
-     * @param model model (CM_* constants)
+     * @param attrvers attribute version map
+     * @param model content model (CM_* constants)
      * @param parser parser for this tag
      * @param chkattrs validator for this tag (can be null)
      */
-    public Dict(String name, int versions, int model, Parser parser, TagCheck chkattrs)
+    public Dict(final TagId id, final String name, final int versions, final Map<AttrId, Integer> attrvers,
+    		final int model, final Parser parser, final TagCheck chkattrs)
     {
+    	this.id = id;
         this.name = name;
         this.versions = versions;
+        this.attrvers = attrvers;
         this.model = model;
         this.parser = parser;
         this.chkattrs = chkattrs;
