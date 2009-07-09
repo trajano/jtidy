@@ -54,6 +54,7 @@
 package org.w3c.tidy;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -207,9 +208,10 @@ public final class TagTable
     };
 
     /**
-     * anchor/node hash.
+     * anchor/node map
      */
-    protected Anchor anchorList;
+    protected Map<String, Node> anchorMap = new HashMap<String, Node>();
+    protected Map<Node, String> anchorByNode = new HashMap<Node, String>();
 
     /**
      * configuration.
@@ -458,49 +460,13 @@ public final class TagTable
      * Removes anchor for specific node.
      * @param node Node
      */
-    void removeAnchorByNode(Node node)
-    {
-        Anchor delme = null;
-        Anchor found = null;
-        Anchor prev = null;
-        Anchor next = null;
-
-        for (found = anchorList; found != null; found = found.next)
-        {
-            next = found.next;
-
-            if (found.node == node)
-            {
-                if (prev != null)
-                {
-                    prev.next = next;
-                }
-                else
-                {
-                    anchorList = next;
-                }
-
-                delme = found;
-            }
-            else
-            {
-                prev = found;
-            }
-        }
-        if (delme != null)
-        {
-            delme = null; // freeAnchor
-        }
-    }
-
-    /**
-     * Initialize a new anchor.
-     * @return a new anchor element
-     */
-    Anchor newAnchor()
-    {
-        Anchor a = new Anchor();
-        return a;
+    void removeAnchorByNode(final Node node) {
+    	final String s = anchorByNode.get(node);
+    	if (s == null) {
+    		return;
+    	}
+    	anchorByNode.remove(node);
+    	anchorMap.remove(s);
     }
 
     /**
@@ -509,29 +475,10 @@ public final class TagTable
      * @param node destination for this anchor
      * @return Anchor
      */
-    Anchor addAnchor(String name, Node node)
-    {
-        Anchor a = newAnchor();
-
-        a.name = name;
-        a.node = node;
-
-        if (anchorList == null)
-        {
-            anchorList = a;
-        }
-        else
-        {
-            Anchor here = anchorList;
-
-            while (here.next != null)
-            {
-                here = here.next;
-            }
-            here.next = a;
-        }
-
-        return anchorList;
+    void addAnchor(final String name, final Node node) {
+    	final String s = name.toLowerCase();
+    	anchorMap.put(s, node);
+    	anchorByNode.put(node, s);
     }
 
     /**
@@ -539,24 +486,8 @@ public final class TagTable
      * @param name anchor name
      * @return node associated with anchor
      */
-    Node getNodeByAnchor(String name)
-    {
-        Anchor found;
-
-        for (found = anchorList; found != null; found = found.next)
-        {
-            if (name.equalsIgnoreCase(found.name))
-            {
-                break;
-            }
-        }
-
-        if (found != null)
-        {
-            return found.node;
-        }
-
-        return null;
+    Node getNodeByAnchor(final String name) {
+    	return anchorMap.get(name.toLowerCase());
     }
 
     /**
@@ -564,7 +495,8 @@ public final class TagTable
      */
     void freeAnchors()
     {
-        anchorList = null;
+        anchorMap.clear();
+        anchorByNode.clear();
     }
 
 }

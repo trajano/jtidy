@@ -814,7 +814,7 @@ public final class AttrCheckImpl
             }
             else
             {
-                lexer.configuration.tt.anchorList = lexer.configuration.tt.addAnchor(attval.value, node);
+                lexer.configuration.tt.addAnchor(attval.value, node);
             }
         }
 
@@ -848,7 +848,7 @@ public final class AttrCheckImpl
                 }
                 else
                 {
-                    lexer.configuration.tt.anchorList = lexer.configuration.tt.addAnchor(attval.value, node);
+                    lexer.configuration.tt.addAnchor(attval.value, node);
                 }
             }
         }
