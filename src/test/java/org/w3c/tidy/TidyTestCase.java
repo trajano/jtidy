@@ -145,6 +145,7 @@ public class TidyTestCase extends TestCase
     /**
      * @see junit.framework.TestCase#setUp()
      */
+    @Override
     protected void setUp() throws Exception
     {
         super.setUp();
@@ -156,6 +157,7 @@ public class TidyTestCase extends TestCase
     /**
      * @see junit.framework.TestCase#tearDown()
      */
+    @Override
     protected void tearDown() throws Exception
     {
         this.tidy = null;
@@ -257,18 +259,17 @@ public class TidyTestCase extends TestCase
 
         MsgXmlHandler handler = new MsgXmlHandler();
         saxParser.parse(new InputSource(messagesFile.openStream()), handler);
-        List expectedMsgs = handler.getMessages();
+        List<TidyMessage> expectedMsgs = handler.getMessages();
 
-        List tidyMsgs = this.messageListener.getReceived();
+        List<TidyMessage> tidyMsgs = this.messageListener.getReceived();
 
         // assert size
         if (expectedMsgs.size() != tidyMsgs.size())
         {
             StringBuffer messagesAsString = new StringBuffer();
 
-            for (Iterator iter = tidyMsgs.iterator(); iter.hasNext();)
+            for (TidyMessage message : tidyMsgs)
             {
-                TidyMessage message = (TidyMessage) iter.next();
                 messagesAsString.append("\n");
                 messagesAsString.append(message.getMessage());
             }
@@ -282,13 +283,13 @@ public class TidyTestCase extends TestCase
         }
 
         // compare messages
-        Iterator expectedMsgIt = expectedMsgs.iterator();
-        Iterator tidyMsgIt = tidyMsgs.iterator();
+        Iterator<TidyMessage> expectedMsgIt = expectedMsgs.iterator();
+        Iterator<TidyMessage> tidyMsgIt = tidyMsgs.iterator();
         int count = 0;
         while (tidyMsgIt.hasNext())
         {
-            TidyMessage expectedOne = (TidyMessage) expectedMsgIt.next();
-            TidyMessage tidyOne = (TidyMessage) tidyMsgIt.next();
+            TidyMessage expectedOne = expectedMsgIt.next();
+            TidyMessage tidyOne = tidyMsgIt.next();
 
             assertEquals("Error code for message [" + count + "] is different from expected", expectedOne
                 .getErrorCode(), tidyOne.getErrorCode());
@@ -604,7 +605,7 @@ public class TidyTestCase extends TestCase
         /**
          * Parsed messages.
          */
-        private List messages = new ArrayList();
+        private List<TidyMessage> messages = new ArrayList<TidyMessage>();
 
         /**
          * Error code for the current message.
@@ -644,6 +645,7 @@ public class TidyTestCase extends TestCase
         /**
          * @see org.xml.sax.ContentHandler#startElement(String, String, String, org.xml.sax.Attributes)
          */
+        @Override
         public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
         {
             if ("message".equals(qName))
@@ -661,6 +663,7 @@ public class TidyTestCase extends TestCase
         /**
          * @see org.xml.sax.ContentHandler#endElement(String, String, String)
          */
+        @Override
         public void endElement(String uri, String localName, String qName) throws SAXException
         {
             if ("message".equals(qName))
@@ -675,6 +678,7 @@ public class TidyTestCase extends TestCase
         /**
          * @see org.xml.sax.ContentHandler#characters(char[], int, int)
          */
+        @Override
         public void characters(char[] ch, int start, int length) throws SAXException
         {
             if (!intag)
@@ -708,7 +712,7 @@ public class TidyTestCase extends TestCase
          * Returns the list of parsed messages.
          * @return List containing TidyMessage elements
          */
-        public List getMessages()
+        public List<TidyMessage> getMessages()
         {
             return messages;
         }

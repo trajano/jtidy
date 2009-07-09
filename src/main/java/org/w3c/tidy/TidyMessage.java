@@ -156,7 +156,7 @@ public final class TidyMessage
      * @author fgiust
      * @version $Revision$ ($Author$)
      */
-    public static final class Level implements Comparable
+    public static final class Level implements Comparable<Level>
     {
 
         /**
@@ -228,15 +228,16 @@ public final class TidyMessage
         /**
          * @see java.lang.Comparable#compareTo(Object)
          */
-        public int compareTo(Object object)
+        public int compareTo(Level level)
         {
-            return this.code - ((Level) object).code;
+            return this.code - level.code;
         }
 
         /**
          * @see java.lang.Object#equals(Object)
          */
-        public boolean equals(Object object)
+        @Override
+		public boolean equals(Object object)
         {
             if (!(object instanceof Level))
             {
@@ -248,7 +249,8 @@ public final class TidyMessage
         /**
          * @see java.lang.Object#toString()
          */
-        public String toString()
+        @Override
+		public String toString()
         {
             switch (code)
             {
@@ -270,7 +272,8 @@ public final class TidyMessage
         /**
          * @see java.lang.Object#hashCode()
          */
-        public int hashCode()
+        @Override
+		public int hashCode()
         {
             // new instances should not be created
             return super.hashCode();

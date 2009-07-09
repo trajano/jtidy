@@ -53,7 +53,6 @@
  */
 package org.w3c.tidy;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -489,17 +488,17 @@ public final class ParsePropertyImpl
                 return "";
             }
 
-            List tagList = configuration.tt.findAllDefinedTag(tagType);
+            List<String> tagList = configuration.tt.findAllDefinedTag(tagType);
             if (tagList.isEmpty())
             {
                 return "";
             }
 
             StringBuffer buffer = new StringBuffer();
-            Iterator iterator = tagList.iterator();
-            while (iterator.hasNext())
+            
+            for (String tag : tagList)
             {
-                buffer.append(iterator.next());
+                buffer.append(tag);
                 buffer.append(" ");
             }
 

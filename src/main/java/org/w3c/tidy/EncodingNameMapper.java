@@ -69,7 +69,7 @@ public abstract class EncodingNameMapper
     /**
      * Map containing uppercase alias - {standard iana, standard java}.
      */
-    private static Map encodingNameMap = new HashMap();
+    private static Map<String, String[]> encodingNameMap = new HashMap<String, String[]>();
 
     static
     {
@@ -284,7 +284,7 @@ public abstract class EncodingNameMapper
             return null;
         }
 
-        String[] values = (String[]) encodingNameMap.get(handlecommonAlias(encoding));
+        String[] values = encodingNameMap.get(handlecommonAlias(encoding));
         if (values != null)
         {
             return values[0];
@@ -345,7 +345,7 @@ public abstract class EncodingNameMapper
             return null;
         }
 
-        String[] values = (String[]) encodingNameMap.get(handlecommonAlias(encoding));
+        String[] values = encodingNameMap.get(handlecommonAlias(encoding));
         if (values != null)
         {
             return values[1];

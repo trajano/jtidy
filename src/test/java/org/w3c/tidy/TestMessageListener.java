@@ -1,7 +1,6 @@
 package org.w3c.tidy;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -20,7 +19,7 @@ public class TestMessageListener implements TidyMessageListener
     /**
      * Contains all the received TidyMessages.
      */
-    private List received = new ArrayList();
+    private List<TidyMessage> received = new ArrayList<TidyMessage>();
 
     /**
      * Instantiate a new messag listener for the given test file.
@@ -53,10 +52,8 @@ public class TestMessageListener implements TidyMessageListener
         buffer.append("-->\n");
 
         buffer.append("<messages>\n");
-        Iterator iterator = received.iterator();
-        while (iterator.hasNext())
+        for (TidyMessage msg : received)
         {
-            TidyMessage msg = (TidyMessage) iterator.next();
             buffer.append("  <message>\n");
 
             buffer.append("    <code>");
@@ -100,7 +97,7 @@ public class TestMessageListener implements TidyMessageListener
      * Returns the list of received messages.
      * @return Returns the received messages.
      */
-    public List getReceived()
+    public List<TidyMessage> getReceived()
     {
         return this.received;
     }

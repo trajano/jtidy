@@ -62,7 +62,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -208,7 +207,7 @@ public class Configuration implements Serializable
      * Map containg all the valid configuration options and the related parser. Tag entry contains String(option
      * name)-Flag instance.
      */
-    private static final Map OPTIONS = new HashMap();
+    private static final Map<String, Flag> OPTIONS = new HashMap<String, Flag>();
 
     /**
      * serial version UID for this class.
@@ -723,7 +722,7 @@ public class Configuration implements Serializable
      */
     public void addProps(Properties p)
     {
-        Enumeration propEnum = p.propertyNames();
+        Enumeration<?> propEnum = p.propertyNames();
         while (propEnum.hasMoreElements())
         {
             String key = (String) propEnum.nextElement();
@@ -766,12 +765,10 @@ public class Configuration implements Serializable
      */
     private void parseProps()
     {
-        Iterator iterator = properties.keySet().iterator();
-
-        while (iterator.hasNext())
+        for (Object o : properties.keySet())
         {
-            String key = (String) iterator.next();
-            Flag flag = (Flag) OPTIONS.get(key);
+        	String key = (String) o;
+            Flag flag = OPTIONS.get(key);
             if (flag == null)
             {
                 report.unknownOption(key);
@@ -896,18 +893,13 @@ public class Configuration implements Serializable
 
             errout.write("=========================== =========  ========================================\n");
 
-            Flag configItem;
-
             // sort configuration options
-            List values = new ArrayList(OPTIONS.values());
+            List<Flag> values = new ArrayList<Flag>(OPTIONS.values());
             Collections.sort(values);
 
-            Iterator iterator = values.iterator();
 
-            while (iterator.hasNext())
+            for (Flag configItem : values)
             {
-                configItem = (Flag) iterator.next();
-
                 errout.write(configItem.getName());
                 errout.write(pad, 0, 28 - configItem.getName().length());
 
@@ -959,7 +951,7 @@ public class Configuration implements Serializable
     /**
      * A configuration option.
      */
-    static class Flag implements Comparable
+    static class Flag implements Comparable<Flag>
     {
 
         /**
@@ -1047,7 +1039,8 @@ public class Configuration implements Serializable
         /**
          * @see java.lang.Object#equals(java.lang.Object)
          */
-        public boolean equals(Object obj)
+        @Override
+		public boolean equals(Object obj)
         {
             return this.name.equals(((Flag) obj).name);
         }
@@ -1055,7 +1048,8 @@ public class Configuration implements Serializable
         /**
          * @see java.lang.Object#hashCode()
          */
-        public int hashCode()
+        @Override
+		public int hashCode()
         {
             // returning the hashCode of String, to be consistent with equals and compareTo
             return this.name.hashCode();
@@ -1064,9 +1058,9 @@ public class Configuration implements Serializable
         /**
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
-        public int compareTo(Object o)
+        public int compareTo(Flag o)
         {
-            return this.name.compareTo(((Flag) o).name);
+            return this.name.compareTo(o.name);
         }
 
     }

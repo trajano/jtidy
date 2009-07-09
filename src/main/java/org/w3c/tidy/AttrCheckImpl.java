@@ -54,7 +54,6 @@
 package org.w3c.tidy;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import static org.w3c.tidy.Versions.*;
@@ -864,7 +863,7 @@ public final class AttrCheckImpl
         /**
          * valid html colors.
          */
-        private static final Map COLORS = new HashMap();
+        private static final Map<String, String> COLORS = new HashMap<String, String>();
 
         static
         {
@@ -903,12 +902,8 @@ public final class AttrCheckImpl
 
             String given = attval.value;
 
-            Iterator colorIter = COLORS.entrySet().iterator();
-
-            while (colorIter.hasNext())
+            for (Map.Entry<String, String> color : COLORS.entrySet())
             {
-                Map.Entry color = (Map.Entry) colorIter.next();
-
                 if (given.charAt(0) == '#')
                 {
                     if (given.length() != 7)
@@ -917,11 +912,11 @@ public final class AttrCheckImpl
                         invalid = true;
                         break;
                     }
-                    else if (given.equalsIgnoreCase((String) color.getValue()))
+                    else if (given.equalsIgnoreCase(color.getValue()))
                     {
                         if (lexer.configuration.replaceColor)
                         {
-                            attval.value = (String) color.getKey();
+                            attval.value = color.getKey();
                         }
                         found = true;
                         break;
@@ -929,11 +924,11 @@ public final class AttrCheckImpl
                 }
                 else if (TidyUtils.isLetter(given.charAt(0)))
                 {
-                    if (given.equalsIgnoreCase((String) color.getKey()))
+                    if (given.equalsIgnoreCase(color.getKey()))
                     {
                         if (lexer.configuration.replaceColor)
                         {
-                            attval.value = (String) color.getKey();
+                            attval.value = color.getKey();
                         }
                         found = true;
                         break;
@@ -1112,7 +1107,6 @@ public final class AttrCheckImpl
 	    when transformed into a request."
      */
     public static class CheckAction implements AttrCheck {
-		@Override
 		public void check(final Lexer lexer, final Node node, final AttVal attval) {
 			if (attval.hasValue()) {
 				URL.check(lexer, node, attval);
@@ -1142,7 +1136,6 @@ public final class AttrCheckImpl
     
     /* checks type attribute */
     public static class CheckType implements AttrCheck {
-		@Override
 		public void check(final Lexer lexer, final Node node, final AttVal attval) {
 	        if (node.is(TagId.INPUT)) {
 	            CheckAttrValidity(lexer, node, attval, valuesINPUT);

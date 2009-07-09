@@ -80,6 +80,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
     /**
      * @see org.w3c.dom.Node#getNodeType
      */
+    @Override
     public short getNodeType()
     {
         return org.w3c.dom.Node.ELEMENT_NODE;
@@ -320,6 +321,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
      * @todo DOM level 2 getOwnerDocument() Not supported. Do nothing.
      * @see org.w3c.dom.Element#normalize
      */
+    @Override
     public void normalize()
     {
         // do nothing
