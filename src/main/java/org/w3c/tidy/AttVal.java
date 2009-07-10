@@ -433,12 +433,7 @@ public class AttVal extends Object implements Cloneable
     }
     
     public boolean valueIsAmong(final String list[]) {
-        for (String v : list) {
-            if (valueIs(v)) {
-                return true;
-            }
-        }
-        return false;
+    	return TidyUtils.isInValuesIgnoreCase(list, value);
     }
     
     public boolean is(final AttrId id) {

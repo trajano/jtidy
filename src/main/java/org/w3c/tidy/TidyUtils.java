@@ -222,13 +222,12 @@ public final class TidyUtils
      * @param valueToCheck value to search for
      * @return <code>true</code> if valueToCheck is found in validValues
      */
-    static boolean isInValuesIgnoreCase(String[] validValues, String valueToCheck)
-    {
-        int len = validValues.length;
-        for (int j = 0; j < len; j++)
-        {
-            if (validValues[j].equalsIgnoreCase(valueToCheck))
-            {
+    static boolean isInValuesIgnoreCase(String[] validValues, String valueToCheck) {
+    	if (valueToCheck == null) {
+    		return false;
+    	}
+        for (String s : validValues) {
+            if (s.equalsIgnoreCase(valueToCheck)) {
                 return true;
             }
         }
