@@ -258,59 +258,42 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
-            char c;
-            StringBuffer dest;
-            boolean escapeFound = false;
+        public void check(Lexer lexer, Node node, AttVal attval) {
+            int escapeCount = 0;
             boolean backslashFound = false;
-            int i = 0;
 
-            if (attval.value == null)
-            {
+            if (!attval.hasValue()) {
                 lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
                 return;
             }
 
             String p = attval.value;
+            boolean isJavascript = attval.value.startsWith("javascript:");
 
-            for (i = 0; i < p.length(); ++i)
-            {
-                c = p.charAt(i);
+            for (int i = 0; i < p.length(); ++i) {
+                char c = p.charAt(i);
                 // find \
-                if (c == '\\')
-                {
+                if (c == '\\') {
                     backslashFound = true;
-                }
-                // find non-ascii chars
-                else if ((c > 0x7e) || (c <= 0x20) || (c == '<') || (c == '>'))
-                {
-                    escapeFound = true;
+                } else if ((c > 0x7e) || (c <= 0x20) || (c == '<') || (c == '>')) {
+                    ++escapeCount;
                 }
             }
 
             // backslashes found, fix them
-            if (lexer.configuration.fixBackslash && backslashFound)
-            {
-                attval.value = attval.value.replace('\\', '/');
-                p = attval.value;
+            if (lexer.configuration.fixBackslash && backslashFound) {
+                attval.value = p = p.replace('\\', '/');
             }
 
             // non-ascii chars found, fix them
-            if (lexer.configuration.fixUri && escapeFound)
-            {
-                dest = new StringBuffer();
+            if (lexer.configuration.fixUri && escapeCount > 0) {
+                StringBuilder dest = new StringBuilder(p.length() + escapeCount * 2);
 
-                for (i = 0; i < p.length(); ++i)
-                {
-                    c = p.charAt(i);
-                    if ((c > 0x7e) || (c <= 0x20) || (c == '<') || (c == '>'))
-                    {
-                        dest.append('%');
-                        dest.append(Integer.toHexString(c).toUpperCase());
-                    }
-                    else
-                    {
+                for (int i = 0; i < p.length(); ++i) {
+                    char c = p.charAt(i);
+                    if ((c > 0x7e) || (c <= 0x20) || (c == '<') || (c == '>')) {
+                        dest.append(String.format("%%%02X", c));
+                    } else {
                         dest.append(c);
                     }
                 }
@@ -319,29 +302,21 @@ public final class AttrCheckImpl
             }
             if (backslashFound)
             {
-                if (lexer.configuration.fixBackslash)
-                {
+                if (lexer.configuration.fixBackslash && !isJavascript) {
                     lexer.report.attrError(lexer, node, attval, Report.FIXED_BACKSLASH);
-                }
-                else
-                {
+                } else {
                     lexer.report.attrError(lexer, node, attval, Report.BACKSLASH_IN_URI);
                 }
             }
-            if (escapeFound)
-            {
-                if (lexer.configuration.fixUri)
-                {
+            if (escapeCount > 0) {
+                if (lexer.configuration.fixUri) {
                     lexer.report.attrError(lexer, node, attval, Report.ESCAPED_ILLEGAL_URI);
-                }
-                else
-                {
+                } else {
                     lexer.report.attrError(lexer, node, attval, Report.ILLEGAL_URI_REFERENCE);
                 }
 
                 lexer.badChars |= Report.INVALID_URI;
             }
-
         }
     }
 
