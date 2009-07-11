@@ -1103,14 +1103,15 @@ public final class AttrCheckImpl
     	}
     }
     
-    private static final String valuesINPUT[] = {"text", "password", "checkbox", "radio",
-        "submit", "reset", "file", "hidden", "image", "button"};
-    private static final String valuesBUTTON[] = {"button", "submit", "reset"};
-    private static final String valuesUL[] = {"disc", "square", "circle"};
-    private static final String valuesOL[] = {"1", "a", "i"};
-    
-    /* checks type attribute */
+    /** Checks type attribute */
     public static class CheckType implements AttrCheck {
+    	
+    	private static final String valuesINPUT[] = {"text", "password", "checkbox", "radio",
+            "submit", "reset", "file", "hidden", "image", "button"};
+        private static final String valuesBUTTON[] = {"button", "submit", "reset"};
+        private static final String valuesUL[] = {"disc", "square", "circle"};
+        private static final String valuesOL[] = {"1", "a", "i"};
+    	
 		public void check(final Lexer lexer, final Node node, final AttVal attval) {
 	        if (node.is(TagId.INPUT)) {
 	            CheckAttrValidity(lexer, node, attval, valuesINPUT);
