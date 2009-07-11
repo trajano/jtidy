@@ -1568,4 +1568,9 @@ public class Node implements Cloneable
 				|| tid == TagId.FRAME || tid == TagId.IFRAME
 				|| tid == TagId.IMG || tid == TagId.MAP;
 	}
+    
+    /** Checks for content model flags */
+    public boolean hasCM(final int contentModel) {
+    	return tag != null && (tag.model & contentModel) != 0;
+    }
 }
