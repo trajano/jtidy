@@ -252,8 +252,7 @@ public final class AttrCheckImpl
     /**
      * AttrCheck implementation for checking URLs.
      */
-    public static class CheckUrl implements AttrCheck
-    {
+    public static class CheckUrl implements AttrCheck {
 
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
@@ -323,78 +322,77 @@ public final class AttrCheckImpl
     /**
      * AttrCheck implementation for checking scripts.
      */
-    public static class CheckScript implements AttrCheck
-    {
+    public static class CheckScript implements AttrCheck {
 
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
+        public void check(Lexer lexer, Node node, AttVal attval) {
             // not implemented
         }
-
     }
 
     /**
      * AttrCheck implementation for checking the "align" attribute.
      */
-    public static class CheckAlign implements AttrCheck
-    {
+    public static class CheckAlign implements AttrCheck {
 
         /**
          * valid values for this attribute.
          */
-        private static final String[] VALID_VALUES = new String[]{"left", "center", "right", "justify"};
+        private static final String[] VALID_VALUES = {"left", "right", "center", "justify"};
 
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
+        public void check(Lexer lexer, Node node, AttVal attval) {
             // IMG, OBJECT, APPLET and EMBED use align for vertical position
-            if (node.tag != null && ((node.tag.model & Dict.CM_IMG) != 0))
-            {
+            if (node.tag != null && ((node.tag.model & Dict.CM_IMG) != 0)) {
                 VALIGN.check(lexer, node, attval);
                 return;
             }
 
-            if (attval.value == null)
-            {
+            if (!attval.hasValue()) {
                 lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
                 return;
             }
 
             attval.checkLowerCaseAttrValue(lexer, node);
-
-            if (!TidyUtils.isInValuesIgnoreCase(VALID_VALUES, attval.value))
-            {
-                lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+            
+            // currently CheckCaption(...) takes care of the remaining cases
+            if (node.is(TagId.CAPTION)) {
+            	return;
+            }
+            
+            if (!attval.valueIsAmong(VALID_VALUES)) {
+            	// align="char" is allowed for elements with CM_TABLE|CM_ROW
+                // except CAPTION which is excluded above
+            	if (!(attval.valueIs("char") && node.hasCM(Dict.CM_TABLE|Dict.CM_ROW))) {
+            		lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+            	}
             }
         }
-
     }
 
     /**
      * AttrCheck implementation for checking the "valign" attribute.
      */
-    public static class CheckValign implements AttrCheck
-    {
+    public static class CheckValign implements AttrCheck {
 
         /**
          * valid values for this attribute.
          */
-        private static final String[] VALID_VALUES = new String[]{"top", "middle", "bottom", "baseline"};
+        private static final String[] VALID_VALUES = {"top", "middle", "bottom", "baseline"};
 
         /**
          * valid values for this attribute (only for img tag).
          */
-        private static final String[] VALID_VALUES_IMG = new String[]{"left", "right"};
+        private static final String[] VALID_VALUES_IMG = {"left", "right"};
 
         /**
          * proprietary values for this attribute.
          */
-        private static final String[] VALID_VALUES_PROPRIETARY = new String[]{
+        private static final String[] VALID_VALUES_PROPRIETARY = {
             "texttop",
             "absmiddle",
             "absbottom",
@@ -403,44 +401,27 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
-            String value;
-
-            if (attval.value == null)
-            {
+        public void check(Lexer lexer, Node node, AttVal attval) {
+            if (!attval.hasValue()) {
                 lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
                 return;
             }
 
             attval.checkLowerCaseAttrValue(lexer, node);
 
-            value = attval.value;
-
-            if (TidyUtils.isInValuesIgnoreCase(VALID_VALUES, value))
-            {
+            if (attval.valueIsAmong(VALID_VALUES)) {
                 // all is fine
-                return;
-            }
-
-            if (TidyUtils.isInValuesIgnoreCase(VALID_VALUES_IMG, value))
-            {
-                if (!(node.tag != null && ((node.tag.model & Dict.CM_IMG) != 0)))
-                {
+            } else if (attval.valueIsAmong(VALID_VALUES_IMG)) {
+                if (!(node.tag != null && ((node.tag.model & Dict.CM_IMG) != 0))) {
                     lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
                 }
-            }
-            else if (TidyUtils.isInValuesIgnoreCase(VALID_VALUES_PROPRIETARY, value))
-            {
+            } else if (attval.valueIsAmong(VALID_VALUES_PROPRIETARY)) {
                 lexer.constrainVersion(VERS_PROPRIETARY);
                 lexer.report.attrError(lexer, node, attval, Report.PROPRIETARY_ATTR_VALUE);
-            }
-            else
-            {
+            } else {
                 lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
             }
         }
-
     }
 
     /**
