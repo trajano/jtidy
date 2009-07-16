@@ -512,128 +512,84 @@ public final class AttrCheckImpl
     /**
      * AttrCheck implementation for checking the "submit" attribute.
      */
-    public static class CheckFsubmit implements AttrCheck
-    {
+    public static class CheckFsubmit implements AttrCheck {
 
         /**
          * valid values for this attribute.
          */
-        private static final String[] VALID_VALUES = new String[]{"get", "post"};
+        private static final String[] VALID_VALUES = {"get", "post"};
 
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
-            if (attval.value == null)
-            {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
-                return;
-            }
-
-            attval.checkLowerCaseAttrValue(lexer, node);
-
-            if (!TidyUtils.isInValuesIgnoreCase(VALID_VALUES, attval.value))
-            {
-                lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
-            }
+        public void check(Lexer lexer, Node node, AttVal attval) {
+        	CheckAttrValidity(lexer, node, attval, VALID_VALUES);
         }
     }
 
     /**
      * AttrCheck implementation for checking the "clear" attribute.
      */
-    public static class CheckClear implements AttrCheck
-    {
+    public static class CheckClear implements AttrCheck {
 
         /**
          * valid values for this attribute.
          */
-        private static final String[] VALID_VALUES = new String[]{"none", "left", "right", "all"};
+        private static final String[] VALID_VALUES = {"none", "left", "right", "all"};
 
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
-            if (attval.value == null)
-            {
+        public void check(Lexer lexer, Node node, AttVal attval) {
+        	if (!attval.hasValue()) {
                 lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
-                attval.value = VALID_VALUES[0];
+                if (attval.value == null) { // TODO redundant check?
+                	attval.value = "none";
+                }
                 return;
             }
 
             attval.checkLowerCaseAttrValue(lexer, node);
 
-            if (!TidyUtils.isInValuesIgnoreCase(VALID_VALUES, attval.value))
-            {
+            if (!attval.valueIsAmong(VALID_VALUES)) {
                 lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
             }
-
         }
     }
 
     /**
      * AttrCheck implementation for checking the "shape" attribute.
      */
-    public static class CheckShape implements AttrCheck
-    {
+    public static class CheckShape implements AttrCheck {
 
         /**
          * valid values for this attribute.
          */
-        private static final String[] VALID_VALUES = new String[]{"rect", "default", "circle", "poly"};
+        private static final String[] VALID_VALUES = {"rect", "default", "circle", "poly"};
 
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
-            if (attval.value == null)
-            {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
-                return;
-            }
-
-            attval.checkLowerCaseAttrValue(lexer, node);
-
-            if (!TidyUtils.isInValuesIgnoreCase(VALID_VALUES, attval.value))
-            {
-                lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
-            }
-
+        public void check(Lexer lexer, Node node, AttVal attval) {
+        	CheckAttrValidity(lexer, node, attval, VALID_VALUES);
         }
     }
 
     /**
      * AttrCheck implementation for checking Scope.
      */
-    public static class CheckScope implements AttrCheck
-    {
+    public static class CheckScope implements AttrCheck {
 
         /**
          * valid values for this attribute.
          */
-        private static final String[] VALID_VALUES = new String[]{"row", "rowgroup", "col", "colgroup"};
+        private static final String[] VALID_VALUES = {"row", "rowgroup", "col", "colgroup"};
 
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
-
-            if (attval.value == null)
-            {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
-                return;
-            }
-
-            attval.checkLowerCaseAttrValue(lexer, node);
-
-            if (!TidyUtils.isInValuesIgnoreCase(VALID_VALUES, attval.value))
-            {
-                lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
-            }
+        public void check(Lexer lexer, Node node, AttVal attval) {
+        	CheckAttrValidity(lexer, node, attval, VALID_VALUES);
         }
     }
 
