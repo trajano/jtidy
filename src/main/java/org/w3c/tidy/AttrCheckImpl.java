@@ -299,8 +299,7 @@ public final class AttrCheckImpl
 
                 attval.value = dest.toString();
             }
-            if (backslashFound)
-            {
+            if (backslashFound) {
                 if (lexer.configuration.fixBackslash && !isJavascript) {
                     lexer.report.attrError(lexer, node, attval, Report.FIXED_BACKSLASH);
                 } else {
@@ -427,38 +426,31 @@ public final class AttrCheckImpl
     /**
      * AttrCheck implementation for checking boolean attributes.
      */
-    public static class CheckBool implements AttrCheck
-    {
+    public static class CheckBool implements AttrCheck {
 
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
-            if (attval.value == null)
-            {
+        public void check(Lexer lexer, Node node, AttVal attval) {
+            if (!attval.hasValue()) {
                 return;
             }
 
             attval.checkLowerCaseAttrValue(lexer, node);
         }
-
     }
 
     /**
      * AttrCheck implementation for checking the "length" attribute.
      */
-    public static class CheckLength implements AttrCheck
-    {
+    public static class CheckLength implements AttrCheck {
 
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
+        public void check(Lexer lexer, Node node, AttVal attval) {
 
-            if (attval.value == null)
-            {
+            if (!attval.hasValue()) {
                 lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
                 return;
             }
@@ -470,18 +462,11 @@ public final class AttrCheckImpl
 
             String p = attval.value;
 
-            if (p.length() == 0 || (!Character.isDigit(p.charAt(0)) && !('%' == p.charAt(0))))
-            {
+            if (p.length() == 0 || !Character.isDigit(p.charAt(0))) {
                 lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
-            }
-            else
-            {
-                for (int j = 1; j < p.length(); j++)
-                {
-                    // elements th and td must not use percentages
-                    if ((!Character.isDigit(p.charAt(j)) && (node.is(TagId.TD) || node.is(TagId.TH)))
-                        || (!Character.isDigit(p.charAt(j)) && p.charAt(j) != '%'))
-                    {
+            } else {
+                for (int j = 1; j < p.length(); j++) {
+                    if (!Character.isDigit(p.charAt(j)) && p.charAt(j) != '%') {
                         lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
                         break;
                     }
@@ -493,25 +478,19 @@ public final class AttrCheckImpl
     /**
      * AttrCheck implementation for checking the "target" attribute.
      */
-    public static class CheckTarget implements AttrCheck
-    {
+    public static class CheckTarget implements AttrCheck {
 
         /**
          * valid values for this attribute.
          */
-        private static final String[] VALID_VALUES = new String[]{"_blank", "_self", "_parent", "_top"};
+        private static final String[] VALID_VALUES = {"_blank", "_self", "_parent", "_top"};
 
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
+        public void check(Lexer lexer, Node node, AttVal attval) {
 
-            // No target attribute in strict HTML versions
-            lexer.constrainVersion(~VERS_HTML40_STRICT);
-
-            if (attval.value == null || attval.value.length() == 0)
-            {
+            if (!attval.hasValue()) {
                 lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
                 return;
             }
@@ -519,17 +498,14 @@ public final class AttrCheckImpl
             String value = attval.value;
 
             // target names must begin with A-Za-z ...
-            if (Character.isLetter(value.charAt(0)))
-            {
+            if (value.length() > 0 && Character.isLetter(value.charAt(0))) {
                 return;
             }
 
-            // or be one of _blank, _self, _parent and _top
-            if (!TidyUtils.isInValuesIgnoreCase(VALID_VALUES, value))
-            {
+            // or be one of the allowed list
+            if (!attval.valueIsAmong(VALID_VALUES)) {
                 lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
             }
-
         }
     }
 
