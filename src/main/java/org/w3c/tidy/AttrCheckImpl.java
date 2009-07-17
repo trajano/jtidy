@@ -596,43 +596,34 @@ public final class AttrCheckImpl
     /**
      * AttrCheck implementation for checking numbers.
      */
-    public static class CheckNumber implements AttrCheck
-    {
+    public static class CheckNumber implements AttrCheck {
 
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
+        public void check(Lexer lexer, Node node, AttVal attval) {
 
-            if (attval.value == null)
-            {
+            if (!attval.hasValue()) {
                 lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
                 return;
             }
 
             // don't check <frameset cols=... rows=...>
-            if (("cols".equalsIgnoreCase(attval.attribute) || "rows".equalsIgnoreCase(attval.attribute))
-                && node.is(TagId.FRAMESET))
-            {
+            if (node.is(TagId.FRAMESET) && (attval.is(AttrId.COLS) || attval.is(AttrId.ROWS))) {
                 return;
             }
 
-            String value = attval.value;
+            String p = attval.value;
 
             int j = 0;
 
             // font size may be preceded by + or -
-            if (node.is(TagId.FONT) && (value.startsWith("+") || value.startsWith("-")))
-            {
+            if (node.is(TagId.FONT) && p.length() > 0 && (p.charAt(0) == '+' || p.charAt(0) == '-')) {
                 ++j;
             }
 
-            for (; j < value.length(); j++)
-            {
-                char p = value.charAt(j);
-                if (!Character.isDigit(p))
-                {
+            for (; j < p.length(); j++) {
+                if (!Character.isDigit(p.charAt(j))) {
                     lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
                     break;
                 }
@@ -643,103 +634,58 @@ public final class AttrCheckImpl
     /**
      * AttrCheck implementation for checking ids.
      */
-    public static class CheckId implements AttrCheck
-    {
+    public static class CheckId implements AttrCheck {
 
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
-            Node old;
-
-            if (attval.value == null || attval.value.length() == 0)
-            {
+        public void check(Lexer lexer, Node node, AttVal attval) {
+            if (!attval.hasValue()) {
                 lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
                 return;
             }
-
-            String p = attval.value;
-            char s = p.charAt(0);
-
-            if (p.length() == 0 || !Character.isLetter(p.charAt(0)))
-            {
-                if (lexer.isvoyager && (TidyUtils.isXMLLetter(s) || s == '_' || s == ':'))
-                {
+            if (!TidyUtils.isValidHTMLID(attval.value)) {
+                if (lexer.isvoyager && TidyUtils.isValidXMLID(attval.value)) {
                     lexer.report.attrError(lexer, node, attval, Report.XML_ID_SYNTAX);
-                }
-                else
-                {
-                    lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
-                }
-            }
-            else
-            {
-
-                for (int j = 1; j < p.length(); j++)
-                {
-                    s = p.charAt(j);
-
-                    if (!TidyUtils.isNamechar(s))
-                    {
-                        if (lexer.isvoyager && TidyUtils.isXMLNamechar(s))
-                        {
-                            lexer.report.attrError(lexer, node, attval, Report.XML_ID_SYNTAX);
-                        }
-                        else
-                        {
-                            lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
-                        }
-                        break;
-                    }
+                } else {
+                	lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
                 }
             }
 
-            if (((old = lexer.configuration.tt.getNodeByAnchor(attval.value)) != null) && old != node)
-            {
-                lexer.report.attrError(lexer, node, attval, Report.ANCHOR_NOT_UNIQUE);
-            }
-            else
-            {
-                lexer.configuration.tt.addAnchor(attval.value, node);
+            final Node old = lexer.configuration.tt.getNodeByAnchor(attval.value);
+            if (old != null && old != node) {
+            	lexer.report.attrError(lexer, node, attval, Report.ANCHOR_NOT_UNIQUE);
+            } else {
+            	lexer.configuration.tt.addAnchor(attval.value, node);
             }
         }
-
     }
 
     /**
      * AttrCheck implementation for checking the "name" attribute.
      */
-    public static class CheckName implements AttrCheck
-    {
+    public static class CheckName implements AttrCheck {
 
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
-            Node old;
-
-            if (attval.value == null)
-            {
+        public void check(Lexer lexer, Node node, AttVal attval) {
+            if (!attval.hasValue()) {
                 lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
                 return;
             }
-            else if (node.isAnchorElement())
-            {
-                lexer.constrainVersion(~VERS_XHTML11);
-
-                if (((old = lexer.configuration.tt.getNodeByAnchor(attval.value)) != null) && old != node)
-                {
+            if (node.isAnchorElement()) {
+            	if (lexer.configuration.xmlOut && !TidyUtils.isValidNMTOKEN(attval.value)) {
+            		lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+            	}
+            	final Node old = lexer.configuration.tt.getNodeByAnchor(attval.value);
+                if (old != null && old != node) {
                     lexer.report.attrError(lexer, node, attval, Report.ANCHOR_NOT_UNIQUE);
-                }
-                else
-                {
+                } else {
                     lexer.configuration.tt.addAnchor(attval.value, node);
                 }
             }
         }
-
     }
 
     /**
