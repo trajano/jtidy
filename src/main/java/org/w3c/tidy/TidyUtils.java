@@ -864,4 +864,47 @@ public final class TidyUtils
         }
         return true;
     }
+    
+    public static boolean isValidHTMLID(final String s) {
+        if (s == null || s.length() == 0) {
+            return false;
+        }
+        if (!isLetter(s.charAt(0))) {
+            return false;
+        }
+        for (int i = 0; i < s.length(); ++i) {
+        	if (!isNamechar(s.charAt(i))) {
+                return false;
+        	}
+		}
+        return true;
+    }
+    
+    public static boolean isValidXMLID(final String s) {
+        if (s == null || s.length() == 0) {
+            return false;
+        }
+        char c = s.charAt(0);
+        if (!(isXMLLetter(c) || c == '_' || c == ':')) {
+            return false;
+        }
+        for (int i = 1; i < s.length(); ++i) {
+            if (!isXMLNamechar(s.charAt(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    public static boolean isValidNMTOKEN(final String s) {
+        if (s == null) {
+            return false;
+        }
+        for (int i = 0; i < s.length(); ++i) {
+			if (!isXMLNamechar(s.charAt(i))) {
+				return false;
+			}
+		}
+        return true;
+    }
 }
