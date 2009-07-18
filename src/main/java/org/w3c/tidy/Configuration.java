@@ -216,17 +216,70 @@ public class Configuration implements Serializable
 
     static
     {
+    	// missing: unknown
         addConfigOption(new Flag("indent-spaces", "spaces", ParsePropertyImpl.INT));
         addConfigOption(new Flag("wrap", "wraplen", ParsePropertyImpl.INT));
-        addConfigOption(new Flag("show-errors", "showErrors", ParsePropertyImpl.INT));
         addConfigOption(new Flag("tab-size", "tabsize", ParsePropertyImpl.INT));
-
+        addConfigOption(new Flag("char-encoding", null, ParsePropertyImpl.CHAR_ENCODING));
+        addConfigOption(new Flag("input-encoding", null, ParsePropertyImpl.CHAR_ENCODING));
+        addConfigOption(new Flag("output-encoding", null, ParsePropertyImpl.CHAR_ENCODING));
+        addConfigOption(new Flag("newline", null, ParsePropertyImpl.NEWLINE));
+        // missing: doctype-mode
+        addConfigOption(new Flag("doctype", "docTypeStr", ParsePropertyImpl.DOCTYPE));
+        addConfigOption(new Flag("repeated-attributes", "duplicateAttrs", ParsePropertyImpl.REPEATED_ATTRIBUTES));
+        addConfigOption(new Flag("alt-text", "altText", ParsePropertyImpl.STRING));
+        
+        // obsolete
+        addConfigOption(new Flag("slide-style", "slidestyle", ParsePropertyImpl.NAME));
+        
+        addConfigOption(new Flag("error-file", "errfile", ParsePropertyImpl.NAME));
+        // missing: output-file
+        addConfigOption(new Flag("write-back", "writeback", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("markup", "onlyErrors", ParsePropertyImpl.INVBOOL));
+        addConfigOption(new Flag("show-warnings", "showWarnings", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("quiet", "quiet", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("indent", "indentContent", ParsePropertyImpl.INDENT));
+        addConfigOption(new Flag("hide-endtags", "hideEndTags", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("input-xml", "xmlTags", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("output-xml", "xmlOut", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("output-xhtml", "xHTML", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("output-html", "htmlOut", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("add-xml-decl", "xmlPi", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("uppercase-tags", "upperCaseTags", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("uppercase-attributes", "upperCaseAttrs", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("bare", "makeBare", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("clean", "makeClean", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("logical-emphasis", "logicalEmphasis", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("drop-proprietary-attributes", "dropProprietaryAttributes", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("drop-font-tags", "dropFontTags", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("drop-empty-paras", "dropEmptyParas", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("fix-bad-comments", "fixComments", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("break-before-br", "breakBeforeBR", ParsePropertyImpl.BOOL));
+        
+        // obsolete
+        addConfigOption(new Flag("split", "burstSlides", ParsePropertyImpl.BOOL));
+        
+        addConfigOption(new Flag("numeric-entities", "numEntities", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("quote-marks", "quoteMarks", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("quote-nbsp", "quoteNbsp", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("quote-ampersand", "quoteAmpersand", ParsePropertyImpl.BOOL));
         addConfigOption(new Flag("wrap-attributes", "wrapAttVals", ParsePropertyImpl.BOOL));
         addConfigOption(new Flag("wrap-script-literals", "wrapScriptlets", ParsePropertyImpl.BOOL));
         addConfigOption(new Flag("wrap-sections", "wrapSection", ParsePropertyImpl.BOOL));
         addConfigOption(new Flag("wrap-asp", "wrapAsp", ParsePropertyImpl.BOOL));
         addConfigOption(new Flag("wrap-jste", "wrapJste", ParsePropertyImpl.BOOL));
         addConfigOption(new Flag("wrap-php", "wrapPhp", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("fix-backslash", "fixBackslash", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("indent-attributes", "indentAttributes", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("assume-xml-procins", "xmlPIs", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("add-xml-space", "xmlSpace", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("enclose-text", "encloseBodyText", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("enclose-block-text", "encloseBlockText", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("keep-time", "keepFileTimes", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("word-2000", "word2000", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("tidy-mark", "tidyMark", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("gnu-emacs", "emacs", ParsePropertyImpl.BOOL));
+        // missing: gnu-emacs-file
         addConfigOption(new Flag("literal-attributes", "literalAttribs", ParsePropertyImpl.BOOL));
         addConfigOption(new Flag("show-body-only", "bodyOnly", ParsePropertyImpl.BOOL));
         addConfigOption(new Flag("fix-uri", "fixUri", ParsePropertyImpl.BOOL));
@@ -234,77 +287,35 @@ public class Configuration implements Serializable
         addConfigOption(new Flag("hide-comments", "hideComments", ParsePropertyImpl.BOOL));
         addConfigOption(new Flag("indent-cdata", "indentCdata", ParsePropertyImpl.BOOL));
         addConfigOption(new Flag("force-output", "forceOutput", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("show-errors", "showErrors", ParsePropertyImpl.INT));
         addConfigOption(new Flag("ascii-chars", "asciiChars", ParsePropertyImpl.BOOL));
         addConfigOption(new Flag("join-classes", "joinClasses", ParsePropertyImpl.BOOL));
         addConfigOption(new Flag("join-styles", "joinStyles", ParsePropertyImpl.BOOL));
         addConfigOption(new Flag("escape-cdata", "escapeCdata", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("replace-color", "replaceColor", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("quiet", "quiet", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("tidy-mark", "tidyMark", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("indent-attributes", "indentAttributes", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("hide-endtags", "hideEndTags", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("input-xml", "xmlTags", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("output-xml", "xmlOut", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("output-html", "htmlOut", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("output-xhtml", "xHTML", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("add-xml-pi", "xmlPi", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("add-xml-decl", "xmlPi", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("assume-xml-procins", "xmlPIs", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("uppercase-tags", "upperCaseTags", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("uppercase-attributes", "upperCaseAttrs", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("bare", "makeBare", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("clean", "makeClean", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("logical-emphasis", "logicalEmphasis", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("word-2000", "word2000", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("drop-empty-paras", "dropEmptyParas", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("drop-font-tags", "dropFontTags", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("drop-proprietary-attributes", "dropProprietaryAttributes", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("enclose-text", "encloseBodyText", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("enclose-block-text", "encloseBlockText", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("add-xml-space", "xmlSpace", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("fix-bad-comments", "fixComments", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("split", "burstSlides", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("break-before-br", "breakBeforeBR", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("numeric-entities", "numEntities", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("quote-marks", "quoteMarks", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("quote-nbsp", "quoteNbsp", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("quote-ampersand", "quoteAmpersand", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("write-back", "writeback", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("keep-time", "keepFileTimes", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("show-warnings", "showWarnings", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("ncr", "ncr", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("fix-backslash", "fixBackslash", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("gnu-emacs", "emacs", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("only-errors", "onlyErrors", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("output-raw", "rawOut", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("trim-empty-elements", "trimEmpty", ParsePropertyImpl.BOOL));
-
-        addConfigOption(new Flag("markup", "onlyErrors", ParsePropertyImpl.INVBOOL));
-
-        addConfigOption(new Flag("char-encoding", null, ParsePropertyImpl.CHAR_ENCODING));
-        addConfigOption(new Flag("input-encoding", null, ParsePropertyImpl.CHAR_ENCODING));
-        addConfigOption(new Flag("output-encoding", null, ParsePropertyImpl.CHAR_ENCODING));
-
-        addConfigOption(new Flag("error-file", "errfile", ParsePropertyImpl.NAME));
-        addConfigOption(new Flag("slide-style", "slidestyle", ParsePropertyImpl.NAME));
         addConfigOption(new Flag("language", "language", ParsePropertyImpl.NAME));
-
+        addConfigOption(new Flag("ncr", "ncr", ParsePropertyImpl.BOOL));
+        // missing: output-bom
+        addConfigOption(new Flag("replace-color", "replaceColor", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("css-prefix", "cssPrefix", ParsePropertyImpl.CSS1SELECTOR));
         addConfigOption(new Flag("new-inline-tags", null, ParsePropertyImpl.TAGNAMES));
         addConfigOption(new Flag("new-blocklevel-tags", null, ParsePropertyImpl.TAGNAMES));
         addConfigOption(new Flag("new-empty-tags", null, ParsePropertyImpl.TAGNAMES));
         addConfigOption(new Flag("new-pre-tags", null, ParsePropertyImpl.TAGNAMES));
-
-        addConfigOption(new Flag("doctype", "docTypeStr", ParsePropertyImpl.DOCTYPE));
-
-        addConfigOption(new Flag("repeated-attributes", "duplicateAttrs", ParsePropertyImpl.REPEATED_ATTRIBUTES));
-
-        addConfigOption(new Flag("alt-text", "altText", ParsePropertyImpl.STRING));
-
-        addConfigOption(new Flag("indent", "indentContent", ParsePropertyImpl.INDENT));
-
-        addConfigOption(new Flag("css-prefix", "cssPrefix", ParsePropertyImpl.CSS1SELECTOR));
-
-        addConfigOption(new Flag("newline", null, ParsePropertyImpl.NEWLINE));
+        // missing: accessibility-check
+        // missing: vertical-space
+        // missing: punctuation-wrap
+        // missing: merge-divs
+        // missing: decorate-inferred-ul
+        // missing: preserve-entities
+        // missing: sort-attributes
+        // missing: merge-spans
+        // missing: anchor-as-name
+        
+        // options not found in Tidy
+        addConfigOption(new Flag("add-xml-pi", "xmlPi", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("only-errors", "onlyErrors", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("output-raw", "rawOut", ParsePropertyImpl.BOOL));
+        addConfigOption(new Flag("trim-empty-elements", "trimEmpty", ParsePropertyImpl.BOOL));
     }
 
     /**
