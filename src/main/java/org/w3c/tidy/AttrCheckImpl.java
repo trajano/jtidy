@@ -523,7 +523,7 @@ public final class AttrCheckImpl
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
         public void check(Lexer lexer, Node node, AttVal attval) {
-        	CheckAttrValidity(lexer, node, attval, VALID_VALUES);
+        	checkAttrValidity(lexer, node, attval, VALID_VALUES);
         }
     }
 
@@ -571,7 +571,7 @@ public final class AttrCheckImpl
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
         public void check(Lexer lexer, Node node, AttVal attval) {
-        	CheckAttrValidity(lexer, node, attval, VALID_VALUES);
+        	checkAttrValidity(lexer, node, attval, VALID_VALUES);
         }
     }
 
@@ -589,7 +589,7 @@ public final class AttrCheckImpl
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
         public void check(Lexer lexer, Node node, AttVal attval) {
-        	CheckAttrValidity(lexer, node, attval, VALID_VALUES);
+        	checkAttrValidity(lexer, node, attval, VALID_VALUES);
         }
     }
 
@@ -808,7 +808,7 @@ public final class AttrCheckImpl
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
         public void check(Lexer lexer, Node node, AttVal attval) {
-        	CheckAttrValidity(lexer, node, attval, VALID_VALUES);
+        	checkAttrValidity(lexer, node, attval, VALID_VALUES);
         }
     }
 
@@ -826,7 +826,7 @@ public final class AttrCheckImpl
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
         public void check(Lexer lexer, Node node, AttVal attval) {
-        	CheckAttrValidity(lexer, node, attval, VALID_VALUES);
+        	checkAttrValidity(lexer, node, attval, VALID_VALUES);
         }
     }
 
@@ -844,7 +844,7 @@ public final class AttrCheckImpl
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
         public void check(Lexer lexer, Node node, AttVal attval) {
-        	CheckAttrValidity(lexer, node, attval, VALID_VALUES);
+        	checkAttrValidity(lexer, node, attval, VALID_VALUES);
         }
     }
 
@@ -881,7 +881,7 @@ public final class AttrCheckImpl
 		}
     }
     
-    private static void CheckAttrValidity(final Lexer lexer, final Node node, final AttVal attval,
+    private static void checkAttrValidity(final Lexer lexer, final Node node, final AttVal attval,
             final String list[]) {
     	if (!attval.hasValue()) {
     		lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
@@ -906,11 +906,11 @@ public final class AttrCheckImpl
     	
 		public void check(final Lexer lexer, final Node node, final AttVal attval) {
 	        if (node.is(TagId.INPUT)) {
-	            CheckAttrValidity(lexer, node, attval, valuesINPUT);
+	            checkAttrValidity(lexer, node, attval, valuesINPUT);
 	        } else if (node.is(TagId.BUTTON)) {
-	            CheckAttrValidity(lexer, node, attval, valuesBUTTON);
+	            checkAttrValidity(lexer, node, attval, valuesBUTTON);
 	        } else if (node.is(TagId.UL)) {
-	            CheckAttrValidity(lexer, node, attval, valuesUL);
+	            checkAttrValidity(lexer, node, attval, valuesUL);
 	        } else if (node.is(TagId.OL)) {
 	            if (!attval.hasValue()) {
 	            	lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
