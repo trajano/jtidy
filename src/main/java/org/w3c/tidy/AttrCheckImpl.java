@@ -697,119 +697,99 @@ public final class AttrCheckImpl
         /**
          * valid html colors.
          */
-        private static final Map<String, String> COLORS = new HashMap<String, String>();
+        private static final Map<String, String> COLORS_BY_NAME = new HashMap<String, String>();
+        private static final Map<String, String> COLORS_BY_VALUE = new HashMap<String, String>();
+        
+        private static void addColor(final String name, final String value) {
+        	COLORS_BY_NAME.put(name, value);
+        	COLORS_BY_VALUE.put(value, name);
+        }
 
         static
         {
-            COLORS.put("black", "#000000");
-            COLORS.put("green", "#008000");
-            COLORS.put("silver", "#C0C0C0");
-            COLORS.put("lime", "#00FF00");
-            COLORS.put("gray", "#808080");
-            COLORS.put("olive", "#808000");
-            COLORS.put("white", "#FFFFFF");
-            COLORS.put("yellow", "#FFFF00");
-            COLORS.put("maroon", "#800000");
-            COLORS.put("navy", "#000080");
-            COLORS.put("red", "#FF0000");
-            COLORS.put("blue", "#0000FF");
-            COLORS.put("purple", "#800080");
-            COLORS.put("teal", "#008080");
-            COLORS.put("fuchsia", "#FF00FF");
-            COLORS.put("aqua", "#00FFFF");
+            addColor("black", "#000000");
+            addColor("green", "#008000");
+            addColor("silver", "#C0C0C0");
+            addColor("lime", "#00FF00");
+            addColor("gray", "#808080");
+            addColor("olive", "#808000");
+            addColor("white", "#FFFFFF");
+            addColor("yellow", "#FFFF00");
+            addColor("maroon", "#800000");
+            addColor("navy", "#000080");
+            addColor("red", "#FF0000");
+            addColor("blue", "#0000FF");
+            addColor("purple", "#800080");
+            addColor("teal", "#008080");
+            addColor("fuchsia", "#FF00FF");
+            addColor("aqua", "#00FFFF");
+        }
+        
+        private static String getColorCode(final String name) {
+        	return COLORS_BY_NAME.get(name.toLowerCase());
+        }
+        
+        private static String getColorName(final String code) {
+        	return COLORS_BY_VALUE.get(code.toUpperCase());
+        }
+        
+        /** Checks hexadecimal color value */
+        private static boolean isValidColorCode(final String color) {
+            if (color.length() != 6) {
+                return false;
+            }
+
+            // check if valid hex digits and letters
+            for (int i = 0; i < 6; i++) {
+                if (!TidyUtils.isxdigit(color.charAt(i))) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
-            boolean hexUppercase = true;
-            boolean invalid = false;
-            boolean found = false;
-
-            if (attval.value == null || attval.value.length() == 0)
-            {
+        public void check(Lexer lexer, Node node, AttVal attval) {
+            if (!attval.hasValue()) {
                 lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
                 return;
             }
 
+            boolean valid = false;
             String given = attval.value;
-
-            for (Map.Entry<String, String> color : COLORS.entrySet())
-            {
-                if (given.charAt(0) == '#')
-                {
-                    if (given.length() != 7)
-                    {
-                        lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
-                        invalid = true;
-                        break;
-                    }
-                    else if (given.equalsIgnoreCase(color.getValue()))
-                    {
-                        if (lexer.configuration.replaceColor)
-                        {
-                            attval.value = color.getKey();
-                        }
-                        found = true;
-                        break;
-                    }
-                }
-                else if (TidyUtils.isLetter(given.charAt(0)))
-                {
-                    if (given.equalsIgnoreCase(color.getKey()))
-                    {
-                        if (lexer.configuration.replaceColor)
-                        {
-                            attval.value = color.getKey();
-                        }
-                        found = true;
-                        break;
-                    }
-                }
-                else
-                {
-
-                    lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
-
-                    invalid = true;
-                    break;
-                }
+            
+            // 727851 - add hash to hash-less color values
+            if (given.length() > 0 && given.charAt(0) != '#' && (valid = isValidColorCode(given))) {
+            	String s = '#' + given;
+            	lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE_REPLACED);
+                given = attval.value = s;
             }
-            if (!found && !invalid)
-            {
-                if (given.charAt(0) == '#')
-                {
-                    // check if valid hex digits and letters
+            
+            if (!valid && given.length() > 0 && given.charAt(0) == '#') {
+            	valid = isValidColorCode(given.substring(1));
+            }
+            
+            if (valid && given.charAt(0) == '#' && lexer.configuration.replaceColor) {
+            	String newName = getColorName(given);
+            	if (newName != null) {
+            		given = attval.value = newName;
+            	}
+            }
+            
+            // if it is not a valid color code, it is a color name
+            if (!valid) {
+            	valid = getColorCode(given) != null;
+            }
 
-                    for (int i = 1; i < 7; ++i)
-                    {
-                        if (!TidyUtils.isDigit(given.charAt(i))
-                            && ("abcdef".indexOf(Character.toLowerCase(given.charAt(i))) == -1))
-                        {
-                            lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
-                            invalid = true;
-                            break;
-                        }
-                    }
-                    // convert hex letters to uppercase
-                    if (!invalid && hexUppercase)
-                    {
-                        for (int i = 1; i < 7; ++i)
-                        {
-                            attval.value = given.toUpperCase();
-                        }
-                    }
-                }
-
-                else
-                {
-                    // we could search for more colors and mark the file as HTML Proprietary, but I don't thinks
-                    // it's worth the effort, so values not in HTML 4.01 are invalid
-                    lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
-                    invalid = true;
-                }
+            if (valid && given.charAt(0) == '#') {
+            	attval.value = attval.value.toUpperCase();
+            } else {
+            	attval.value = attval.value.toLowerCase();
+            }
+            if (!valid) {
+            	lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
             }
         }
     }
