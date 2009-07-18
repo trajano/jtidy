@@ -795,97 +795,56 @@ public final class AttrCheckImpl
     }
 
     /**
-     * AttrCheck implementation for checking valuetype.
+     * AttrCheck implementation for checking valuetype attribute for element param.
      */
-    public static class CheckVType implements AttrCheck
-    {
+    public static class CheckVType implements AttrCheck {
 
         /**
          * valid values for this attribute.
          */
-        private static final String[] VALID_VALUES = new String[]{"data", "object", "ref"};
+        private static final String[] VALID_VALUES = {"data", "object", "ref"};
 
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
-            if (attval.value == null)
-            {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
-                return;
-            }
-
-            attval.checkLowerCaseAttrValue(lexer, node);
-
-            if (!TidyUtils.isInValuesIgnoreCase(VALID_VALUES, attval.value))
-            {
-                lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
-            }
+        public void check(Lexer lexer, Node node, AttVal attval) {
+        	CheckAttrValidity(lexer, node, attval, VALID_VALUES);
         }
     }
 
     /**
      * AttrCheck implementation for checking scroll.
      */
-    public static class CheckScroll implements AttrCheck
-    {
+    public static class CheckScroll implements AttrCheck {
 
         /**
          * valid values for this attribute.
          */
-        private static final String[] VALID_VALUES = new String[]{"no", "yes", "auto"};
+        private static final String[] VALID_VALUES = {"no", "auto", "yes"};
 
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
-
-            if (attval.value == null)
-            {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
-                return;
-            }
-
-            attval.checkLowerCaseAttrValue(lexer, node);
-
-            if (!TidyUtils.isInValuesIgnoreCase(VALID_VALUES, attval.value))
-            {
-                lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
-            }
+        public void check(Lexer lexer, Node node, AttVal attval) {
+        	CheckAttrValidity(lexer, node, attval, VALID_VALUES);
         }
     }
 
     /**
      * AttrCheck implementation for checking dir.
      */
-    public static class CheckTextDir implements AttrCheck
-    {
+    public static class CheckTextDir implements AttrCheck {
 
         /**
          * valid values for this attribute.
          */
-        private static final String[] VALID_VALUES = new String[]{"rtl", "ltr"};
+        private static final String[] VALID_VALUES = {"rtl", "ltr"};
 
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
-
-            if (attval.value == null)
-            {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
-                return;
-            }
-
-            attval.checkLowerCaseAttrValue(lexer, node);
-
-            if (!TidyUtils.isInValuesIgnoreCase(VALID_VALUES, attval.value))
-            {
-                lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
-            }
+        public void check(Lexer lexer, Node node, AttVal attval) {
+        	CheckAttrValidity(lexer, node, attval, VALID_VALUES);
         }
     }
 
