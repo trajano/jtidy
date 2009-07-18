@@ -851,25 +851,19 @@ public final class AttrCheckImpl
     /**
      * AttrCheck implementation for checking lang and xml:lang.
      */
-    public static class CheckLang implements AttrCheck
-    {
+    public static class CheckLang implements AttrCheck {
 
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
-        {
-
-            if ("lang".equals(attval.attribute))
-            {
-                lexer.constrainVersion(~VERS_XHTML11);
-            }
-
-            if (attval.value == null)
-            {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
-                return;
-            }
+        public void check(Lexer lexer, Node node, AttVal attval) {
+        	// empty xml:lang is allowed through XML 1.0 SE errata
+        	if (!attval.hasValue() && !attval.is(AttrId.XML_LANG)) {
+        		if (lexer.configuration.accessibilityCheckLevel == 0) {
+        			lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+        		}
+        		return;
+        	}
         }
     }
 
