@@ -703,6 +703,8 @@ public class Configuration implements Serializable
      * Avoid mapping values > 127 to entities.
      */
     protected boolean rawOut;
+    
+    protected int accessibilityCheckLevel = 0;
 
     /**
      * configuration properties.
