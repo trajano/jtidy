@@ -244,8 +244,7 @@ public final class AttrCheckImpl
     /**
      * utility class, don't instantiate.
      */
-    private AttrCheckImpl()
-    {
+    private AttrCheckImpl() {
         // empty private constructor
     }
 
@@ -318,6 +317,20 @@ public final class AttrCheckImpl
         }
     }
 
+    /* RFC 2396, section 4.2 states:
+	    "[...] in the case of HTML's FORM element, [...] an
+	    empty URI reference represents the base URI of the
+	    current document and should be replaced by that URI
+	    when transformed into a request."
+	 */
+	public static class CheckAction implements AttrCheck {
+		public void check(final Lexer lexer, final Node node, final AttVal attval) {
+			if (attval.hasValue()) {
+				URL.check(lexer, node, attval);
+			}
+		}
+	}
+
     /**
      * AttrCheck implementation for checking scripts.
      */
@@ -328,6 +341,94 @@ public final class AttrCheckImpl
          */
         public void check(Lexer lexer, Node node, AttVal attval) {
             // not implemented
+        }
+    }
+
+    private static void checkAttrValidity(final Lexer lexer, final Node node, final AttVal attval,
+            final String list[]) {
+    	if (!attval.hasValue()) {
+    		lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+    		return;
+    	}
+
+    	attval.checkLowerCaseAttrValue(lexer, node);
+
+    	if (!attval.valueIsAmong(list)) {
+    		lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+    	}
+    }
+
+    /**
+     * AttrCheck implementation for checking the "name" attribute.
+     */
+    public static class CheckName implements AttrCheck {
+
+        /**
+         * @see AttrCheck#check(Lexer, Node, AttVal)
+         */
+        public void check(Lexer lexer, Node node, AttVal attval) {
+            if (!attval.hasValue()) {
+                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+                return;
+            }
+            if (node.isAnchorElement()) {
+            	if (lexer.configuration.xmlOut && !TidyUtils.isValidNMTOKEN(attval.value)) {
+            		lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+            	}
+            	final Node old = lexer.configuration.tt.getNodeByAnchor(attval.value);
+                if (old != null && old != node) {
+                    lexer.report.attrError(lexer, node, attval, Report.ANCHOR_NOT_UNIQUE);
+                } else {
+                    lexer.configuration.tt.addAnchor(attval.value, node);
+                }
+            }
+        }
+    }
+
+    /**
+     * AttrCheck implementation for checking ids.
+     */
+    public static class CheckId implements AttrCheck {
+
+        /**
+         * @see AttrCheck#check(Lexer, Node, AttVal)
+         */
+        public void check(Lexer lexer, Node node, AttVal attval) {
+            if (!attval.hasValue()) {
+                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+                return;
+            }
+            if (!TidyUtils.isValidHTMLID(attval.value)) {
+                if (lexer.isvoyager && TidyUtils.isValidXMLID(attval.value)) {
+                    lexer.report.attrError(lexer, node, attval, Report.XML_ID_SYNTAX);
+                } else {
+                	lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+                }
+            }
+
+            final Node old = lexer.configuration.tt.getNodeByAnchor(attval.value);
+            if (old != null && old != node) {
+            	lexer.report.attrError(lexer, node, attval, Report.ANCHOR_NOT_UNIQUE);
+            } else {
+            	lexer.configuration.tt.addAnchor(attval.value, node);
+            }
+        }
+    }
+
+    /**
+     * AttrCheck implementation for checking boolean attributes.
+     */
+    public static class CheckBool implements AttrCheck {
+
+        /**
+         * @see AttrCheck#check(Lexer, Node, AttVal)
+         */
+        public void check(Lexer lexer, Node node, AttVal attval) {
+            if (!attval.hasValue()) {
+                return;
+            }
+
+            attval.checkLowerCaseAttrValue(lexer, node);
         }
     }
 
@@ -420,23 +521,6 @@ public final class AttrCheckImpl
             } else {
                 lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
             }
-        }
-    }
-
-    /**
-     * AttrCheck implementation for checking boolean attributes.
-     */
-    public static class CheckBool implements AttrCheck {
-
-        /**
-         * @see AttrCheck#check(Lexer, Node, AttVal)
-         */
-        public void check(Lexer lexer, Node node, AttVal attval) {
-            if (!attval.hasValue()) {
-                return;
-            }
-
-            attval.checkLowerCaseAttrValue(lexer, node);
         }
     }
 
@@ -632,63 +716,6 @@ public final class AttrCheckImpl
     }
 
     /**
-     * AttrCheck implementation for checking ids.
-     */
-    public static class CheckId implements AttrCheck {
-
-        /**
-         * @see AttrCheck#check(Lexer, Node, AttVal)
-         */
-        public void check(Lexer lexer, Node node, AttVal attval) {
-            if (!attval.hasValue()) {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
-                return;
-            }
-            if (!TidyUtils.isValidHTMLID(attval.value)) {
-                if (lexer.isvoyager && TidyUtils.isValidXMLID(attval.value)) {
-                    lexer.report.attrError(lexer, node, attval, Report.XML_ID_SYNTAX);
-                } else {
-                	lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
-                }
-            }
-
-            final Node old = lexer.configuration.tt.getNodeByAnchor(attval.value);
-            if (old != null && old != node) {
-            	lexer.report.attrError(lexer, node, attval, Report.ANCHOR_NOT_UNIQUE);
-            } else {
-            	lexer.configuration.tt.addAnchor(attval.value, node);
-            }
-        }
-    }
-
-    /**
-     * AttrCheck implementation for checking the "name" attribute.
-     */
-    public static class CheckName implements AttrCheck {
-
-        /**
-         * @see AttrCheck#check(Lexer, Node, AttVal)
-         */
-        public void check(Lexer lexer, Node node, AttVal attval) {
-            if (!attval.hasValue()) {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
-                return;
-            }
-            if (node.isAnchorElement()) {
-            	if (lexer.configuration.xmlOut && !TidyUtils.isValidNMTOKEN(attval.value)) {
-            		lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
-            	}
-            	final Node old = lexer.configuration.tt.getNodeByAnchor(attval.value);
-                if (old != null && old != node) {
-                    lexer.report.attrError(lexer, node, attval, Report.ANCHOR_NOT_UNIQUE);
-                } else {
-                    lexer.configuration.tt.addAnchor(attval.value, node);
-                }
-            }
-        }
-    }
-
-    /**
      * AttrCheck implementation for checking colors.
      */
     public static class CheckColor implements AttrCheck
@@ -867,34 +894,6 @@ public final class AttrCheckImpl
         }
     }
 
-    /* RFC 2396, section 4.2 states:
-	    "[...] in the case of HTML's FORM element, [...] an
-	    empty URI reference represents the base URI of the
-	    current document and should be replaced by that URI
-	    when transformed into a request."
-     */
-    public static class CheckAction implements AttrCheck {
-		public void check(final Lexer lexer, final Node node, final AttVal attval) {
-			if (attval.hasValue()) {
-				URL.check(lexer, node, attval);
-			}
-		}
-    }
-    
-    private static void checkAttrValidity(final Lexer lexer, final Node node, final AttVal attval,
-            final String list[]) {
-    	if (!attval.hasValue()) {
-    		lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
-    		return;
-    	}
-
-    	attval.checkLowerCaseAttrValue(lexer, node);
-
-    	if (!attval.valueIsAmong(list)) {
-    		lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
-    	}
-    }
-    
     /** Checks type attribute */
     public static class CheckType implements AttrCheck {
     	
