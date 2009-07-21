@@ -296,7 +296,7 @@ public final class TagTable
     {
         Dict np;
 
-        if (configuration != null && configuration.xmlTags)
+        if (configuration != null && configuration.isXmlTags())
         {
             node.tag = XML_TAGS;
             return true;

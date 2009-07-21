@@ -168,14 +168,14 @@ public final class TagCheckImpl
             if (xmlns != null && XHTML_NAMESPACE.equals(xmlns.value))
             {
                 lexer.isvoyager = true;
-                if (!lexer.configuration.htmlOut) // Unless user has specified plain HTML output,
+                if (!lexer.configuration.isHtmlOut()) // Unless user has specified plain HTML output,
                 {
-                    lexer.configuration.xHTML = true; // output format will be XHTML.
+                    lexer.configuration.setXHTML(true); // output format will be XHTML.
                 }
                 // adjust other config options, just as in Configuration
-                lexer.configuration.xmlOut = true;
-                lexer.configuration.upperCaseTags = false;
-                lexer.configuration.upperCaseAttrs = false;
+                lexer.configuration.setXmlOut(true);
+                lexer.configuration.setUpperCaseTags(false);
+                lexer.configuration.setUpperCaseAttrs(false);
             }
 
             for (attval = node.attributes; attval != null; attval = attval.next)
@@ -257,7 +257,7 @@ public final class TagCheckImpl
             }
 
             /* convert <table border> to <table border="1"> */
-            if (lexer.configuration.xmlOut)
+            if (lexer.configuration.isXmlOut())
             {
                 attval = node.getAttrByName("border");
                 if (attval != null)
@@ -368,9 +368,9 @@ public final class TagCheckImpl
                 lexer.badAccess |= Report.MISSING_IMAGE_ALT;
                 AttVal missingAlt = new AttVal(null, null, '"', "alt", "");
                 lexer.report.attrError(lexer, node, missingAlt, Report.MISSING_ATTRIBUTE);
-                if (lexer.configuration.altText != null)
+                if (lexer.configuration.getAltText() != null)
                 {
-                    node.addAttribute("alt", lexer.configuration.altText);
+                    node.addAttribute("alt", lexer.configuration.getAltText());
                 }
             }
 

@@ -411,7 +411,7 @@ public class Node implements Cloneable
                     {
                         AttVal temp;
 
-                        if ("class".equalsIgnoreCase(current.attribute) && lexer.configuration.joinClasses)
+                        if ("class".equalsIgnoreCase(current.attribute) && lexer.configuration.isJoinClasses())
                         {
                             // concatenate classes
                             current.value = current.value + " " + attval.value;
@@ -432,7 +432,7 @@ public class Node implements Cloneable
                             removeAttribute(attval);
                             attval = temp;
                         }
-                        else if ("style".equalsIgnoreCase(current.attribute) && lexer.configuration.joinStyles)
+                        else if ("style".equalsIgnoreCase(current.attribute) && lexer.configuration.isJoinStyles())
                         {
                             // concatenate styles
 
@@ -474,7 +474,7 @@ public class Node implements Cloneable
                             attval = temp;
 
                         }
-                        else if (lexer.configuration.duplicateAttrs == Configuration.KEEP_LAST)
+                        else if (lexer.configuration.getDuplicateAttrs() == Configuration.KEEP_LAST)
                         {
                             temp = current.next;
 
@@ -785,7 +785,7 @@ public class Node implements Cloneable
     {
         // don't trim if user explicitely set trim-empty-elements to false
         // empty element can be needed in css sites
-        if (lexer.configuration.trimEmpty)
+        if (lexer.configuration.isTrimEmpty())
         {
             if (lexer.canPrune(element))
             {

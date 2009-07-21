@@ -84,7 +84,7 @@ public final class StreamInFactory
     {
         try
         {
-            return new StreamInJavaImpl(stream, config.getInCharEncodingName(), config.tabsize);
+            return new StreamInJavaImpl(stream, config.getInCharEncodingName(), config.getTabsize());
         }
         catch (UnsupportedEncodingException e)
         {
@@ -100,6 +100,6 @@ public final class StreamInFactory
      */
     public static StreamIn getStreamIn(Configuration config, Reader reader)
     {
-        return new StreamInJavaImpl(reader, config.tabsize);
+        return new StreamInJavaImpl(reader, config.getTabsize());
     }
 }

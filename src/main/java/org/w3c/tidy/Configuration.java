@@ -321,32 +321,32 @@ public class Configuration implements Serializable
     /**
      * default indentation.
      */
-    protected int spaces = 2;
+    private int spaces = 2;
 
     /**
      * default wrap margin (68).
      */
-    protected int wraplen = 68;
+    private int wraplen = 68;
 
     /**
      * default tab size (8).
      */
-    protected int tabsize = 8;
+    private int tabsize = 8;
 
     /**
      * see doctype property.
      */
-    protected int docTypeMode = DOCTYPE_AUTO;
+    private int docTypeMode = DOCTYPE_AUTO;
 
     /**
      * Keep first or last duplicate attribute.
      */
-    protected int duplicateAttrs = KEEP_LAST;
+    private int duplicateAttrs = KEEP_LAST;
 
     /**
      * default text for alt attribute.
      */
-    protected String altText;
+    private String altText;
 
     /**
      * style sheet for slides.
@@ -357,317 +357,317 @@ public class Configuration implements Serializable
     /**
      * RJ language property.
      */
-    protected String language; // #431953
+    private String language; // #431953
 
     /**
      * user specified doctype.
      */
-    protected String docTypeStr;
+    private String docTypeStr;
 
     /**
      * file name to write errors to.
      */
-    protected String errfile;
+    private String errfile;
 
     /**
      * if true then output tidied markup.
      */
-    protected boolean writeback;
+    private boolean writeback;
 
     /**
      * if true normal output is suppressed.
      */
-    protected boolean onlyErrors;
+    private boolean onlyErrors;
 
     /**
      * however errors are always shown.
      */
-    protected boolean showWarnings = true;
+    private boolean showWarnings = true;
 
     /**
      * no 'Parsing X', guessed DTD or summary.
      */
-    protected boolean quiet;
+    private boolean quiet;
 
     /**
      * indent content of appropriate tags.
      */
-    protected boolean indentContent;
+    private boolean indentContent;
 
     /**
      * does text/block level content effect indentation.
      */
-    protected boolean smartIndent;
+    private boolean smartIndent;
 
     /**
      * suppress optional end tags.
      */
-    protected boolean hideEndTags;
+    private boolean hideEndTags;
 
     /**
      * treat input as XML.
      */
-    protected boolean xmlTags;
+    private boolean xmlTags;
 
     /**
      * create output as XML.
      */
-    protected boolean xmlOut;
+    private boolean xmlOut;
 
     /**
      * output extensible HTML.
      */
-    protected boolean xHTML;
+    private boolean xHTML;
 
     /**
      * output plain-old HTML, even for XHTML input. Yes means set explicitly.
      */
-    protected boolean htmlOut;
+    private boolean htmlOut;
 
     /**
      * add <code>&lt;?xml?&gt;</code> for XML docs.
      */
-    protected boolean xmlPi;
+    private boolean xmlPi;
 
     /**
      * output tags in upper not lower case.
      */
-    protected boolean upperCaseTags;
+    private boolean upperCaseTags;
 
     /**
      * output attributes in upper not lower case.
      */
-    protected boolean upperCaseAttrs;
+    private boolean upperCaseAttrs;
 
     /**
      * remove presentational clutter.
      */
-    protected boolean makeClean;
+    private boolean makeClean;
 
     /**
      * Make bare HTML: remove Microsoft cruft.
      */
-    protected boolean makeBare;
+    private boolean makeBare;
 
     /**
      * replace i by em and b by strong.
      */
-    protected boolean logicalEmphasis;
+    private boolean logicalEmphasis;
 
     /**
      * discard presentation tags.
      */
-    protected boolean dropFontTags;
+    private boolean dropFontTags;
 
     /**
      * discard proprietary attributes.
      */
-    protected boolean dropProprietaryAttributes;
+    private boolean dropProprietaryAttributes;
 
     /**
      * discard empty p elements.
      */
-    protected boolean dropEmptyParas = true;
+    private boolean dropEmptyParas = true;
 
     /**
      * fix comments with adjacent hyphens.
      */
-    protected boolean fixComments = true;
+    private boolean fixComments = true;
 
     /**
      * trim empty elements.
      */
-    protected boolean trimEmpty = true;
+    private boolean trimEmpty = true;
 
     /**
      * o/p newline before br or not?
      */
-    protected boolean breakBeforeBR;
+    private boolean breakBeforeBR;
 
     /**
      * create slides on each h2 element.
      */
-    protected boolean burstSlides;
+    private boolean burstSlides;
 
     /**
      * use numeric entities.
      */
-    protected boolean numEntities;
+    private boolean numEntities;
 
     /**
      * output " marks as &quot;.
      */
-    protected boolean quoteMarks;
+    private boolean quoteMarks;
 
     /**
      * output non-breaking space as entity.
      */
-    protected boolean quoteNbsp = true;
+    private boolean quoteNbsp = true;
 
     /**
      * output naked ampersand as &amp;.
      */
-    protected boolean quoteAmpersand = true;
+    private boolean quoteAmpersand = true;
 
     /**
      * wrap within attribute values.
      */
-    protected boolean wrapAttVals;
+    private boolean wrapAttVals;
 
     /**
      * wrap within JavaScript string literals.
      */
-    protected boolean wrapScriptlets;
+    private boolean wrapScriptlets;
 
     /**
      * wrap within CDATA section tags.
      */
-    protected boolean wrapSection = true;
+    private boolean wrapSection = true;
 
     /**
      * wrap within ASP pseudo elements.
      */
-    protected boolean wrapAsp = true;
+    private boolean wrapAsp = true;
 
     /**
      * wrap within JSTE pseudo elements.
      */
-    protected boolean wrapJste = true;
+    private boolean wrapJste = true;
 
     /**
      * wrap within PHP pseudo elements.
      */
-    protected boolean wrapPhp = true;
+    private boolean wrapPhp = true;
 
     /**
      * fix URLs by replacing \ with /.
      */
-    protected boolean fixBackslash = true;
+    private boolean fixBackslash = true;
 
     /**
      * newline+indent before each attribute.
      */
-    protected boolean indentAttributes;
+    private boolean indentAttributes;
 
     /**
      * If set to yes PIs must end with <code>?&gt;</code>.
      */
-    protected boolean xmlPIs;
+    private boolean xmlPIs;
 
     /**
      * if set to yes adds xml:space attr as needed.
      */
-    protected boolean xmlSpace;
+    private boolean xmlSpace;
 
     /**
      * if yes text at body is wrapped in p's.
      */
-    protected boolean encloseBodyText;
+    private boolean encloseBodyText;
 
     /**
      * if yes text in blocks is wrapped in p's.
      */
-    protected boolean encloseBlockText;
+    private boolean encloseBlockText;
 
     /**
      * if yes last modied time is preserved.
      */
-    protected boolean keepFileTimes = true;
+    private boolean keepFileTimes = true;
 
     /**
      * draconian cleaning for Word2000.
      */
-    protected boolean word2000;
+    private boolean word2000;
 
     /**
      * add meta element indicating tidied doc.
      */
-    protected boolean tidyMark = true;
+    private boolean tidyMark = true;
 
     /**
      * if true format error output for GNU Emacs.
      */
-    protected boolean emacs;
+    private boolean emacs;
 
     /**
      * if true attributes may use newlines.
      */
-    protected boolean literalAttribs;
+    private boolean literalAttribs;
 
     /**
      * output BODY content only.
      */
-    protected boolean bodyOnly;
+    private boolean bodyOnly;
 
     /**
      * properly escape URLs.
      */
-    protected boolean fixUri = true;
+    private boolean fixUri = true;
 
     /**
      * folds known attribute values to lower case.
      */
-    protected boolean lowerLiterals = true;
+    private boolean lowerLiterals = true;
 
     /**
      * replace hex color attribute values with names.
      */
-    protected boolean replaceColor;
+    private boolean replaceColor;
 
     /**
      * hides all (real) comments in output.
      */
-    protected boolean hideComments;
+    private boolean hideComments;
 
     /**
      * indent CDATA sections.
      */
-    protected boolean indentCdata;
+    private boolean indentCdata;
 
     /**
      * output document even if errors were found.
      */
-    protected boolean forceOutput;
+    private boolean forceOutput;
 
     /**
      * number of errors to put out.
      */
-    protected int showErrors = 6;
+    private int showErrors = 6;
 
     /**
      * convert quotes and dashes to nearest ASCII char.
      */
-    protected boolean asciiChars = true;
+    private boolean asciiChars = true;
 
     /**
      * join multiple class attributes.
      */
-    protected boolean joinClasses;
+    private boolean joinClasses;
 
     /**
      * join multiple style attributes.
      */
-    protected boolean joinStyles = true;
+    private boolean joinStyles = true;
 
     /**
      * replace CDATA sections with escaped text.
      */
-    protected boolean escapeCdata = true;
+    private boolean escapeCdata = true;
 
     /**
      * allow numeric character references.
      */
-    protected boolean ncr = true; // #431953
+    private boolean ncr = true; // #431953
 
     /**
      * CSS class naming for -clean option.
      */
-    protected String cssPrefix;
+    private String cssPrefix;
 
     /**
      * char encoding used when replacing illegal SGML chars, regardless of specified encoding.
      */
-    protected String replacementCharEncoding = "WIN1252"; // by default
+    private String replacementCharEncoding = "WIN1252"; // by default
 
     /**
      * TagTable associated with this Configuration.
@@ -682,12 +682,12 @@ public class Configuration implements Serializable
     /**
      * track what types of tags user has defined to eliminate unnecessary searches.
      */
-    protected int definedTags;
+    private int definedTags;
 
     /**
      * bytes for the newline marker.
      */
-    protected char[] newline = (System.getProperty("line.separator")).toCharArray();
+    private char[] newline = (System.getProperty("line.separator")).toCharArray();
 
     /**
      * Input character encoding (defaults to "ISO8859_1").
@@ -702,9 +702,9 @@ public class Configuration implements Serializable
     /**
      * Avoid mapping values > 127 to entities.
      */
-    protected boolean rawOut;
+    private boolean rawOut;
     
-    protected int accessibilityCheckLevel = 0;
+    private int accessibilityCheckLevel = 0;
 
     /**
      * configuration properties.
@@ -1166,4 +1166,587 @@ public class Configuration implements Serializable
         return null;
     }
 
+	protected void setSpaces(int spaces) {
+		this.spaces = spaces;
+	}
+
+	protected int getSpaces() {
+		return spaces;
+	}
+
+	protected void setWraplen(int wraplen) {
+		this.wraplen = wraplen;
+	}
+
+	protected int getWraplen() {
+		return wraplen;
+	}
+
+	protected void setTabsize(int tabsize) {
+		this.tabsize = tabsize;
+	}
+
+	protected int getTabsize() {
+		return tabsize;
+	}
+
+	protected void setDocTypeMode(int docTypeMode) {
+		this.docTypeMode = docTypeMode;
+	}
+
+	protected int getDocTypeMode() {
+		return docTypeMode;
+	}
+
+	protected void setDuplicateAttrs(int duplicateAttrs) {
+		this.duplicateAttrs = duplicateAttrs;
+	}
+
+	protected int getDuplicateAttrs() {
+		return duplicateAttrs;
+	}
+
+	protected void setAltText(String altText) {
+		this.altText = altText;
+	}
+
+	protected String getAltText() {
+		return altText;
+	}
+
+	protected void setLanguage(String language) {
+		this.language = language;
+	}
+
+	protected String getLanguage() {
+		return language;
+	}
+
+	protected void setDocTypeStr(String docTypeStr) {
+		this.docTypeStr = docTypeStr;
+	}
+
+	protected String getDocTypeStr() {
+		return docTypeStr;
+	}
+
+	protected void setErrfile(String errfile) {
+		this.errfile = errfile;
+	}
+
+	protected String getErrfile() {
+		return errfile;
+	}
+
+	protected void setWriteback(boolean writeback) {
+		this.writeback = writeback;
+	}
+
+	protected boolean isWriteback() {
+		return writeback;
+	}
+
+	protected void setOnlyErrors(boolean onlyErrors) {
+		this.onlyErrors = onlyErrors;
+	}
+
+	protected boolean isOnlyErrors() {
+		return onlyErrors;
+	}
+
+	protected void setShowWarnings(boolean showWarnings) {
+		this.showWarnings = showWarnings;
+	}
+
+	protected boolean isShowWarnings() {
+		return showWarnings;
+	}
+
+	protected void setQuiet(boolean quiet) {
+		this.quiet = quiet;
+	}
+
+	protected boolean isQuiet() {
+		return quiet;
+	}
+
+	protected void setIndentContent(boolean indentContent) {
+		this.indentContent = indentContent;
+	}
+
+	protected boolean isIndentContent() {
+		return indentContent;
+	}
+
+	protected void setSmartIndent(boolean smartIndent) {
+		this.smartIndent = smartIndent;
+	}
+
+	protected boolean isSmartIndent() {
+		return smartIndent;
+	}
+
+	protected void setHideEndTags(boolean hideEndTags) {
+		this.hideEndTags = hideEndTags;
+	}
+
+	protected boolean isHideEndTags() {
+		return hideEndTags;
+	}
+
+	protected void setXmlTags(boolean xmlTags) {
+		this.xmlTags = xmlTags;
+	}
+
+	protected boolean isXmlTags() {
+		return xmlTags;
+	}
+
+	protected void setXmlOut(boolean xmlOut) {
+		this.xmlOut = xmlOut;
+	}
+
+	protected boolean isXmlOut() {
+		return xmlOut;
+	}
+
+	protected void setXHTML(boolean xHTML) {
+		this.xHTML = xHTML;
+	}
+
+	protected boolean isXHTML() {
+		return xHTML;
+	}
+
+	protected void setHtmlOut(boolean htmlOut) {
+		this.htmlOut = htmlOut;
+	}
+
+	protected boolean isHtmlOut() {
+		return htmlOut;
+	}
+
+	protected void setXmlPi(boolean xmlPi) {
+		this.xmlPi = xmlPi;
+	}
+
+	protected boolean isXmlPi() {
+		return xmlPi;
+	}
+
+	protected void setUpperCaseTags(boolean upperCaseTags) {
+		this.upperCaseTags = upperCaseTags;
+	}
+
+	protected boolean isUpperCaseTags() {
+		return upperCaseTags;
+	}
+
+	protected void setUpperCaseAttrs(boolean upperCaseAttrs) {
+		this.upperCaseAttrs = upperCaseAttrs;
+	}
+
+	protected boolean isUpperCaseAttrs() {
+		return upperCaseAttrs;
+	}
+
+	protected void setMakeClean(boolean makeClean) {
+		this.makeClean = makeClean;
+	}
+
+	protected boolean isMakeClean() {
+		return makeClean;
+	}
+
+	protected void setMakeBare(boolean makeBare) {
+		this.makeBare = makeBare;
+	}
+
+	protected boolean isMakeBare() {
+		return makeBare;
+	}
+
+	protected void setLogicalEmphasis(boolean logicalEmphasis) {
+		this.logicalEmphasis = logicalEmphasis;
+	}
+
+	protected boolean isLogicalEmphasis() {
+		return logicalEmphasis;
+	}
+
+	protected void setDropFontTags(boolean dropFontTags) {
+		this.dropFontTags = dropFontTags;
+	}
+
+	protected boolean isDropFontTags() {
+		return dropFontTags;
+	}
+
+	protected void setDropProprietaryAttributes(boolean dropProprietaryAttributes) {
+		this.dropProprietaryAttributes = dropProprietaryAttributes;
+	}
+
+	protected boolean isDropProprietaryAttributes() {
+		return dropProprietaryAttributes;
+	}
+
+	protected void setDropEmptyParas(boolean dropEmptyParas) {
+		this.dropEmptyParas = dropEmptyParas;
+	}
+
+	protected boolean isDropEmptyParas() {
+		return dropEmptyParas;
+	}
+
+	protected void setFixComments(boolean fixComments) {
+		this.fixComments = fixComments;
+	}
+
+	protected boolean isFixComments() {
+		return fixComments;
+	}
+
+	protected void setTrimEmpty(boolean trimEmpty) {
+		this.trimEmpty = trimEmpty;
+	}
+
+	protected boolean isTrimEmpty() {
+		return trimEmpty;
+	}
+
+	protected void setBreakBeforeBR(boolean breakBeforeBR) {
+		this.breakBeforeBR = breakBeforeBR;
+	}
+
+	protected boolean isBreakBeforeBR() {
+		return breakBeforeBR;
+	}
+
+	protected void setBurstSlides(boolean burstSlides) {
+		this.burstSlides = burstSlides;
+	}
+
+	protected boolean isBurstSlides() {
+		return burstSlides;
+	}
+
+	protected void setNumEntities(boolean numEntities) {
+		this.numEntities = numEntities;
+	}
+
+	protected boolean isNumEntities() {
+		return numEntities;
+	}
+
+	protected void setQuoteMarks(boolean quoteMarks) {
+		this.quoteMarks = quoteMarks;
+	}
+
+	protected boolean isQuoteMarks() {
+		return quoteMarks;
+	}
+
+	protected void setQuoteNbsp(boolean quoteNbsp) {
+		this.quoteNbsp = quoteNbsp;
+	}
+
+	protected boolean isQuoteNbsp() {
+		return quoteNbsp;
+	}
+
+	protected void setQuoteAmpersand(boolean quoteAmpersand) {
+		this.quoteAmpersand = quoteAmpersand;
+	}
+
+	protected boolean isQuoteAmpersand() {
+		return quoteAmpersand;
+	}
+
+	protected void setWrapAttVals(boolean wrapAttVals) {
+		this.wrapAttVals = wrapAttVals;
+	}
+
+	protected boolean isWrapAttVals() {
+		return wrapAttVals;
+	}
+
+	protected void setWrapScriptlets(boolean wrapScriptlets) {
+		this.wrapScriptlets = wrapScriptlets;
+	}
+
+	protected boolean isWrapScriptlets() {
+		return wrapScriptlets;
+	}
+
+	protected void setWrapSection(boolean wrapSection) {
+		this.wrapSection = wrapSection;
+	}
+
+	protected boolean isWrapSection() {
+		return wrapSection;
+	}
+
+	protected void setWrapAsp(boolean wrapAsp) {
+		this.wrapAsp = wrapAsp;
+	}
+
+	protected boolean isWrapAsp() {
+		return wrapAsp;
+	}
+
+	protected void setWrapJste(boolean wrapJste) {
+		this.wrapJste = wrapJste;
+	}
+
+	protected boolean isWrapJste() {
+		return wrapJste;
+	}
+
+	protected void setWrapPhp(boolean wrapPhp) {
+		this.wrapPhp = wrapPhp;
+	}
+
+	protected boolean isWrapPhp() {
+		return wrapPhp;
+	}
+
+	protected void setFixBackslash(boolean fixBackslash) {
+		this.fixBackslash = fixBackslash;
+	}
+
+	protected boolean isFixBackslash() {
+		return fixBackslash;
+	}
+
+	protected void setIndentAttributes(boolean indentAttributes) {
+		this.indentAttributes = indentAttributes;
+	}
+
+	protected boolean isIndentAttributes() {
+		return indentAttributes;
+	}
+
+	protected void setXmlPIs(boolean xmlPIs) {
+		this.xmlPIs = xmlPIs;
+	}
+
+	protected boolean isXmlPIs() {
+		return xmlPIs;
+	}
+
+	protected void setXmlSpace(boolean xmlSpace) {
+		this.xmlSpace = xmlSpace;
+	}
+
+	protected boolean isXmlSpace() {
+		return xmlSpace;
+	}
+
+	protected void setEncloseBodyText(boolean encloseBodyText) {
+		this.encloseBodyText = encloseBodyText;
+	}
+
+	protected boolean isEncloseBodyText() {
+		return encloseBodyText;
+	}
+
+	protected void setEncloseBlockText(boolean encloseBlockText) {
+		this.encloseBlockText = encloseBlockText;
+	}
+
+	protected boolean isEncloseBlockText() {
+		return encloseBlockText;
+	}
+
+	protected void setKeepFileTimes(boolean keepFileTimes) {
+		this.keepFileTimes = keepFileTimes;
+	}
+
+	protected boolean isKeepFileTimes() {
+		return keepFileTimes;
+	}
+
+	protected void setWord2000(boolean word2000) {
+		this.word2000 = word2000;
+	}
+
+	protected boolean isWord2000() {
+		return word2000;
+	}
+
+	protected void setTidyMark(boolean tidyMark) {
+		this.tidyMark = tidyMark;
+	}
+
+	protected boolean isTidyMark() {
+		return tidyMark;
+	}
+
+	protected void setEmacs(boolean emacs) {
+		this.emacs = emacs;
+	}
+
+	protected boolean isEmacs() {
+		return emacs;
+	}
+
+	protected void setLiteralAttribs(boolean literalAttribs) {
+		this.literalAttribs = literalAttribs;
+	}
+
+	protected boolean isLiteralAttribs() {
+		return literalAttribs;
+	}
+
+	protected void setBodyOnly(boolean bodyOnly) {
+		this.bodyOnly = bodyOnly;
+	}
+
+	protected boolean isBodyOnly() {
+		return bodyOnly;
+	}
+
+	protected void setFixUri(boolean fixUri) {
+		this.fixUri = fixUri;
+	}
+
+	protected boolean isFixUri() {
+		return fixUri;
+	}
+
+	protected void setLowerLiterals(boolean lowerLiterals) {
+		this.lowerLiterals = lowerLiterals;
+	}
+
+	protected boolean isLowerLiterals() {
+		return lowerLiterals;
+	}
+
+	protected void setReplaceColor(boolean replaceColor) {
+		this.replaceColor = replaceColor;
+	}
+
+	protected boolean isReplaceColor() {
+		return replaceColor;
+	}
+
+	protected void setHideComments(boolean hideComments) {
+		this.hideComments = hideComments;
+	}
+
+	protected boolean isHideComments() {
+		return hideComments;
+	}
+
+	protected void setIndentCdata(boolean indentCdata) {
+		this.indentCdata = indentCdata;
+	}
+
+	protected boolean isIndentCdata() {
+		return indentCdata;
+	}
+
+	protected void setForceOutput(boolean forceOutput) {
+		this.forceOutput = forceOutput;
+	}
+
+	protected boolean isForceOutput() {
+		return forceOutput;
+	}
+
+	protected void setShowErrors(int showErrors) {
+		this.showErrors = showErrors;
+	}
+
+	protected int getShowErrors() {
+		return showErrors;
+	}
+
+	protected void setAsciiChars(boolean asciiChars) {
+		this.asciiChars = asciiChars;
+	}
+
+	protected boolean isAsciiChars() {
+		return asciiChars;
+	}
+
+	protected void setJoinClasses(boolean joinClasses) {
+		this.joinClasses = joinClasses;
+	}
+
+	protected boolean isJoinClasses() {
+		return joinClasses;
+	}
+
+	protected void setJoinStyles(boolean joinStyles) {
+		this.joinStyles = joinStyles;
+	}
+
+	protected boolean isJoinStyles() {
+		return joinStyles;
+	}
+
+	protected void setEscapeCdata(boolean escapeCdata) {
+		this.escapeCdata = escapeCdata;
+	}
+
+	protected boolean isEscapeCdata() {
+		return escapeCdata;
+	}
+
+	protected void setNcr(boolean ncr) {
+		this.ncr = ncr;
+	}
+
+	protected boolean isNcr() {
+		return ncr;
+	}
+
+	protected void setCssPrefix(String cssPrefix) {
+		this.cssPrefix = cssPrefix;
+	}
+
+	protected String getCssPrefix() {
+		return cssPrefix;
+	}
+
+	protected void setReplacementCharEncoding(String replacementCharEncoding) {
+		this.replacementCharEncoding = replacementCharEncoding;
+	}
+
+	protected String getReplacementCharEncoding() {
+		return replacementCharEncoding;
+	}
+
+	protected void setDefinedTags(int definedTags) {
+		this.definedTags = definedTags;
+	}
+
+	protected int getDefinedTags() {
+		return definedTags;
+	}
+
+	protected void setNewline(char[] newline) {
+		this.newline = newline;
+	}
+
+	protected char[] getNewline() {
+		return newline;
+	}
+
+	protected void setRawOut(boolean rawOut) {
+		this.rawOut = rawOut;
+	}
+
+	protected boolean isRawOut() {
+		return rawOut;
+	}
+
+	protected void setAccessibilityCheckLevel(int accessibilityCheckLevel) {
+		this.accessibilityCheckLevel = accessibilityCheckLevel;
+	}
+
+	protected int getAccessibilityCheckLevel() {
+		return accessibilityCheckLevel;
+	}
 }

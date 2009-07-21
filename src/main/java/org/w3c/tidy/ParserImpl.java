@@ -272,7 +272,7 @@ public final class ParserImpl
             Node frameset = null;
             Node noframes = null;
 
-            lexer.configuration.xmlTags = false;
+            lexer.configuration.setXmlTags(false);
             lexer.seenEndBody = false;
 
             while (true)
@@ -581,7 +581,7 @@ public final class ParserImpl
 
             if (hasTitle == 0)
             {
-                if (!lexer.configuration.bodyOnly)
+                if (!lexer.configuration.isBodyOnly())
                 {
                     lexer.report.warning(lexer, head, null, Report.MISSING_TITLE_ELEMENT);
                 }
@@ -799,7 +799,7 @@ public final class ParserImpl
                         continue;
                     }
 
-                    if (lexer.configuration.encloseBodyText && !iswhitenode)
+                    if (lexer.configuration.isEncloseBodyText() && !iswhitenode)
                     {
                         Node para;
 
@@ -2149,7 +2149,7 @@ public final class ParserImpl
                         iswhitenode = true;
                     }
 
-                    if (lexer.configuration.encloseBlockText && !iswhitenode)
+                    if (lexer.configuration.isEncloseBlockText() && !iswhitenode)
                     {
                         lexer.ungetToken();
                         node = lexer.inferredTag(TagId.P);
@@ -3121,7 +3121,7 @@ public final class ParserImpl
                     {
                         lexer.ungetToken();
                         node = lexer.inferredTag(TagId.BODY);
-                        if (lexer.configuration.xmlOut)
+                        if (lexer.configuration.isXmlOut())
                         {
                             lexer.report.warning(lexer, noframes, node, Report.INSERTING_TAG);
                         }
@@ -3372,7 +3372,7 @@ public final class ParserImpl
                 html = node;
             }
 
-            if (document.findDocType() == null && !lexer.configuration.bodyOnly)
+            if (document.findDocType() == null && !lexer.configuration.isBodyOnly())
             {
                 lexer.report.warning(lexer, null, null, Report.MISSING_DOCTYPE);
             }
@@ -3524,7 +3524,7 @@ public final class ParserImpl
         document = lexer.newNode();
         document.type = Node.ROOT_NODE;
         doctype = null;
-        lexer.configuration.xmlTags = true;
+        lexer.configuration.setXmlTags(true);
 
         while ((node = lexer.getToken(Lexer.IGNORE_WHITESPACE)) != null)
         {
@@ -3576,7 +3576,7 @@ public final class ParserImpl
         }
 
         // ensure presence of initial <?XML version="1.0"?>
-        if (lexer.configuration.xmlPi)
+        if (lexer.configuration.isXmlPi())
         {
             lexer.fixXmlDecl(document);
         }

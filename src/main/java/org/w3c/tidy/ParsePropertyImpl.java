@@ -302,7 +302,7 @@ public final class ParsePropertyImpl
             if ("raw".equalsIgnoreCase(value))
             {
                 // special value for compatibility with tidy c
-                configuration.rawOut = true;
+                configuration.setRawOut(true);
             }
             else if (!TidyUtils.isCharEncodingSupported(value))
             {
@@ -439,7 +439,7 @@ public final class ParsePropertyImpl
             StringTokenizer t = new StringTokenizer(value, " \t\n\r,");
             while (t.hasMoreTokens())
             {
-                configuration.definedTags |= tagType;
+                configuration.setDefinedTags(configuration.getDefinedTags() | tagType);
                 configuration.tt.defineTag(tagType, t.nextToken());
             }
             return null;
@@ -524,7 +524,7 @@ public final class ParsePropertyImpl
 
             if (value.startsWith("\""))
             {
-                configuration.docTypeMode = Configuration.DOCTYPE_USER;
+                configuration.setDocTypeMode(Configuration.DOCTYPE_USER);
                 return value;
             }
 
@@ -538,19 +538,19 @@ public final class ParsePropertyImpl
             // #443663 - fix by Terry Teague 23 Jul 01
             if ("auto".equalsIgnoreCase(word))
             {
-                configuration.docTypeMode = Configuration.DOCTYPE_AUTO;
+                configuration.setDocTypeMode(Configuration.DOCTYPE_AUTO);
             }
             else if ("omit".equalsIgnoreCase(word))
             {
-                configuration.docTypeMode = Configuration.DOCTYPE_OMIT;
+                configuration.setDocTypeMode(Configuration.DOCTYPE_OMIT);
             }
             else if ("strict".equalsIgnoreCase(word))
             {
-                configuration.docTypeMode = Configuration.DOCTYPE_STRICT;
+                configuration.setDocTypeMode(Configuration.DOCTYPE_STRICT);
             }
             else if ("loose".equalsIgnoreCase(word) || "transitional".equalsIgnoreCase(word))
             {
-                configuration.docTypeMode = Configuration.DOCTYPE_LOOSE;
+                configuration.setDocTypeMode(Configuration.DOCTYPE_LOOSE);
             }
             else
             {
@@ -583,7 +583,7 @@ public final class ParsePropertyImpl
 
             String stringValue;
 
-            switch (configuration.docTypeMode)
+            switch (configuration.getDocTypeMode())
             {
                 case Configuration.DOCTYPE_AUTO :
                     stringValue = "auto";
@@ -602,7 +602,7 @@ public final class ParsePropertyImpl
                     break;
 
                 case Configuration.DOCTYPE_USER :
-                    stringValue = configuration.docTypeStr;
+                    stringValue = configuration.getDocTypeStr();
                     break;
 
                 default :
@@ -741,32 +741,32 @@ public final class ParsePropertyImpl
          */
         public Object parse(String value, String option, Configuration configuration)
         {
-            boolean b = configuration.indentContent;
+            boolean b = configuration.isIndentContent();
 
             if ("yes".equalsIgnoreCase(value))
             {
                 b = true;
-                configuration.smartIndent = false;
+                configuration.setSmartIndent(false);
             }
             else if ("true".equalsIgnoreCase(value))
             {
                 b = true;
-                configuration.smartIndent = false;
+                configuration.setSmartIndent(false);
             }
             else if ("no".equalsIgnoreCase(value))
             {
                 b = false;
-                configuration.smartIndent = false;
+                configuration.setSmartIndent(false);
             }
             else if ("false".equalsIgnoreCase(value))
             {
                 b = false;
-                configuration.smartIndent = false;
+                configuration.setSmartIndent(false);
             }
             else if ("auto".equalsIgnoreCase(value))
             {
                 b = true;
-                configuration.smartIndent = true;
+                configuration.setSmartIndent(true);
             }
             else
             {
@@ -870,15 +870,15 @@ public final class ParsePropertyImpl
             // lf|crlf|cr
             if ("lf".equalsIgnoreCase(value))
             {
-                configuration.newline = new char[]{'\n'};
+                configuration.setNewline(new char[]{'\n'});
             }
             else if ("cr".equalsIgnoreCase(value))
             {
-                configuration.newline = new char[]{'\r'};
+                configuration.setNewline(new char[]{'\r'});
             }
             else if ("crlf".equalsIgnoreCase(value))
             {
-                configuration.newline = new char[]{'\r', '\n'};
+                configuration.setNewline(new char[]{'\r', '\n'});
             }
             else
             {
@@ -908,9 +908,9 @@ public final class ParsePropertyImpl
          */
         public String getFriendlyName(String option, Object value, Configuration configuration)
         {
-            if (configuration.newline.length == 1)
+            if (configuration.getNewline().length == 1)
             {
-                return (configuration.newline[0] == '\n') ? "lf" : "cr";
+                return (configuration.getNewline()[0] == '\n') ? "lf" : "cr";
             }
             return "crlf";
         }

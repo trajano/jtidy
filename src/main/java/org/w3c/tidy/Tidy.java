@@ -139,7 +139,7 @@ public class Tidy implements Serializable
         tt.setConfiguration(configuration);
         configuration.tt = tt;
 
-        configuration.errfile = null;
+        configuration.setErrfile(null);
         stderr = new PrintWriter(System.err, true);
         errout = stderr;
     }
@@ -413,18 +413,18 @@ public class Tidy implements Serializable
 
         this.report.setFilename(inputStreamName); // #431895 - fix by Dave Bryan 04 Jan 01
 
-        if (!configuration.quiet)
+        if (!configuration.isQuiet())
         {
             this.report.helloMessage(errout);
         }
 
         // Tidy doesn't alter the doctype for generic XML docs
-        if (configuration.xmlTags)
+        if (configuration.isXmlTags())
         {
             document = ParserImpl.parseXMLDocument(lexer);
             if (!document.checkNodeIntegrity())
             {
-                if (!configuration.quiet)
+                if (!configuration.isQuiet())
                 {
                     report.badTree(errout);
                 }
@@ -439,7 +439,7 @@ public class Tidy implements Serializable
 
             if (!document.checkNodeIntegrity())
             {
-                if (!configuration.quiet)
+                if (!configuration.isQuiet())
                 {
                     this.report.badTree(errout);
                 }
@@ -456,12 +456,12 @@ public class Tidy implements Serializable
             cleaner.bQ2Div(document);
 
             // replaces i by em and b by strong
-            if (configuration.logicalEmphasis)
+            if (configuration.isLogicalEmphasis())
             {
                 cleaner.emFromI(document);
             }
 
-            if (configuration.word2000 && cleaner.isWord2000(document))
+            if (configuration.isWord2000() && cleaner.isWord2000(document))
             {
                 // prune Word2000's <![if ...]> ... <![endif]>
                 cleaner.dropSections(lexer, document);
@@ -471,7 +471,7 @@ public class Tidy implements Serializable
             }
 
             // replaces presentational markup by style rules
-            if (configuration.makeClean || configuration.dropFontTags)
+            if (configuration.isMakeClean() || configuration.isDropFontTags())
             {
                 cleaner.cleanTree(lexer, document);
             }
@@ -492,7 +492,7 @@ public class Tidy implements Serializable
 
             if (document.content != null)
             {
-                if (configuration.xHTML)
+                if (configuration.isXHTML())
                 {
                     lexer.setXHTMLDocType(document);
                 }
@@ -501,39 +501,39 @@ public class Tidy implements Serializable
                     lexer.fixDocType(document);
                 }
 
-                if (configuration.tidyMark)
+                if (configuration.isTidyMark())
                 {
                     lexer.addGenerator(document);
                 }
             }
 
             // ensure presence of initial <?XML version="1.0"?>
-            if (configuration.xmlOut && configuration.xmlPi)
+            if (configuration.isXmlOut() && configuration.isXmlPi())
             {
                 lexer.fixXmlDecl(document);
             }
 
-            if (!configuration.quiet && document.content != null)
+            if (!configuration.isQuiet() && document.content != null)
             {
                 this.report.reportVersion(errout, lexer, inputStreamName, doctype);
             }
         }
 
-        if (!configuration.quiet)
+        if (!configuration.isQuiet())
         {
             parseWarnings = lexer.warnings;
             parseErrors = lexer.errors;
             this.report.reportNumWarnings(errout, lexer);
         }
 
-        if (!configuration.quiet && lexer.errors > 0 && !configuration.forceOutput)
+        if (!configuration.isQuiet() && lexer.errors > 0 && !configuration.isForceOutput())
         {
             this.report.needsAuthorIntervention(errout);
         }
 
-        if (!configuration.onlyErrors && (lexer.errors == 0 || configuration.forceOutput))
+        if (!configuration.isOnlyErrors() && (lexer.errors == 0 || configuration.isForceOutput()))
         {
-            if (configuration.burstSlides)
+            if (configuration.isBurstSlides())
             {
                 Node body;
 
@@ -552,7 +552,7 @@ public class Tidy implements Serializable
                 lexer.versions |= Versions.VERS_HTML40_LOOSE;
 
                 // and patch up doctype to match
-                if (configuration.xHTML)
+                if (configuration.isXHTML())
                 {
                     lexer.setXHTMLDocType(document);
                 }
@@ -567,13 +567,13 @@ public class Tidy implements Serializable
                 if (body != null)
                 {
                     pprint = new PPrint(configuration);
-                    if (!configuration.quiet)
+                    if (!configuration.isQuiet())
                     {
                         this.report.reportNumberOfSlides(errout, pprint.countSlides(body));
                     }
                     pprint.createSlides(lexer, document);
                 }
-                else if (!configuration.quiet)
+                else if (!configuration.isQuiet())
                 {
                     this.report.missingBody(errout);
                 }
@@ -586,14 +586,14 @@ public class Tidy implements Serializable
                 {
                     // only use numeric character references if no doctype could be determined (e.g., because
                     // the document contains proprietary features) to ensure well-formedness.
-                    configuration.numEntities = true;
+                    configuration.setNumEntities(true);
                 }
-                if (configuration.bodyOnly)
+                if (configuration.isBodyOnly())
                 {
                     // Feature request #434940 - fix by Dave Raggett/Ignacio Vazquez-Abrams 21 Jun 01
-                    pprint.printBody(o, lexer, document, configuration.xmlOut);
+                    pprint.printBody(o, lexer, document, configuration.isXmlOut());
                 }
-                else if (configuration.xmlOut && !configuration.xHTML)
+                else if (configuration.isXmlOut() && !configuration.isXHTML())
                 {
                     pprint.printXMLTree(o, (short) 0, 0, lexer, document);
                 }
@@ -608,7 +608,7 @@ public class Tidy implements Serializable
 
         }
 
-        if (!configuration.quiet)
+        if (!configuration.isQuiet())
         {
             this.report.errorSummary(lexer);
         }
@@ -648,7 +648,7 @@ public class Tidy implements Serializable
 
         streamIn = StreamInFactory.getStreamIn(configuration, in);
 
-        if (configuration.writeback && (file != null))
+        if (configuration.isWriteback() && (file != null))
         {
             out = new FileOutputStream(file);
             outputStreamOpen = true;
@@ -709,7 +709,7 @@ public class Tidy implements Serializable
 
             pprint = new PPrint(configuration);
 
-            if (configuration.xmlTags)
+            if (configuration.isXmlTags())
             {
                 pprint.printXMLTree(o, (short) 0, 0, lexer, node);
             }
@@ -830,40 +830,40 @@ public class Tidy implements Serializable
                         switch (argName.charAt(i))
                         {
                             case 'i' :
-                                configuration.indentContent = true;
-                                configuration.smartIndent = true;
+                                configuration.setIndentContent(true);
+                                configuration.setSmartIndent(true);
                                 break;
 
                             case 'o' :
-                                configuration.hideEndTags = true;
+                                configuration.setHideEndTags(true);
                                 break;
 
                             case 'u' :
-                                configuration.upperCaseTags = true;
+                                configuration.setUpperCaseTags(true);
                                 break;
 
                             case 'c' :
-                                configuration.makeClean = true;
+                                configuration.setMakeClean(true);
                                 break;
 
                             case 'b' :
-                                configuration.makeBare = true;
+                                configuration.setMakeBare(true);
                                 break;
 
                             case 'n' :
-                                configuration.numEntities = true;
+                                configuration.setNumEntities(true);
                                 break;
 
                             case 'm' :
-                                configuration.writeback = true;
+                                configuration.setWriteback(true);
                                 break;
 
                             case 'e' :
-                                configuration.onlyErrors = true;
+                                configuration.setOnlyErrors(true);
                                 break;
 
                             case 'q' :
-                                configuration.quiet = true;
+                                configuration.setQuiet(true);
                                 break;
 
                             default :
@@ -884,13 +884,13 @@ public class Tidy implements Serializable
             configuration.adjust();
 
             // user specified error file
-            if (configuration.errfile != null)
+            if (configuration.getErrfile() != null)
             {
 
                 String errorfile = "stderr";
 
                 // is it same as the currently opened file?
-                if (!configuration.errfile.equals(errorfile))
+                if (!configuration.getErrfile().equals(errorfile))
                 {
                     // no so close previous error file
 
@@ -902,8 +902,8 @@ public class Tidy implements Serializable
                     // and try to open the new error file
                     try
                     {
-                        this.setErrout(new PrintWriter(new FileWriter(configuration.errfile), true));
-                        errorfile = configuration.errfile;
+                        this.setErrout(new PrintWriter(new FileWriter(configuration.getErrfile()), true));
+                        errorfile = configuration.getErrfile();
                     }
                     catch (IOException e)
                     {
@@ -945,7 +945,7 @@ public class Tidy implements Serializable
             }
         }
 
-        if (this.parseErrors + this.parseWarnings > 0 && !configuration.quiet)
+        if (this.parseErrors + this.parseWarnings > 0 && !configuration.isQuiet())
         {
             this.report.generalInfo(this.errout);
         }
@@ -986,7 +986,7 @@ public class Tidy implements Serializable
      */
     public void setSpaces(int spaces)
     {
-        configuration.spaces = spaces;
+        configuration.setSpaces(spaces);
     }
 
     /**
@@ -996,7 +996,7 @@ public class Tidy implements Serializable
      */
     public int getSpaces()
     {
-        return configuration.spaces;
+        return configuration.getSpaces();
     }
 
     /**
@@ -1006,7 +1006,7 @@ public class Tidy implements Serializable
      */
     public void setWraplen(int wraplen)
     {
-        configuration.wraplen = wraplen;
+        configuration.setWraplen(wraplen);
     }
 
     /**
@@ -1016,7 +1016,7 @@ public class Tidy implements Serializable
      */
     public int getWraplen()
     {
-        return configuration.wraplen;
+        return configuration.getWraplen();
     }
 
     /**
@@ -1026,7 +1026,7 @@ public class Tidy implements Serializable
      */
     public void setTabsize(int tabsize)
     {
-        configuration.tabsize = tabsize;
+        configuration.setTabsize(tabsize);
     }
 
     /**
@@ -1036,7 +1036,7 @@ public class Tidy implements Serializable
      */
     public int getTabsize()
     {
-        return configuration.tabsize;
+        return configuration.getTabsize();
     }
 
     /**
@@ -1046,7 +1046,7 @@ public class Tidy implements Serializable
      */
     public void setErrfile(String errfile)
     {
-        configuration.errfile = errfile;
+        configuration.setErrfile(errfile);
     }
 
     /**
@@ -1056,7 +1056,7 @@ public class Tidy implements Serializable
      */
     public String getErrfile()
     {
-        return configuration.errfile;
+        return configuration.getErrfile();
     }
 
     /**
@@ -1066,7 +1066,7 @@ public class Tidy implements Serializable
      */
     public void setWriteback(boolean writeback)
     {
-        configuration.writeback = writeback;
+        configuration.setWriteback(writeback);
     }
 
     /**
@@ -1076,7 +1076,7 @@ public class Tidy implements Serializable
      */
     public boolean getWriteback()
     {
-        return configuration.writeback;
+        return configuration.isWriteback();
     }
 
     /**
@@ -1086,7 +1086,7 @@ public class Tidy implements Serializable
      */
     public void setOnlyErrors(boolean onlyErrors)
     {
-        configuration.onlyErrors = onlyErrors;
+        configuration.setOnlyErrors(onlyErrors);
     }
 
     /**
@@ -1096,7 +1096,7 @@ public class Tidy implements Serializable
      */
     public boolean getOnlyErrors()
     {
-        return configuration.onlyErrors;
+        return configuration.isOnlyErrors();
     }
 
     /**
@@ -1106,7 +1106,7 @@ public class Tidy implements Serializable
      */
     public void setShowWarnings(boolean showWarnings)
     {
-        configuration.showWarnings = showWarnings;
+        configuration.setShowWarnings(showWarnings);
     }
 
     /**
@@ -1116,7 +1116,7 @@ public class Tidy implements Serializable
      */
     public boolean getShowWarnings()
     {
-        return configuration.showWarnings;
+        return configuration.isShowWarnings();
     }
 
     /**
@@ -1126,7 +1126,7 @@ public class Tidy implements Serializable
      */
     public void setQuiet(boolean quiet)
     {
-        configuration.quiet = quiet;
+        configuration.setQuiet(quiet);
     }
 
     /**
@@ -1136,7 +1136,7 @@ public class Tidy implements Serializable
      */
     public boolean getQuiet()
     {
-        return configuration.quiet;
+        return configuration.isQuiet();
     }
 
     /**
@@ -1146,7 +1146,7 @@ public class Tidy implements Serializable
      */
     public void setIndentContent(boolean indentContent)
     {
-        configuration.indentContent = indentContent;
+        configuration.setIndentContent(indentContent);
     }
 
     /**
@@ -1156,7 +1156,7 @@ public class Tidy implements Serializable
      */
     public boolean getIndentContent()
     {
-        return configuration.indentContent;
+        return configuration.isIndentContent();
     }
 
     /**
@@ -1166,7 +1166,7 @@ public class Tidy implements Serializable
      */
     public void setSmartIndent(boolean smartIndent)
     {
-        configuration.smartIndent = smartIndent;
+        configuration.setSmartIndent(smartIndent);
     }
 
     /**
@@ -1176,7 +1176,7 @@ public class Tidy implements Serializable
      */
     public boolean getSmartIndent()
     {
-        return configuration.smartIndent;
+        return configuration.isSmartIndent();
     }
 
     /**
@@ -1186,7 +1186,7 @@ public class Tidy implements Serializable
      */
     public void setHideEndTags(boolean hideEndTags)
     {
-        configuration.hideEndTags = hideEndTags;
+        configuration.setHideEndTags(hideEndTags);
     }
 
     /**
@@ -1196,7 +1196,7 @@ public class Tidy implements Serializable
      */
     public boolean getHideEndTags()
     {
-        return configuration.hideEndTags;
+        return configuration.isHideEndTags();
     }
 
     /**
@@ -1206,7 +1206,7 @@ public class Tidy implements Serializable
      */
     public void setXmlTags(boolean xmlTags)
     {
-        configuration.xmlTags = xmlTags;
+        configuration.setXmlTags(xmlTags);
     }
 
     /**
@@ -1216,7 +1216,7 @@ public class Tidy implements Serializable
      */
     public boolean getXmlTags()
     {
-        return configuration.xmlTags;
+        return configuration.isXmlTags();
     }
 
     /**
@@ -1226,7 +1226,7 @@ public class Tidy implements Serializable
      */
     public void setXmlOut(boolean xmlOut)
     {
-        configuration.xmlOut = xmlOut;
+        configuration.setXmlOut(xmlOut);
     }
 
     /**
@@ -1236,7 +1236,7 @@ public class Tidy implements Serializable
      */
     public boolean getXmlOut()
     {
-        return configuration.xmlOut;
+        return configuration.isXmlOut();
     }
 
     /**
@@ -1246,7 +1246,7 @@ public class Tidy implements Serializable
      */
     public void setXHTML(boolean xhtml)
     {
-        configuration.xHTML = xhtml;
+        configuration.setXHTML(xhtml);
     }
 
     /**
@@ -1256,7 +1256,7 @@ public class Tidy implements Serializable
      */
     public boolean getXHTML()
     {
-        return configuration.xHTML;
+        return configuration.isXHTML();
     }
 
     /**
@@ -1266,7 +1266,7 @@ public class Tidy implements Serializable
      */
     public void setUpperCaseTags(boolean upperCaseTags)
     {
-        configuration.upperCaseTags = upperCaseTags;
+        configuration.setUpperCaseTags(upperCaseTags);
     }
 
     /**
@@ -1276,7 +1276,7 @@ public class Tidy implements Serializable
      */
     public boolean getUpperCaseTags()
     {
-        return configuration.upperCaseTags;
+        return configuration.isUpperCaseTags();
     }
 
     /**
@@ -1286,7 +1286,7 @@ public class Tidy implements Serializable
      */
     public void setUpperCaseAttrs(boolean upperCaseAttrs)
     {
-        configuration.upperCaseAttrs = upperCaseAttrs;
+        configuration.setUpperCaseAttrs(upperCaseAttrs);
     }
 
     /**
@@ -1296,7 +1296,7 @@ public class Tidy implements Serializable
      */
     public boolean getUpperCaseAttrs()
     {
-        return configuration.upperCaseAttrs;
+        return configuration.isUpperCaseAttrs();
     }
 
     /**
@@ -1306,7 +1306,7 @@ public class Tidy implements Serializable
      */
     public void setMakeClean(boolean makeClean)
     {
-        configuration.makeClean = makeClean;
+        configuration.setMakeClean(makeClean);
     }
 
     /**
@@ -1316,7 +1316,7 @@ public class Tidy implements Serializable
      */
     public boolean getMakeClean()
     {
-        return configuration.makeClean;
+        return configuration.isMakeClean();
     }
 
     /**
@@ -1326,7 +1326,7 @@ public class Tidy implements Serializable
      */
     public void setMakeBare(boolean makeBare)
     {
-        configuration.makeBare = makeBare;
+        configuration.setMakeBare(makeBare);
     }
 
     /**
@@ -1336,7 +1336,7 @@ public class Tidy implements Serializable
      */
     public boolean getMakeBare()
     {
-        return configuration.makeBare;
+        return configuration.isMakeBare();
     }
 
     /**
@@ -1346,7 +1346,7 @@ public class Tidy implements Serializable
      */
     public void setBreakBeforeBR(boolean breakBeforeBR)
     {
-        configuration.breakBeforeBR = breakBeforeBR;
+        configuration.setBreakBeforeBR(breakBeforeBR);
     }
 
     /**
@@ -1356,7 +1356,7 @@ public class Tidy implements Serializable
      */
     public boolean getBreakBeforeBR()
     {
-        return configuration.breakBeforeBR;
+        return configuration.isBreakBeforeBR();
     }
 
     /**
@@ -1366,7 +1366,7 @@ public class Tidy implements Serializable
      */
     public void setBurstSlides(boolean burstSlides)
     {
-        configuration.burstSlides = burstSlides;
+        configuration.setBurstSlides(burstSlides);
     }
 
     /**
@@ -1376,7 +1376,7 @@ public class Tidy implements Serializable
      */
     public boolean getBurstSlides()
     {
-        return configuration.burstSlides;
+        return configuration.isBurstSlides();
     }
 
     /**
@@ -1387,7 +1387,7 @@ public class Tidy implements Serializable
      */
     public void setNumEntities(boolean numEntities)
     {
-        configuration.numEntities = numEntities;
+        configuration.setNumEntities(numEntities);
     }
 
     /**
@@ -1398,7 +1398,7 @@ public class Tidy implements Serializable
      */
     public boolean getNumEntities()
     {
-        return configuration.numEntities;
+        return configuration.isNumEntities();
     }
 
     /**
@@ -1408,7 +1408,7 @@ public class Tidy implements Serializable
      */
     public void setQuoteMarks(boolean quoteMarks)
     {
-        configuration.quoteMarks = quoteMarks;
+        configuration.setQuoteMarks(quoteMarks);
     }
 
     /**
@@ -1418,7 +1418,7 @@ public class Tidy implements Serializable
      */
     public boolean getQuoteMarks()
     {
-        return configuration.quoteMarks;
+        return configuration.isQuoteMarks();
     }
 
     /**
@@ -1428,7 +1428,7 @@ public class Tidy implements Serializable
      */
     public void setQuoteNbsp(boolean quoteNbsp)
     {
-        configuration.quoteNbsp = quoteNbsp;
+        configuration.setQuoteNbsp(quoteNbsp);
     }
 
     /**
@@ -1438,7 +1438,7 @@ public class Tidy implements Serializable
      */
     public boolean getQuoteNbsp()
     {
-        return configuration.quoteNbsp;
+        return configuration.isQuoteNbsp();
     }
 
     /**
@@ -1448,7 +1448,7 @@ public class Tidy implements Serializable
      */
     public void setQuoteAmpersand(boolean quoteAmpersand)
     {
-        configuration.quoteAmpersand = quoteAmpersand;
+        configuration.setQuoteAmpersand(quoteAmpersand);
     }
 
     /**
@@ -1458,7 +1458,7 @@ public class Tidy implements Serializable
      */
     public boolean getQuoteAmpersand()
     {
-        return configuration.quoteAmpersand;
+        return configuration.isQuoteAmpersand();
     }
 
     /**
@@ -1468,7 +1468,7 @@ public class Tidy implements Serializable
      */
     public void setWrapAttVals(boolean wrapAttVals)
     {
-        configuration.wrapAttVals = wrapAttVals;
+        configuration.setWrapAttVals(wrapAttVals);
     }
 
     /**
@@ -1478,7 +1478,7 @@ public class Tidy implements Serializable
      */
     public boolean getWrapAttVals()
     {
-        return configuration.wrapAttVals;
+        return configuration.isWrapAttVals();
     }
 
     /**
@@ -1488,7 +1488,7 @@ public class Tidy implements Serializable
      */
     public void setWrapScriptlets(boolean wrapScriptlets)
     {
-        configuration.wrapScriptlets = wrapScriptlets;
+        configuration.setWrapScriptlets(wrapScriptlets);
     }
 
     /**
@@ -1498,7 +1498,7 @@ public class Tidy implements Serializable
      */
     public boolean getWrapScriptlets()
     {
-        return configuration.wrapScriptlets;
+        return configuration.isWrapScriptlets();
     }
 
     /**
@@ -1508,7 +1508,7 @@ public class Tidy implements Serializable
      */
     public void setWrapSection(boolean wrapSection)
     {
-        configuration.wrapSection = wrapSection;
+        configuration.setWrapSection(wrapSection);
     }
 
     /**
@@ -1518,7 +1518,7 @@ public class Tidy implements Serializable
      */
     public boolean getWrapSection()
     {
-        return configuration.wrapSection;
+        return configuration.isWrapSection();
     }
 
     /**
@@ -1528,7 +1528,7 @@ public class Tidy implements Serializable
      */
     public void setAltText(String altText)
     {
-        configuration.altText = altText;
+        configuration.setAltText(altText);
     }
 
     /**
@@ -1538,7 +1538,7 @@ public class Tidy implements Serializable
      */
     public String getAltText()
     {
-        return configuration.altText;
+        return configuration.getAltText();
     }
 
     /**
@@ -1548,7 +1548,7 @@ public class Tidy implements Serializable
      */
     public void setXmlPi(boolean xmlPi)
     {
-        configuration.xmlPi = xmlPi;
+        configuration.setXmlPi(xmlPi);
     }
 
     /**
@@ -1558,7 +1558,7 @@ public class Tidy implements Serializable
      */
     public boolean getXmlPi()
     {
-        return configuration.xmlPi;
+        return configuration.isXmlPi();
     }
 
     /**
@@ -1568,7 +1568,7 @@ public class Tidy implements Serializable
      */
     public void setDropFontTags(boolean dropFontTags)
     {
-        configuration.dropFontTags = dropFontTags;
+        configuration.setDropFontTags(dropFontTags);
     }
 
     /**
@@ -1578,7 +1578,7 @@ public class Tidy implements Serializable
      */
     public boolean getDropFontTags()
     {
-        return configuration.dropFontTags;
+        return configuration.isDropFontTags();
     }
 
     /**
@@ -1588,7 +1588,7 @@ public class Tidy implements Serializable
      */
     public void setDropProprietaryAttributes(boolean dropProprietaryAttributes)
     {
-        configuration.dropProprietaryAttributes = dropProprietaryAttributes;
+        configuration.setDropProprietaryAttributes(dropProprietaryAttributes);
     }
 
     /**
@@ -1598,7 +1598,7 @@ public class Tidy implements Serializable
      */
     public boolean getDropProprietaryAttributes()
     {
-        return configuration.dropProprietaryAttributes;
+        return configuration.isDropProprietaryAttributes();
     }
 
     /**
@@ -1608,7 +1608,7 @@ public class Tidy implements Serializable
      */
     public void setDropEmptyParas(boolean dropEmptyParas)
     {
-        configuration.dropEmptyParas = dropEmptyParas;
+        configuration.setDropEmptyParas(dropEmptyParas);
     }
 
     /**
@@ -1618,7 +1618,7 @@ public class Tidy implements Serializable
      */
     public boolean getDropEmptyParas()
     {
-        return configuration.dropEmptyParas;
+        return configuration.isDropEmptyParas();
     }
 
     /**
@@ -1628,7 +1628,7 @@ public class Tidy implements Serializable
      */
     public void setFixComments(boolean fixComments)
     {
-        configuration.fixComments = fixComments;
+        configuration.setFixComments(fixComments);
     }
 
     /**
@@ -1638,7 +1638,7 @@ public class Tidy implements Serializable
      */
     public boolean getFixComments()
     {
-        return configuration.fixComments;
+        return configuration.isFixComments();
     }
 
     /**
@@ -1648,7 +1648,7 @@ public class Tidy implements Serializable
      */
     public void setWrapAsp(boolean wrapAsp)
     {
-        configuration.wrapAsp = wrapAsp;
+        configuration.setWrapAsp(wrapAsp);
     }
 
     /**
@@ -1658,7 +1658,7 @@ public class Tidy implements Serializable
      */
     public boolean getWrapAsp()
     {
-        return configuration.wrapAsp;
+        return configuration.isWrapAsp();
     }
 
     /**
@@ -1668,7 +1668,7 @@ public class Tidy implements Serializable
      */
     public void setWrapJste(boolean wrapJste)
     {
-        configuration.wrapJste = wrapJste;
+        configuration.setWrapJste(wrapJste);
     }
 
     /**
@@ -1678,7 +1678,7 @@ public class Tidy implements Serializable
      */
     public boolean getWrapJste()
     {
-        return configuration.wrapJste;
+        return configuration.isWrapJste();
     }
 
     /**
@@ -1688,7 +1688,7 @@ public class Tidy implements Serializable
      */
     public void setWrapPhp(boolean wrapPhp)
     {
-        configuration.wrapPhp = wrapPhp;
+        configuration.setWrapPhp(wrapPhp);
     }
 
     /**
@@ -1698,7 +1698,7 @@ public class Tidy implements Serializable
      */
     public boolean getWrapPhp()
     {
-        return configuration.wrapPhp;
+        return configuration.isWrapPhp();
     }
 
     /**
@@ -1708,7 +1708,7 @@ public class Tidy implements Serializable
      */
     public void setFixBackslash(boolean fixBackslash)
     {
-        configuration.fixBackslash = fixBackslash;
+        configuration.setFixBackslash(fixBackslash);
     }
 
     /**
@@ -1718,7 +1718,7 @@ public class Tidy implements Serializable
      */
     public boolean getFixBackslash()
     {
-        return configuration.fixBackslash;
+        return configuration.isFixBackslash();
     }
 
     /**
@@ -1728,7 +1728,7 @@ public class Tidy implements Serializable
      */
     public void setIndentAttributes(boolean indentAttributes)
     {
-        configuration.indentAttributes = indentAttributes;
+        configuration.setIndentAttributes(indentAttributes);
     }
 
     /**
@@ -1738,7 +1738,7 @@ public class Tidy implements Serializable
      */
     public boolean getIndentAttributes()
     {
-        return configuration.indentAttributes;
+        return configuration.isIndentAttributes();
     }
 
     /**
@@ -1753,7 +1753,7 @@ public class Tidy implements Serializable
     {
         if (doctype != null)
         {
-            configuration.docTypeStr = (String) ParsePropertyImpl.DOCTYPE.parse(doctype, "doctype", configuration);
+            configuration.setDocTypeStr((String) ParsePropertyImpl.DOCTYPE.parse(doctype, "doctype", configuration));
         }
     }
 
@@ -1767,7 +1767,7 @@ public class Tidy implements Serializable
     public String getDocType()
     {
         String result = null;
-        switch (configuration.docTypeMode)
+        switch (configuration.getDocTypeMode())
         {
             case Configuration.DOCTYPE_OMIT :
                 result = "omit";
@@ -1782,7 +1782,7 @@ public class Tidy implements Serializable
                 result = "loose";
                 break;
             case Configuration.DOCTYPE_USER :
-                result = configuration.docTypeStr;
+                result = configuration.getDocTypeStr();
                 break;
         }
         return result;
@@ -1795,7 +1795,7 @@ public class Tidy implements Serializable
      */
     public void setLogicalEmphasis(boolean logicalEmphasis)
     {
-        configuration.logicalEmphasis = logicalEmphasis;
+        configuration.setLogicalEmphasis(logicalEmphasis);
     }
 
     /**
@@ -1805,7 +1805,7 @@ public class Tidy implements Serializable
      */
     public boolean getLogicalEmphasis()
     {
-        return configuration.logicalEmphasis;
+        return configuration.isLogicalEmphasis();
     }
 
     /**
@@ -1817,7 +1817,7 @@ public class Tidy implements Serializable
      */
     public void setXmlPIs(boolean xmlPIs)
     {
-        configuration.xmlPIs = xmlPIs;
+        configuration.setXmlPIs(xmlPIs);
     }
 
     /**
@@ -1829,7 +1829,7 @@ public class Tidy implements Serializable
      */
     public boolean getXmlPIs()
     {
-        return configuration.xmlPIs;
+        return configuration.isXmlPIs();
     }
 
     /**
@@ -1839,7 +1839,7 @@ public class Tidy implements Serializable
      */
     public void setEncloseText(boolean encloseText)
     {
-        configuration.encloseBodyText = encloseText;
+        configuration.setEncloseBodyText(encloseText);
     }
 
     /**
@@ -1849,7 +1849,7 @@ public class Tidy implements Serializable
      */
     public boolean getEncloseText()
     {
-        return configuration.encloseBodyText;
+        return configuration.isEncloseBodyText();
     }
 
     /**
@@ -1859,7 +1859,7 @@ public class Tidy implements Serializable
      */
     public void setEncloseBlockText(boolean encloseBlockText)
     {
-        configuration.encloseBlockText = encloseBlockText;
+        configuration.setEncloseBlockText(encloseBlockText);
     }
 
     /**
@@ -1869,7 +1869,7 @@ public class Tidy implements Serializable
      */
     public boolean getEncloseBlockText()
     {
-        return configuration.encloseBlockText;
+        return configuration.isEncloseBlockText();
     }
 
     /**
@@ -1879,7 +1879,7 @@ public class Tidy implements Serializable
      */
     public void setWord2000(boolean word2000)
     {
-        configuration.word2000 = word2000;
+        configuration.setWord2000(word2000);
     }
 
     /**
@@ -1889,7 +1889,7 @@ public class Tidy implements Serializable
      */
     public boolean getWord2000()
     {
-        return configuration.word2000;
+        return configuration.isWord2000();
     }
 
     /**
@@ -1899,7 +1899,7 @@ public class Tidy implements Serializable
      */
     public void setTidyMark(boolean tidyMark)
     {
-        configuration.tidyMark = tidyMark;
+        configuration.setTidyMark(tidyMark);
     }
 
     /**
@@ -1909,7 +1909,7 @@ public class Tidy implements Serializable
      */
     public boolean getTidyMark()
     {
-        return configuration.tidyMark;
+        return configuration.isTidyMark();
     }
 
     /**
@@ -1919,7 +1919,7 @@ public class Tidy implements Serializable
      */
     public void setXmlSpace(boolean xmlSpace)
     {
-        configuration.xmlSpace = xmlSpace;
+        configuration.setXmlSpace(xmlSpace);
     }
 
     /**
@@ -1929,7 +1929,7 @@ public class Tidy implements Serializable
      */
     public boolean getXmlSpace()
     {
-        return configuration.xmlSpace;
+        return configuration.isXmlSpace();
     }
 
     /**
@@ -1939,7 +1939,7 @@ public class Tidy implements Serializable
      */
     public void setEmacs(boolean emacs)
     {
-        configuration.emacs = emacs;
+        configuration.setEmacs(emacs);
     }
 
     /**
@@ -1949,7 +1949,7 @@ public class Tidy implements Serializable
      */
     public boolean getEmacs()
     {
-        return configuration.emacs;
+        return configuration.isEmacs();
     }
 
     /**
@@ -1959,7 +1959,7 @@ public class Tidy implements Serializable
      */
     public void setLiteralAttribs(boolean literalAttribs)
     {
-        configuration.literalAttribs = literalAttribs;
+        configuration.setLiteralAttribs(literalAttribs);
     }
 
     /**
@@ -1969,7 +1969,7 @@ public class Tidy implements Serializable
      */
     public boolean getLiteralAttribs()
     {
-        return configuration.literalAttribs;
+        return configuration.isLiteralAttribs();
     }
 
     /**
@@ -1979,7 +1979,7 @@ public class Tidy implements Serializable
      */
     public void setPrintBodyOnly(boolean bodyOnly)
     {
-        configuration.bodyOnly = bodyOnly;
+        configuration.setBodyOnly(bodyOnly);
     }
 
     /**
@@ -1988,7 +1988,7 @@ public class Tidy implements Serializable
      */
     public boolean getPrintBodyOnly()
     {
-        return configuration.bodyOnly;
+        return configuration.isBodyOnly();
     }
 
     /**
@@ -1998,7 +1998,7 @@ public class Tidy implements Serializable
      */
     public void setFixUri(boolean fixUri)
     {
-        configuration.fixUri = fixUri;
+        configuration.setFixUri(fixUri);
     }
 
     /**
@@ -2007,7 +2007,7 @@ public class Tidy implements Serializable
      */
     public boolean getFixUri()
     {
-        return configuration.fixUri;
+        return configuration.isFixUri();
     }
 
     /**
@@ -2017,7 +2017,7 @@ public class Tidy implements Serializable
      */
     public void setLowerLiterals(boolean lowerLiterals)
     {
-        configuration.lowerLiterals = lowerLiterals;
+        configuration.setLowerLiterals(lowerLiterals);
     }
 
     /**
@@ -2026,7 +2026,7 @@ public class Tidy implements Serializable
      */
     public boolean getLowerLiterals()
     {
-        return configuration.lowerLiterals;
+        return configuration.isLowerLiterals();
     }
 
     /**
@@ -2036,7 +2036,7 @@ public class Tidy implements Serializable
      */
     public void setHideComments(boolean hideComments)
     {
-        configuration.hideComments = hideComments;
+        configuration.setHideComments(hideComments);
     }
 
     /**
@@ -2045,7 +2045,7 @@ public class Tidy implements Serializable
      */
     public boolean getHideComments()
     {
-        return configuration.hideComments;
+        return configuration.isHideComments();
     }
 
     /**
@@ -2055,7 +2055,7 @@ public class Tidy implements Serializable
      */
     public void setIndentCdata(boolean indentCdata)
     {
-        configuration.indentCdata = indentCdata;
+        configuration.setIndentCdata(indentCdata);
     }
 
     /**
@@ -2064,7 +2064,7 @@ public class Tidy implements Serializable
      */
     public boolean getIndentCdata()
     {
-        return configuration.indentCdata;
+        return configuration.isIndentCdata();
     }
 
     /**
@@ -2074,7 +2074,7 @@ public class Tidy implements Serializable
      */
     public void setForceOutput(boolean forceOutput)
     {
-        configuration.forceOutput = forceOutput;
+        configuration.setForceOutput(forceOutput);
     }
 
     /**
@@ -2083,7 +2083,7 @@ public class Tidy implements Serializable
      */
     public boolean getForceOutput()
     {
-        return configuration.forceOutput;
+        return configuration.isForceOutput();
     }
 
     /**
@@ -2093,7 +2093,7 @@ public class Tidy implements Serializable
      */
     public void setShowErrors(int showErrors)
     {
-        configuration.showErrors = showErrors;
+        configuration.setShowErrors(showErrors);
     }
 
     /**
@@ -2102,7 +2102,7 @@ public class Tidy implements Serializable
      */
     public int getShowErrors()
     {
-        return configuration.showErrors;
+        return configuration.getShowErrors();
     }
 
     /**
@@ -2112,7 +2112,7 @@ public class Tidy implements Serializable
      */
     public void setAsciiChars(boolean asciiChars)
     {
-        configuration.asciiChars = asciiChars;
+        configuration.setAsciiChars(asciiChars);
     }
 
     /**
@@ -2121,7 +2121,7 @@ public class Tidy implements Serializable
      */
     public boolean getAsciiChars()
     {
-        return configuration.asciiChars;
+        return configuration.isAsciiChars();
     }
 
     /**
@@ -2131,7 +2131,7 @@ public class Tidy implements Serializable
      */
     public void setJoinClasses(boolean joinClasses)
     {
-        configuration.joinClasses = joinClasses;
+        configuration.setJoinClasses(joinClasses);
     }
 
     /**
@@ -2140,7 +2140,7 @@ public class Tidy implements Serializable
      */
     public boolean getJoinClasses()
     {
-        return configuration.joinClasses;
+        return configuration.isJoinClasses();
     }
 
     /**
@@ -2150,7 +2150,7 @@ public class Tidy implements Serializable
      */
     public void setJoinStyles(boolean joinStyles)
     {
-        configuration.joinStyles = joinStyles;
+        configuration.setJoinStyles(joinStyles);
     }
 
     /**
@@ -2159,7 +2159,7 @@ public class Tidy implements Serializable
      */
     public boolean getJoinStyles()
     {
-        return configuration.joinStyles;
+        return configuration.isJoinStyles();
     }
 
     /**
@@ -2169,7 +2169,7 @@ public class Tidy implements Serializable
      */
     public void setTrimEmptyElements(boolean trimEmpty)
     {
-        configuration.trimEmpty = trimEmpty;
+        configuration.setTrimEmpty(trimEmpty);
     }
 
     /**
@@ -2178,7 +2178,7 @@ public class Tidy implements Serializable
      */
     public boolean getTrimEmptyElements()
     {
-        return configuration.trimEmpty;
+        return configuration.isTrimEmpty();
     }
 
     /**
@@ -2188,7 +2188,7 @@ public class Tidy implements Serializable
      */
     public void setReplaceColor(boolean replaceColor)
     {
-        configuration.replaceColor = replaceColor;
+        configuration.setReplaceColor(replaceColor);
     }
 
     /**
@@ -2197,7 +2197,7 @@ public class Tidy implements Serializable
      */
     public boolean getReplaceColor()
     {
-        return configuration.replaceColor;
+        return configuration.isReplaceColor();
     }
 
     /**
@@ -2207,7 +2207,7 @@ public class Tidy implements Serializable
      */
     public void setEscapeCdata(boolean escapeCdata)
     {
-        configuration.escapeCdata = escapeCdata;
+        configuration.setEscapeCdata(escapeCdata);
     }
 
     /**
@@ -2216,7 +2216,7 @@ public class Tidy implements Serializable
      */
     public boolean getEscapeCdata()
     {
-        return configuration.escapeCdata;
+        return configuration.isEscapeCdata();
     }
 
     /**
@@ -2226,7 +2226,7 @@ public class Tidy implements Serializable
      */
     public void setRepeatedAttributes(int repeatedAttributes)
     {
-        configuration.duplicateAttrs = repeatedAttributes;
+        configuration.setDuplicateAttrs(repeatedAttributes);
     }
 
     /**
@@ -2235,7 +2235,7 @@ public class Tidy implements Serializable
      */
     public int getRepeatedAttributes()
     {
-        return configuration.duplicateAttrs;
+        return configuration.getDuplicateAttrs();
     }
 
     /**
@@ -2246,7 +2246,7 @@ public class Tidy implements Serializable
      */
     public void setKeepFileTimes(boolean keepFileTimes)
     {
-        configuration.keepFileTimes = keepFileTimes;
+        configuration.setKeepFileTimes(keepFileTimes);
     }
 
     /**
@@ -2257,7 +2257,7 @@ public class Tidy implements Serializable
      */
     public boolean getKeepFileTimes()
     {
-        return configuration.keepFileTimes;
+        return configuration.isKeepFileTimes();
     }
 
     /**
@@ -2268,7 +2268,7 @@ public class Tidy implements Serializable
      */
     public void setRawOut(boolean rawOut)
     {
-        configuration.rawOut = rawOut;
+        configuration.setRawOut(rawOut);
     }
 
     /**
@@ -2278,7 +2278,7 @@ public class Tidy implements Serializable
      */
     public boolean getRawOut()
     {
-        return configuration.rawOut;
+        return configuration.isRawOut();
     }
 
     /**

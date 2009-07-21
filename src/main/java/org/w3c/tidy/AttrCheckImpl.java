@@ -279,12 +279,12 @@ public final class AttrCheckImpl
             }
 
             // backslashes found, fix them
-            if (lexer.configuration.fixBackslash && backslashFound) {
+            if (lexer.configuration.isFixBackslash() && backslashFound) {
                 attval.value = p = p.replace('\\', '/');
             }
 
             // non-ascii chars found, fix them
-            if (lexer.configuration.fixUri && escapeCount > 0) {
+            if (lexer.configuration.isFixUri() && escapeCount > 0) {
                 StringBuilder dest = new StringBuilder(p.length() + escapeCount * 2);
 
                 for (int i = 0; i < p.length(); ++i) {
@@ -299,14 +299,14 @@ public final class AttrCheckImpl
                 attval.value = dest.toString();
             }
             if (backslashFound) {
-                if (lexer.configuration.fixBackslash && !isJavascript) {
+                if (lexer.configuration.isFixBackslash() && !isJavascript) {
                     lexer.report.attrError(lexer, node, attval, Report.FIXED_BACKSLASH);
                 } else {
                     lexer.report.attrError(lexer, node, attval, Report.BACKSLASH_IN_URI);
                 }
             }
             if (escapeCount > 0) {
-                if (lexer.configuration.fixUri) {
+                if (lexer.configuration.isFixUri()) {
                     lexer.report.attrError(lexer, node, attval, Report.ESCAPED_ILLEGAL_URI);
                 } else {
                     lexer.report.attrError(lexer, node, attval, Report.ILLEGAL_URI_REFERENCE);
@@ -372,7 +372,7 @@ public final class AttrCheckImpl
                 return;
             }
             if (node.isAnchorElement()) {
-            	if (lexer.configuration.xmlOut && !TidyUtils.isValidNMTOKEN(attval.value)) {
+            	if (lexer.configuration.isXmlOut() && !TidyUtils.isValidNMTOKEN(attval.value)) {
             		lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
             	}
             	final Node old = lexer.configuration.tt.getNodeByAnchor(attval.value);
@@ -798,7 +798,7 @@ public final class AttrCheckImpl
             	valid = isValidColorCode(given.substring(1));
             }
             
-            if (valid && given.charAt(0) == '#' && lexer.configuration.replaceColor) {
+            if (valid && given.charAt(0) == '#' && lexer.configuration.isReplaceColor()) {
             	String newName = getColorName(given);
             	if (newName != null) {
             		given = attval.value = newName;
@@ -886,7 +886,7 @@ public final class AttrCheckImpl
         public void check(Lexer lexer, Node node, AttVal attval) {
         	// empty xml:lang is allowed through XML 1.0 SE errata
         	if (!attval.hasValue() && !attval.is(AttrId.XML_LANG)) {
-        		if (lexer.configuration.accessibilityCheckLevel == 0) {
+        		if (lexer.configuration.getAccessibilityCheckLevel() == 0) {
         			lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
         		}
         		return;

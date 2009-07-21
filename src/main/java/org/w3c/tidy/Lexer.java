@@ -602,7 +602,7 @@ public class Lexer
         // Allow only valid XML characters. See: http://www.w3.org/TR/2004/REC-xml-20040204/#NT-Char
         // Fix by Pablo Mayrgundter 17-08-2004
 
-        if ((this.configuration.xmlOut || this.configuration.xHTML) // only for xml output
+        if ((this.configuration.isXmlOut() || this.configuration.isXHTML()) // only for xml output
             && !((c >= 0x20 && c <= 0xD7FF) // Check the common-case first.
                 || c == 0x9
                 || c == 0xA
@@ -698,7 +698,7 @@ public class Lexer
             if (first && c == '#')
             {
                 // #431953 - start RJ
-                if (!this.configuration.ncr
+                if (!this.configuration.isNcr()
                     || "BIG5".equals(this.configuration.getInCharEncodingName())
                     || "SHIFTJIS".equals(this.configuration.getInCharEncodingName()))
                 {
@@ -727,7 +727,7 @@ public class Lexer
 
         str = TidyUtils.getString(this.lexbuf, start, this.lexsize - start);
 
-        if ("&apos".equals(str) && !configuration.xmlOut && !this.isvoyager && !configuration.xHTML)
+        if ("&apos".equals(str) && !configuration.isXmlOut() && !this.isvoyager && !configuration.isXHTML())
         {
             report.entityError(this, Report.APOS_UNDEFINED, str, 39);
         }
@@ -760,11 +760,11 @@ public class Lexer
                     // invalid numeric character reference
                     int c1 = 0;
 
-                    if ("WIN1252".equals(configuration.replacementCharEncoding))
+                    if ("WIN1252".equals(configuration.getReplacementCharEncoding()))
                     {
                         c1 = EncodingUtils.decodeWin1252(ch);
                     }
-                    else if ("MACROMAN".equals(configuration.replacementCharEncoding))
+                    else if ("MACROMAN".equals(configuration.getReplacementCharEncoding()))
                     {
                         c1 = EncodingUtils.decodeMacRoman(ch);
                     }
@@ -831,7 +831,7 @@ public class Lexer
 
             addCharToLexer(ch);
 
-            if (ch == '&' && !this.configuration.quoteAmpersand)
+            if (ch == '&' && !this.configuration.isQuoteAmpersand())
             {
                 addCharToLexer('a');
                 addCharToLexer('m');
@@ -852,7 +852,7 @@ public class Lexer
         // fold case of first char in buffer
         c = this.lexbuf[this.txtstart];
 
-        if (!this.configuration.xmlTags && TidyUtils.isUpper((char) c))
+        if (!this.configuration.isXmlTags() && TidyUtils.isUpper((char) c))
         {
             c = TidyUtils.toLower((char) c);
             this.lexbuf[this.txtstart] = (byte) c;
@@ -866,7 +866,7 @@ public class Lexer
             }
 
             // fold case of subsequent chars
-            if (!this.configuration.xmlTags && TidyUtils.isUpper((char) c))
+            if (!this.configuration.isXmlTags() && TidyUtils.isUpper((char) c))
             {
                 c = TidyUtils.toLower((char) c);
             }
@@ -920,7 +920,7 @@ public class Lexer
             return VERS_HTML20;
         }
 
-        if (!(this.configuration.xmlOut | this.configuration.xmlTags | this.isvoyager)
+        if (!(this.configuration.isXmlOut() | this.configuration.isXmlTags() | this.isvoyager)
             && TidyUtils.toBoolean(versions & VERS_HTML32))
         {
             return VERS_HTML32;
@@ -1239,7 +1239,7 @@ public class Lexer
 
         fixHTMLNameSpace(root, namespace); // #427839 - fix by Evan Lenz 05 Sep 00
 
-        if (this.configuration.docTypeMode == Configuration.DOCTYPE_OMIT)
+        if (this.configuration.getDocTypeMode() == Configuration.DOCTYPE_OMIT)
         {
             if (doctype != null)
             {
@@ -1248,7 +1248,7 @@ public class Lexer
             return true;
         }
 
-        if (this.configuration.docTypeMode == Configuration.DOCTYPE_AUTO)
+        if (this.configuration.getDocTypeMode() == Configuration.DOCTYPE_AUTO)
         {
             // see what flavor of XHTML this document matches
             if (TidyUtils.toBoolean(this.versions & VERS_HTML40_STRICT))
@@ -1285,20 +1285,20 @@ public class Lexer
                 }
             }
         }
-        else if (this.configuration.docTypeMode == Configuration.DOCTYPE_STRICT)
+        else if (this.configuration.getDocTypeMode() == Configuration.DOCTYPE_STRICT)
         {
             fpi = "-//W3C//DTD XHTML 1.0 Strict//EN";
             sysid = VOYAGER_STRICT;
         }
-        else if (this.configuration.docTypeMode == Configuration.DOCTYPE_LOOSE)
+        else if (this.configuration.getDocTypeMode() == Configuration.DOCTYPE_LOOSE)
         {
             fpi = "-//W3C//DTD XHTML 1.0 Transitional//EN";
             sysid = VOYAGER_LOOSE;
         }
 
-        if (this.configuration.docTypeMode == Configuration.DOCTYPE_USER && this.configuration.docTypeStr != null)
+        if (this.configuration.getDocTypeMode() == Configuration.DOCTYPE_USER && this.configuration.getDocTypeStr() != null)
         {
-            fpi = this.configuration.docTypeStr;
+            fpi = this.configuration.getDocTypeStr();
             sysid = "";
         }
 
@@ -1310,7 +1310,7 @@ public class Lexer
         if (doctype != null)
         {
             // Look for internal DTD subset
-            if (configuration.xHTML || configuration.xmlOut)
+            if (configuration.isXHTML() || configuration.isXmlOut())
             {
 
                 int len = doctype.end - doctype.start + 1;
@@ -1354,7 +1354,7 @@ public class Lexer
             addStringLiteral("\"");
         }
 
-        if (this.configuration.wraplen != 0 && sysid.length() + 6 >= this.configuration.wraplen)
+        if (this.configuration.getWraplen() != 0 && sysid.length() + 6 >= this.configuration.getWraplen())
         {
             addStringLiteral("\n\"");
         }
@@ -1477,7 +1477,7 @@ public class Lexer
 
         doctype = root.findDocType();
 
-        if (this.configuration.docTypeMode == Configuration.DOCTYPE_OMIT)
+        if (this.configuration.getDocTypeMode() == Configuration.DOCTYPE_OMIT)
         {
             if (doctype != null)
             {
@@ -1486,24 +1486,24 @@ public class Lexer
             return true;
         }
 
-        if (this.configuration.xmlOut)
+        if (this.configuration.isXmlOut())
         {
             return true;
         }
 
-        if (this.configuration.docTypeMode == Configuration.DOCTYPE_STRICT)
+        if (this.configuration.getDocTypeMode() == Configuration.DOCTYPE_STRICT)
         {
             Node.discardElement(doctype);
             doctype = null;
             guessed = VERS_HTML40_STRICT;
         }
-        else if (this.configuration.docTypeMode == Configuration.DOCTYPE_LOOSE)
+        else if (this.configuration.getDocTypeMode() == Configuration.DOCTYPE_LOOSE)
         {
             Node.discardElement(doctype);
             doctype = null;
             guessed = VERS_HTML40_LOOSE;
         }
-        else if (this.configuration.docTypeMode == Configuration.DOCTYPE_AUTO)
+        else if (this.configuration.getDocTypeMode() == Configuration.DOCTYPE_AUTO)
         {
             if (doctype != null)
             {
@@ -1582,7 +1582,7 @@ public class Lexer
         }
 
         // for XML use the Voyager system identifier
-        if (this.configuration.xmlOut || this.configuration.xmlTags || this.isvoyager)
+        if (this.configuration.isXmlOut() || this.configuration.isXmlTags() || this.isvoyager)
         {
             if (doctype != null)
             {
@@ -1619,19 +1619,19 @@ public class Lexer
         // use the appropriate public identifier
         addStringLiteral("html PUBLIC ");
 
-        if (this.configuration.docTypeMode == Configuration.DOCTYPE_USER
-            && this.configuration.docTypeStr != null
-            && this.configuration.docTypeStr.length() > 0)
+        if (this.configuration.getDocTypeMode() == Configuration.DOCTYPE_USER
+            && this.configuration.getDocTypeStr() != null
+            && this.configuration.getDocTypeStr().length() > 0)
         {
             // check if the fpi is quoted or not
-            if (this.configuration.docTypeStr.charAt(0) == '"')
+            if (this.configuration.getDocTypeStr().charAt(0) == '"')
             {
-                addStringLiteral(this.configuration.docTypeStr);
+                addStringLiteral(this.configuration.getDocTypeStr());
             }
             else
             {
                 addStringLiteral("\""); // #431889 - fix by Dave Bryan 04 Jan 2001
-                addStringLiteral(this.configuration.docTypeStr);
+                addStringLiteral(this.configuration.getDocTypeStr());
                 addStringLiteral("\""); // #431889 - fix by Dave Bryan 04 Jan 2001
             }
         }
@@ -2417,20 +2417,20 @@ public class Lexer
                     {
                         report.error(this, null, this.token, Report.UNKNOWN_ELEMENT);
                     }
-                    else if (!this.configuration.xmlTags)
+                    else if (!this.configuration.isXmlTags())
                     {
                         constrainVersion(this.token.tag.versions);
 
                         if (TidyUtils.toBoolean(this.token.tag.versions & VERS_PROPRIETARY))
                         {
                             // #427810 - fix by Gary Deschaines 24 May 00
-                            if (this.configuration.makeClean && (!this.token.is(TagId.NOBR) && //
+                            if (this.configuration.isMakeClean() && (!this.token.is(TagId.NOBR) && //
                                 !this.token.is(TagId.WBR)))
                             {
                                 report.warning(this, null, this.token, Report.PROPRIETARY_ELEMENT);
                             }
                             // #427810 - fix by Terry Teague 2 Jul 01
-                            else if (!this.configuration.makeClean)
+                            else if (!this.configuration.isMakeClean())
                             {
                                 report.warning(this, null, this.token, Report.PROPRIETARY_ELEMENT);
                             }
@@ -2519,7 +2519,7 @@ public class Lexer
                         }
 
                         badcomment++;
-                        if (this.configuration.fixComments)
+                        if (this.configuration.isFixComments())
                         {
                             this.lexbuf[this.lexsize - 2] = (byte) '=';
                         }
@@ -2604,7 +2604,7 @@ public class Lexer
                         }
                     }
 
-                    if (this.configuration.xmlPIs) // insist on ?> as terminator
+                    if (this.configuration.isXmlPIs()) // insist on ?> as terminator
                     {
                         if (c != '?')
                         {
@@ -3081,7 +3081,7 @@ public class Lexer
             // what should be done about non-namechar characters?
             // currently these are incorporated into the attr name
 
-            if (!this.configuration.xmlTags && TidyUtils.isUpper((char) c))
+            if (!this.configuration.isXmlTags() && TidyUtils.isUpper((char) c))
             {
                 c = TidyUtils.toLower((char) c);
             }
@@ -3236,7 +3236,7 @@ public class Lexer
         // Henry Zrepa reports that some folk are using the embed element with script attributes where newlines are
         // significant and must be preserved
 
-        if (this.configuration.literalAttribs)
+        if (this.configuration.isLiteralAttribs())
         {
             munge = false;
         }
@@ -3902,7 +3902,7 @@ public class Lexer
             return false;
         }
 
-        if (element.is(TagId.P) && !this.configuration.dropEmptyParas)
+        if (element.is(TagId.P) && !this.configuration.isDropEmptyParas())
         {
             return false;
         }
@@ -3975,7 +3975,7 @@ public class Lexer
                     report.attrError(this, node, name, Report.ID_NAME_MISMATCH);
                 }
             }
-            else if (this.configuration.xmlOut)
+            else if (this.configuration.isXmlOut())
             {
                 node.addAttribute("id", name.value);
             }

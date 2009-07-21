@@ -856,7 +856,7 @@ public final class Report
         try
         {
             // Change formatting to be parsable by GNU Emacs
-            if (lexer.configuration.emacs)
+            if (lexer.configuration.isEmacs())
             {
                 return MessageFormat.format(res.getString("emacs_format"), new Object[]{
                     this.currentFile,
@@ -887,12 +887,12 @@ public final class Report
     {
         lexer.warnings++;
 
-        if (lexer.errors > lexer.configuration.showErrors) // keep quiet after <showErrors> errors
+        if (lexer.errors > lexer.configuration.getShowErrors()) // keep quiet after <showErrors> errors
         {
             return;
         }
 
-        if (lexer.configuration.showWarnings)
+        if (lexer.configuration.isShowWarnings())
         {
             String buf = Integer.toHexString(c);
 
@@ -978,12 +978,12 @@ public final class Report
     {
         lexer.warnings++;
 
-        if (lexer.errors > lexer.configuration.showErrors) // keep quiet after <showErrors> errors
+        if (lexer.errors > lexer.configuration.getShowErrors()) // keep quiet after <showErrors> errors
         {
             return;
         }
 
-        if (lexer.configuration.showWarnings)
+        if (lexer.configuration.isShowWarnings())
         {
             switch (code)
             {
@@ -1027,7 +1027,7 @@ public final class Report
             lexer.warnings++;
         }
 
-        if (lexer.errors > lexer.configuration.showErrors) // keep quiet after <showErrors> errors
+        if (lexer.errors > lexer.configuration.getShowErrors()) // keep quiet after <showErrors> errors
         {
             return;
         }
@@ -1037,7 +1037,7 @@ public final class Report
             printMessage(code, lexer, "unexpected_gt", new Object[]{getTagName(node)}, Level.ERROR);
         }
 
-        if (!lexer.configuration.showWarnings) // warnings
+        if (!lexer.configuration.isShowWarnings()) // warnings
         {
             return;
         }
@@ -1213,12 +1213,12 @@ public final class Report
         }
 
         // keep quiet after <showErrors> errors
-        if (lexer.errors > lexer.configuration.showErrors)
+        if (lexer.errors > lexer.configuration.getShowErrors())
         {
             return;
         }
 
-        if (lexer.configuration.showWarnings)
+        if (lexer.configuration.isShowWarnings())
         {
             switch (code)
             {
@@ -1463,7 +1463,7 @@ public final class Report
         lexer.errors++;
 
         // keep quiet after <showErrors> errors
-        if (lexer.errors > lexer.configuration.showErrors)
+        if (lexer.errors > lexer.configuration.getShowErrors())
         {
             return;
         }

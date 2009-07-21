@@ -225,7 +225,7 @@ public class AttVal extends Object implements Cloneable
                 lexer.report.attrError(lexer, node, this, Report.ATTR_VALUE_NOT_LCASE);
             }
 
-            if (lexer.isvoyager || lexer.configuration.lowerLiterals)
+            if (lexer.isvoyager || lexer.configuration.isLowerLiterals())
             {
                 this.value = lowercase;
             }
@@ -249,7 +249,7 @@ public class AttVal extends Object implements Cloneable
             // if attribute looks like <foo/> check XML is ok
             if (TidyUtils.toBoolean(attr.getVersions() & VERS_XML))
             {
-                if (!(lexer.configuration.xmlTags || lexer.configuration.xmlOut))
+                if (!(lexer.configuration.isXmlTags() || lexer.configuration.isXmlOut()))
                 {
                     lexer.report.attrError(lexer, node, this, Report.XML_ATTRIBUTE_VALUE);
                 }
@@ -270,7 +270,7 @@ public class AttVal extends Object implements Cloneable
             }
 
         }
-        else if (!lexer.configuration.xmlTags
+        else if (!lexer.configuration.isXmlTags()
             && !(node.tag == null)
             && this.asp == null
             && !(node.tag != null && (TidyUtils.toBoolean(node.tag.versions & VERS_PROPRIETARY))))

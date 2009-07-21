@@ -306,7 +306,7 @@ public class Clean
     {
         String str;
 
-        str = lexer.configuration.cssPrefix == null ? lexer.configuration.cssPrefix + this.classNum : "c"
+        str = lexer.configuration.getCssPrefix() == null ? lexer.configuration.getCssPrefix() + this.classNum : "c"
             + this.classNum;
         this.classNum++;
         return str;
@@ -1098,7 +1098,7 @@ public class Clean
     {
         if (node.is(TagId.CENTER))
         {
-            if (lexer.configuration.dropFontTags)
+            if (lexer.configuration.isDropFontTags())
             {
                 if (node.content != null)
                 {
@@ -1408,7 +1408,7 @@ public class Clean
                 return false;
             }
 
-            if (child.is(TagId.B) && lexer.configuration.logicalEmphasis)
+            if (child.is(TagId.B) && lexer.configuration.isLogicalEmphasis())
             {
                 mergeStyles(node, child);
                 addStyleProperty(node, "font-weight: bold");
@@ -1416,7 +1416,7 @@ public class Clean
                 return true;
             }
 
-            if (child.is(TagId.I) && lexer.configuration.logicalEmphasis)
+            if (child.is(TagId.I) && lexer.configuration.isLogicalEmphasis())
             {
                 mergeStyles(node, child);
                 addStyleProperty(node, "font-style: italic");
@@ -1450,7 +1450,7 @@ public class Clean
 
         if (node.is(TagId.FONT))
         {
-            if (lexer.configuration.dropFontTags)
+            if (lexer.configuration.isDropFontTags())
             {
                 discardContainer(node, pnode);
                 return false;
@@ -1630,7 +1630,7 @@ public class Clean
         repl[0] = doc;
         doc = createStyleProperties(lexer, doc, repl);
 
-        if (!lexer.configuration.makeClean)
+        if (!lexer.configuration.isMakeClean())
         {
             defineStyleRules(lexer, doc);
             createStyleElement(lexer, doc);
