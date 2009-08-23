@@ -1746,7 +1746,7 @@ public class Tidy implements Serializable
     {
         if (doctype != null)
         {
-            configuration.setDocTypeStr((String) ParsePropertyImpl.DOCTYPE.parse(doctype, "doctype", configuration));
+            configuration.setDocTypeStr((String) ParsePropertyImpl.DOCTYPE.parse(doctype, Option.Doctype, configuration));
         }
     }
 

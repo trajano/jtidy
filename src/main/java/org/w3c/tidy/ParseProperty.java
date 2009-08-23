@@ -64,11 +64,11 @@ public interface ParseProperty
     /**
      * Parse a configuration option.
      * @param value option value
-     * @param option option name
+     * @param option option object
      * @param configuration actual configuration instance
      * @return parsed configuration value
      */
-    Object parse(String value, String option, Configuration configuration);
+    Object parse(String value, Option option, Configuration configuration);
 
     /**
      * Returns the option type.

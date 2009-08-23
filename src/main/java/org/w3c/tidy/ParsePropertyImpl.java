@@ -142,7 +142,7 @@ public final class ParsePropertyImpl
         /**
          * @see org.w3c.tidy.ParseProperty#parse(java.lang.String, java.lang.String, org.w3c.tidy.Configuration)
          */
-        public Object parse(String value, String option, Configuration configuration)
+        public Object parse(String value, Option option, Configuration configuration)
         {
             int i = 0;
             try
@@ -191,7 +191,7 @@ public final class ParsePropertyImpl
         /**
          * @see org.w3c.tidy.ParseProperty#parse(java.lang.String, java.lang.String, org.w3c.tidy.Configuration)
          */
-        public Object parse(String value, String option, Configuration configuration)
+        public Object parse(String value, Option option, Configuration configuration)
         {
             Boolean b = Boolean.TRUE;
             if (value != null && value.length() > 0)
@@ -252,7 +252,7 @@ public final class ParsePropertyImpl
         /**
          * @see org.w3c.tidy.ParseProperty#parse(java.lang.String, java.lang.String, org.w3c.tidy.Configuration)
          */
-        public Object parse(String value, String option, Configuration configuration)
+        public Object parse(String value, Option option, Configuration configuration)
         {
             return (((Boolean) BOOL.parse(value, option, configuration)).booleanValue() ? Boolean.FALSE : Boolean.TRUE);
         }
@@ -296,9 +296,9 @@ public final class ParsePropertyImpl
         /**
          * @see org.w3c.tidy.ParseProperty#parse(java.lang.String, java.lang.String, org.w3c.tidy.Configuration)
          */
-        public Object parse(String value, String option, Configuration configuration)
+        public Object parse(String value, Option option, Configuration configuration)
         {
-
+        	final String name = option.getName();
             if ("raw".equalsIgnoreCase(value))
             {
                 // special value for compatibility with tidy c
@@ -308,15 +308,15 @@ public final class ParsePropertyImpl
             {
                 configuration.report.badArgument(value, option);
             }
-            else if ("input-encoding".equalsIgnoreCase(option))
+            else if ("input-encoding".equalsIgnoreCase(name))
             {
                 configuration.setInCharEncodingName(value);
             }
-            else if ("output-encoding".equalsIgnoreCase(option))
+            else if ("output-encoding".equalsIgnoreCase(name))
             {
                 configuration.setOutCharEncodingName(value);
             }
-            else if ("char-encoding".equalsIgnoreCase(option))
+            else if ("char-encoding".equalsIgnoreCase(name))
             {
                 configuration.setInCharEncodingName(value);
                 configuration.setOutCharEncodingName(value);
@@ -366,7 +366,7 @@ public final class ParsePropertyImpl
         /**
          * @see org.w3c.tidy.ParseProperty#parse(java.lang.String, java.lang.String, org.w3c.tidy.Configuration)
          */
-        public Object parse(String value, String option, Configuration configuration)
+        public Object parse(String value, Option option, Configuration configuration)
         {
             StringTokenizer t = new StringTokenizer(value);
             String rs = null;
@@ -415,7 +415,7 @@ public final class ParsePropertyImpl
         /**
          * @see org.w3c.tidy.ParseProperty#parse(java.lang.String, java.lang.String, org.w3c.tidy.Configuration)
          */
-        public Object parse(String value, String option, Configuration configuration)
+        public Object parse(String value, Option option, Configuration configuration)
         {
             short tagType = Dict.TAGTYPE_INLINE;
 
@@ -516,7 +516,7 @@ public final class ParsePropertyImpl
         /**
          * @see org.w3c.tidy.ParseProperty#parse(java.lang.String, java.lang.String, org.w3c.tidy.Configuration)
          */
-        public Object parse(String value, String option, Configuration configuration)
+        public Object parse(String value, Option option, Configuration configuration)
         {
             value = value.trim();
 
@@ -623,7 +623,7 @@ public final class ParsePropertyImpl
         /**
          * @see org.w3c.tidy.ParseProperty#parse(java.lang.String, java.lang.String, org.w3c.tidy.Configuration)
          */
-        public Object parse(String value, String option, Configuration configuration)
+        public Object parse(String value, Option option, Configuration configuration)
         {
             int dupAttr;
 
@@ -700,7 +700,7 @@ public final class ParsePropertyImpl
         /**
          * @see org.w3c.tidy.ParseProperty#parse(java.lang.String, java.lang.String, org.w3c.tidy.Configuration)
          */
-        public Object parse(String value, String option, Configuration configuration)
+        public Object parse(String value, Option option, Configuration configuration)
         {
             return value;
         }
@@ -739,7 +739,7 @@ public final class ParsePropertyImpl
         /**
          * @see org.w3c.tidy.ParseProperty#parse(java.lang.String, java.lang.String, org.w3c.tidy.Configuration)
          */
-        public Object parse(String value, String option, Configuration configuration)
+        public Object parse(String value, Option option, Configuration configuration)
         {
             boolean b = configuration.isIndentContent();
 
@@ -809,7 +809,7 @@ public final class ParsePropertyImpl
         /**
          * @see org.w3c.tidy.ParseProperty#parse(java.lang.String, java.lang.String, org.w3c.tidy.Configuration)
          */
-        public Object parse(String value, String option, Configuration configuration)
+        public Object parse(String value, Option option, Configuration configuration)
         {
             StringTokenizer t = new StringTokenizer(value);
             String buf = null;
@@ -865,7 +865,7 @@ public final class ParsePropertyImpl
         /**
          * @see org.w3c.tidy.ParseProperty#parse(java.lang.String, java.lang.String, org.w3c.tidy.Configuration)
          */
-        public Object parse(String value, String option, Configuration configuration)
+        public Object parse(String value, Option option, Configuration configuration)
         {
             // lf|crlf|cr
             if ("lf".equalsIgnoreCase(value))
