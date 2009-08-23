@@ -57,12 +57,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.EnumMap;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -203,120 +199,116 @@ public class Configuration implements Serializable
      */
     public static final int KEEP_FIRST = 1;
 
-    /**
-     * Map containg all the valid configuration options and the related parser. Tag entry contains String(option
-     * name)-Flag instance.
-     */
-    private static final Map<String, Flag> OPTIONS = new HashMap<String, Flag>();
+    private final Map<Option, Object> options = new EnumMap<Option, Object>(Option.class);
 
     /**
      * serial version UID for this class.
      */
     private static final long serialVersionUID = -4955155037138560842L;
 
-    static
-    {
-    	// missing: unknown
-        addConfigOption(new Flag("indent-spaces", "spaces", ParsePropertyImpl.INT));
-        addConfigOption(new Flag("wrap", "wraplen", ParsePropertyImpl.INT));
-        addConfigOption(new Flag("tab-size", "tabsize", ParsePropertyImpl.INT));
-        addConfigOption(new Flag("char-encoding", null, ParsePropertyImpl.CHAR_ENCODING));
-        addConfigOption(new Flag("input-encoding", null, ParsePropertyImpl.CHAR_ENCODING));
-        addConfigOption(new Flag("output-encoding", null, ParsePropertyImpl.CHAR_ENCODING));
-        addConfigOption(new Flag("newline", null, ParsePropertyImpl.NEWLINE));
-        // missing: doctype-mode
-        addConfigOption(new Flag("doctype", "docTypeStr", ParsePropertyImpl.DOCTYPE));
-        addConfigOption(new Flag("repeated-attributes", "duplicateAttrs", ParsePropertyImpl.REPEATED_ATTRIBUTES));
-        addConfigOption(new Flag("alt-text", "altText", ParsePropertyImpl.STRING));
-        
-        // obsolete
-        addConfigOption(new Flag("slide-style", "slidestyle", ParsePropertyImpl.NAME));
-        
-        addConfigOption(new Flag("error-file", "errfile", ParsePropertyImpl.NAME));
-        // missing: output-file
-        addConfigOption(new Flag("write-back", "writeback", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("markup", "onlyErrors", ParsePropertyImpl.INVBOOL));
-        addConfigOption(new Flag("show-warnings", "showWarnings", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("quiet", "quiet", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("indent", "indentContent", ParsePropertyImpl.INDENT));
-        addConfigOption(new Flag("hide-endtags", "hideEndTags", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("input-xml", "xmlTags", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("output-xml", "xmlOut", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("output-xhtml", "xHTML", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("output-html", "htmlOut", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("add-xml-decl", "xmlPi", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("uppercase-tags", "upperCaseTags", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("uppercase-attributes", "upperCaseAttrs", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("bare", "makeBare", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("clean", "makeClean", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("logical-emphasis", "logicalEmphasis", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("drop-proprietary-attributes", "dropProprietaryAttributes", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("drop-font-tags", "dropFontTags", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("drop-empty-paras", "dropEmptyParas", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("fix-bad-comments", "fixComments", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("break-before-br", "breakBeforeBR", ParsePropertyImpl.BOOL));
-        
-        // obsolete
-        addConfigOption(new Flag("split", "burstSlides", ParsePropertyImpl.BOOL));
-        
-        addConfigOption(new Flag("numeric-entities", "numEntities", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("quote-marks", "quoteMarks", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("quote-nbsp", "quoteNbsp", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("quote-ampersand", "quoteAmpersand", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("wrap-attributes", "wrapAttVals", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("wrap-script-literals", "wrapScriptlets", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("wrap-sections", "wrapSection", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("wrap-asp", "wrapAsp", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("wrap-jste", "wrapJste", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("wrap-php", "wrapPhp", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("fix-backslash", "fixBackslash", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("indent-attributes", "indentAttributes", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("assume-xml-procins", "xmlPIs", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("add-xml-space", "xmlSpace", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("enclose-text", "encloseBodyText", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("enclose-block-text", "encloseBlockText", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("keep-time", "keepFileTimes", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("word-2000", "word2000", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("tidy-mark", "tidyMark", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("gnu-emacs", "emacs", ParsePropertyImpl.BOOL));
-        // missing: gnu-emacs-file
-        addConfigOption(new Flag("literal-attributes", "literalAttribs", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("show-body-only", "bodyOnly", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("fix-uri", "fixUri", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("lower-literals", "lowerLiterals", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("hide-comments", "hideComments", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("indent-cdata", "indentCdata", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("force-output", "forceOutput", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("show-errors", "showErrors", ParsePropertyImpl.INT));
-        addConfigOption(new Flag("ascii-chars", "asciiChars", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("join-classes", "joinClasses", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("join-styles", "joinStyles", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("escape-cdata", "escapeCdata", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("language", "language", ParsePropertyImpl.NAME));
-        addConfigOption(new Flag("ncr", "ncr", ParsePropertyImpl.BOOL));
-        // missing: output-bom
-        addConfigOption(new Flag("replace-color", "replaceColor", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("css-prefix", "cssPrefix", ParsePropertyImpl.CSS1SELECTOR));
-        addConfigOption(new Flag("new-inline-tags", null, ParsePropertyImpl.TAGNAMES));
-        addConfigOption(new Flag("new-blocklevel-tags", null, ParsePropertyImpl.TAGNAMES));
-        addConfigOption(new Flag("new-empty-tags", null, ParsePropertyImpl.TAGNAMES));
-        addConfigOption(new Flag("new-pre-tags", null, ParsePropertyImpl.TAGNAMES));
-        // missing: accessibility-check
-        // missing: vertical-space
-        // missing: punctuation-wrap
-        // missing: merge-divs
-        // missing: decorate-inferred-ul
-        // missing: preserve-entities
-        // missing: sort-attributes
-        // missing: merge-spans
-        // missing: anchor-as-name
-        
-        // options not found in Tidy
-        addConfigOption(new Flag("add-xml-pi", "xmlPi", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("only-errors", "onlyErrors", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("output-raw", "rawOut", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("trim-empty-elements", "trimEmpty", ParsePropertyImpl.BOOL));
-    }
+//    static
+//    {
+//    	// missing: unknown
+//        addConfigOption(new Flag("indent-spaces", "spaces", ParsePropertyImpl.INT));
+//        addConfigOption(new Flag("wrap", "wraplen", ParsePropertyImpl.INT));
+//        addConfigOption(new Flag("tab-size", "tabsize", ParsePropertyImpl.INT));
+//        addConfigOption(new Flag("char-encoding", null, ParsePropertyImpl.CHAR_ENCODING));
+//        addConfigOption(new Flag("input-encoding", null, ParsePropertyImpl.CHAR_ENCODING));
+//        addConfigOption(new Flag("output-encoding", null, ParsePropertyImpl.CHAR_ENCODING));
+//        addConfigOption(new Flag("newline", null, ParsePropertyImpl.NEWLINE));
+//        // missing: doctype-mode
+//        addConfigOption(new Flag("doctype", "docTypeStr", ParsePropertyImpl.DOCTYPE));
+//        addConfigOption(new Flag("repeated-attributes", "duplicateAttrs", ParsePropertyImpl.REPEATED_ATTRIBUTES));
+//        addConfigOption(new Flag("alt-text", "altText", ParsePropertyImpl.STRING));
+//        
+//        // obsolete
+//        addConfigOption(new Flag("slide-style", "slidestyle", ParsePropertyImpl.NAME));
+//        
+//        addConfigOption(new Flag("error-file", "errfile", ParsePropertyImpl.NAME));
+//        // missing: output-file
+//        addConfigOption(new Flag("write-back", "writeback", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("markup", "onlyErrors", ParsePropertyImpl.INVBOOL));
+//        addConfigOption(new Flag("show-warnings", "showWarnings", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("quiet", "quiet", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("indent", "indentContent", ParsePropertyImpl.INDENT));
+//        addConfigOption(new Flag("hide-endtags", "hideEndTags", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("input-xml", "xmlTags", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("output-xml", "xmlOut", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("output-xhtml", "xHTML", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("output-html", "htmlOut", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("add-xml-decl", "xmlPi", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("uppercase-tags", "upperCaseTags", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("uppercase-attributes", "upperCaseAttrs", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("bare", "makeBare", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("clean", "makeClean", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("logical-emphasis", "logicalEmphasis", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("drop-proprietary-attributes", "dropProprietaryAttributes", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("drop-font-tags", "dropFontTags", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("drop-empty-paras", "dropEmptyParas", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("fix-bad-comments", "fixComments", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("break-before-br", "breakBeforeBR", ParsePropertyImpl.BOOL));
+//        
+//        // obsolete
+//        addConfigOption(new Flag("split", "burstSlides", ParsePropertyImpl.BOOL));
+//        
+//        addConfigOption(new Flag("numeric-entities", "numEntities", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("quote-marks", "quoteMarks", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("quote-nbsp", "quoteNbsp", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("quote-ampersand", "quoteAmpersand", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("wrap-attributes", "wrapAttVals", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("wrap-script-literals", "wrapScriptlets", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("wrap-sections", "wrapSection", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("wrap-asp", "wrapAsp", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("wrap-jste", "wrapJste", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("wrap-php", "wrapPhp", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("fix-backslash", "fixBackslash", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("indent-attributes", "indentAttributes", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("assume-xml-procins", "xmlPIs", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("add-xml-space", "xmlSpace", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("enclose-text", "encloseBodyText", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("enclose-block-text", "encloseBlockText", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("keep-time", "keepFileTimes", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("word-2000", "word2000", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("tidy-mark", "tidyMark", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("gnu-emacs", "emacs", ParsePropertyImpl.BOOL));
+//        // missing: gnu-emacs-file
+//        addConfigOption(new Flag("literal-attributes", "literalAttribs", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("show-body-only", "bodyOnly", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("fix-uri", "fixUri", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("lower-literals", "lowerLiterals", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("hide-comments", "hideComments", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("indent-cdata", "indentCdata", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("force-output", "forceOutput", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("show-errors", "showErrors", ParsePropertyImpl.INT));
+//        addConfigOption(new Flag("ascii-chars", "asciiChars", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("join-classes", "joinClasses", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("join-styles", "joinStyles", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("escape-cdata", "escapeCdata", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("language", "language", ParsePropertyImpl.NAME));
+//        addConfigOption(new Flag("ncr", "ncr", ParsePropertyImpl.BOOL));
+//        // missing: output-bom
+//        addConfigOption(new Flag("replace-color", "replaceColor", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("css-prefix", "cssPrefix", ParsePropertyImpl.CSS1SELECTOR));
+//        addConfigOption(new Flag("new-inline-tags", null, ParsePropertyImpl.TAGNAMES));
+//        addConfigOption(new Flag("new-blocklevel-tags", null, ParsePropertyImpl.TAGNAMES));
+//        addConfigOption(new Flag("new-empty-tags", null, ParsePropertyImpl.TAGNAMES));
+//        addConfigOption(new Flag("new-pre-tags", null, ParsePropertyImpl.TAGNAMES));
+//        // missing: accessibility-check
+//        // missing: vertical-space
+//        // missing: punctuation-wrap
+//        // missing: merge-divs
+//        // missing: decorate-inferred-ul
+//        // missing: preserve-entities
+//        // missing: sort-attributes
+//        // missing: merge-spans
+//        // missing: anchor-as-name
+//        
+//        // options not found in Tidy
+//        addConfigOption(new Flag("add-xml-pi", "xmlPi", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("only-errors", "onlyErrors", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("output-raw", "rawOut", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("trim-empty-elements", "trimEmpty", ParsePropertyImpl.BOOL));
+//    }
 
     /**
      * default indentation.
@@ -721,15 +713,6 @@ public class Configuration implements Serializable
     }
 
     /**
-     * adds a config option to the map.
-     * @param flag configuration options added
-     */
-    private static void addConfigOption(Flag flag)
-    {
-        OPTIONS.put(flag.getName(), flag);
-    }
-
-    /**
      * adds configuration Properties.
      * @param p Properties
      */
@@ -770,7 +753,7 @@ public class Configuration implements Serializable
      */
     public static boolean isKnownOption(String name)
     {
-        return name != null && OPTIONS.containsKey(name);
+        return name != null && Options.getOption(name) != null;
     }
 
     /**
@@ -781,7 +764,7 @@ public class Configuration implements Serializable
         for (Object o : properties.keySet())
         {
         	String key = (String) o;
-            Flag flag = OPTIONS.get(key);
+        	Option flag = Options.getOption(key);
             if (flag == null)
             {
                 report.unknownOption(key);
@@ -789,32 +772,8 @@ public class Configuration implements Serializable
             }
 
             String stringValue = properties.getProperty(key);
-            Object value = flag.getParser().parse(stringValue, key, this);
-            if (flag.getLocation() != null)
-            {
-                try
-                {
-                    flag.getLocation().set(this, value);
-                }
-                catch (IllegalArgumentException e)
-                {
-                    throw new RuntimeException("IllegalArgumentException during config initialization for field "
-                        + key
-                        + "with value ["
-                        + value
-                        + "]: "
-                        + e.getMessage());
-                }
-                catch (IllegalAccessException e)
-                {
-                    throw new RuntimeException("IllegalArgumentException during config initialization for field "
-                        + key
-                        + "with value ["
-                        + value
-                        + "]: "
-                        + e.getMessage());
-                }
-            }
+            Object value = flag.getParser().parse(stringValue, flag, this);
+            options.put(flag, value);
         }
     }
 
@@ -906,12 +865,7 @@ public class Configuration implements Serializable
 
             errout.write("=========================== =========  ========================================\n");
 
-            // sort configuration options
-            List<Flag> values = new ArrayList<Flag>(OPTIONS.values());
-            Collections.sort(values);
-
-
-            for (Flag configItem : values)
+            for (Option configItem : Options.getOptions())
             {
                 errout.write(configItem.getName());
                 errout.write(pad, 0, 28 - configItem.getName().length());
@@ -921,27 +875,7 @@ public class Configuration implements Serializable
 
                 if (showActualConfiguration)
                 {
-                    Field field = configItem.getLocation();
-                    Object actualValue = null;
-
-                    if (field != null)
-                    {
-                        try
-                        {
-                            actualValue = field.get(this);
-                        }
-                        catch (IllegalArgumentException e1)
-                        {
-                            // should never happen
-                            throw new RuntimeException("IllegalArgument when reading field " + field.getName());
-                        }
-                        catch (IllegalAccessException e1)
-                        {
-                            // should never happen
-                            throw new RuntimeException("IllegalAccess when reading field " + field.getName());
-                        }
-                    }
-
+                    Object actualValue = options.get(configItem);
                     errout.write(configItem.getParser().getFriendlyName(configItem.getName(), actualValue, this));
                 }
                 else
@@ -957,123 +891,6 @@ public class Configuration implements Serializable
         catch (IOException e)
         {
             throw new RuntimeException(e.getMessage());
-        }
-
-    }
-
-    /**
-     * A configuration option.
-     */
-    static class Flag implements Comparable<Flag>
-    {
-
-        /**
-         * option name.
-         */
-        private String name;
-
-        /**
-         * field name.
-         */
-        private String fieldName;
-
-        /**
-         * Field where the evaluated value is saved.
-         */
-        private Field location;
-
-        /**
-         * Parser for the configuration property.
-         */
-        private ParseProperty parser;
-
-        /**
-         * Instantiates a new Flag.
-         * @param name option name
-         * @param fieldName field name (can be null)
-         * @param parser parser for property
-         */
-        Flag(String name, String fieldName, ParseProperty parser)
-        {
-
-            this.fieldName = fieldName;
-            this.name = name;
-            this.parser = parser;
-        }
-
-        /**
-         * Getter for <code>location</code>.
-         * @return Returns the location.
-         */
-        public Field getLocation()
-        {
-            // lazy initialization to speed up loading
-            if (fieldName != null && this.location == null)
-            {
-                try
-                {
-                    this.location = Configuration.class.getDeclaredField(fieldName);
-                }
-                catch (NoSuchFieldException e)
-                {
-                    throw new RuntimeException("NoSuchField exception during config initialization for field "
-                        + fieldName);
-                }
-                catch (SecurityException e)
-                {
-                    throw new RuntimeException("Security exception during config initialization for field "
-                        + fieldName
-                        + ": "
-                        + e.getMessage());
-                }
-            }
-
-            return this.location;
-        }
-
-        /**
-         * Getter for <code>name</code>.
-         * @return Returns the name.
-         */
-        public String getName()
-        {
-            return this.name;
-        }
-
-        /**
-         * Getter for <code>parser</code>.
-         * @return Returns the parser.
-         */
-        public ParseProperty getParser()
-        {
-            return this.parser;
-        }
-
-        /**
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
-        @Override
-		public boolean equals(Object obj)
-        {
-            return this.name.equals(((Flag) obj).name);
-        }
-
-        /**
-         * @see java.lang.Object#hashCode()
-         */
-        @Override
-		public int hashCode()
-        {
-            // returning the hashCode of String, to be consistent with equals and compareTo
-            return this.name.hashCode();
-        }
-
-        /**
-         * @see java.lang.Comparable#compareTo(java.lang.Object)
-         */
-        public int compareTo(Flag o)
-        {
-            return this.name.compareTo(o.name);
         }
 
     }
