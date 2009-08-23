@@ -56,6 +56,7 @@ package org.w3c.tidy;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.w3c.tidy.Options.OptionEnum;
 
 /**
  * Property parser instances.
@@ -64,6 +65,7 @@ import java.util.StringTokenizer;
  */
 public final class ParsePropertyImpl
 {
+	static final ParseProperty VALUES = new ParseFromValues();
 
     /**
      * configuration parser for int values.
@@ -74,6 +76,8 @@ public final class ParsePropertyImpl
      * configuration parser for boolean values.
      */
     static final ParseProperty BOOL = new ParseBoolean();
+    
+    static final ParseProperty AUTOBOOL = VALUES;
 
     /**
      * configuration parser for inverted boolean values.
@@ -124,6 +128,8 @@ public final class ParsePropertyImpl
      * configuration parser for new line bytes.
      */
     static final ParseProperty NEWLINE = new ParseNewLine();
+    
+    static final ParseProperty SORTER = VALUES;
 
     /**
      * don't instantiate.
@@ -131,6 +137,29 @@ public final class ParsePropertyImpl
     private ParsePropertyImpl()
     {
         // unused
+    }
+    
+    private static class ParseFromValues implements ParseProperty {
+		public Object parse(final String value, final Option option, final Configuration configuration) {
+			try {
+				return option.getPickList().get(value);
+			} catch (Exception e) {
+				configuration.report.badArgument(value, option);
+				return null;
+			}
+		}
+
+		public String getFriendlyName(final String option, final Object value, final Configuration configuration) {
+			return ((OptionEnum) value).getName();
+		}
+
+		public String getOptionValues() {
+			return null;
+		}
+
+		public String getType() {
+			return null;
+		}
     }
 
     /**
@@ -915,5 +944,4 @@ public final class ParsePropertyImpl
             return "crlf";
         }
     }
-
 }
