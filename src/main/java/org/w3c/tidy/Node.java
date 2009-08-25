@@ -1480,6 +1480,8 @@ public class Node implements Cloneable
     protected Node cloneNode(boolean deep)
     {
         Node node = (Node) this.clone();
+        node.content = null;
+        node.last = null;
         if (deep)
         {
             Node child;
