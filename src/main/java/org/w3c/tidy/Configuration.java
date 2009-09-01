@@ -509,7 +509,7 @@ public class Configuration implements Serializable
         // XML requires end tags
         if (isXmlOut()) {
             setQuoteAmpersand(true);
-            setHideEndTags(true);
+            setHideEndTags(false);
         }
     }
 
