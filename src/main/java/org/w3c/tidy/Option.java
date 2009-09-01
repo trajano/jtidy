@@ -35,21 +35,21 @@ enum Option {
 	/** See doctype property */
 	DoctypeMode             (MU, "doctype-mode",                IN, DoctypeModes.Auto,     null,                DoctypeModes.class),
 	/** User specified doctype */
-	Doctype                 (MU, "doctype",                     ST, 0,                     DOCTYPE,             DoctypeModes.class),
+	Doctype                 (MU, "doctype",                     ST, null,                  DOCTYPE,             DoctypeModes.class),
 	
 	/** Keep first or last duplicate attribute */
 	DuplicateAttrs          (MU, "repeated-attributes",         IN, DupAttrModes.KeepLast, REPEATED_ATTRIBUTES, DupAttrModes.class),
 	/** Default text for alt attribute */
-	AltText                 (MU, "alt-text",                    ST, 0,                     STRING,              null),
+	AltText                 (MU, "alt-text",                    ST, null,                  STRING,              null),
 	
 	// obsolete
 	/** Style sheet for slides: not used for anything yet */
-	SlideStyle              (MS, "slide-style",                 ST, 0,                     NAME,                null),
+	SlideStyle              (MS, "slide-style",                 ST, null,                  NAME,                null),
 	
 	/** File name to write errors to */
-	ErrFile                 (MS, "error-file",                  ST, 0,                     STRING,              null),
+	ErrFile                 (MS, "error-file",                  ST, null,                  STRING,              null),
 	/** File name to write markup to */
-	OutFile                 (MS, "output-file",                 ST, 0,                     STRING,              null),
+	OutFile                 (MS, "output-file",                 ST, null,                  STRING,              null),
 	/** If true then output tidied markup */
 	WriteBack               (MS, "write-back",                  BL, false,                 BOOL,                Bool.class),
 	/** If false, normal output is suppressed */
@@ -140,7 +140,7 @@ enum Option {
 	/** If true format error output for GNU Emacs */
 	Emacs                   (MS, "gnu-emacs",                   BL, false,                 BOOL,                Bool.class),
 	/** Name of current Emacs file */
-	EmacsFile               (MS, "gnu-emacs-file",              ST, 0,                     STRING,              null),
+	EmacsFile               (MS, "gnu-emacs-file",              ST, null,                  STRING,              null),
 	/** If true attributes may use newlines */
 	LiteralAttribs          (MU, "literal-attributes",          BL, false,                 BOOL,                Bool.class),
 	/** Output BODY content only */
@@ -167,7 +167,7 @@ enum Option {
 	EscapeCdata             (MU, "escape-cdata",                BL, false,                 BOOL,                Bool.class),
 	
 	/** Language property: not used for anything yet */
-	Language                (CE, "language",                    ST, 0,                     NAME,                null),
+	Language                (CE, "language",                    ST, null,                  NAME,                null),
 	/** Allow numeric character references */
 	NCR                     (MU, "ncr",                         BL, true,                  BOOL,                Bool.class),
 	/** Output a Byte Order Mark (BOM) for UTF-16 encodings
@@ -177,16 +177,16 @@ enum Option {
 	/** Replace hex color attribute values with names */
 	ReplaceColor            (MU, "replace-color",               BL, false,                 BOOL,                Bool.class),
 	/** CSS class naming for -clean option */
-	CSSPrefix               (MU, "css-prefix",                  ST, 0,                     CSS1SELECTOR,        null),
+	CSSPrefix               (MU, "css-prefix",                  ST, null,                  CSS1SELECTOR,        null),
 	
 	/** Declared inline tags */
-	InlineTags              (MU, "new-inline-tags",             ST, 0,                     TAGNAMES,            null),
+	InlineTags              (MU, "new-inline-tags",             ST, null,                  TAGNAMES,            null),
 	/** Declared block tags */
-	BlockTags               (MU, "new-blocklevel-tags",         ST, 0,                     TAGNAMES,            null),
+	BlockTags               (MU, "new-blocklevel-tags",         ST, null,                  TAGNAMES,            null),
 	/** Declared empty tags */
-	EmptyTags               (MU, "new-empty-tags",              ST, 0,                     TAGNAMES,            null),
+	EmptyTags               (MU, "new-empty-tags",              ST, null,                  TAGNAMES,            null),
 	/** Declared pre tags */
-	PreTags                 (MU, "new-pre-tags",                ST, 0,                     TAGNAMES,            null),
+	PreTags                 (MU, "new-pre-tags",                ST, null,                  TAGNAMES,            null),
 	
 	/** Accessibility check level
 	 * 0 (old style), or 1, 2, 3 */
