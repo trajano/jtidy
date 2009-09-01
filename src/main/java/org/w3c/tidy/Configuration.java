@@ -277,30 +277,10 @@ public class Configuration implements Serializable
 //    }
 
     /**
-     * default text for alt attribute.
-     */
-    private String altText;
-
-    /**
      * style sheet for slides.
      * @deprecated does nothing
      */
     protected String slidestyle;
-
-    /**
-     * RJ language property.
-     */
-    private String language; // #431953
-
-    /**
-     * user specified doctype.
-     */
-    private String docTypeStr;
-
-    /**
-     * file name to write errors to.
-     */
-    private String errfile;
 
     /**
      * if true then output tidied markup.
@@ -951,6 +931,14 @@ public class Configuration implements Serializable
     	throw badType(x);
     }
     
+    private String getString(final Option option) {
+    	final Object x = get(option);
+    	if (x instanceof String) {
+    		return (String) x;
+    	}
+    	throw badType(x);
+    }
+    
     private void set(final Option option, final Object value) {
     	options.put(option, value);
     }
@@ -995,36 +983,36 @@ public class Configuration implements Serializable
 		return (DupAttrModes) getOptionEnum(Option.DuplicateAttrs);
 	}
 
-	protected void setAltText(String altText) {
-		this.altText = altText;
+	protected void setAltText(final String altText) {
+		set(Option.AltText, altText);
 	}
 
 	protected String getAltText() {
-		return altText;
+		return getString(Option.AltText);
 	}
 
-	protected void setLanguage(String language) {
-		this.language = language;
+	protected void setLanguage(final String language) {
+		set(Option.Language, language);
 	}
 
 	protected String getLanguage() {
-		return language;
+		return getString(Option.Language);
 	}
 
-	protected void setDocTypeStr(String docTypeStr) {
-		this.docTypeStr = docTypeStr;
+	protected void setDocTypeStr(final String docTypeStr) {
+		set(Option.Doctype, docTypeStr);
 	}
 
 	protected String getDocTypeStr() {
-		return docTypeStr;
+		return getString(Option.Doctype);
 	}
 
-	protected void setErrfile(String errfile) {
-		this.errfile = errfile;
+	protected void setErrfile(final String errfile) {
+		set(Option.ErrFile, errfile);
 	}
 
 	protected String getErrfile() {
-		return errfile;
+		return getString(Option.ErrFile);
 	}
 
 	protected void setWriteback(boolean writeback) {
