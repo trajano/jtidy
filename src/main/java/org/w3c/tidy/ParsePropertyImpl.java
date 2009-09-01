@@ -56,6 +56,7 @@ package org.w3c.tidy;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.w3c.tidy.Options.DoctypeModes;
 import org.w3c.tidy.Options.OptionEnum;
 
 /**
@@ -553,7 +554,7 @@ public final class ParsePropertyImpl
 
             if (value.startsWith("\""))
             {
-                configuration.setDocTypeMode(Configuration.DOCTYPE_USER);
+                configuration.setDocTypeMode(DoctypeModes.User);
                 return value;
             }
 
@@ -567,19 +568,19 @@ public final class ParsePropertyImpl
             // #443663 - fix by Terry Teague 23 Jul 01
             if ("auto".equalsIgnoreCase(word))
             {
-                configuration.setDocTypeMode(Configuration.DOCTYPE_AUTO);
+                configuration.setDocTypeMode(DoctypeModes.Auto);
             }
             else if ("omit".equalsIgnoreCase(word))
             {
-                configuration.setDocTypeMode(Configuration.DOCTYPE_OMIT);
+                configuration.setDocTypeMode(DoctypeModes.Omit);
             }
             else if ("strict".equalsIgnoreCase(word))
             {
-                configuration.setDocTypeMode(Configuration.DOCTYPE_STRICT);
+                configuration.setDocTypeMode(DoctypeModes.Strict);
             }
             else if ("loose".equalsIgnoreCase(word) || "transitional".equalsIgnoreCase(word))
             {
-                configuration.setDocTypeMode(Configuration.DOCTYPE_LOOSE);
+                configuration.setDocTypeMode(DoctypeModes.Loose);
             }
             else
             {
@@ -614,23 +615,23 @@ public final class ParsePropertyImpl
 
             switch (configuration.getDocTypeMode())
             {
-                case Configuration.DOCTYPE_AUTO :
+                case Auto:
                     stringValue = "auto";
                     break;
 
-                case Configuration.DOCTYPE_OMIT :
+                case Omit:
                     stringValue = "omit";
                     break;
 
-                case Configuration.DOCTYPE_STRICT :
+                case Strict:
                     stringValue = "strict";
                     break;
 
-                case Configuration.DOCTYPE_LOOSE :
+                case Loose:
                     stringValue = "transitional";
                     break;
 
-                case Configuration.DOCTYPE_USER :
+                case User :
                     stringValue = configuration.getDocTypeStr();
                     break;
 

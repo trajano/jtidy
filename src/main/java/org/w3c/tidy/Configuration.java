@@ -62,6 +62,8 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 
+import org.w3c.tidy.Options.DoctypeModes;
+import org.w3c.tidy.Options.OptionEnum;
 
 /**
  * Read configuration file and manage configuration properties. Configuration files associate a property name with a
@@ -161,32 +163,6 @@ public class Configuration implements Serializable
         "Cp1252",
         "Big5",
         "SJIS"};
-
-    /**
-     * treatment of doctype: omit.
-     * @todo should be an enumeration DocTypeMode
-     */
-    public static final int DOCTYPE_OMIT = 0;
-
-    /**
-     * treatment of doctype: auto.
-     */
-    public static final int DOCTYPE_AUTO = 1;
-
-    /**
-     * treatment of doctype: strict.
-     */
-    public static final int DOCTYPE_STRICT = 2;
-
-    /**
-     * treatment of doctype: loose.
-     */
-    public static final int DOCTYPE_LOOSE = 3;
-
-    /**
-     * treatment of doctype: user.
-     */
-    public static final int DOCTYPE_USER = 4;
 
     /**
      * Keep last duplicate attribute.
@@ -309,11 +285,6 @@ public class Configuration implements Serializable
 //        addConfigOption(new Flag("output-raw", "rawOut", ParsePropertyImpl.BOOL));
 //        addConfigOption(new Flag("trim-empty-elements", "trimEmpty", ParsePropertyImpl.BOOL));
 //    }
-
-    /**
-     * see doctype property.
-     */
-    private int docTypeMode = DOCTYPE_AUTO;
 
     /**
      * Keep first or last duplicate attribute.
@@ -987,6 +958,14 @@ public class Configuration implements Serializable
     	throw badType(x);
     }
     
+    private OptionEnum getOptionEnum(final Option option) {
+    	final Object x = get(option);
+    	if (x instanceof OptionEnum) {
+    		return (OptionEnum) x;
+    	}
+    	throw badType(x);
+    }
+    
     private void set(final Option option, final Object value) {
     	options.put(option, value);
     }
@@ -1015,12 +994,12 @@ public class Configuration implements Serializable
 		return getInt(Option.TabSize);
 	}
 
-	protected void setDocTypeMode(int docTypeMode) {
-		this.docTypeMode = docTypeMode;
+	protected void setDocTypeMode(final DoctypeModes docTypeMode) {
+		set(Option.DoctypeMode, docTypeMode);
 	}
 
-	protected int getDocTypeMode() {
-		return docTypeMode;
+	protected DoctypeModes getDocTypeMode() {
+		return (DoctypeModes) getOptionEnum(Option.DoctypeMode);
 	}
 
 	protected void setDuplicateAttrs(int duplicateAttrs) {

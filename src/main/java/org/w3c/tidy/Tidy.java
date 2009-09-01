@@ -1762,19 +1762,19 @@ public class Tidy implements Serializable
         String result = null;
         switch (configuration.getDocTypeMode())
         {
-            case Configuration.DOCTYPE_OMIT :
+            case Omit :
                 result = "omit";
                 break;
-            case Configuration.DOCTYPE_AUTO :
+            case Auto :
                 result = "auto";
                 break;
-            case Configuration.DOCTYPE_STRICT :
+            case Strict :
                 result = "strict";
                 break;
-            case Configuration.DOCTYPE_LOOSE :
+            case Loose :
                 result = "loose";
                 break;
-            case Configuration.DOCTYPE_USER :
+            case User :
                 result = configuration.getDocTypeStr();
                 break;
         }
