@@ -63,6 +63,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.w3c.tidy.Options.DoctypeModes;
+import org.w3c.tidy.Options.DupAttrModes;
 import org.w3c.tidy.Options.OptionEnum;
 
 /**
@@ -163,17 +164,6 @@ public class Configuration implements Serializable
         "Cp1252",
         "Big5",
         "SJIS"};
-
-    /**
-     * Keep last duplicate attribute.
-     * @todo should be an enumeration DupAttrMode
-     */
-    public static final int KEEP_LAST = 0;
-
-    /**
-     * Keep first duplicate attribute.
-     */
-    public static final int KEEP_FIRST = 1;
 
     private final Map<Option, Object> options = new EnumMap<Option, Object>(Option.class);
 
@@ -285,11 +275,6 @@ public class Configuration implements Serializable
 //        addConfigOption(new Flag("output-raw", "rawOut", ParsePropertyImpl.BOOL));
 //        addConfigOption(new Flag("trim-empty-elements", "trimEmpty", ParsePropertyImpl.BOOL));
 //    }
-
-    /**
-     * Keep first or last duplicate attribute.
-     */
-    private int duplicateAttrs = KEEP_LAST;
 
     /**
      * default text for alt attribute.
@@ -1002,12 +987,12 @@ public class Configuration implements Serializable
 		return (DoctypeModes) getOptionEnum(Option.DoctypeMode);
 	}
 
-	protected void setDuplicateAttrs(int duplicateAttrs) {
-		this.duplicateAttrs = duplicateAttrs;
+	protected void setDuplicateAttrs(final DupAttrModes duplicateAttrs) {
+		set(Option.DuplicateAttrs, duplicateAttrs);
 	}
 
-	protected int getDuplicateAttrs() {
-		return duplicateAttrs;
+	protected DupAttrModes getDuplicateAttrs() {
+		return (DupAttrModes) getOptionEnum(Option.DuplicateAttrs);
 	}
 
 	protected void setAltText(String altText) {

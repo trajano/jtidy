@@ -53,6 +53,8 @@
  */
 package org.w3c.tidy;
 
+import org.w3c.tidy.Options.DupAttrModes;
+
 /**
  * Used for elements and text nodes element name is null for text nodes start and end are offsets into lexbuf which
  * contains the textual content of all elements in the parse tree. Parent and content allow traversal of the parse tree
@@ -474,7 +476,7 @@ public class Node implements Cloneable
                             attval = temp;
 
                         }
-                        else if (lexer.configuration.getDuplicateAttrs() == Configuration.KEEP_LAST)
+                        else if (lexer.configuration.getDuplicateAttrs() == DupAttrModes.KeepLast)
                         {
                             temp = current.next;
 

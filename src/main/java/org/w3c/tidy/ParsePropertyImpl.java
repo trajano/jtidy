@@ -57,6 +57,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.w3c.tidy.Options.DoctypeModes;
+import org.w3c.tidy.Options.DupAttrModes;
 import org.w3c.tidy.Options.OptionEnum;
 
 /**
@@ -631,11 +632,11 @@ public final class ParsePropertyImpl
                     stringValue = "transitional";
                     break;
 
-                case User :
+                case User:
                     stringValue = configuration.getDocTypeStr();
                     break;
 
-                default :
+                default:
                     stringValue = "unknown";
                     break;
             }
@@ -655,22 +656,17 @@ public final class ParsePropertyImpl
          */
         public Object parse(String value, Option option, Configuration configuration)
         {
-            int dupAttr;
+        	DupAttrModes dupAttr;
 
-            if ("keep-first".equalsIgnoreCase(value))
-            {
-                dupAttr = Configuration.KEEP_FIRST;
-            }
-            else if ("keep-last".equalsIgnoreCase(value))
-            {
-                dupAttr = Configuration.KEEP_LAST;
-            }
-            else
-            {
+            if ("keep-first".equalsIgnoreCase(value)) {
+                dupAttr = DupAttrModes.KeepFirst;
+            } else if ("keep-last".equalsIgnoreCase(value)) {
+                dupAttr = DupAttrModes.KeepLast;
+            } else {
                 configuration.report.badArgument(value, option);
-                dupAttr = -1;
+                dupAttr = null;
             }
-            return new Integer(dupAttr);
+            return dupAttr;
         }
 
         /**
@@ -699,20 +695,19 @@ public final class ParsePropertyImpl
                 return "";
             }
 
-            int intValue = ((Integer) value).intValue();
+            DupAttrModes val = (DupAttrModes) value;
             String stringValue;
 
-            switch (intValue)
-            {
-                case Configuration.KEEP_FIRST :
+            switch (val) {
+                case KeepFirst:
                     stringValue = "keep-first";
                     break;
 
-                case Configuration.KEEP_LAST :
+                case KeepLast:
                     stringValue = "keep-last";
                     break;
 
-                default :
+                default:
                     stringValue = "unknown";
                     break;
             }

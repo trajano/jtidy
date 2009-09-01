@@ -59,7 +59,7 @@ import junit.framework.TestCase;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.w3c.tidy.Options.DupAttrModes;
 
 /**
  * @author Fabrizio Giustina
@@ -298,8 +298,8 @@ public class ConfigurationTest extends TestCase
         tidy.setInputEncoding("UTF8");
         assertEquals("UTF8", tidy.getInputEncoding());
 
-        tidy.setRepeatedAttributes(Configuration.KEEP_FIRST);
-        assertEquals(Configuration.KEEP_FIRST, tidy.getRepeatedAttributes());
+        tidy.setRepeatedAttributes(DupAttrModes.KeepFirst);
+        assertEquals(DupAttrModes.KeepFirst, tidy.getRepeatedAttributes());
 
         tidy.setShowErrors(10);
         assertEquals(10, tidy.getShowErrors());

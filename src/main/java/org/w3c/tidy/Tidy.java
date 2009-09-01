@@ -68,6 +68,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.w3c.tidy.Options.DupAttrModes;
 
 /**
  * HTML parser and pretty printer.
@@ -2217,7 +2218,7 @@ public class Tidy implements Serializable
      * @param repeatedAttributes <code>Configuration.KEEP_FIRST | Configuration.KEEP_LAST</code>
      * @see Configuration#duplicateAttrs
      */
-    public void setRepeatedAttributes(int repeatedAttributes)
+    public void setRepeatedAttributes(final DupAttrModes repeatedAttributes)
     {
         configuration.setDuplicateAttrs(repeatedAttributes);
     }
@@ -2226,7 +2227,7 @@ public class Tidy implements Serializable
      * <code>repeated-attributes</code>- keep first or last duplicate attribute.
      * @return <code>Configuration.KEEP_FIRST | Configuration.KEEP_LAST</code>
      */
-    public int getRepeatedAttributes()
+    public DupAttrModes getRepeatedAttributes()
     {
         return configuration.getDuplicateAttrs();
     }
