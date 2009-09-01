@@ -311,21 +311,6 @@ public class Configuration implements Serializable
 //    }
 
     /**
-     * default indentation.
-     */
-    private int spaces = 2;
-
-    /**
-     * default wrap margin (68).
-     */
-    private int wraplen = 68;
-
-    /**
-     * default tab size (8).
-     */
-    private int tabsize = 8;
-
-    /**
      * see doctype property.
      */
     private int docTypeMode = DOCTYPE_AUTO;
@@ -794,9 +779,8 @@ public class Configuration implements Serializable
         }
 
         // disable wrapping
-        if (wraplen == 0)
-        {
-            wraplen = 0x7FFFFFFF;
+        if (getWraplen() == 0) {
+            setWraplen(0x7FFFFFFF);
         }
 
         // Word 2000 needs o:p to be declared as inline
@@ -982,29 +966,53 @@ public class Configuration implements Serializable
         }
         return null;
     }
+    
+    private static RuntimeException badType(final Object x) {
+    	if (x == null) {
+    		return new RuntimeException("Null option value");
+    	}
+    	return new RuntimeException("Unexpected value type: " + x.getClass().getName());
+    }
+    
+    private Object get(final Option option) {
+    	final Object x = options.get(option);
+    	return x == null ? option.getDflt() : x;
+    }
+    
+    private int getInt(final Option option) {
+    	final Object x = get(option);
+    	if (x instanceof Integer) {
+    		return (Integer) x;
+    	}
+    	throw badType(x);
+    }
+    
+    private void set(final Option option, final Object value) {
+    	options.put(option, value);
+    }
 
-	protected void setSpaces(int spaces) {
-		this.spaces = spaces;
+	protected void setSpaces(final int spaces) {
+		set(Option.IndentSpaces, spaces);
 	}
 
 	protected int getSpaces() {
-		return spaces;
+		return getInt(Option.IndentSpaces);
 	}
 
-	protected void setWraplen(int wraplen) {
-		this.wraplen = wraplen;
+	protected void setWraplen(final int wraplen) {
+		set(Option.WrapLen, wraplen);
 	}
 
 	protected int getWraplen() {
-		return wraplen;
+		return getInt(Option.WrapLen);
 	}
 
-	protected void setTabsize(int tabsize) {
-		this.tabsize = tabsize;
+	protected void setTabsize(final int tabsize) {
+		set(Option.TabSize, tabsize);
 	}
 
 	protected int getTabsize() {
-		return tabsize;
+		return getInt(Option.TabSize);
 	}
 
 	protected void setDocTypeMode(int docTypeMode) {
