@@ -283,29 +283,9 @@ public class Configuration implements Serializable
     protected String slidestyle;
 
     /**
-     * if true then output tidied markup.
-     */
-    private boolean writeback;
-
-    /**
      * if true normal output is suppressed.
      */
     private boolean onlyErrors;
-
-    /**
-     * however errors are always shown.
-     */
-    private boolean showWarnings = true;
-
-    /**
-     * no 'Parsing X', guessed DTD or summary.
-     */
-    private boolean quiet;
-
-    /**
-     * indent content of appropriate tags.
-     */
-    private boolean indentContent;
 
     /**
      * does text/block level content effect indentation.
@@ -313,234 +293,14 @@ public class Configuration implements Serializable
     private boolean smartIndent;
 
     /**
-     * suppress optional end tags.
-     */
-    private boolean hideEndTags;
-
-    /**
-     * treat input as XML.
-     */
-    private boolean xmlTags;
-
-    /**
-     * create output as XML.
-     */
-    private boolean xmlOut;
-
-    /**
-     * output extensible HTML.
-     */
-    private boolean xHTML;
-
-    /**
-     * output plain-old HTML, even for XHTML input. Yes means set explicitly.
-     */
-    private boolean htmlOut;
-
-    /**
      * add <code>&lt;?xml?&gt;</code> for XML docs.
      */
     private boolean xmlPi;
 
     /**
-     * output tags in upper not lower case.
-     */
-    private boolean upperCaseTags;
-
-    /**
-     * output attributes in upper not lower case.
-     */
-    private boolean upperCaseAttrs;
-
-    /**
-     * remove presentational clutter.
-     */
-    private boolean makeClean;
-
-    /**
-     * Make bare HTML: remove Microsoft cruft.
-     */
-    private boolean makeBare;
-
-    /**
-     * replace i by em and b by strong.
-     */
-    private boolean logicalEmphasis;
-
-    /**
-     * discard presentation tags.
-     */
-    private boolean dropFontTags;
-
-    /**
-     * discard proprietary attributes.
-     */
-    private boolean dropProprietaryAttributes;
-
-    /**
-     * discard empty p elements.
-     */
-    private boolean dropEmptyParas = true;
-
-    /**
-     * fix comments with adjacent hyphens.
-     */
-    private boolean fixComments = true;
-
-    /**
      * trim empty elements.
      */
     private boolean trimEmpty = true;
-
-    /**
-     * o/p newline before br or not?
-     */
-    private boolean breakBeforeBR;
-
-    /**
-     * create slides on each h2 element.
-     */
-    private boolean burstSlides;
-
-    /**
-     * use numeric entities.
-     */
-    private boolean numEntities;
-
-    /**
-     * output " marks as &quot;.
-     */
-    private boolean quoteMarks;
-
-    /**
-     * output non-breaking space as entity.
-     */
-    private boolean quoteNbsp = true;
-
-    /**
-     * output naked ampersand as &amp;.
-     */
-    private boolean quoteAmpersand = true;
-
-    /**
-     * wrap within attribute values.
-     */
-    private boolean wrapAttVals;
-
-    /**
-     * wrap within JavaScript string literals.
-     */
-    private boolean wrapScriptlets;
-
-    /**
-     * wrap within CDATA section tags.
-     */
-    private boolean wrapSection = true;
-
-    /**
-     * wrap within ASP pseudo elements.
-     */
-    private boolean wrapAsp = true;
-
-    /**
-     * wrap within JSTE pseudo elements.
-     */
-    private boolean wrapJste = true;
-
-    /**
-     * wrap within PHP pseudo elements.
-     */
-    private boolean wrapPhp = true;
-
-    /**
-     * fix URLs by replacing \ with /.
-     */
-    private boolean fixBackslash = true;
-
-    /**
-     * newline+indent before each attribute.
-     */
-    private boolean indentAttributes;
-
-    /**
-     * If set to yes PIs must end with <code>?&gt;</code>.
-     */
-    private boolean xmlPIs;
-
-    /**
-     * if set to yes adds xml:space attr as needed.
-     */
-    private boolean xmlSpace;
-
-    /**
-     * if yes text at body is wrapped in p's.
-     */
-    private boolean encloseBodyText;
-
-    /**
-     * if yes text in blocks is wrapped in p's.
-     */
-    private boolean encloseBlockText;
-
-    /**
-     * if yes last modied time is preserved.
-     */
-    private boolean keepFileTimes = true;
-
-    /**
-     * draconian cleaning for Word2000.
-     */
-    private boolean word2000;
-
-    /**
-     * add meta element indicating tidied doc.
-     */
-    private boolean tidyMark = true;
-
-    /**
-     * if true format error output for GNU Emacs.
-     */
-    private boolean emacs;
-
-    /**
-     * if true attributes may use newlines.
-     */
-    private boolean literalAttribs;
-
-    /**
-     * output BODY content only.
-     */
-    private boolean bodyOnly;
-
-    /**
-     * properly escape URLs.
-     */
-    private boolean fixUri = true;
-
-    /**
-     * folds known attribute values to lower case.
-     */
-    private boolean lowerLiterals = true;
-
-    /**
-     * replace hex color attribute values with names.
-     */
-    private boolean replaceColor;
-
-    /**
-     * hides all (real) comments in output.
-     */
-    private boolean hideComments;
-
-    /**
-     * indent CDATA sections.
-     */
-    private boolean indentCdata;
-
-    /**
-     * output document even if errors were found.
-     */
-    private boolean forceOutput;
 
     /**
      * number of errors to put out.
@@ -701,17 +461,14 @@ public class Configuration implements Serializable
     /**
      * Ensure that config is self consistent.
      */
-    public void adjust()
-    {
-        if (encloseBlockText)
-        {
-            encloseBodyText = true;
+    public void adjust() {
+        if (isEncloseBlockText()) {
+            setEncloseBodyText(true);
         }
 
         // avoid the need to set IndentContent when SmartIndent is set
-        if (smartIndent)
-        {
-            indentContent = true;
+        if (smartIndent) {
+            setIndentContent(true);
         }
 
         // disable wrapping
@@ -720,45 +477,39 @@ public class Configuration implements Serializable
         }
 
         // Word 2000 needs o:p to be declared as inline
-        if (word2000)
-        {
+        if (isWord2000()) {
             definedTags |= Dict.TAGTYPE_INLINE;
             tt.defineTag(Dict.TAGTYPE_INLINE, "o:p");
         }
 
         // #480701 disable XHTML output flag if both output-xhtml and xml are set
-        if (xmlTags)
-        {
-            xHTML = false;
+        if (isXmlTags()) {
+            setXHTML(false);
         }
 
         // XHTML is written in lower case
-        if (xHTML)
-        {
-            xmlOut = true;
-            upperCaseTags = false;
-            upperCaseAttrs = false;
+        if (isXHTML()) {
+            setXmlOut(true);
+            setUpperCaseTags(false);
+            setUpperCaseAttrs(false);
         }
 
         // if XML in, then XML out
-        if (xmlTags)
-        {
-            xmlOut = true;
-            xmlPIs = true;
+        if (isXmlTags()) {
+            setXmlOut(true);
+            setXmlPIs(true);
         }
 
         // #427837 - fix by Dave Raggett 02 Jun 01
         // generate <?xml version="1.0" encoding="iso-8859-1"?> if the output character encoding is Latin-1 etc.
-        if (!"UTF8".equals(getOutCharEncodingName()) && !"ASCII".equals(getOutCharEncodingName()) && xmlOut)
-        {
+        if (!"UTF8".equals(getOutCharEncodingName()) && !"ASCII".equals(getOutCharEncodingName()) && isXmlOut()) {
             xmlPi = true;
         }
 
         // XML requires end tags
-        if (xmlOut)
-        {
-            quoteAmpersand = true;
-            hideEndTags = false;
+        if (isXmlOut()) {
+            setQuoteAmpersand(true);
+            setHideEndTags(true);
         }
     }
 
@@ -939,6 +690,14 @@ public class Configuration implements Serializable
     	throw badType(x);
     }
     
+    private boolean getBool(final Option option) {
+    	final Object x = get(option);
+    	if (x instanceof Boolean) {
+    		return (Boolean) x;
+    	}
+    	throw badType(x);
+    }
+    
     private void set(final Option option, final Object value) {
     	options.put(option, value);
     }
@@ -1015,15 +774,15 @@ public class Configuration implements Serializable
 		return getString(Option.ErrFile);
 	}
 
-	protected void setWriteback(boolean writeback) {
-		this.writeback = writeback;
+	protected void setWriteback(final boolean writeback) {
+		set(Option.WriteBack, writeback);
 	}
 
 	protected boolean isWriteback() {
-		return writeback;
+		return getBool(Option.WriteBack);
 	}
 
-	protected void setOnlyErrors(boolean onlyErrors) {
+	protected void setOnlyErrors(final boolean onlyErrors) {
 		this.onlyErrors = onlyErrors;
 	}
 
@@ -1031,31 +790,31 @@ public class Configuration implements Serializable
 		return onlyErrors;
 	}
 
-	protected void setShowWarnings(boolean showWarnings) {
-		this.showWarnings = showWarnings;
+	protected void setShowWarnings(final boolean showWarnings) {
+		set(Option.ShowWarnings, showWarnings);
 	}
 
 	protected boolean isShowWarnings() {
-		return showWarnings;
+		return getBool(Option.ShowWarnings);
 	}
 
-	protected void setQuiet(boolean quiet) {
-		this.quiet = quiet;
+	protected void setQuiet(final boolean quiet) {
+		set(Option.Quiet, quiet);
 	}
 
 	protected boolean isQuiet() {
-		return quiet;
+		return getBool(Option.Quiet);
 	}
 
-	protected void setIndentContent(boolean indentContent) {
-		this.indentContent = indentContent;
+	protected void setIndentContent(final boolean indentContent) {
+		set(Option.IndentContent, indentContent);
 	}
 
 	protected boolean isIndentContent() {
-		return indentContent;
+		return getBool(Option.IndentContent);
 	}
 
-	protected void setSmartIndent(boolean smartIndent) {
+	protected void setSmartIndent(final boolean smartIndent) {
 		this.smartIndent = smartIndent;
 	}
 
@@ -1063,47 +822,47 @@ public class Configuration implements Serializable
 		return smartIndent;
 	}
 
-	protected void setHideEndTags(boolean hideEndTags) {
-		this.hideEndTags = hideEndTags;
+	protected void setHideEndTags(final boolean hideEndTags) {
+		set(Option.HideEndTags, hideEndTags);
 	}
 
 	protected boolean isHideEndTags() {
-		return hideEndTags;
+		return getBool(Option.HideEndTags);
 	}
 
-	protected void setXmlTags(boolean xmlTags) {
-		this.xmlTags = xmlTags;
+	protected void setXmlTags(final boolean xmlTags) {
+		set(Option.XmlTags, xmlTags);
 	}
 
 	protected boolean isXmlTags() {
-		return xmlTags;
+		return getBool(Option.XmlTags);
 	}
 
-	protected void setXmlOut(boolean xmlOut) {
-		this.xmlOut = xmlOut;
+	protected void setXmlOut(final boolean xmlOut) {
+		set(Option.XmlOut, xmlOut);
 	}
 
 	protected boolean isXmlOut() {
-		return xmlOut;
+		return getBool(Option.XmlOut);
 	}
 
-	protected void setXHTML(boolean xHTML) {
-		this.xHTML = xHTML;
+	protected void setXHTML(final boolean xHTML) {
+		set(Option.XhtmlOut, xHTML);
 	}
 
 	protected boolean isXHTML() {
-		return xHTML;
+		return getBool(Option.XhtmlOut);
 	}
 
-	protected void setHtmlOut(boolean htmlOut) {
-		this.htmlOut = htmlOut;
+	protected void setHtmlOut(final boolean htmlOut) {
+		set(Option.HtmlOut, htmlOut);
 	}
 
 	protected boolean isHtmlOut() {
-		return htmlOut;
+		return getBool(Option.HtmlOut);
 	}
 
-	protected void setXmlPi(boolean xmlPi) {
+	protected void setXmlPi(final boolean xmlPi) {
 		this.xmlPi = xmlPi;
 	}
 
@@ -1111,79 +870,79 @@ public class Configuration implements Serializable
 		return xmlPi;
 	}
 
-	protected void setUpperCaseTags(boolean upperCaseTags) {
-		this.upperCaseTags = upperCaseTags;
+	protected void setUpperCaseTags(final boolean upperCaseTags) {
+		set(Option.UpperCaseTags, upperCaseTags);
 	}
 
 	protected boolean isUpperCaseTags() {
-		return upperCaseTags;
+		return getBool(Option.UpperCaseTags);
 	}
 
-	protected void setUpperCaseAttrs(boolean upperCaseAttrs) {
-		this.upperCaseAttrs = upperCaseAttrs;
+	protected void setUpperCaseAttrs(final boolean upperCaseAttrs) {
+		set(Option.UpperCaseAttrs, upperCaseAttrs);
 	}
 
 	protected boolean isUpperCaseAttrs() {
-		return upperCaseAttrs;
+		return getBool(Option.UpperCaseAttrs);
 	}
 
-	protected void setMakeClean(boolean makeClean) {
-		this.makeClean = makeClean;
+	protected void setMakeClean(final boolean makeClean) {
+		set(Option.MakeClean, makeClean);
 	}
 
 	protected boolean isMakeClean() {
-		return makeClean;
+		return getBool(Option.MakeClean);
 	}
 
-	protected void setMakeBare(boolean makeBare) {
-		this.makeBare = makeBare;
+	protected void setMakeBare(final boolean makeBare) {
+		set(Option.MakeBare, makeBare);
 	}
 
 	protected boolean isMakeBare() {
-		return makeBare;
+		return getBool(Option.MakeBare);
 	}
 
-	protected void setLogicalEmphasis(boolean logicalEmphasis) {
-		this.logicalEmphasis = logicalEmphasis;
+	protected void setLogicalEmphasis(final boolean logicalEmphasis) {
+		set(Option.LogicalEmphasis, logicalEmphasis);
 	}
 
 	protected boolean isLogicalEmphasis() {
-		return logicalEmphasis;
+		return getBool(Option.LogicalEmphasis);
 	}
 
-	protected void setDropFontTags(boolean dropFontTags) {
-		this.dropFontTags = dropFontTags;
+	protected void setDropFontTags(final boolean dropFontTags) {
+		set(Option.DropFontTags, dropFontTags);
 	}
 
 	protected boolean isDropFontTags() {
-		return dropFontTags;
+		return getBool(Option.DropFontTags);
 	}
 
-	protected void setDropProprietaryAttributes(boolean dropProprietaryAttributes) {
-		this.dropProprietaryAttributes = dropProprietaryAttributes;
+	protected void setDropProprietaryAttributes(final boolean dropProprietaryAttributes) {
+		set(Option.DropPropAttrs, dropProprietaryAttributes);
 	}
 
 	protected boolean isDropProprietaryAttributes() {
-		return dropProprietaryAttributes;
+		return getBool(Option.DropPropAttrs);
 	}
 
-	protected void setDropEmptyParas(boolean dropEmptyParas) {
-		this.dropEmptyParas = dropEmptyParas;
+	protected void setDropEmptyParas(final boolean dropEmptyParas) {
+		set(Option.DropEmptyParas, dropEmptyParas);
 	}
 
 	protected boolean isDropEmptyParas() {
-		return dropEmptyParas;
+		return getBool(Option.DropEmptyParas);
 	}
 
-	protected void setFixComments(boolean fixComments) {
-		this.fixComments = fixComments;
+	protected void setFixComments(final boolean fixComments) {
+		set(Option.FixComments, fixComments);
 	}
 
 	protected boolean isFixComments() {
-		return fixComments;
+		return getBool(Option.FixComments);
 	}
 
-	protected void setTrimEmpty(boolean trimEmpty) {
+	protected void setTrimEmpty(final boolean trimEmpty) {
 		this.trimEmpty = trimEmpty;
 	}
 
@@ -1191,244 +950,244 @@ public class Configuration implements Serializable
 		return trimEmpty;
 	}
 
-	protected void setBreakBeforeBR(boolean breakBeforeBR) {
-		this.breakBeforeBR = breakBeforeBR;
+	protected void setBreakBeforeBR(final boolean breakBeforeBR) {
+		set(Option.BreakBeforeBR, breakBeforeBR);
 	}
 
 	protected boolean isBreakBeforeBR() {
-		return breakBeforeBR;
+		return getBool(Option.BreakBeforeBR);
 	}
 
-	protected void setBurstSlides(boolean burstSlides) {
-		this.burstSlides = burstSlides;
+	protected void setBurstSlides(final boolean burstSlides) {
+		set(Option.BurstSlides, burstSlides);
 	}
 
 	protected boolean isBurstSlides() {
-		return burstSlides;
+		return getBool(Option.BurstSlides);
 	}
 
-	protected void setNumEntities(boolean numEntities) {
-		this.numEntities = numEntities;
+	protected void setNumEntities(final boolean numEntities) {
+		set(Option.NumEntities, numEntities);
 	}
 
 	protected boolean isNumEntities() {
-		return numEntities;
+		return getBool(Option.NumEntities);
 	}
 
-	protected void setQuoteMarks(boolean quoteMarks) {
-		this.quoteMarks = quoteMarks;
+	protected void setQuoteMarks(final boolean quoteMarks) {
+		set(Option.QuoteMarks, quoteMarks);
 	}
 
 	protected boolean isQuoteMarks() {
-		return quoteMarks;
+		return getBool(Option.QuoteMarks);
 	}
 
-	protected void setQuoteNbsp(boolean quoteNbsp) {
-		this.quoteNbsp = quoteNbsp;
+	protected void setQuoteNbsp(final boolean quoteNbsp) {
+		set(Option.QuoteNbsp, quoteNbsp);
 	}
 
 	protected boolean isQuoteNbsp() {
-		return quoteNbsp;
+		return getBool(Option.QuoteNbsp);
 	}
 
-	protected void setQuoteAmpersand(boolean quoteAmpersand) {
-		this.quoteAmpersand = quoteAmpersand;
+	protected void setQuoteAmpersand(final boolean quoteAmpersand) {
+		set(Option.QuoteAmpersand, quoteAmpersand);
 	}
 
 	protected boolean isQuoteAmpersand() {
-		return quoteAmpersand;
+		return getBool(Option.QuoteAmpersand);
 	}
 
-	protected void setWrapAttVals(boolean wrapAttVals) {
-		this.wrapAttVals = wrapAttVals;
+	protected void setWrapAttVals(final boolean wrapAttVals) {
+		set(Option.WrapAttVals, wrapAttVals);
 	}
 
 	protected boolean isWrapAttVals() {
-		return wrapAttVals;
+		return getBool(Option.WrapAttVals);
 	}
 
-	protected void setWrapScriptlets(boolean wrapScriptlets) {
-		this.wrapScriptlets = wrapScriptlets;
+	protected void setWrapScriptlets(final boolean wrapScriptlets) {
+		set(Option.WrapScriptlets, wrapScriptlets);
 	}
 
 	protected boolean isWrapScriptlets() {
-		return wrapScriptlets;
+		return getBool(Option.WrapScriptlets);
 	}
 
-	protected void setWrapSection(boolean wrapSection) {
-		this.wrapSection = wrapSection;
+	protected void setWrapSection(final boolean wrapSection) {
+		set(Option.WrapSection, wrapSection);
 	}
 
 	protected boolean isWrapSection() {
-		return wrapSection;
+		return getBool(Option.WrapSection);
 	}
 
-	protected void setWrapAsp(boolean wrapAsp) {
-		this.wrapAsp = wrapAsp;
+	protected void setWrapAsp(final boolean wrapAsp) {
+		set(Option.WrapAsp, wrapAsp);
 	}
 
 	protected boolean isWrapAsp() {
-		return wrapAsp;
+		return getBool(Option.WrapAsp);
 	}
 
-	protected void setWrapJste(boolean wrapJste) {
-		this.wrapJste = wrapJste;
+	protected void setWrapJste(final boolean wrapJste) {
+		set(Option.WrapJste, wrapJste);
 	}
 
 	protected boolean isWrapJste() {
-		return wrapJste;
+		return getBool(Option.WrapJste);
 	}
 
-	protected void setWrapPhp(boolean wrapPhp) {
-		this.wrapPhp = wrapPhp;
+	protected void setWrapPhp(final boolean wrapPhp) {
+		set(Option.WrapPhp, wrapPhp);
 	}
 
 	protected boolean isWrapPhp() {
-		return wrapPhp;
+		return getBool(Option.WrapPhp);
 	}
 
-	protected void setFixBackslash(boolean fixBackslash) {
-		this.fixBackslash = fixBackslash;
+	protected void setFixBackslash(final boolean fixBackslash) {
+		set(Option.FixBackslash, fixBackslash);
 	}
 
 	protected boolean isFixBackslash() {
-		return fixBackslash;
+		return getBool(Option.FixBackslash);
 	}
 
-	protected void setIndentAttributes(boolean indentAttributes) {
-		this.indentAttributes = indentAttributes;
+	protected void setIndentAttributes(final boolean indentAttributes) {
+		set(Option.IndentAttributes, indentAttributes);
 	}
 
 	protected boolean isIndentAttributes() {
-		return indentAttributes;
+		return getBool(Option.IndentAttributes);
 	}
 
-	protected void setXmlPIs(boolean xmlPIs) {
-		this.xmlPIs = xmlPIs;
+	protected void setXmlPIs(final boolean xmlPIs) {
+		set(Option.XmlPIs, xmlPIs);
 	}
 
 	protected boolean isXmlPIs() {
-		return xmlPIs;
+		return getBool(Option.XmlPIs);
 	}
 
-	protected void setXmlSpace(boolean xmlSpace) {
-		this.xmlSpace = xmlSpace;
+	protected void setXmlSpace(final boolean xmlSpace) {
+		set(Option.XmlSpace, xmlSpace);
 	}
 
 	protected boolean isXmlSpace() {
-		return xmlSpace;
+		return getBool(Option.XmlSpace);
 	}
 
-	protected void setEncloseBodyText(boolean encloseBodyText) {
-		this.encloseBodyText = encloseBodyText;
+	protected void setEncloseBodyText(final boolean encloseBodyText) {
+		set(Option.EncloseBodyText, encloseBodyText);
 	}
 
 	protected boolean isEncloseBodyText() {
-		return encloseBodyText;
+		return getBool(Option.EncloseBodyText);
 	}
 
-	protected void setEncloseBlockText(boolean encloseBlockText) {
-		this.encloseBlockText = encloseBlockText;
+	protected void setEncloseBlockText(final boolean encloseBlockText) {
+		set(Option.EncloseBlockText, encloseBlockText);
 	}
 
 	protected boolean isEncloseBlockText() {
-		return encloseBlockText;
+		return getBool(Option.EncloseBlockText);
 	}
 
-	protected void setKeepFileTimes(boolean keepFileTimes) {
-		this.keepFileTimes = keepFileTimes;
+	protected void setKeepFileTimes(final boolean keepFileTimes) {
+		set(Option.KeepFileTimes, keepFileTimes);
 	}
 
 	protected boolean isKeepFileTimes() {
-		return keepFileTimes;
+		return getBool(Option.KeepFileTimes);
 	}
 
-	protected void setWord2000(boolean word2000) {
-		this.word2000 = word2000;
+	protected void setWord2000(final boolean word2000) {
+		set(Option.Word2000, word2000);
 	}
 
 	protected boolean isWord2000() {
-		return word2000;
+		return getBool(Option.Word2000);
 	}
 
-	protected void setTidyMark(boolean tidyMark) {
-		this.tidyMark = tidyMark;
+	protected void setTidyMark(final boolean tidyMark) {
+		set(Option.Mark, tidyMark);
 	}
 
 	protected boolean isTidyMark() {
-		return tidyMark;
+		return getBool(Option.Mark);
 	}
 
-	protected void setEmacs(boolean emacs) {
-		this.emacs = emacs;
+	protected void setEmacs(final boolean emacs) {
+		set(Option.Emacs, emacs);
 	}
 
 	protected boolean isEmacs() {
-		return emacs;
+		return getBool(Option.Emacs);
 	}
 
-	protected void setLiteralAttribs(boolean literalAttribs) {
-		this.literalAttribs = literalAttribs;
+	protected void setLiteralAttribs(final boolean literalAttribs) {
+		set(Option.LiteralAttribs, literalAttribs);
 	}
 
 	protected boolean isLiteralAttribs() {
-		return literalAttribs;
+		return getBool(Option.LiteralAttribs);
 	}
 
-	protected void setBodyOnly(boolean bodyOnly) {
-		this.bodyOnly = bodyOnly;
+	protected void setBodyOnly(final boolean bodyOnly) {
+		set(Option.BodyOnly, bodyOnly);
 	}
 
 	protected boolean isBodyOnly() {
-		return bodyOnly;
+		return getBool(Option.BodyOnly);
 	}
 
-	protected void setFixUri(boolean fixUri) {
-		this.fixUri = fixUri;
+	protected void setFixUri(final boolean fixUri) {
+		set(Option.FixUri, fixUri);
 	}
 
 	protected boolean isFixUri() {
-		return fixUri;
+		return getBool(Option.FixUri);
 	}
 
-	protected void setLowerLiterals(boolean lowerLiterals) {
-		this.lowerLiterals = lowerLiterals;
+	protected void setLowerLiterals(final boolean lowerLiterals) {
+		set(Option.LowerLiterals, lowerLiterals);
 	}
 
 	protected boolean isLowerLiterals() {
-		return lowerLiterals;
+		return getBool(Option.LowerLiterals);
 	}
 
-	protected void setReplaceColor(boolean replaceColor) {
-		this.replaceColor = replaceColor;
+	protected void setReplaceColor(final boolean replaceColor) {
+		set(Option.ReplaceColor, replaceColor);
 	}
 
 	protected boolean isReplaceColor() {
-		return replaceColor;
+		return getBool(Option.ReplaceColor);
 	}
 
-	protected void setHideComments(boolean hideComments) {
-		this.hideComments = hideComments;
+	protected void setHideComments(final boolean hideComments) {
+		set(Option.HideComments, hideComments);
 	}
 
 	protected boolean isHideComments() {
-		return hideComments;
+		return getBool(Option.HideComments);
 	}
 
-	protected void setIndentCdata(boolean indentCdata) {
-		this.indentCdata = indentCdata;
+	protected void setIndentCdata(final boolean indentCdata) {
+		set(Option.IndentCdata, indentCdata);
 	}
 
 	protected boolean isIndentCdata() {
-		return indentCdata;
+		return getBool(Option.IndentCdata);
 	}
 
-	protected void setForceOutput(boolean forceOutput) {
-		this.forceOutput = forceOutput;
+	protected void setForceOutput(final boolean forceOutput) {
+		set(Option.ForceOutput, forceOutput);
 	}
 
 	protected boolean isForceOutput() {
-		return forceOutput;
+		return getBool(Option.ForceOutput);
 	}
 
 	protected void setShowErrors(int showErrors) {
