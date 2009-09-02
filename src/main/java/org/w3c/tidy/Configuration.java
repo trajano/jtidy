@@ -270,8 +270,6 @@ public class Configuration implements Serializable
 //        // missing: anchor-as-name
 //        
 //        // options not found in Tidy
-//        addConfigOption(new Flag("add-xml-pi", "xmlPi", ParsePropertyImpl.BOOL));
-//        addConfigOption(new Flag("only-errors", "onlyErrors", ParsePropertyImpl.BOOL));
 //        addConfigOption(new Flag("output-raw", "rawOut", ParsePropertyImpl.BOOL));
 //        addConfigOption(new Flag("trim-empty-elements", "trimEmpty", ParsePropertyImpl.BOOL));
 //    }
@@ -281,11 +279,6 @@ public class Configuration implements Serializable
      * @deprecated does nothing
      */
     protected String slidestyle;
-
-    /**
-     * if true normal output is suppressed.
-     */
-    private boolean onlyErrors;
 
     /**
      * does text/block level content effect indentation.
@@ -735,12 +728,12 @@ public class Configuration implements Serializable
 		return getBool(Option.WriteBack);
 	}
 
-	protected void setOnlyErrors(final boolean onlyErrors) {
-		this.onlyErrors = onlyErrors;
+	protected void setShowMarkup(final boolean showMarkup) {
+		set(Option.ShowMarkup, showMarkup);
 	}
 
-	protected boolean isOnlyErrors() {
-		return onlyErrors;
+	protected boolean isShowMarkup() {
+		return getBool(Option.ShowMarkup);
 	}
 
 	protected void setShowWarnings(final boolean showWarnings) {

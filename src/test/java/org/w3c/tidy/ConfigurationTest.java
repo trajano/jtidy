@@ -202,8 +202,8 @@ public class ConfigurationTest extends TestCase
         tidy.setNumEntities(true);
         assertEquals(true, tidy.getNumEntities());
 
-        tidy.setOnlyErrors(true);
-        assertEquals(true, tidy.getOnlyErrors());
+        tidy.setShowMarkup(false);
+        assertEquals(false, tidy.isShowMarkup());
 
         tidy.setPrintBodyOnly(true);
         assertEquals(true, tidy.getPrintBodyOnly());

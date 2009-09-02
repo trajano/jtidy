@@ -533,7 +533,7 @@ public class Tidy implements Serializable
             this.report.needsAuthorIntervention(errout);
         }
 
-        if (!configuration.isOnlyErrors() && (lexer.errors == 0 || configuration.isForceOutput()))
+        if (configuration.isShowMarkup() && (lexer.errors == 0 || configuration.isForceOutput()))
         {
             if (configuration.isBurstSlides())
             {
@@ -854,7 +854,7 @@ public class Tidy implements Serializable
                                 break;
 
                             case 'e' :
-                                configuration.setOnlyErrors(true);
+                                configuration.setShowMarkup(false);
                                 break;
 
                             case 'q' :
@@ -1074,24 +1074,14 @@ public class Tidy implements Serializable
         return configuration.isWriteback();
     }
 
-    /**
-     * only-errors - if true normal output is suppressed.
-     * @param onlyErrors if <code>true</code> normal output is suppressed.
-     * @see Configuration#onlyErrors
-     */
-    public void setOnlyErrors(boolean onlyErrors)
+    public void setShowMarkup(boolean showMarkup)
     {
-        configuration.setOnlyErrors(onlyErrors);
+        configuration.setShowMarkup(showMarkup);
     }
 
-    /**
-     * only-errors - if true normal output is suppressed.
-     * @return <code>true</code> if normal output is suppressed.
-     * @see Configuration#onlyErrors
-     */
-    public boolean getOnlyErrors()
+    public boolean isShowMarkup()
     {
-        return configuration.isOnlyErrors();
+        return configuration.isShowMarkup();
     }
 
     /**
