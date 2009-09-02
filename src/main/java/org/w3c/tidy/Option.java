@@ -72,7 +72,7 @@ enum Option {
 	/** Output plain HTML, even for XHTML input.
 	 * Yes means set explicitly. */
 	HtmlOut                 (MU, "output-html",                 BL, false,                 BOOL,                Bool.class),
-	/** Add <?xml?> for XML docs */
+	/** Add <code>&lt;?xml?&gt;</code> for XML docs */
 	XmlDecl                 (MU, "add-xml-decl",                BL, false,                 BOOL,                Bool.class),
 	/** Output tags in upper not lower case */
 	UpperCaseTags           (MU, "uppercase-tags",              BL, false,                 BOOL,                Bool.class),
@@ -92,7 +92,7 @@ enum Option {
 	DropEmptyParas          (MU, "drop-empty-paras",            BL, true,                  BOOL,                Bool.class),
 	/** Fix comments with adjacent hyphens */
 	FixComments             (MU, "fix-bad-comments",            BL, true,                  BOOL,                Bool.class),
-	/** Output newline before <br> or not? */
+	/** Output newline before &lt;br&gt; or not? */
 	BreakBeforeBR           (PP, "break-before-br",             BL, false,                 BOOL,                Bool.class),
 	
 	// obsolete
@@ -111,7 +111,7 @@ enum Option {
 	WrapAttVals             (PP, "wrap-attributes",             BL, false,                 BOOL,                Bool.class),
 	/** Wrap within JavaScript string literals */
 	WrapScriptlets          (PP, "wrap-script-literals",        BL, false,                 BOOL,                Bool.class),
-	/** Wrap within <![ ... ]> section tags */
+	/** Wrap within &lt;![ ... ]&gt; section tags */
 	WrapSection             (PP, "wrap-sections",               BL, true,                  BOOL,                Bool.class),
 	/** Wrap within ASP pseudo elements */
 	WrapAsp                 (PP, "wrap-asp",                    BL, true,                  BOOL,                Bool.class),
@@ -151,7 +151,7 @@ enum Option {
 	LowerLiterals           (MU, "lower-literals",              BL, true,                  BOOL,                Bool.class),
 	/** Hides all (real) comments in output */
 	HideComments            (MU, "hide-comments",               BL, false,                 BOOL,                Bool.class),
-	/** Indent <!CDATA[ ... ]]> section */
+	/** Indent &lt;!CDATA[ ... ]]&gt; section */
 	IndentCdata             (MU, "indent-cdata",                BL, false,                 BOOL,                Bool.class),
 	/** Output document even if errors were found */
 	ForceOutput             (MS, "force-output",                BL, false,                 BOOL,                Bool.class),
@@ -163,7 +163,7 @@ enum Option {
 	JoinClasses             (MU, "join-classes",                BL, false,                 BOOL,                Bool.class),
 	/** Join multiple style attributes */
 	JoinStyles              (MU, "join-styles",                 BL, true,                  BOOL,                Bool.class),
-	/** Replace <![CDATA[]]> sections with escaped text */
+	/** Replace &lt;![CDATA[]]&gt; sections with escaped text */
 	EscapeCdata             (MU, "escape-cdata",                BL, false,                 BOOL,                Bool.class),
 	
 	/** Language property: not used for anything yet */
