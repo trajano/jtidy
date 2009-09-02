@@ -1017,9 +1017,8 @@ public class Node implements Cloneable {
      * Is the node an element?
      * @return <code>true</code> if type is START_TAG | START_END_TAG
      */
-    public boolean isElement()
-    {
-        return (this.type == NodeType.StartTag || this.type == NodeType.StartEndTag ? true : false);
+    public boolean isElement() {
+        return this.type == NodeType.StartTag || this.type == NodeType.StartEndTag;
     }
 
     /**
@@ -1488,5 +1487,9 @@ public class Node implements Cloneable {
     /** Checks for content model flags */
     public boolean hasCM(final int contentModel) {
     	return tag != null && (tag.model & contentModel) != 0;
+    }
+    
+    public boolean isText() {
+    	return type == NodeType.TextNode;
     }
 }
