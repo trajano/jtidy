@@ -53,6 +53,8 @@
  */
 package org.w3c.tidy;
 
+import org.w3c.tidy.Node.NodeType;
+
 /**
  * Clean up misuse of presentation markup. Filters from other formats such as Microsoft Word often make excessive use of
  * presentation markup such as font tags, B, I, and the align attribute. By applying a set of production rules, it is
@@ -532,7 +534,7 @@ public class Clean
             return;
         }
 
-        node = lexer.newNode(Node.START_TAG, null, 0, 0, "style");
+        node = lexer.newNode(NodeType.StartTag, null, 0, 0, "style");
         node.implicit = true;
 
         // insert type attribute
@@ -564,7 +566,7 @@ public class Clean
 
         lexer.txtend = lexer.lexsize;
 
-        node.insertNodeAtEnd(lexer.newNode(Node.TEXT_NODE, lexer.lexbuf, lexer.txtstart, lexer.txtend));
+        node.insertNodeAtEnd(lexer.newNode(NodeType.TextNode, lexer.lexbuf, lexer.txtstart, lexer.txtend));
 
         // now insert style element into document head doc is root node. search its children for html node the head
         // node should be first child of html node
@@ -1829,7 +1831,7 @@ public class Clean
                 return null;
             }
 
-            if (node.type == Node.SECTION_TAG)
+            if (node.type == NodeType.SectionTag)
             {
                 if ((TidyUtils.getString(node.textarray, node.start, 2)).equals("if"))
                 {
@@ -1857,7 +1859,7 @@ public class Clean
     {
         while (node != null)
         {
-            if (node.type == Node.SECTION_TAG)
+            if (node.type == NodeType.SectionTag)
             {
                 // prune up to matching endif
                 if ((TidyUtils.getString(node.textarray, node.start, 2)).equals("if")
@@ -1997,7 +1999,7 @@ public class Clean
                 normalizeSpaces(lexer, node.content);
             }
 
-            if (node.type == Node.TEXT_NODE)
+            if (node.type == NodeType.TextNode)
             {
                 int i;
                 int[] c = new int[1];
@@ -2072,7 +2074,7 @@ public class Clean
                 return false;
             }
 
-            if (node.type != Node.TEXT_NODE)
+            if (node.type != NodeType.TextNode)
             {
                 return false;
             }
@@ -2168,7 +2170,7 @@ public class Clean
             }
 
             // discard Word's style verbiage
-            if (node.is(TagId.STYLE) || node.is(TagId.META) || node.type == Node.COMMENT_TAG)
+            if (node.is(TagId.STYLE) || node.is(TagId.META) || node.type == NodeType.CommentTag)
             {
                 node = Node.discardElement(node);
                 continue;
@@ -2273,7 +2275,7 @@ public class Clean
             }
 
             // strip out style and class attributes
-            if (node.type == Node.START_TAG || node.type == Node.START_END_TAG)
+            if (node.type == NodeType.StartTag || node.type == NodeType.StartEndTag)
             {
                 purgeWord2000Attributes(node);
             }
@@ -2385,7 +2387,7 @@ public class Clean
                     for (child = node.content; child != null; child = child.next)
                     {
                         // bump to body unless content is param
-                        if ((child.type == Node.TEXT_NODE && !node.isBlank(lexer)) || !child.is(TagId.PARAM))
+                        if ((child.type == NodeType.TextNode && !node.isBlank(lexer)) || !child.is(TagId.PARAM))
                         {
                             bump = true;
                             break;

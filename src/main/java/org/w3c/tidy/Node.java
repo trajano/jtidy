@@ -65,96 +65,12 @@ import org.w3c.tidy.Options.DupAttrModes;
  * @author Fabrizio Giustina
  * @version $Revision$ ($Author$)
  */
-public class Node implements Cloneable
-{
-
-    /**
-     * node type: root.
-     */
-    public static final short ROOT_NODE = 0;
-
-    /**
-     * node type: doctype.
-     */
-    public static final short DOCTYPE_TAG = 1;
-
-    /**
-     * node type: comment.
-     */
-    public static final short COMMENT_TAG = 2;
-
-    /**
-     * node type: .
-     */
-    public static final short PROC_INS_TAG = 3;
-
-    /**
-     * node type: text.
-     */
-    public static final short TEXT_NODE = 4;
-
-    /**
-     * Start tag.
-     */
-    public static final short START_TAG = 5;
-
-    /**
-     * End tag.
-     */
-    public static final short END_TAG = 6;
-
-    /**
-     * Start of an end tag.
-     */
-    public static final short START_END_TAG = 7;
-
-    /**
-     * node type: CDATA.
-     */
-    public static final short CDATA_TAG = 8;
-
-    /**
-     * node type: section tag.
-     */
-    public static final short SECTION_TAG = 9;
-
-    /**
-     * node type: asp tag.
-     */
-    public static final short ASP_TAG = 10;
-
-    /**
-     * node type: jste tag.
-     */
-    public static final short JSTE_TAG = 11;
-
-    /**
-     * node type: php tag.
-     */
-    public static final short PHP_TAG = 12;
-
-    /**
-     * node type: doctype.
-     */
-    public static final short XML_DECL = 13;
-
-    /**
-     * Description for all the node types. Used in toString.
-     */
-    private static final String[] NODETYPE_STRING = {
-        "RootNode",
-        "DocTypeTag",
-        "CommentTag",
-        "ProcInsTag",
-        "TextNode",
-        "StartTag",
-        "EndTag",
-        "StartEndTag",
-        "SectionTag",
-        "AspTag",
-        "PhpTag",
-        "XmlDecl"};
-
+public class Node implements Cloneable {
+	static enum NodeType {
+		RootNode, DocTypeTag, CommentTag, ProcInsTag, TextNode, StartTag, EndTag, StartEndTag, CDATATag, SectionTag,
+		AspTag, JsteTag, PhpTag, XmlDecl
+	}
+	
     /**
      * parent node.
      */
@@ -193,7 +109,7 @@ public class Node implements Cloneable
     /**
      * TextNode, StartTag, EndTag etc.
      */
-    protected short type;
+    protected NodeType type;
 
     /**
      * true if closed by explicit end tag.
@@ -245,19 +161,17 @@ public class Node implements Cloneable
      */
     public Node()
     {
-        this(TEXT_NODE, null, 0, 0);
+        this(NodeType.TextNode, null, 0, 0);
     }
 
     /**
      * Instantiates a new node.
-     * @param type node type: Node.ROOT_NODE | Node.DOCTYPE_TAG | Node.COMMENT_TAG | Node.PROC_INS_TAG | Node.TEXT_NODE |
-     * Node.START_TAG | Node.END_TAG | Node.START_END_TAG | Node.CDATA_TAG | Node.SECTION_TAG | Node. ASP_TAG |
-     * Node.JSTE_TAG | Node.PHP_TAG | Node.XML_DECL
+     * @param type node type
      * @param textarray array of bytes contained in the Node
      * @param start start position
      * @param end end position
      */
-    public Node(short type, byte[] textarray, int start, int end)
+    public Node(NodeType type, byte[] textarray, int start, int end)
     {
         this.parent = null;
         this.prev = null;
@@ -279,16 +193,14 @@ public class Node implements Cloneable
 
     /**
      * Instantiates a new node.
-     * @param type node type: Node.ROOT_NODE | Node.DOCTYPE_TAG | Node.COMMENT_TAG | Node.PROC_INS_TAG | Node.TEXT_NODE |
-     * Node.START_TAG | Node.END_TAG | Node.START_END_TAG | Node.CDATA_TAG | Node.SECTION_TAG | Node. ASP_TAG |
-     * Node.JSTE_TAG | Node.PHP_TAG | Node.XML_DECL
+     * @param type node type
      * @param textarray array of bytes contained in the Node
      * @param start start position
      * @param end end position
      * @param element tag name
      * @param tt tag table instance
      */
-    public Node(short type, byte[] textarray, int start, int end, String element, TagTable tt)
+    public Node(NodeType type, byte[] textarray, int start, int end, String element, TagTable tt)
     {
         this.parent = null;
         this.prev = null;
@@ -306,7 +218,7 @@ public class Node implements Cloneable
         this.element = element;
         this.attributes = null;
         this.content = null;
-        if (type == START_TAG || type == START_END_TAG || type == END_TAG)
+        if (type == NodeType.StartTag || type == NodeType.StartEndTag || type == NodeType.EndTag)
         {
             tt.findTag(this);
         }
@@ -586,7 +498,7 @@ public class Node implements Cloneable
     {
         Node node = this.content;
 
-        while (node != null && node.type != DOCTYPE_TAG)
+        while (node != null && node.type != NodeType.DocTypeTag)
         {
             node = node.next;
         }
@@ -791,7 +703,7 @@ public class Node implements Cloneable
         {
             if (lexer.canPrune(element))
             {
-                if (element.type != TEXT_NODE)
+                if (element.type != NodeType.TextNode)
                 {
                     lexer.report.warning(lexer, element, null, Report.TRIM_EMPTY_ELEMENT);
                 }
@@ -819,7 +731,7 @@ public class Node implements Cloneable
     {
         byte c;
 
-        if (last != null && last.type == Node.TEXT_NODE)
+        if (last != null && last.type == NodeType.TextNode)
         {
             if (last.end > last.start)
 
@@ -870,7 +782,7 @@ public class Node implements Cloneable
         node.textarray = element.textarray; // @todo check it
         lexer.addByte('<');
 
-        if (element.type == END_TAG)
+        if (element.type == NodeType.EndTag)
         {
             lexer.addByte('/');
         }
@@ -879,7 +791,7 @@ public class Node implements Cloneable
         {
             lexer.addStringLiteral(element.element);
         }
-        else if (element.type == DOCTYPE_TAG)
+        else if (element.type == NodeType.DocTypeTag)
         {
             int i;
 
@@ -899,7 +811,7 @@ public class Node implements Cloneable
             }
         }
 
-        if (element.type == START_END_TAG)
+        if (element.type == NodeType.StartEndTag)
         {
             lexer.addByte('/');
         }
@@ -917,7 +829,7 @@ public class Node implements Cloneable
      */
     public boolean isBlank(Lexer lexer)
     {
-        if (this.type == TEXT_NODE)
+        if (this.type == NodeType.TextNode)
         {
             if (this.end == this.start)
             {
@@ -944,7 +856,7 @@ public class Node implements Cloneable
         Node prev, node;
 
         // #427677 - fix by Gary Peskin 31 Oct 00
-        if (text.type == TEXT_NODE && text.textarray[text.start] == (byte) ' ' && (text.start < text.end))
+        if (text.type == NodeType.TextNode && text.textarray[text.start] == (byte) ' ' && (text.start < text.end))
         {
             if (TidyUtils.toBoolean(element.tag.model & Dict.CM_INLINE)
                 && !TidyUtils.toBoolean(element.tag.model & Dict.CM_FIELD)
@@ -952,7 +864,7 @@ public class Node implements Cloneable
             {
                 prev = element.prev;
 
-                if (prev != null && prev.type == TEXT_NODE)
+                if (prev != null && prev.type == NodeType.TextNode)
                 {
                     if (prev.textarray[prev.end - 1] != (byte) ' ')
                     {
@@ -1009,14 +921,14 @@ public class Node implements Cloneable
     {
         Node text = element.content;
 
-        if (text != null && text.type == Node.TEXT_NODE && !element.is(TagId.PRE))
+        if (text != null && text.type == NodeType.TextNode && !element.is(TagId.PRE))
         {
             trimInitialSpace(lexer, element, text);
         }
 
         text = element.last;
 
-        if (text != null && text.type == Node.TEXT_NODE)
+        if (text != null && text.type == NodeType.TextNode)
         {
             trimTrailingSpace(lexer, element, text);
         }
@@ -1107,7 +1019,7 @@ public class Node implements Cloneable
      */
     public boolean isElement()
     {
-        return (this.type == START_TAG || this.type == START_END_TAG ? true : false);
+        return (this.type == NodeType.StartTag || this.type == NodeType.StartEndTag ? true : false);
     }
 
     /**
@@ -1175,7 +1087,7 @@ public class Node implements Cloneable
         lexer.report.warning(lexer, node, tmp, Report.OBSOLETE_ELEMENT);
         node.was = node.tag;
         node.tag = tag;
-        node.type = START_TAG;
+        node.type = NodeType.StartTag;
         node.implicit = true;
         node.element = tag.name;
     }
@@ -1221,14 +1133,14 @@ public class Node implements Cloneable
      */
     public static boolean insertMisc(Node element, Node node)
     {
-        if (node.type == COMMENT_TAG
-            || node.type == PROC_INS_TAG
-            || node.type == CDATA_TAG
-            || node.type == SECTION_TAG
-            || node.type == ASP_TAG
-            || node.type == JSTE_TAG
-            || node.type == PHP_TAG
-            || node.type == XML_DECL)
+        if (node.type == NodeType.CommentTag
+            || node.type == NodeType.ProcInsTag
+            || node.type == NodeType.CDATATag
+            || node.type == NodeType.SectionTag
+            || node.type == NodeType.AspTag
+            || node.type == NodeType.JsteTag
+            || node.type == NodeType.PhpTag
+            || node.type == NodeType.XmlDecl)
         {
             element.insertNodeAtEnd(node);
             return true;
@@ -1392,7 +1304,7 @@ public class Node implements Cloneable
         while (n != null)
         {
             s += "[Node type=";
-            s += NODETYPE_STRING[n.type];
+            s += n.type;
             s += ",element=";
             if (n.element != null)
             {
@@ -1402,7 +1314,7 @@ public class Node implements Cloneable
             {
                 s += "null";
             }
-            if (n.type == TEXT_NODE || n.type == COMMENT_TAG || n.type == PROC_INS_TAG)
+            if (n.type == NodeType.TextNode || n.type == NodeType.CommentTag || n.type == NodeType.ProcInsTag)
             {
                 s += ",text=";
                 if (n.textarray != null && n.start <= n.end)
@@ -1445,29 +1357,29 @@ public class Node implements Cloneable
         {
             switch (this.type)
             {
-                case ROOT_NODE :
+                case RootNode:
                     adapter = new DOMDocumentImpl(this);
                     break;
-                case START_TAG :
-                case START_END_TAG :
+                case StartTag:
+                case StartEndTag:
                     adapter = new DOMElementImpl(this);
                     break;
-                case DOCTYPE_TAG :
+                case DocTypeTag:
                     adapter = new DOMDocumentTypeImpl(this);
                     break;
-                case COMMENT_TAG :
+                case CommentTag:
                     adapter = new DOMCommentImpl(this);
                     break;
-                case TEXT_NODE :
+                case TextNode:
                     adapter = new DOMTextImpl(this);
                     break;
-                case CDATA_TAG :
+                case CDATATag:
                     adapter = new DOMCDATASectionImpl(this);
                     break;
-                case PROC_INS_TAG :
+                case ProcInsTag:
                     adapter = new DOMProcessingInstructionImpl(this);
                     break;
-                default :
+                default:
                     adapter = new DOMNodeImpl(this);
             }
         }
@@ -1501,7 +1413,7 @@ public class Node implements Cloneable
      * Setter for node type.
      * @param newType a valid node type constant
      */
-    protected void setType(short newType)
+    protected void setType(NodeType newType)
     {
         this.type = newType;
     }
@@ -1538,7 +1450,7 @@ public class Node implements Cloneable
      */
     public boolean expectsContent()
     {
-        if (this.type != Node.START_TAG)
+        if (this.type != NodeType.StartTag)
         {
             return false;
         }

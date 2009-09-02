@@ -58,6 +58,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.Vector;
 
+import org.w3c.tidy.Node.NodeType;
 import org.w3c.tidy.Options.DoctypeModes;
 
 import static org.w3c.tidy.Versions.*;
@@ -430,15 +431,13 @@ public class Lexer
 
     /**
      * Creates a new node and add it to nodelist.
-     * @param type node type: Node.ROOT_NODE | Node.DOCTYPE_TAG | Node.COMMENT_TAG | Node.PROC_INS_TAG | Node.TEXT_NODE |
-     * Node.START_TAG | Node.END_TAG | Node.START_END_TAG | Node.CDATA_TAG | Node.SECTION_TAG | Node. ASP_TAG |
-     * Node.JSTE_TAG | Node.PHP_TAG | Node.XML_DECL
+     * @param type node type
      * @param textarray array of bytes contained in the Node
      * @param start start position
      * @param end end position
      * @return Node
      */
-    public Node newNode(short type, byte[] textarray, int start, int end)
+    public Node newNode(NodeType type, byte[] textarray, int start, int end)
     {
         Node node = new Node(type, textarray, start, end);
         this.nodeList.add(node);
@@ -447,16 +446,14 @@ public class Lexer
 
     /**
      * Creates a new node and add it to nodelist.
-     * @param type node type: Node.ROOT_NODE | Node.DOCTYPE_TAG | Node.COMMENT_TAG | Node.PROC_INS_TAG | Node.TEXT_NODE |
-     * Node.START_TAG | Node.END_TAG | Node.START_END_TAG | Node.CDATA_TAG | Node.SECTION_TAG | Node. ASP_TAG |
-     * Node.JSTE_TAG | Node.PHP_TAG | Node.XML_DECL
+     * @param type node type
      * @param textarray array of bytes contained in the Node
      * @param start start position
      * @param end end position
      * @param element tag name
      * @return Node
      */
-    public Node newNode(short type, byte[] textarray, int start, int end, String element)
+    public Node newNode(NodeType type, byte[] textarray, int start, int end, String element)
     {
         Node node = new Node(type, textarray, start, end, element, this.configuration.tt);
         this.nodeList.add(node);
@@ -1201,7 +1198,7 @@ public class Lexer
         }
 
         Node newdoctype = newNode();
-        newdoctype.setType(Node.DOCTYPE_TAG);
+        newdoctype.setType(NodeType.DocTypeTag);
         newdoctype.next = html;
         newdoctype.parent = root;
         newdoctype.prev = null;
@@ -1681,13 +1678,13 @@ public class Lexer
         AttVal version;
         AttVal encoding;
 
-        if (root.content != null && root.content.type == Node.XML_DECL)
+        if (root.content != null && root.content.type == NodeType.XmlDecl)
         {
             xml = root.content;
         }
         else
         {
-            xml = newNode(Node.XML_DECL, this.lexbuf, 0, 0);
+            xml = newNode(NodeType.XmlDecl, this.lexbuf, 0, 0);
             xml.next = root.content;
 
             if (root.content != null)
@@ -1734,7 +1731,7 @@ public class Lexer
         if (dict == null) {
         	throw new RuntimeException();
         }
-        Node node = newNode(Node.START_TAG, this.lexbuf, this.txtstart, this.txtend, dict.name);
+        Node node = newNode(NodeType.StartTag, this.lexbuf, this.txtstart, this.txtend, dict.name);
         node.implicit = true;
         return node;
     }
@@ -1895,7 +1892,7 @@ public class Lexer
 
         if (this.txtend > this.txtstart)
         {
-            this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
+            this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
             return this.token;
         }
 
@@ -1933,7 +1930,7 @@ public class Lexer
         if (this.pushed)
         {
             // duplicate inlines in preference to pushed text nodes when appropriate
-            if (this.token.type != Node.TEXT_NODE || (this.insert == -1 && this.inode == null))
+            if (this.token.type != NodeType.TextNode || (this.insert == -1 && this.inode == null))
             {
                 this.pushed = false;
                 return this.token;
@@ -2081,7 +2078,7 @@ public class Lexer
                                     this.txtend = this.lexsize;
                                 }
 
-                                this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
+                                this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
                                 return this.token;
                             }
 
@@ -2120,7 +2117,7 @@ public class Lexer
                                 // if some text before < return it now
                                 if (this.txtend > this.txtstart)
                                 {
-                                    this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
+                                    this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
                                     return this.token;
                                 }
 
@@ -2181,7 +2178,7 @@ public class Lexer
                             // if some text before < return it now
                             if (this.txtend > this.txtstart)
                             {
-                                this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
+                                this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
                                 return this.token;
                             }
 
@@ -2198,7 +2195,7 @@ public class Lexer
                             // if some text before < return it now
                             if (this.txtend > this.txtstart)
                             {
-                                this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
+                                this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
                                 return this.token;
                             }
 
@@ -2238,7 +2235,7 @@ public class Lexer
                         // if some text before < return it now
                         if (this.txtend > this.txtstart)
                         {
-                            this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
+                            this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
                             return this.token;
                         }
 
@@ -2256,7 +2253,7 @@ public class Lexer
                         // if some text before < return it now
                         if (this.txtend > this.txtstart)
                         {
-                            this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
+                            this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
                             return this.token;
                         }
 
@@ -2274,7 +2271,7 @@ public class Lexer
                         // if some text before < return it now
                         if (this.txtend > this.txtstart)
                         {
-                            this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
+                            this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
                             return this.token;
                         }
 
@@ -2293,7 +2290,7 @@ public class Lexer
                         // if some text before < return it now
                         if (this.txtend > this.txtstart)
                         {
-                            this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
+                            this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
                             return this.token;
                         }
 
@@ -2314,7 +2311,7 @@ public class Lexer
                     this.columns -= 2;
 
                     c = parseTagName();
-                    this.token = newNode(Node.END_TAG, // create endtag token
+                    this.token = newNode(NodeType.EndTag, // create endtag token
                         this.lexbuf,
                         this.txtstart,
                         this.txtend,
@@ -2353,7 +2350,7 @@ public class Lexer
                     isempty[0] = false;
                     attributes = null;
                     this.token = newNode(
-                        (isempty[0] ? Node.START_END_TAG : Node.START_TAG),
+                        (isempty[0] ? NodeType.StartEndTag : NodeType.StartTag),
                         this.lexbuf,
                         this.txtstart,
                         this.txtend,
@@ -2372,7 +2369,7 @@ public class Lexer
 
                     if (isempty[0])
                     {
-                        this.token.type = Node.START_END_TAG;
+                        this.token.type = NodeType.StartEndTag;
                     }
 
                     this.token.attributes = attributes;
@@ -2485,7 +2482,7 @@ public class Lexer
                             this.lexbuf[this.lexsize] = (byte) '\0';
                             this.state = LEX_CONTENT;
                             this.waswhite = false;
-                            this.token = newNode(Node.COMMENT_TAG, this.lexbuf, this.txtstart, this.txtend);
+                            this.token = newNode(NodeType.CommentTag, this.lexbuf, this.txtstart, this.txtend);
 
                             // now look for a line break
 
@@ -2577,7 +2574,7 @@ public class Lexer
                     this.lexbuf[this.lexsize] = (byte) '\0';
                     this.state = LEX_CONTENT;
                     this.waswhite = false;
-                    this.token = newNode(Node.DOCTYPE_TAG, this.lexbuf, this.txtstart, this.txtend);
+                    this.token = newNode(NodeType.DocTypeTag, this.lexbuf, this.txtstart, this.txtend);
                     // make a note of the version named by the doctype
                     this.doctype = findGivenVersion(this.token);
                     return this.token;
@@ -2636,7 +2633,7 @@ public class Lexer
                     this.lexbuf[this.lexsize] = (byte) '\0';
                     this.state = LEX_CONTENT;
                     this.waswhite = false;
-                    this.token = newNode(Node.PROC_INS_TAG, this.lexbuf, this.txtstart, this.txtend);
+                    this.token = newNode(NodeType.ProcInsTag, this.lexbuf, this.txtstart, this.txtend);
                     return this.token;
 
                 case LEX_ASP :
@@ -2660,7 +2657,7 @@ public class Lexer
                     this.lexbuf[this.lexsize] = (byte) '\0';
                     this.state = LEX_CONTENT;
                     this.waswhite = false;
-                    this.token = newNode(Node.ASP_TAG, this.lexbuf, this.txtstart, this.txtend);
+                    this.token = newNode(NodeType.AspTag, this.lexbuf, this.txtstart, this.txtend);
                     return this.token;
 
                 case LEX_JSTE :
@@ -2684,7 +2681,7 @@ public class Lexer
                     this.lexbuf[this.lexsize] = (byte) '\0';
                     this.state = LEX_CONTENT;
                     this.waswhite = false;
-                    this.token = newNode(Node.JSTE_TAG, this.lexbuf, this.txtstart, this.txtend);
+                    this.token = newNode(NodeType.JsteTag, this.lexbuf, this.txtstart, this.txtend);
                     return this.token;
 
                 case LEX_PHP :
@@ -2708,7 +2705,7 @@ public class Lexer
                     this.lexbuf[this.lexsize] = (byte) '\0';
                     this.state = LEX_CONTENT;
                     this.waswhite = false;
-                    this.token = newNode(Node.PHP_TAG, this.lexbuf, this.txtstart, this.txtend);
+                    this.token = newNode(NodeType.PhpTag, this.lexbuf, this.txtstart, this.txtend);
                     return this.token;
 
                 case LEX_XMLDECL : // seen "<?xml" so look for "?>"
@@ -2754,7 +2751,7 @@ public class Lexer
                     this.lexbuf[this.txtend] = '\0';
                     this.state = LEX_CONTENT;
                     this.waswhite = false;
-                    this.token = newNode(Node.XML_DECL, this.lexbuf, this.txtstart, this.txtend);
+                    this.token = newNode(NodeType.XmlDecl, this.lexbuf, this.txtstart, this.txtend);
                     this.token.attributes = attributes;
                     return this.token;
 
@@ -2790,7 +2787,7 @@ public class Lexer
                     this.lexbuf[this.lexsize] = (byte) '\0';
                     this.state = LEX_CONTENT;
                     this.waswhite = false;
-                    this.token = newNode(Node.SECTION_TAG, this.lexbuf, this.txtstart, this.txtend);
+                    this.token = newNode(NodeType.SectionTag, this.lexbuf, this.txtstart, this.txtend);
                     return this.token;
 
                 case LEX_CDATA :
@@ -2823,7 +2820,7 @@ public class Lexer
                     this.lexbuf[this.lexsize] = (byte) '\0';
                     this.state = LEX_CONTENT;
                     this.waswhite = false;
-                    this.token = newNode(Node.CDATA_TAG, this.lexbuf, this.txtstart, this.txtend);
+                    this.token = newNode(NodeType.CDATATag, this.lexbuf, this.txtstart, this.txtend);
                     return this.token;
 
                 default :
@@ -2846,7 +2843,7 @@ public class Lexer
                     this.txtend = this.lexsize;
                 }
 
-                this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
+                this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
                 return this.token;
             }
         }
@@ -2861,7 +2858,7 @@ public class Lexer
             this.lexbuf[this.lexsize] = (byte) '\0';
             this.state = LEX_CONTENT;
             this.waswhite = false;
-            this.token = newNode(Node.COMMENT_TAG, this.lexbuf, this.txtstart, this.txtend);
+            this.token = newNode(NodeType.CommentTag, this.lexbuf, this.txtstart, this.txtend);
             return this.token;
         }
 
@@ -2910,7 +2907,7 @@ public class Lexer
 
         if (this.txtend > this.txtstart)
         {
-            asp = newNode(Node.ASP_TAG, this.lexbuf, this.txtstart, this.txtend);
+            asp = newNode(NodeType.AspTag, this.lexbuf, this.txtstart, this.txtend);
         }
 
         this.txtstart = this.txtend;
@@ -2954,7 +2951,7 @@ public class Lexer
 
         if (this.txtend > this.txtstart)
         {
-            php = newNode(Node.PHP_TAG, this.lexbuf, this.txtstart, this.txtend);
+            php = newNode(NodeType.PhpTag, this.lexbuf, this.txtstart, this.txtend);
         }
 
         this.txtstart = this.txtend;
@@ -3854,7 +3851,7 @@ public class Lexer
             this.columns = this.in.getCurcol();
         }
 
-        node = newNode(Node.START_TAG, this.lexbuf, this.txtstart, this.txtend);
+        node = newNode(NodeType.StartTag, this.lexbuf, this.txtstart, this.txtend);
 
         // GLP: Bugfix 126261. Remove when this change is fixed in istack.c in the original Tidy
         node.implicit = true;
@@ -3889,7 +3886,7 @@ public class Lexer
      */
     public boolean canPrune(Node element)
     {
-        if (element.type == Node.TEXT_NODE)
+        if (element.type == NodeType.TextNode)
         {
             return true;
         }

@@ -68,6 +68,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.w3c.tidy.Node.NodeType;
 import org.w3c.tidy.Options.DupAttrModes;
 
 /**
@@ -232,8 +233,8 @@ public class Tidy implements Serializable
      */
     public static org.w3c.dom.Document createEmptyDocument()
     {
-        Node document = new Node(Node.ROOT_NODE, new byte[0], 0, 0);
-        Node node = new Node(Node.START_TAG, new byte[0], 0, 0, "html", new TagTable());
+        Node document = new Node(NodeType.RootNode, new byte[0], 0, 0);
+        Node node = new Node(NodeType.StartTag, new byte[0], 0, 0, "html", new TagTable());
         if (document != null && node != null)
         {
             document.insertNodeAtStart(node);

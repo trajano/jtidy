@@ -54,6 +54,8 @@
 
 package org.w3c.tidy;
 
+import org.w3c.tidy.Node.NodeType;
+
 /**
  * DOMNodeListByTagNameImpl. The items in the <code>NodeList</code> are accessible via an integral index, starting
  * from 0.
@@ -140,7 +142,7 @@ public class DOMNodeListByTagNameImpl implements org.w3c.dom.NodeList
             return;
         }
 
-        if (node.type == Node.START_TAG || node.type == Node.START_END_TAG)
+        if (node.type == NodeType.StartTag || node.type == NodeType.StartEndTag)
         {
             if (currIndex <= maxIndex && (tagName.equals("*") || tagName.equals(node.element)))
             {

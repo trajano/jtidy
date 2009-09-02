@@ -60,8 +60,8 @@ import java.util.Date;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import org.w3c.tidy.Node.NodeType;
 import org.w3c.tidy.TidyMessage.Level;
-
 
 /**
  * Error/informational message reporter. You should only need to edit the file TidyMessages.properties to localize HTML
@@ -789,19 +789,19 @@ public final class Report
     {
         if (tag != null)
         {
-            if (tag.type == Node.START_TAG)
+            if (tag.type == NodeType.StartTag)
             {
                 return "<" + tag.element + ">";
             }
-            else if (tag.type == Node.END_TAG)
+            else if (tag.type == NodeType.EndTag)
             {
                 return "</" + tag.element + ">";
             }
-            else if (tag.type == Node.DOCTYPE_TAG)
+            else if (tag.type == NodeType.DocTypeTag)
             {
                 return "<!DOCTYPE>";
             }
-            else if (tag.type == Node.TEXT_NODE)
+            else if (tag.type == NodeType.TextNode)
             {
                 return "plain text";
             }

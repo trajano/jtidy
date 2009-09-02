@@ -54,6 +54,8 @@
 
 package org.w3c.tidy;
 
+import org.w3c.tidy.Node.NodeType;
+
 /**
  * DOMDocumentTypeImpl.
  * @author Dave Raggett <a href="mailto:dsr@w3.org">dsr@w3.org </a>
@@ -97,7 +99,7 @@ public class DOMDocumentTypeImpl extends DOMNodeImpl implements org.w3c.dom.Docu
     public String getName()
     {
         String value = null;
-        if (adaptee.type == Node.DOCTYPE_TAG)
+        if (adaptee.type == NodeType.DocTypeTag)
         {
 
             if (adaptee.textarray != null && adaptee.start < adaptee.end)
