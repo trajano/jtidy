@@ -76,7 +76,7 @@ public class OutJavaImpl implements Out
     /**
      * Newline string.
      */
-    private char[] newline;
+    private String newline;
 
     /**
      * Constructor.

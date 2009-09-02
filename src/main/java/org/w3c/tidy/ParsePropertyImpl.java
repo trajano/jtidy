@@ -890,23 +890,15 @@ public final class ParsePropertyImpl
         /**
          * @see org.w3c.tidy.ParseProperty#parse(java.lang.String, java.lang.String, org.w3c.tidy.Configuration)
          */
-        public Object parse(String value, Option option, Configuration configuration)
-        {
+        public Object parse(String value, Option option, Configuration configuration) {
             // lf|crlf|cr
-            if ("lf".equalsIgnoreCase(value))
-            {
-                configuration.setNewline(new char[]{'\n'});
-            }
-            else if ("cr".equalsIgnoreCase(value))
-            {
-                configuration.setNewline(new char[]{'\r'});
-            }
-            else if ("crlf".equalsIgnoreCase(value))
-            {
-                configuration.setNewline(new char[]{'\r', '\n'});
-            }
-            else
-            {
+            if ("lf".equalsIgnoreCase(value)) {
+                configuration.setNewline("\n");
+            } else if ("cr".equalsIgnoreCase(value)) {
+                configuration.setNewline("\r");
+            } else if ("crlf".equalsIgnoreCase(value)) {
+                configuration.setNewline("\r\n");
+            } else {
                 configuration.report.badArgument(value, option);
             }
             return null;
@@ -931,11 +923,9 @@ public final class ParsePropertyImpl
         /**
          * @see org.w3c.tidy.ParseProperty#getFriendlyName(java.lang.String, java.lang.Object, Configuration)
          */
-        public String getFriendlyName(String option, Object value, Configuration configuration)
-        {
-            if (configuration.getNewline().length == 1)
-            {
-                return (configuration.getNewline()[0] == '\n') ? "lf" : "cr";
+        public String getFriendlyName(String option, Object value, Configuration configuration) {
+            if (configuration.getNewline().length() == 1) {
+                return (configuration.getNewline().charAt(0) == '\n') ? "lf" : "cr";
             }
             return "crlf";
         }

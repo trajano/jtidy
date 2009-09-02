@@ -318,11 +318,6 @@ public class Configuration implements Serializable
     private int definedTags;
 
     /**
-     * bytes for the newline marker.
-     */
-    private char[] newline = (System.getProperty("line.separator")).toCharArray();
-
-    /**
      * Input character encoding (defaults to "ISO8859_1").
      */
     private String inCharEncoding = "ISO8859_1";
@@ -1220,12 +1215,12 @@ public class Configuration implements Serializable
 		return definedTags;
 	}
 
-	protected void setNewline(final char[] newline) {
-		this.newline = newline;
+	protected void setNewline(final String newline) {
+		set(Option.Newline, newline);
 	}
 
-	protected char[] getNewline() {
-		return newline;
+	protected String getNewline() {
+		return getString(Option.Newline);
 	}
 
 	protected void setRawOut(boolean rawOut) {
