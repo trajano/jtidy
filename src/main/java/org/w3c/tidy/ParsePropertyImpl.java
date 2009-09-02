@@ -129,7 +129,7 @@ public final class ParsePropertyImpl
     /**
      * configuration parser for new line bytes.
      */
-    static final ParseProperty NEWLINE = new ParseNewLine();
+    static final ParseProperty NEWLINE = VALUES;
     
     static final ParseProperty SORTER = VALUES;
 
@@ -878,56 +878,6 @@ public final class ParsePropertyImpl
         public String getFriendlyName(String option, Object value, Configuration configuration)
         {
             return value == null ? "" : (String) value;
-        }
-    }
-
-    /**
-     * Parser for newline bytes. Allows lf|crlf|cr.
-     */
-    static class ParseNewLine implements ParseProperty
-    {
-
-        /**
-         * @see org.w3c.tidy.ParseProperty#parse(java.lang.String, java.lang.String, org.w3c.tidy.Configuration)
-         */
-        public Object parse(String value, Option option, Configuration configuration) {
-            // lf|crlf|cr
-            if ("lf".equalsIgnoreCase(value)) {
-                configuration.setNewline("\n");
-            } else if ("cr".equalsIgnoreCase(value)) {
-                configuration.setNewline("\r");
-            } else if ("crlf".equalsIgnoreCase(value)) {
-                configuration.setNewline("\r\n");
-            } else {
-                configuration.report.badArgument(value, option);
-            }
-            return null;
-        }
-
-        /**
-         * @see org.w3c.tidy.ParseProperty#getType()
-         */
-        public String getType()
-        {
-            return "Enum";
-        }
-
-        /**
-         * @see org.w3c.tidy.ParseProperty#getOptionValues()
-         */
-        public String getOptionValues()
-        {
-            return "lf, crlf, cr";
-        }
-
-        /**
-         * @see org.w3c.tidy.ParseProperty#getFriendlyName(java.lang.String, java.lang.Object, Configuration)
-         */
-        public String getFriendlyName(String option, Object value, Configuration configuration) {
-            if (configuration.getNewline().length() == 1) {
-                return (configuration.getNewline().charAt(0) == '\n') ? "lf" : "cr";
-            }
-            return "crlf";
         }
     }
 }
