@@ -98,18 +98,20 @@ public class Options {
 	
 	static enum LineEnding implements OptionEnum {
 		/** Use Unix style: LF */
-		LF("LF"),
+		LF("LF", "\n"),
 		/** Use DOS/Windows style: CR+LF */
-		CRLF("CRLF"),
+		CRLF("CRLF", "\r\n"),
 		/** Use Macintosh style: CR */
-		CR("CR"),
+		CR("CR", "\r"),
 		/** System default */
-		Auto("auto");
+		Auto("auto", System.getProperty("line.separator"));
 		
 		private final String name;
+		private final String value;
 
-		private LineEnding(final String name) {
+		private LineEnding(final String name, final String value) {
 			this.name = name;
+			this.value = value;
 		}
 		
 		public String getName() {
@@ -118,6 +120,10 @@ public class Options {
 		
 		public String[] getSynonyms() {
 			return EMPTY;
+		}
+		
+		public String getValue() {
+			return value;
 		}
 	}
 	
