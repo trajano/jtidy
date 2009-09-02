@@ -3576,7 +3576,7 @@ public final class ParserImpl
         }
 
         // ensure presence of initial <?XML version="1.0"?>
-        if (lexer.configuration.isXmlPi())
+        if (lexer.configuration.isXmlDecl())
         {
             lexer.fixXmlDecl(document);
         }

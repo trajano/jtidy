@@ -509,7 +509,7 @@ public class Tidy implements Serializable
             }
 
             // ensure presence of initial <?XML version="1.0"?>
-            if (configuration.isXmlOut() && configuration.isXmlPi())
+            if (configuration.isXmlOut() && configuration.isXmlDecl())
             {
                 lexer.fixXmlDecl(document);
             }
@@ -1537,12 +1537,12 @@ public class Tidy implements Serializable
 
     /**
      * <code>add-xml-pi</code>- add &lt;?xml?&gt; for XML docs.
-     * @param xmlPi <code>true</code> if tidy should add &lt;?xml?&gt; for XML docs
+     * @param xmlDecl <code>true</code> if tidy should add &lt;?xml?&gt; for XML docs
      * @see Configuration#xmlPi
      */
-    public void setXmlPi(boolean xmlPi)
+    public void setXmlDecl(boolean xmlDecl)
     {
-        configuration.setXmlPi(xmlPi);
+        configuration.setXmlDecl(xmlDecl);
     }
 
     /**
@@ -1550,9 +1550,9 @@ public class Tidy implements Serializable
      * @return <code>true</code> if tidy will add &lt;?xml?&gt; for XML docs
      * @see Configuration#xmlPi
      */
-    public boolean getXmlPi()
+    public boolean getXmlDecl()
     {
-        return configuration.isXmlPi();
+        return configuration.isXmlDecl();
     }
 
     /**
@@ -1758,24 +1758,22 @@ public class Tidy implements Serializable
      * @see Configuration#docTypeStr
      * @see Configuration#docTypeMode
      */
-    public String getDocType()
-    {
+    public String getDocType() {
         String result = null;
-        switch (configuration.getDocTypeMode())
-        {
-            case Omit :
+        switch (configuration.getDocTypeMode()) {
+            case Omit:
                 result = "omit";
                 break;
-            case Auto :
+            case Auto:
                 result = "auto";
                 break;
-            case Strict :
+            case Strict:
                 result = "strict";
                 break;
-            case Loose :
+            case Loose:
                 result = "loose";
                 break;
-            case User :
+            case User:
                 result = configuration.getDocTypeStr();
                 break;
         }

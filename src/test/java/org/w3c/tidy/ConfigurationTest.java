@@ -277,8 +277,8 @@ public class ConfigurationTest extends TestCase
         tidy.setXmlOut(true);
         assertEquals(true, tidy.getXmlOut());
 
-        tidy.setXmlPi(true);
-        assertEquals(true, tidy.getXmlPi());
+        tidy.setXmlDecl(true);
+        assertEquals(true, tidy.getXmlDecl());
 
         tidy.setXmlPIs(true);
         assertEquals(true, tidy.getXmlPIs());

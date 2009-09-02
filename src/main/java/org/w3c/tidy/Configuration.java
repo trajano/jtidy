@@ -293,49 +293,9 @@ public class Configuration implements Serializable
     private boolean smartIndent;
 
     /**
-     * add <code>&lt;?xml?&gt;</code> for XML docs.
-     */
-    private boolean xmlPi;
-
-    /**
      * trim empty elements.
      */
     private boolean trimEmpty = true;
-
-    /**
-     * number of errors to put out.
-     */
-    private int showErrors = 6;
-
-    /**
-     * convert quotes and dashes to nearest ASCII char.
-     */
-    private boolean asciiChars = true;
-
-    /**
-     * join multiple class attributes.
-     */
-    private boolean joinClasses;
-
-    /**
-     * join multiple style attributes.
-     */
-    private boolean joinStyles = true;
-
-    /**
-     * replace CDATA sections with escaped text.
-     */
-    private boolean escapeCdata = true;
-
-    /**
-     * allow numeric character references.
-     */
-    private boolean ncr = true; // #431953
-
-    /**
-     * CSS class naming for -clean option.
-     */
-    private String cssPrefix;
 
     /**
      * char encoding used when replacing illegal SGML chars, regardless of specified encoding.
@@ -377,8 +337,6 @@ public class Configuration implements Serializable
      */
     private boolean rawOut;
     
-    private int accessibilityCheckLevel = 0;
-
     /**
      * configuration properties.
      */
@@ -503,7 +461,7 @@ public class Configuration implements Serializable
         // #427837 - fix by Dave Raggett 02 Jun 01
         // generate <?xml version="1.0" encoding="iso-8859-1"?> if the output character encoding is Latin-1 etc.
         if (!"UTF8".equals(getOutCharEncodingName()) && !"ASCII".equals(getOutCharEncodingName()) && isXmlOut()) {
-            xmlPi = true;
+            setXmlDecl(true);
         }
 
         // XML requires end tags
@@ -862,12 +820,12 @@ public class Configuration implements Serializable
 		return getBool(Option.HtmlOut);
 	}
 
-	protected void setXmlPi(final boolean xmlPi) {
-		this.xmlPi = xmlPi;
+	protected void setXmlDecl(final boolean xmlDecl) {
+		set(Option.XmlDecl, xmlDecl);
 	}
 
-	protected boolean isXmlPi() {
-		return xmlPi;
+	protected boolean isXmlDecl() {
+		return getBool(Option.XmlDecl);
 	}
 
 	protected void setUpperCaseTags(final boolean upperCaseTags) {
@@ -1190,63 +1148,63 @@ public class Configuration implements Serializable
 		return getBool(Option.ForceOutput);
 	}
 
-	protected void setShowErrors(int showErrors) {
-		this.showErrors = showErrors;
+	protected void setShowErrors(final int showErrors) {
+		set(Option.ShowErrors, showErrors);
 	}
 
 	protected int getShowErrors() {
-		return showErrors;
+		return getInt(Option.ShowErrors);
 	}
 
-	protected void setAsciiChars(boolean asciiChars) {
-		this.asciiChars = asciiChars;
+	protected void setAsciiChars(final boolean asciiChars) {
+		set(Option.AsciiChars, asciiChars);
 	}
 
 	protected boolean isAsciiChars() {
-		return asciiChars;
+		return getBool(Option.AsciiChars);
 	}
 
-	protected void setJoinClasses(boolean joinClasses) {
-		this.joinClasses = joinClasses;
+	protected void setJoinClasses(final boolean joinClasses) {
+		set(Option.JoinClasses, joinClasses);
 	}
 
 	protected boolean isJoinClasses() {
-		return joinClasses;
+		return getBool(Option.JoinClasses);
 	}
 
-	protected void setJoinStyles(boolean joinStyles) {
-		this.joinStyles = joinStyles;
+	protected void setJoinStyles(final boolean joinStyles) {
+		set(Option.JoinStyles, joinStyles);
 	}
 
 	protected boolean isJoinStyles() {
-		return joinStyles;
+		return getBool(Option.JoinStyles);
 	}
 
-	protected void setEscapeCdata(boolean escapeCdata) {
-		this.escapeCdata = escapeCdata;
+	protected void setEscapeCdata(final boolean escapeCdata) {
+		set(Option.EscapeCdata, escapeCdata);
 	}
 
 	protected boolean isEscapeCdata() {
-		return escapeCdata;
+		return getBool(Option.EscapeCdata);
 	}
 
-	protected void setNcr(boolean ncr) {
-		this.ncr = ncr;
+	protected void setNcr(final boolean ncr) {
+		set(Option.NCR, ncr);
 	}
 
 	protected boolean isNcr() {
-		return ncr;
+		return getBool(Option.NCR);
 	}
 
-	protected void setCssPrefix(String cssPrefix) {
-		this.cssPrefix = cssPrefix;
+	protected void setCssPrefix(final String cssPrefix) {
+		set(Option.CSSPrefix, cssPrefix);
 	}
 
 	protected String getCssPrefix() {
-		return cssPrefix;
+		return getString(Option.CSSPrefix);
 	}
 
-	protected void setReplacementCharEncoding(String replacementCharEncoding) {
+	protected void setReplacementCharEncoding(final String replacementCharEncoding) {
 		this.replacementCharEncoding = replacementCharEncoding;
 	}
 
@@ -1254,7 +1212,7 @@ public class Configuration implements Serializable
 		return replacementCharEncoding;
 	}
 
-	protected void setDefinedTags(int definedTags) {
+	protected void setDefinedTags(final int definedTags) {
 		this.definedTags = definedTags;
 	}
 
@@ -1262,7 +1220,7 @@ public class Configuration implements Serializable
 		return definedTags;
 	}
 
-	protected void setNewline(char[] newline) {
+	protected void setNewline(final char[] newline) {
 		this.newline = newline;
 	}
 
@@ -1278,11 +1236,11 @@ public class Configuration implements Serializable
 		return rawOut;
 	}
 
-	protected void setAccessibilityCheckLevel(int accessibilityCheckLevel) {
-		this.accessibilityCheckLevel = accessibilityCheckLevel;
+	protected void setAccessibilityCheckLevel(final int accessibilityCheckLevel) {
+		set(Option.AccessibilityCheckLevel, accessibilityCheckLevel);
 	}
 
 	protected int getAccessibilityCheckLevel() {
-		return accessibilityCheckLevel;
+		return getInt(Option.AccessibilityCheckLevel);
 	}
 }
