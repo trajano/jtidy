@@ -89,7 +89,7 @@ public class OutJavaImpl implements Out
         throws UnsupportedEncodingException
     {
         this.writer = new OutputStreamWriter(out, encoding);
-        this.newline = configuration.getNewline();
+        this.newline = configuration.getNewline().getValue();
     }
 
     /**
@@ -100,7 +100,7 @@ public class OutJavaImpl implements Out
     protected OutJavaImpl(Configuration configuration, Writer out)
     {
         this.writer = out;
-        this.newline = configuration.getNewline();
+        this.newline = configuration.getNewline().getValue();
     }
 
     /**

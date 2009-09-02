@@ -64,6 +64,7 @@ import java.util.Properties;
 
 import org.w3c.tidy.Options.DoctypeModes;
 import org.w3c.tidy.Options.DupAttrModes;
+import org.w3c.tidy.Options.LineEnding;
 import org.w3c.tidy.Options.OptionEnum;
 
 /**
@@ -1208,12 +1209,12 @@ public class Configuration implements Serializable
 		return definedTags;
 	}
 
-	protected void setNewline(final String newline) {
+	protected void setNewline(final LineEnding newline) {
 		set(Option.Newline, newline);
 	}
 
-	protected String getNewline() {
-		return getString(Option.Newline);
+	protected LineEnding getNewline() {
+		return (LineEnding) getOptionEnum(Option.Newline);
 	}
 
 	protected void setRawOut(boolean rawOut) {
