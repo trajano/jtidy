@@ -117,11 +117,6 @@ public final class ParsePropertyImpl
     static final ParseProperty STRING = new ParseString();
 
     /**
-     * configuration parser for indent property.
-     */
-    static final ParseProperty INDENT = new ParseIndent();
-
-    /**
      * configuration parser for css selectors.
      */
     static final ParseProperty CSS1SELECTOR = new ParseCSS1Selector();
@@ -752,76 +747,6 @@ public final class ParsePropertyImpl
         public String getFriendlyName(String option, Object value, Configuration configuration)
         {
             return value == null ? "" : (String) value;
-        }
-    }
-
-    /**
-     * Parser for indent values.
-     */
-    static class ParseIndent implements ParseProperty
-    {
-
-        /**
-         * @see org.w3c.tidy.ParseProperty#parse(java.lang.String, java.lang.String, org.w3c.tidy.Configuration)
-         */
-        public Object parse(String value, Option option, Configuration configuration)
-        {
-            boolean b = configuration.isIndentContent();
-
-            if ("yes".equalsIgnoreCase(value))
-            {
-                b = true;
-                configuration.setSmartIndent(false);
-            }
-            else if ("true".equalsIgnoreCase(value))
-            {
-                b = true;
-                configuration.setSmartIndent(false);
-            }
-            else if ("no".equalsIgnoreCase(value))
-            {
-                b = false;
-                configuration.setSmartIndent(false);
-            }
-            else if ("false".equalsIgnoreCase(value))
-            {
-                b = false;
-                configuration.setSmartIndent(false);
-            }
-            else if ("auto".equalsIgnoreCase(value))
-            {
-                b = true;
-                configuration.setSmartIndent(true);
-            }
-            else
-            {
-                configuration.report.badArgument(value, option);
-            }
-            return b ? Boolean.TRUE : Boolean.FALSE;
-        }
-
-        /**
-         * @see org.w3c.tidy.ParseProperty#getType()
-         */
-        public String getType()
-        {
-            return "Indent";
-        }
-
-        /**
-         * @see org.w3c.tidy.ParseProperty#getOptionValues()
-         */
-        public String getOptionValues()
-        {
-            return "auto, y/n, yes/no, t/f, true/false, 1/0";
-        }
-
-        /**
-         * @see org.w3c.tidy.ParseProperty#getFriendlyName(java.lang.String, java.lang.Object, Configuration)
-         */
-        public String getFriendlyName(String option, Object value, Configuration configuration)
-        {
-            return value == null ? "" : value.toString();
         }
     }
 

@@ -1989,7 +1989,7 @@ public class PPrint
             return false;
         }
 
-        if (this.configuration.isSmartIndent())
+//        if (this.configuration.isSmartIndent())
         {
             if (node.content != null && TidyUtils.toBoolean(node.tag.model & Dict.CM_NO_INDENT))
             {
@@ -2261,10 +2261,10 @@ public class PPrint
                 // other tags
                 condFlushLine(fout, indent);
 
-                if (this.configuration.isSmartIndent() && node.prev != null)
-                {
-                    flushLine(fout, indent);
-                }
+//                if (this.configuration.isSmartIndent() && node.prev != null)
+//                {
+//                    flushLine(fout, indent);
+//                }
 
                 // do not omit elements with attributes
                 if (!this.configuration.isHideEndTags()

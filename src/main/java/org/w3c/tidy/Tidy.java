@@ -826,7 +826,6 @@ public class Tidy implements Serializable
                         {
                             case 'i' :
                                 configuration.setIndentContent(true);
-                                configuration.setSmartIndent(true);
                                 break;
 
                             case 'o' :
@@ -1142,26 +1141,6 @@ public class Tidy implements Serializable
     public boolean getIndentContent()
     {
         return configuration.isIndentContent();
-    }
-
-    /**
-     * SmartIndent - does text/block level content effect indentation.
-     * @param smartIndent <code>true</code> if text/block level content should effect indentation
-     * @see Configuration#smartIndent
-     */
-    public void setSmartIndent(boolean smartIndent)
-    {
-        configuration.setSmartIndent(smartIndent);
-    }
-
-    /**
-     * SmartIndent - does text/block level content effect indentation.
-     * @return <code>true</code> if text/block level content should effect indentation
-     * @see Configuration#smartIndent
-     */
-    public boolean getSmartIndent()
-    {
-        return configuration.isSmartIndent();
     }
 
     /**

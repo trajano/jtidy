@@ -229,9 +229,6 @@ public class ConfigurationTest extends TestCase
         tidy.setShowWarnings(true);
         assertEquals(true, tidy.getShowWarnings());
 
-        tidy.setSmartIndent(true);
-        assertEquals(true, tidy.getSmartIndent());
-
         tidy.setTidyMark(true);
         assertEquals(true, tidy.getTidyMark());
 

@@ -282,11 +282,6 @@ public class Configuration implements Serializable
     protected String slidestyle;
 
     /**
-     * does text/block level content effect indentation.
-     */
-    private boolean smartIndent;
-
-    /**
      * trim empty elements.
      */
     private boolean trimEmpty = true;
@@ -413,9 +408,8 @@ public class Configuration implements Serializable
             setEncloseBodyText(true);
         }
 
-        // avoid the need to set IndentContent when SmartIndent is set
-        if (smartIndent) {
-            setIndentContent(true);
+        if (!isIndentContent()) {
+            setSpaces(0);
         }
 
         // disable wrapping
@@ -759,14 +753,6 @@ public class Configuration implements Serializable
 
 	protected boolean isIndentContent() {
 		return getBool(Option.IndentContent);
-	}
-
-	protected void setSmartIndent(final boolean smartIndent) {
-		this.smartIndent = smartIndent;
-	}
-
-	protected boolean isSmartIndent() {
-		return smartIndent;
 	}
 
 	protected void setHideEndTags(final boolean hideEndTags) {
