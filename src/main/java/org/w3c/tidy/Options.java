@@ -210,7 +210,7 @@ public class Options {
 	
 	private static final Map<String, Option> OPTIONS = new TreeMap<String, Option>();
 	
-	static {
+	static void buildOptionsMap() {
 		for (Option o : Option.values()) {
 			OPTIONS.put(o.getName(), o);
 		}

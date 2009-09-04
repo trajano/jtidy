@@ -209,6 +209,10 @@ enum Option {
 	/** Define anchors as name attributes */
 	AnchorAsName            (MU, "anchor-as-name",              BL, true,                  BOOL,                Bool.class);
 	
+	static {
+		buildOptionsMap();
+	}
+	
 	private Option(final ConfigCategory category, final String name, final OptionType type,
 			final Object dflt, final ParseProperty parser, final Class<? extends OptionEnum> enumClass) {
 		this.category = category;
@@ -216,7 +220,7 @@ enum Option {
 		this.type = type;
 		this.dflt = dflt;
 		this.parser = parser;
-		this.pickList = new OptionValues(enumClass);
+		this.pickList = enumClass == null ? null : new OptionValues(enumClass);
 	}
 	
 	private final ConfigCategory category;
