@@ -642,6 +642,10 @@ public class Configuration implements Serializable
     private void set(final Option option, final Object value) {
     	options.put(option, value);
     }
+    
+    protected void reset(final Option option) {
+		options.put(option, null);
+	}
 
 	protected void setSpaces(final int spaces) {
 		set(Option.IndentSpaces, spaces);
@@ -1217,5 +1221,13 @@ public class Configuration implements Serializable
 
 	protected int getAccessibilityCheckLevel() {
 		return getInt(Option.AccessibilityCheckLevel);
+	}
+	
+	protected void setVertSpace(final boolean vertSpace) {
+		set(Option.VertSpace, vertSpace);
+	}
+	
+	protected boolean isVertSpace() {
+		return getBool(Option.VertSpace);
 	}
 }
