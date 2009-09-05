@@ -277,12 +277,6 @@ public class Configuration implements Serializable
 //    }
 
     /**
-     * style sheet for slides.
-     * @deprecated does nothing
-     */
-    protected String slidestyle;
-
-    /**
      * trim empty elements.
      */
     private boolean trimEmpty = true;
@@ -894,14 +888,6 @@ public class Configuration implements Serializable
 
 	protected boolean isBreakBeforeBR() {
 		return getBool(Option.BreakBeforeBR);
-	}
-
-	protected void setBurstSlides(final boolean burstSlides) {
-		set(Option.BurstSlides, burstSlides);
-	}
-
-	protected boolean isBurstSlides() {
-		return getBool(Option.BurstSlides);
 	}
 
 	protected void setNumEntities(final boolean numEntities) {

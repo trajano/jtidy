@@ -534,81 +534,31 @@ public class Tidy implements Serializable
             this.report.needsAuthorIntervention(errout);
         }
 
-        if (configuration.isShowMarkup() && (lexer.errors == 0 || configuration.isForceOutput()))
-        {
-            if (configuration.isBurstSlides())
+        if (configuration.isShowMarkup() && (lexer.errors == 0 || configuration.isForceOutput()) && o != null) {
+            pprint = new PPrint(configuration);
+
+            if (document.findDocType() == null)
             {
-                Node body;
-
-                body = null;
-                // remove doctype to avoid potential clash with markup introduced when bursting into slides
-
-                // discard the document type
-                doctype = document.findDocType();
-
-                if (doctype != null)
-                {
-                    Node.discardElement(doctype);
-                }
-
-                /* slides use transitional features */
-                lexer.versions |= Versions.VERS_HTML40_LOOSE;
-
-                // and patch up doctype to match
-                if (configuration.isXHTML())
-                {
-                    lexer.setXHTMLDocType(document);
-                }
-                else
-                {
-                    lexer.fixDocType(document);
-                }
-
-                // find the body element which may be implicit
-                body = document.findBody();
-
-                if (body != null)
-                {
-                    pprint = new PPrint(configuration);
-                    if (!configuration.isQuiet())
-                    {
-                        this.report.reportNumberOfSlides(errout, pprint.countSlides(body));
-                    }
-                    pprint.createSlides(lexer, document);
-                }
-                else if (!configuration.isQuiet())
-                {
-                    this.report.missingBody(errout);
-                }
+                // only use numeric character references if no doctype could be determined (e.g., because
+                // the document contains proprietary features) to ensure well-formedness.
+                configuration.setNumEntities(true);
             }
-            else if (o != null)
+            if (configuration.isBodyOnly())
             {
-                pprint = new PPrint(configuration);
-
-                if (document.findDocType() == null)
-                {
-                    // only use numeric character references if no doctype could be determined (e.g., because
-                    // the document contains proprietary features) to ensure well-formedness.
-                    configuration.setNumEntities(true);
-                }
-                if (configuration.isBodyOnly())
-                {
-                    // Feature request #434940 - fix by Dave Raggett/Ignacio Vazquez-Abrams 21 Jun 01
-                    pprint.printBody(o, lexer, document, configuration.isXmlOut());
-                }
-                else if (configuration.isXmlOut() && !configuration.isXHTML())
-                {
-                    pprint.printXMLTree(o, (short) 0, 0, lexer, document);
-                }
-                else
-                {
-                    pprint.printTree(o, (short) 0, 0, lexer, document);
-                }
-
-                pprint.flushLine(o, 0);
-                o.flush();
+                // Feature request #434940 - fix by Dave Raggett/Ignacio Vazquez-Abrams 21 Jun 01
+                pprint.printBody(o, lexer, document, configuration.isXmlOut());
+            }
+            else if (configuration.isXmlOut() && !configuration.isXHTML())
+            {
+                pprint.printXMLTree(o, (short) 0, 0, lexer, document);
+            }
+            else
+            {
+                pprint.printTree(o, (short) 0, 0, lexer, document);
             }
 
+            pprint.flushLine(o, 0);
+            o.flush();
         }
 
         if (!configuration.isQuiet())
@@ -1323,26 +1273,6 @@ public class Tidy implements Serializable
     public boolean getBreakBeforeBR()
     {
         return configuration.isBreakBeforeBR();
-    }
-
-    /**
-     * <code>split</code>- create slides on each h2 element.
-     * @param burstSlides <code>true</code> if tidy should create slides on each h2 element
-     * @see Configuration#burstSlides
-     */
-    public void setBurstSlides(boolean burstSlides)
-    {
-        configuration.setBurstSlides(burstSlides);
-    }
-
-    /**
-     * <code>split</code>- create slides on each h2 element.
-     * @return <code>true</code> if tidy will create slides on each h2 element
-     * @see Configuration#burstSlides
-     */
-    public boolean getBurstSlides()
-    {
-        return configuration.isBurstSlides();
     }
 
     /**

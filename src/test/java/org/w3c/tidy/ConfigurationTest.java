@@ -125,9 +125,6 @@ public class ConfigurationTest extends TestCase
         tidy.setBreakBeforeBR(true);
         assertEquals(true, tidy.getBreakBeforeBR());
 
-        tidy.setBurstSlides(true);
-        assertEquals(true, tidy.getBurstSlides());
-
         tidy.setDropEmptyParas(false);
         assertEquals(false, tidy.getDropEmptyParas());
 

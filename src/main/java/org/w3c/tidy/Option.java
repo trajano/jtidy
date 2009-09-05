@@ -42,10 +42,6 @@ enum Option {
 	/** Default text for alt attribute */
 	AltText                 (MU, "alt-text",                    ST, null,                  STRING,              null),
 	
-	// obsolete
-	/** Style sheet for slides: not used for anything yet */
-	SlideStyle              (MS, "slide-style",                 ST, null,                  NAME,                null),
-	
 	/** File name to write errors to */
 	ErrFile                 (MS, "error-file",                  ST, null,                  STRING,              null),
 	/** File name to write markup to */
@@ -94,10 +90,6 @@ enum Option {
 	FixComments             (MU, "fix-bad-comments",            BL, true,                  BOOL,                Bool.class),
 	/** Output newline before &lt;br&gt; or not? */
 	BreakBeforeBR           (PP, "break-before-br",             BL, false,                 BOOL,                Bool.class),
-	
-	// obsolete
-	/** Create slides on each h2 element */
-	BurstSlides             (PP, "split",                       BL, false,                 BOOL,                Bool.class),
 	
 	/** Use numeric entities */
 	NumEntities             (MU, "numeric-entities",            BL, false,                 BOOL,                Bool.class),

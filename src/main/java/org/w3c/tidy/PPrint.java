@@ -53,11 +53,6 @@
  */
 package org.w3c.tidy;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.NumberFormat;
-
 import org.w3c.tidy.Node.NodeType;
 import org.w3c.tidy.Options.TriState;
 
@@ -164,18 +159,6 @@ public class PPrint
     private boolean inAttVal;
 
     private boolean inString;
-
-    /**
-     * Current slide number.
-     */
-    private int slide;
-
-    /**
-     * Total slides count.
-     */
-    private int count;
-
-    private Node slidecontent;
 
     /**
      * current configuration.
@@ -983,17 +966,6 @@ public class PPrint
             }
 
             printChar(c, mode);
-        }
-    }
-
-    /**
-     * @param str
-     */
-    private void printString(String str)
-    {
-        for (int i = 0; i < str.length(); i++)
-        {
-            addC(str.charAt(i), linelen++);
         }
     }
 
@@ -2463,52 +2435,6 @@ public class PPrint
     }
 
     /**
-     * @param fout
-     * @param indent
-     */
-    private void printNavBar(Out fout, int indent)
-    {
-        String buf;
-
-        condFlushLine(fout, indent);
-        printString("<center><small>");
-
-        NumberFormat numberFormat = NumberFormat.getInstance();
-        numberFormat.setMinimumIntegerDigits(3);
-
-        if (slide > 1)
-        {
-            buf = "<a href=\"slide" + numberFormat.format(slide - 1) + ".html\">previous</a> | ";
-            // #427666 - fix by Eric Rossen 02 Aug 00
-            printString(buf);
-            condFlushLine(fout, indent);
-
-            if (slide < count)
-            {
-                printString("<a href=\"slide001.html\">start</a> | ");
-                // #427666 - fix by Eric Rossen 02 Aug 00
-            }
-            else
-            {
-                printString("<a href=\"slide001.html\">start</a>");
-                // #427666 - fix by Eric Rossen 02 Aug 00
-            }
-
-            condFlushLine(fout, indent);
-        }
-
-        if (slide < count)
-        {
-            buf = "<a href=\"slide" + numberFormat.format(slide + 1) + ".html\">next</a>";
-            // #427666 - fix by Eric Rossen 02 Aug 00
-            printString(buf);
-        }
-
-        printString("</small></center>");
-        condFlushLine(fout, indent);
-    }
-
-    /**
      * Add meta element for page transition effect, this works on IE but not NS.
      * @param lexer
      * @param root
@@ -2529,54 +2455,4 @@ public class PPrint
             head.insertNodeAtStart(meta);
         }
     }
-
-    /**
-     * Creates slides from h2.
-     * @param lexer Lexer
-     * @param root root node
-     */
-    public void createSlides(Lexer lexer, Node root)
-    {
-        Node body;
-        String buf;
-
-        NumberFormat numberFormat = NumberFormat.getInstance();
-        numberFormat.setMinimumIntegerDigits(3);
-
-        body = root.findBody();
-        count = countSlides(body);
-        slidecontent = body.content;
-
-        addTransitionEffect(lexer, root, 3.0);
-
-        for (slide = 1; slide <= count; ++slide)
-        {
-            buf = "slide" + numberFormat.format(slide) + ".html";
-
-            try
-            {
-                FileOutputStream fis = new FileOutputStream(buf);
-                Out out = OutFactory.getOut(configuration, fis);
-
-                printTree(out, (short) 0, 0, lexer, root);
-                flushLine(out, 0);
-
-                fis.close();
-            }
-            catch (IOException e)
-            {
-                System.err.println(buf + e.toString());
-            }
-        }
-
-        // delete superfluous slides by deleting slideN.html for N = count+1, count+2, etc.
-        // until no such file is found.
-
-        // #427666 - fix by Eric Rossen 02 Aug 00
-        while ((new File("slide" + numberFormat.format(slide) + ".html")).delete())
-        {
-            ++slide;
-        }
-    }
-
 }
