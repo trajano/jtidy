@@ -60,6 +60,7 @@ import junit.framework.TestCase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.tidy.Options.DupAttrModes;
+import org.w3c.tidy.Options.TriState;
 
 /**
  * @author Fabrizio Giustina
@@ -172,8 +173,8 @@ public class ConfigurationTest extends TestCase
         tidy.setIndentCdata(true);
         assertEquals(true, tidy.getIndentCdata());
 
-        tidy.setIndentContent(true);
-        assertEquals(true, tidy.getIndentContent());
+        tidy.setIndentContent(TriState.Yes);
+        assertEquals(TriState.Yes, tidy.getIndentContent());
 
         tidy.setJoinClasses(true);
         assertEquals(true, tidy.getJoinClasses());

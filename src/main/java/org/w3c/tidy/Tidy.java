@@ -70,6 +70,7 @@ import java.util.Properties;
 
 import org.w3c.tidy.Node.NodeType;
 import org.w3c.tidy.Options.DupAttrModes;
+import org.w3c.tidy.Options.TriState;
 
 /**
  * HTML parser and pretty printer.
@@ -825,7 +826,10 @@ public class Tidy implements Serializable
                         switch (argName.charAt(i))
                         {
                             case 'i' :
-                                configuration.setIndentContent(true);
+                                configuration.setIndentContent(TriState.Auto);
+                                if (configuration.getSpaces() == 0) {
+                                	configuration.reset(Option.IndentSpaces);
+                                }
                                 break;
 
                             case 'o' :
@@ -1128,8 +1132,7 @@ public class Tidy implements Serializable
      * @param indentContent indent content of appropriate tags
      * @see Configuration#indentContent
      */
-    public void setIndentContent(boolean indentContent)
-    {
+    public void setIndentContent(final TriState indentContent) {
         configuration.setIndentContent(indentContent);
     }
 
@@ -1138,9 +1141,8 @@ public class Tidy implements Serializable
      * @return <code>true</code> if tidy will indent content of appropriate tags
      * @see Configuration#indentContent
      */
-    public boolean getIndentContent()
-    {
-        return configuration.isIndentContent();
+    public TriState getIndentContent() {
+        return configuration.getIndentContent();
     }
 
     /**

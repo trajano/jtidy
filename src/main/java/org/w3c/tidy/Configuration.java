@@ -66,6 +66,7 @@ import org.w3c.tidy.Options.DoctypeModes;
 import org.w3c.tidy.Options.DupAttrModes;
 import org.w3c.tidy.Options.LineEnding;
 import org.w3c.tidy.Options.OptionEnum;
+import org.w3c.tidy.Options.TriState;
 
 /**
  * Read configuration file and manage configuration properties. Configuration files associate a property name with a
@@ -408,8 +409,8 @@ public class Configuration implements Serializable
             setEncloseBodyText(true);
         }
 
-        if (!isIndentContent()) {
-            setSpaces(0);
+        if (getIndentContent() == TriState.No) {
+        	setSpaces(0);
         }
 
         // disable wrapping
@@ -751,12 +752,12 @@ public class Configuration implements Serializable
 		return getBool(Option.Quiet);
 	}
 
-	protected void setIndentContent(final boolean indentContent) {
+	protected void setIndentContent(final TriState indentContent) {
 		set(Option.IndentContent, indentContent);
 	}
 
-	protected boolean isIndentContent() {
-		return getBool(Option.IndentContent);
+	protected TriState getIndentContent() {
+		return (TriState) getOptionEnum(Option.IndentContent);
 	}
 
 	protected void setHideEndTags(final boolean hideEndTags) {
