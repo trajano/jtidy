@@ -59,6 +59,7 @@ import java.io.IOException;
 import java.text.NumberFormat;
 
 import org.w3c.tidy.Node.NodeType;
+import org.w3c.tidy.Options.TriState;
 
 /**
  * Pretty print parse tree. Block-level and unknown elements are printed on new lines and their contents indented 2
@@ -1963,18 +1964,11 @@ public class PPrint
 
         printEndTag(mode, indent, node);
 
-        if (!lexer.configuration.isIndentContent() && node.next != null
-
-        && !((node.tag != null && TidyUtils.toBoolean(node.tag.model & Dict.CM_INLINE))
-
-        || node.type != NodeType.TextNode
-
-        ))
-        {
+        if (lexer.configuration.getIndentContent() == TriState.No
+        		&& node.next != null
+        		&& !(node.hasCM(Dict.CM_INLINE) || node.isText())) {
             flushLine(fout, indent);
         }
-
-        flushLine(fout, indent);
     }
 
     /**
@@ -1982,17 +1976,16 @@ public class PPrint
      * @param node actual node
      * @return <code>true</code> if line should be indented
      */
-    private boolean shouldIndent(Node node)
-    {
-        if (!this.configuration.isIndentContent())
-        {
+    private boolean shouldIndent(Node node) {
+    	final TriState indentContent = configuration.getIndentContent();
+        if (indentContent == TriState.No) {
             return false;
         }
-
-//        if (this.configuration.isSmartIndent())
-        {
-            if (node.content != null && TidyUtils.toBoolean(node.tag.model & Dict.CM_NO_INDENT))
-            {
+        if (node.is(TagId.TEXTAREA)) {
+        	return false;
+        }
+        if (indentContent == TriState.Auto) {
+            if (node.content != null && node.hasCM(Dict.CM_NO_INDENT)) {
                 for (node = node.content; node != null; node = node.next)
                 {
                     if (node.tag != null && TidyUtils.toBoolean(node.tag.model & Dict.CM_BLOCK))
@@ -2078,147 +2071,121 @@ public class PPrint
     public void printTree(Out fout, short mode, int indent, Lexer lexer, Node node)
     {
         Node content, last;
+        int spaces = configuration.getSpaces();
+        boolean xhtml = configuration.isXHTML();
 
-        if (node == null)
-        {
+        if (node == null) {
             return;
         }
 
-        if (node.type == NodeType.TextNode || (node.type == NodeType.CDATATag && lexer.configuration.isEscapeCdata()))
-        {
+        if (node.type == NodeType.TextNode) {
             printText(fout, mode, indent, node.textarray, node.start, node.end);
         }
-        else if (node.type == NodeType.CommentTag)
-        {
+        else if (node.type == NodeType.CommentTag) {
             printComment(fout, indent, node);
         }
-        else if (node.type == NodeType.RootNode)
-        {
-            for (content = node.content; content != null; content = content.next)
-            {
+        else if (node.type == NodeType.RootNode) {
+            for (content = node.content; content != null; content = content.next) {
                 printTree(fout, mode, indent, lexer, content);
             }
         }
-        else if (node.type == NodeType.DocTypeTag)
-        {
+        else if (node.type == NodeType.DocTypeTag) {
             printDocType(fout, indent, node);
         }
-        else if (node.type == NodeType.ProcInsTag)
-        {
+        else if (node.type == NodeType.ProcInsTag) {
             printPI(fout, indent, node);
         }
-        else if (node.type == NodeType.XmlDecl)
-        {
+        else if (node.type == NodeType.XmlDecl) {
             printXmlDecl(fout, indent, node);
         }
-        else if (node.type == NodeType.CDATATag)
-        {
+        else if (node.type == NodeType.CDATATag) {
             printCDATA(fout, indent, node);
         }
-        else if (node.type == NodeType.SectionTag)
-        {
+        else if (node.type == NodeType.SectionTag) {
             printSection(fout, indent, node);
         }
-        else if (node.type == NodeType.AspTag)
-        {
+        else if (node.type == NodeType.AspTag) {
             printAsp(fout, indent, node);
         }
-        else if (node.type == NodeType.JsteTag)
-        {
+        else if (node.type == NodeType.JsteTag) {
             printJste(fout, indent, node);
         }
-        else if (node.type == NodeType.PhpTag)
-        {
+        else if (node.type == NodeType.PhpTag) {
             printPhp(fout, indent, node);
         }
-        else if (TidyUtils.toBoolean(node.tag.model & Dict.CM_EMPTY)
-            || (node.type == NodeType.StartEndTag && !configuration.isXHTML()))
-        {
-            if (!TidyUtils.toBoolean(node.tag.model & Dict.CM_INLINE))
-            {
+        else if (node.hasCM(Dict.CM_EMPTY)
+        		|| (node.type == NodeType.StartEndTag && !xhtml)) {
+            if (!node.hasCM(Dict.CM_INLINE)) {
                 condFlushLine(fout, indent);
             }
 
-            if (node.is(TagId.BR)
-                && node.prev != null
-                && !node.prev.is(TagId.BR)
-                && this.configuration.isBreakBeforeBR())
-            {
+            if (node.is(TagId.BR) && node.prev != null
+            		&& !(node.prev.is(TagId.BR) || (mode & PREFORMATTED) != 0)
+            		&& this.configuration.isBreakBeforeBR()) {
                 flushLine(fout, indent);
             }
+            
+            if (node.is(TagId.HR)) {
+            	// insert extra newline for classic formatting
+                final boolean classic = configuration.isVertSpace();
+                if (classic && node.parent != null && node.parent.content != node) {
+                	flushLine(fout, indent);
+                }
+            }
 
-            if (this.configuration.isMakeClean() && node.is(TagId.WBR))
-            {
-                printString(" ");
-            }
-            else
-            {
-                printTag(fout, mode, indent, node);
-            }
-
-            if (node.is(TagId.PARAM) || node.is(TagId.AREA))
-            {
-                condFlushLine(fout, indent);
-            }
-            else if (node.is(TagId.BR) || node.is(TagId.HR))
-            {
-                flushLine(fout, indent);
+            printTag(fout, mode, indent, node);
+            
+            if (node.next != null) {
+	            if (node.is(TagId.PARAM) || node.is(TagId.AREA)) {
+	                condFlushLine(fout, indent);
+	            }
+	            else if ((node.is(TagId.BR) && (mode & PREFORMATTED) == 0) || node.is(TagId.HR)) {
+	                flushLine(fout, indent);
+	            }
             }
         }
-        else
+        else // some kind of container element
         {
-            if (node.type == NodeType.StartEndTag)
-            {
+            if (node.type == NodeType.StartEndTag) {
                 node.type = NodeType.StartTag;
             }
 
-            // some kind of container element
-            if (node.tag != null && node.tag.getParser() == ParserImpl.PRE)
-            {
+            if (node.tag != null
+            		&& (node.tag.getParser() == ParserImpl.PRE || node.is(TagId.TEXTAREA))) {
+            	final boolean classic = configuration.isVertSpace();
+            	final int indprev = indent;
                 condFlushLine(fout, indent);
+                condFlushLine(fout, indent);
+                
+                // insert extra newline for classic formatting
+                if (classic && node.parent != null && node.parent.content != node) {
+                    flushLine(fout, indent);
+                }
+                printTag(fout, mode, indent, node);
 
                 indent = 0;
-                condFlushLine(fout, indent);
-                printTag(fout, mode, indent, node);
                 flushLine(fout, indent);
 
-                for (content = node.content; content != null; content = content.next)
-                {
+                for (content = node.content; content != null; content = content.next) {
                     printTree(fout, (short) (mode | PREFORMATTED | NOWRAP), indent, lexer, content);
                 }
 
                 condFlushLine(fout, indent);
+                indent = indprev;
                 printEndTag(mode, indent, node);
-                flushLine(fout, indent);
-
-                if (!this.configuration.isIndentContent() && node.next != null)
-                {
+                
+                if (configuration.getIndentContent() == TriState.No && node.next != null) {
                     flushLine(fout, indent);
                 }
             }
-            else if (node.is(TagId.STYLE) || node.is(TagId.SCRIPT))
-            {
+            else if (node.is(TagId.STYLE) || node.is(TagId.SCRIPT)) {
                 printScriptStyle(fout, (short) (mode | PREFORMATTED | NOWRAP | CDATA), indent, lexer, node);
             }
-            else if (TidyUtils.toBoolean(node.tag.model & Dict.CM_INLINE))
-            {
-                if (this.configuration.isMakeClean())
-                {
-                    // discards <font> and </font> tags
-                    if (node.is(TagId.FONT))
-                    {
-                        for (content = node.content; content != null; content = content.next)
-                        {
-                            printTree(fout, mode, indent, lexer, content);
-                        }
-                        return;
-                    }
-
+            else if (node.hasCM(Dict.CM_INLINE)) {
+                if (configuration.isMakeClean()) {
                     // replace <nobr> ... </nobr> by &nbsp; or &#160; etc.
-                    if (node.is(TagId.NOBR))
-                    {
-                        for (content = node.content; content != null; content = content.next)
-                        {
+                    if (node.is(TagId.NOBR)) {
+                        for (content = node.content; content != null; content = content.next) {
                             printTree(fout, (short) (mode | NOWRAP), indent, lexer, content);
                         }
                         return;
@@ -2226,140 +2193,101 @@ public class PPrint
                 }
 
                 // otherwise a normal inline element
-
                 printTag(fout, mode, indent, node);
 
                 // indent content for SELECT, TEXTAREA, MAP, OBJECT and APPLET
-
-                if (shouldIndent(node))
-                {
+                if (shouldIndent(node)) {
+                	indent += spaces;
                     condFlushLine(fout, indent);
-                    indent += this.configuration.getSpaces();
 
-                    for (content = node.content; content != null; content = content.next)
-                    {
+                    for (content = node.content; content != null; content = content.next) {
                         printTree(fout, mode, indent, lexer, content);
                     }
 
-                    condFlushLine(fout, indent);
-                    indent -= this.configuration.getSpaces();
+                    indent -= spaces;
                     condFlushLine(fout, indent);
                 }
-                else
-                {
-
-                    for (content = node.content; content != null; content = content.next)
-                    {
+                else {
+                    for (content = node.content; content != null; content = content.next) {
                         printTree(fout, mode, indent, lexer, content);
                     }
                 }
-
                 printEndTag(mode, indent, node);
             }
-            else
-            {
-                // other tags
+            else { // other tags
+            	final boolean indcont = configuration.getIndentContent() != TriState.No;
+            	final boolean indsmart = configuration.getIndentContent() == TriState.Auto;
+            	final boolean hideend = configuration.isHideEndTags();
+            	final boolean classic = configuration.isVertSpace();
+            	int contentIndent = indent;
+            	
+            	// insert extra newline for classic formatting
+                if (classic && node.parent != null && node.parent.content != node && !node.is(TagId.HTML)) {
+                	flushLine(fout, indent);
+                }
+                
+                if (shouldIndent(node)) {
+                	contentIndent += spaces;
+                }
+
                 condFlushLine(fout, indent);
-
-//                if (this.configuration.isSmartIndent() && node.prev != null)
-//                {
-//                    flushLine(fout, indent);
-//                }
-
-                // do not omit elements with attributes
-                if (!this.configuration.isHideEndTags()
-                    || !(node.tag != null && TidyUtils.toBoolean(node.tag.model & Dict.CM_OMITST))
-                    || node.attributes != null)
-                {
-                    printTag(fout, mode, indent, node);
-
-                    if (shouldIndent(node))
-                    {
-                        condFlushLine(fout, indent);
-                    }
-                    else if (TidyUtils.toBoolean(node.tag.model & Dict.CM_HTML)
-                        || node.is(TagId.NOFRAMES)
-                        || (TidyUtils.toBoolean(node.tag.model & Dict.CM_HEAD) && !node.is(TagId.TITLE)))
-                    {
-                        flushLine(fout, indent);
-                    }
-                }
-
-                if (node.is(TagId.BODY) && this.configuration.isBurstSlides())
-                {
-                    printSlide(fout, mode, (this.configuration.isIndentContent()
-                        ? indent + this.configuration.getSpaces()
-                        : indent), lexer);
-                }
-                else
-                {
-                    last = null;
-
-                    for (content = node.content; content != null; content = content.next)
-                    {
-                        // kludge for naked text before block level tag
-                        if (last != null
-                            && !this.configuration.isIndentContent()
-                            && last.type == NodeType.TextNode
-                            && content.tag != null
-                            && !TidyUtils.toBoolean(content.tag.model & Dict.CM_INLINE))
-                        {
-                            flushLine(fout, indent);
-                        }
-
-                        printTree(
-                            fout,
-                            mode,
-                            (shouldIndent(node) ? indent + this.configuration.getSpaces() : indent),
-                            lexer,
-                            content);
-
-                        last = content;
-                    }
-                }
-
-                // don't flush line for td and th
-                if (shouldIndent(node)
-                    || ((TidyUtils.toBoolean(node.tag.model & Dict.CM_HTML) || node.is(TagId.NOFRAMES) || //
-                    (TidyUtils.toBoolean(node.tag.model & Dict.CM_HEAD) && !node.is(TagId.TITLE))) && //
-                    !this.configuration.isHideEndTags()))
-                {
-                    condFlushLine(
-                        fout,
-                        (this.configuration.isIndentContent() ? indent + this.configuration.getSpaces() : indent));
-
-                    if (!this.configuration.isHideEndTags() || !TidyUtils.toBoolean(node.tag.model & Dict.CM_OPT))
-                    {
-                        printEndTag(mode, indent, node);
-
-                        // #603128 tidy adds newslines after </html> tag
-                        // Fix by Fabrizio Giustina 12-02-2004
-                        // fix is different from the one in original tidy
-                        if (!lexer.seenEndHtml)
-                        {
-                            flushLine(fout, indent);
-                        }
-                    }
-                }
-                else
-                {
-                    if (!this.configuration.isHideEndTags() || !TidyUtils.toBoolean(node.tag.model & Dict.CM_OPT))
-                    {
-                        printEndTag(mode, indent, node);
-                    }
-
+                if (indsmart && node.prev != null) {
                     flushLine(fout, indent);
                 }
 
-                // FG commented out: double newlines
-                // if (!this.configuration.indentContent
-                // && node.next != null
-                // && !this.configuration.hideEndTags
-                // && (node.tag.model
-                // & TidyUtils.toBoolean(Dict.CM_BLOCK | Dict.CM_TABLE | Dict.CM_LIST | Dict.CM_DEFLIST)))
-                // {
-                // flushLine(fout, indent);
-                // }
+                // do not omit elements with attributes
+                if (!hideend || !node.hasCM(Dict.CM_OMITST)
+                    	|| node.attributes != null) {
+                    printTag(fout, mode, indent, node);
+
+                    if (shouldIndent(node)) {
+                    	if (!(node.is(TagId.LI) && node.content.isText())) {
+                    		condFlushLine(fout, contentIndent);
+                    	}
+                    }
+                    else if (node.hasCM(Dict.CM_HTML) || node.is(TagId.NOFRAMES)
+                    		|| (node.hasCM(Dict.CM_HEAD) && !node.is(TagId.TITLE))) {
+                        flushLine(fout, contentIndent);
+                    }
+                }
+                
+                last = null;
+                for (content = node.content; content != null; content = content.next) {
+                    // kludge for naked text before block level tag
+                    if (last != null && !indcont && last.isText()
+                    		&& content.tag != null && !content.hasCM(Dict.CM_INLINE)) {
+                        flushLine(fout, contentIndent);
+                    }
+
+                    printTree(fout, mode, contentIndent, lexer, content);
+                    last = content;
+                }
+
+                // don't flush line for td and th
+                if (shouldIndent(node) || (!hideend && (node.hasCM(Dict.CM_HTML) || node.is(TagId.NOFRAMES)
+                		|| (node.hasCM(Dict.CM_HEAD) && !node.is(TagId.TITLE))))) {
+                    condFlushLine(fout, indent);
+                    if (!hideend || !node.hasCM(Dict.CM_OPT)) {
+                        printEndTag(mode, indent, node);
+                    }
+                }
+                else {
+                    if (!hideend || !node.hasCM(Dict.CM_OPT)) {
+                    	// newline before endtag for classic formatting
+                        if (classic && !node.hasMixedContent()) {
+                            flushLine(fout, indent);
+                        }
+                        printEndTag(mode, indent, node);
+                    }
+                }
+                
+                if (!indcont && !hideend && !node.is(TagId.HTML) && !classic) {
+                	flushLine(fout, indent);
+                }
+                else if (classic && node.next != null
+                		&& node.hasCM(Dict.CM_LIST | Dict.CM_DEFLIST | Dict.CM_TABLE | Dict.CM_BLOCK)) {
+                	flushLine(fout, indent);
+                }
             }
         }
     }
@@ -2577,140 +2505,6 @@ public class PPrint
         }
 
         printString("</small></center>");
-        condFlushLine(fout, indent);
-    }
-
-    /**
-     * Called from printTree to print the content of a slide from the node slidecontent. On return slidecontent points
-     * to the node starting the next slide or null. The variables slide and count are used to customise the navigation
-     * bar.
-     * @param fout
-     * @param mode
-     * @param indent
-     * @param lexer
-     */
-    public void printSlide(Out fout, short mode, int indent, Lexer lexer)
-    {
-        Node content, last;
-
-        NumberFormat numberFormat = NumberFormat.getInstance();
-        numberFormat.setMinimumIntegerDigits(3);
-
-        /* insert div for onclick handler */
-        String s;
-        s = "<div onclick=\"document.location='slide"
-            + numberFormat.format(slide < count ? slide + 1 : 1)
-            + ".html'\">";
-        // #427666 - fix by Eric Rossen 02 Aug 00
-        printString(s);
-        condFlushLine(fout, indent);
-
-        /* first print the h2 element and navbar */
-        if (slidecontent != null && slidecontent.is(TagId.H2))
-        {
-            printNavBar(fout, indent);
-
-            /* now print an hr after h2 */
-
-            addC('<', linelen++);
-
-            addC(TidyUtils.foldCase('h', this.configuration.isUpperCaseTags(), this.configuration.isXmlTags()), linelen++);
-            addC(TidyUtils.foldCase('r', this.configuration.isUpperCaseTags(), this.configuration.isXmlTags()), linelen++);
-
-            if (this.configuration.isXmlOut())
-            {
-                printString(" />");
-            }
-            else
-            {
-                addC('>', linelen++);
-            }
-
-            if (this.configuration.isIndentContent())
-            {
-                condFlushLine(fout, indent);
-            }
-
-            // PrintVertSpacer(fout, indent);
-
-            // condFlushLine(fout, indent);
-
-            // print the h2 element
-            printTree(
-                fout,
-                mode,
-                (this.configuration.isIndentContent() ? indent + this.configuration.getSpaces() : indent),
-                lexer,
-                slidecontent);
-
-            slidecontent = slidecontent.next;
-        }
-
-        // now continue until we reach the next h2
-
-        last = null;
-        content = slidecontent;
-
-        for (; content != null; content = content.next)
-        {
-            if (content.is(TagId.H2))
-            {
-                break;
-            }
-
-            // kludge for naked text before block level tag
-            if (last != null
-                && !this.configuration.isIndentContent()
-                && last.type == NodeType.TextNode
-                && content.tag != null
-                && TidyUtils.toBoolean(content.tag.model & Dict.CM_BLOCK))
-            {
-                flushLine(fout, indent);
-                flushLine(fout, indent);
-            }
-
-            printTree(
-                fout,
-                mode,
-                (this.configuration.isIndentContent() ? indent + this.configuration.getSpaces() : indent),
-                lexer,
-                content);
-
-            last = content;
-        }
-
-        slidecontent = content;
-
-        // now print epilog
-
-        condFlushLine(fout, indent);
-
-        printString("<br clear=\"all\">");
-        condFlushLine(fout, indent);
-
-        addC('<', linelen++);
-
-        addC(TidyUtils.foldCase('h', this.configuration.isUpperCaseTags(), this.configuration.isXmlTags()), linelen++);
-        addC(TidyUtils.foldCase('r', this.configuration.isUpperCaseTags(), this.configuration.isXmlTags()), linelen++);
-
-        if (this.configuration.isXmlOut())
-        {
-            printString(" />");
-        }
-        else
-        {
-            addC('>', linelen++);
-        }
-
-        if (this.configuration.isIndentContent())
-        {
-            condFlushLine(fout, indent);
-        }
-
-        printNavBar(fout, indent);
-
-        // end tag for div
-        printString("</div>");
         condFlushLine(fout, indent);
     }
 
