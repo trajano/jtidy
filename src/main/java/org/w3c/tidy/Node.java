@@ -1464,4 +1464,14 @@ public class Node {
     public boolean isText() {
     	return type == NodeType.TextNode;
     }
+    
+    boolean hasMixedContent() {
+        for (Node node = content; node != null; node = node.next) {
+        	if (node.isText()) {
+        		return true;
+        	}
+        }
+        return false;
+    }
+
 }
