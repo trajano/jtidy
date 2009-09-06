@@ -416,11 +416,6 @@ public class Tidy implements Serializable
 
         this.report.setFilename(inputStreamName); // #431895 - fix by Dave Bryan 04 Jan 01
 
-        if (!configuration.isQuiet())
-        {
-            this.report.helloMessage(errout);
-        }
-
         // Tidy doesn't alter the doctype for generic XML docs
         if (configuration.isXmlTags())
         {
