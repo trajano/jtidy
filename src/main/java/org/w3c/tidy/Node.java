@@ -1174,6 +1174,16 @@ public class Node {
 
         return node;
     }
+    
+    public Node findTITLE() {
+        Node node = findHEAD();
+        if (node != null) {
+            for (node = node.content; node != null && !node.is(TagId.TITLE); node = node.next) {
+            	// do nothing
+            }
+        }
+        return node;
+    }
 
     /**
      * Checks for node integrity.
