@@ -77,7 +77,7 @@ public class Node {
     protected Node parent;
 
     /**
-     * pevious node.
+     * previous node.
      */
     protected Node prev;
 
