@@ -880,8 +880,11 @@ public final class ParserImpl
                     }
                     else if ((node.tag.model & (Dict.CM_TABLE | Dict.CM_ROWGRP | Dict.CM_ROW)) != 0)
                     {
-                        lexer.ungetToken();
-                        node = lexer.inferredTag(TagId.TABLE);
+                    	// Issue 2855511
+                        if (node.type != NodeType.EndTag) {
+	                        lexer.ungetToken();
+	                        node = lexer.inferredTag(TagId.TABLE);
+                        }
                         lexer.excludeBlocks = true;
                     }
                     else if (node.is(TagId.INPUT))
