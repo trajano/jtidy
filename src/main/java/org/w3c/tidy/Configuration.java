@@ -620,7 +620,7 @@ public class Configuration implements Serializable
     
     private String getString(final Option option) {
     	final Object x = get(option);
-    	if (x instanceof String) {
+    	if (x == null || x instanceof String) {
     		return (String) x;
     	}
     	throw badType(x);
