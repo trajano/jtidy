@@ -3387,6 +3387,13 @@ public final class ParserImpl
             break;
         }
         
+        if (lexer.root.findHTML() == null) {
+            /* a later check should complain if <body> is empty */
+            html = lexer.inferredTag(TagId.HTML);
+            lexer.root.insertNodeAtEnd(html);
+            HTML.parse(lexer, html, Lexer.IGNORE_WHITESPACE);
+        }
+        
         if (lexer.root.findTITLE() == null) {
             Node head = lexer.root.findHEAD();
             lexer.report.warning(lexer, head, null, Report.MISSING_TITLE_ELEMENT);
