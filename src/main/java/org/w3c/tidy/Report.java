@@ -675,56 +675,21 @@ public final class Report
      * @see TidyMessage
      */
     protected String getMessage(int errorCode, Lexer lexer, String message, Object[] params, Level level)
-        throws MissingResourceException
-    {
-        String resource;
-        resource = res.getString(message);
-
-        String position;
-
-        if (lexer != null && level != Level.SUMMARY)
-        {
-            position = getPosition(lexer);
-        }
-        else
-        {
-            position = "";
-        }
-
-        String prefix;
-
-        if (level == Level.ERROR)
-        {
-            prefix = res.getString("error");
-        }
-        else if (level == Level.WARNING)
-        {
-            prefix = res.getString("warning");
-        }
-        else
-        {
-            prefix = "";
-        }
-
+        	throws MissingResourceException {
+    	String resource = res.getString(message);
+    	String position = lexer == null || level == null ? "" : getPosition(lexer);
+        String prefix = level == null ? "" : (level + ": ");
         String messageString;
-
-        if (params != null)
-        {
+        if (params != null) {
             messageString = MessageFormat.format(resource, params);
-        }
-        else
-        {
+        } else {
             messageString = resource;
         }
-
-        if (listener != null)
-        {
+        if (listener != null) {
             TidyMessage msg = new TidyMessage(errorCode, (lexer != null) ? lexer.lines : 0, (lexer != null)
-                ? lexer.columns
-                : 0, level, messageString);
+                ? lexer.columns : 0, level, messageString);
             listener.messageReceived(msg);
         }
-
         return position + prefix + messageString;
     }
 
@@ -782,9 +747,8 @@ public final class Report
      * print version information.
      * @param p printWriter
      */
-    public void showVersion(PrintWriter p)
-    {
-        printMessage(p, "version_summary", new Object[]{RELEASE_DATE_STRING}, Level.SUMMARY);
+    public void showVersion(final PrintWriter p) {
+        printMessage(p, "version_summary", new Object[]{RELEASE_DATE_STRING}, null);
     }
 
     /**
@@ -1531,7 +1495,7 @@ public final class Report
                 }
 
                 printMessage(VENDOR_SPECIFIC_CHARS, lexer, "vendor_specific_chars_summary", new Object[]{new Integer(
-                    encodingChoiche)}, Level.SUMMARY);
+                    encodingChoiche)}, null);
             }
 
             if ((lexer.badChars & INVALID_SGML_CHARS) != 0 || (lexer.badChars & INVALID_NCR) != 0)
@@ -1548,85 +1512,85 @@ public final class Report
                 }
 
                 printMessage(INVALID_SGML_CHARS, lexer, "invalid_sgml_chars_summary", new Object[]{new Integer(
-                    encodingChoiche)}, Level.SUMMARY);
+                    encodingChoiche)}, null);
             }
 
             if ((lexer.badChars & INVALID_UTF8) != 0)
             {
-                printMessage(INVALID_UTF8, lexer, "invalid_utf8_summary", null, Level.SUMMARY);
+                printMessage(INVALID_UTF8, lexer, "invalid_utf8_summary", null, null);
             }
 
             if ((lexer.badChars & INVALID_UTF16) != 0)
             {
-                printMessage(INVALID_UTF16, lexer, "invalid_utf16_summary", null, Level.SUMMARY);
+                printMessage(INVALID_UTF16, lexer, "invalid_utf16_summary", null, null);
             }
 
             if ((lexer.badChars & INVALID_URI) != 0)
             {
-                printMessage(INVALID_URI, lexer, "invaliduri_summary", null, Level.SUMMARY);
+                printMessage(INVALID_URI, lexer, "invaliduri_summary", null, null);
             }
         }
 
         if (lexer.badForm != 0)
         {
-            printMessage(BADFORM_SUMMARY, lexer, "badform_summary", null, Level.SUMMARY);
+            printMessage(BADFORM_SUMMARY, lexer, "badform_summary", null, null);
         }
 
         if (lexer.badAccess != 0)
         {
             if ((lexer.badAccess & MISSING_SUMMARY) != 0)
             {
-                printMessage(MISSING_SUMMARY, lexer, "badaccess_missing_summary", null, Level.SUMMARY);
+                printMessage(MISSING_SUMMARY, lexer, "badaccess_missing_summary", null, null);
             }
 
             if ((lexer.badAccess & MISSING_IMAGE_ALT) != 0)
             {
-                printMessage(MISSING_IMAGE_ALT, lexer, "badaccess_missing_image_alt", null, Level.SUMMARY);
+                printMessage(MISSING_IMAGE_ALT, lexer, "badaccess_missing_image_alt", null, null);
             }
 
             if ((lexer.badAccess & MISSING_IMAGE_MAP) != 0)
             {
-                printMessage(MISSING_IMAGE_MAP, lexer, "badaccess_missing_image_map", null, Level.SUMMARY);
+                printMessage(MISSING_IMAGE_MAP, lexer, "badaccess_missing_image_map", null, null);
             }
 
             if ((lexer.badAccess & MISSING_LINK_ALT) != 0)
             {
-                printMessage(MISSING_LINK_ALT, lexer, "badaccess_missing_link_alt", null, Level.SUMMARY);
+                printMessage(MISSING_LINK_ALT, lexer, "badaccess_missing_link_alt", null, null);
             }
 
             if (((lexer.badAccess & USING_FRAMES) != 0) && ((lexer.badAccess & USING_NOFRAMES) == 0))
             {
-                printMessage(USING_FRAMES, lexer, "badaccess_frames", null, Level.SUMMARY);
+                printMessage(USING_FRAMES, lexer, "badaccess_frames", null, null);
             }
 
-            printMessage(BADACCESS_SUMMARY, lexer, "badaccess_summary", new Object[]{ACCESS_URL}, Level.SUMMARY);
+            printMessage(BADACCESS_SUMMARY, lexer, "badaccess_summary", new Object[]{ACCESS_URL}, null);
         }
 
         if (lexer.badLayout != 0)
         {
             if ((lexer.badLayout & USING_LAYER) != 0)
             {
-                printMessage(USING_LAYER, lexer, "badlayout_using_layer", null, Level.SUMMARY);
+                printMessage(USING_LAYER, lexer, "badlayout_using_layer", null, null);
             }
 
             if ((lexer.badLayout & USING_SPACER) != 0)
             {
-                printMessage(USING_SPACER, lexer, "badlayout_using_spacer", null, Level.SUMMARY);
+                printMessage(USING_SPACER, lexer, "badlayout_using_spacer", null, null);
             }
 
             if ((lexer.badLayout & USING_FONT) != 0)
             {
-                printMessage(USING_FONT, lexer, "badlayout_using_font", null, Level.SUMMARY);
+                printMessage(USING_FONT, lexer, "badlayout_using_font", null, null);
             }
 
             if ((lexer.badLayout & USING_NOBR) != 0)
             {
-                printMessage(USING_NOBR, lexer, "badlayout_using_nobr", null, Level.SUMMARY);
+                printMessage(USING_NOBR, lexer, "badlayout_using_nobr", null, null);
             }
 
             if ((lexer.badLayout & USING_BODY) != 0)
             {
-                printMessage(USING_BODY, lexer, "badlayout_using_body", null, Level.SUMMARY);
+                printMessage(USING_BODY, lexer, "badlayout_using_body", null, null);
             }
         }
     }
@@ -1657,7 +1621,7 @@ public final class Report
      */
     public void needsAuthorIntervention(PrintWriter errout)
     {
-        printMessage(errout, "needs_author_intervention", null, Level.SUMMARY);
+        printMessage(errout, "needs_author_intervention", null, null);
     }
 
     /**
@@ -1676,7 +1640,7 @@ public final class Report
      */
     public void reportNumberOfSlides(PrintWriter errout, int count)
     {
-        printMessage(errout, "slides_found", new Object[]{new Integer(count)}, Level.SUMMARY);
+        printMessage(errout, "slides_found", new Object[]{new Integer(count)}, null);
     }
 
     /**
@@ -1685,7 +1649,7 @@ public final class Report
      */
     public void generalInfo(PrintWriter errout)
     {
-        printMessage(errout, "general_info", null, Level.SUMMARY);
+        printMessage(errout, "general_info", null, null);
     }
 
     /**
@@ -1745,12 +1709,12 @@ public final class Report
                 lexer,
                 "doctype_given",
                 new Object[]{filename, doctypeBuffer},
-                Level.SUMMARY);
+                Level.INFO);
         }
 
         printMessage(REPORT_VERSION_SUMMARY, lexer, "report_version", new Object[]{
             filename,
-            (vers != null ? vers : "HTML proprietary")}, Level.SUMMARY);
+            (vers != null ? vers : "HTML proprietary")}, Level.INFO);
     }
 
     /**
@@ -1766,11 +1730,11 @@ public final class Report
                 errout,
                 "num_warnings",
                 new Object[]{new Integer(lexer.warnings), new Integer(lexer.errors)},
-                Level.SUMMARY);
+                null);
         }
         else
         {
-            printMessage(errout, "no_warnings", null, Level.SUMMARY);
+            printMessage(errout, "no_warnings", null, null);
         }
     }
 
@@ -1780,7 +1744,7 @@ public final class Report
      */
     public void helpText(PrintWriter out)
     {
-        printMessage(out, "help_text", new Object[]{"Tidy", RELEASE_DATE_STRING}, Level.SUMMARY);
+        printMessage(out, "help_text", new Object[]{"Tidy", RELEASE_DATE_STRING}, null);
     }
 
     /**

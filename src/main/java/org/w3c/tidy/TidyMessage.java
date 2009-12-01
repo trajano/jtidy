@@ -156,128 +156,44 @@ public final class TidyMessage
      * @author fgiust
      * @version $Revision$ ($Author$)
      */
-    public static final class Level implements Comparable<Level>
-    {
-
-        /**
-         * level = summary (0).
-         */
-        public static final Level SUMMARY = new Level(0);
-
-        /**
-         * level = info (1).
-         */
-        public static final Level INFO = new Level(1);
-
-        /**
-         * level = warning (2).
-         */
-        public static final Level WARNING = new Level(2);
-
-        /**
-         * level = error (3).
-         */
-        public static final Level ERROR = new Level(3);
-
-        /**
-         * short value for this level.
-         */
-        private short code;
-
-        /**
-         * Instantiates a new message with the given code.
-         * @param code int value for this level
-         */
-        private Level(int code)
-        {
-            this.code = (short) code;
+    public enum Level {
+    	/** Information about markup usage */
+        INFO("Info"),
+        
+        /** Warning message */
+        WARNING("Warning"),
+        
+        /** Configuration error */
+        CONFIG("Config"),
+        
+        /** Accessibility message */
+        ACCESS("Access"),
+        
+        /** Error message - output suppressed */
+        ERROR("Error"),
+        
+        /** I/O or file system error */
+        BAD_DOCUMENT("Document"),
+        
+        /** Crash! */
+        FATAL("panic");
+        
+        private final String text;
+        
+        private Level(final String text) {
+            this.text = text;
         }
 
-        /**
-         * Returns the int value for this level.
-         * @return int value for this level
-         */
-        public short getCode()
-        {
-            return this.code;
-        }
-
-        /**
-         * Returns the Level instance corresponding to the given int value.
-         * @param code int value for the level
-         * @return Level instance
-         */
-        public static Level fromCode(int code)
-        {
-            switch (code)
-            {
-                case 0 :
-                    return SUMMARY;
-                case 1 :
-                    return INFO;
-                case 2 :
-                    return WARNING;
-                case 3 :
-                    return ERROR;
-
-                default :
-                    return null;
-            }
-        }
-
-        /**
-         * @see java.lang.Comparable#compareTo(Object)
-         */
-        public int compareTo(Level level)
-        {
-            return this.code - level.code;
-        }
-
-        /**
-         * @see java.lang.Object#equals(Object)
-         */
-        @Override
-		public boolean equals(Object object)
-        {
-            if (!(object instanceof Level))
-            {
-                return false;
-            }
-            return this.code == ((Level) object).code;
+        public int getCode() {
+            return ordinal();
         }
 
         /**
          * @see java.lang.Object#toString()
          */
         @Override
-		public String toString()
-        {
-            switch (code)
-            {
-                case 0 :
-                    return "SUMMARY";
-                case 1 :
-                    return "INFO";
-                case 2 :
-                    return "WARNING";
-                case 3 :
-                    return "ERROR";
-
-                default :
-                    // should not happen
-                    return "?";
-            }
-        }
-
-        /**
-         * @see java.lang.Object#hashCode()
-         */
-        @Override
-		public int hashCode()
-        {
-            // new instances should not be created
-            return super.hashCode();
+		public String toString() {
+        	return text;
         }
     }
-
 }
