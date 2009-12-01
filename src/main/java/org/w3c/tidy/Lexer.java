@@ -452,6 +452,10 @@ public class Lexer
         this.nodeList.add(node);
         return node;
     }
+    
+    Node textToken() {
+        return newNode(NodeType.TextNode, lexbuf, txtstart, txtend);
+    }
 
     /**
      * Creates a new node and add it to nodelist.
@@ -1726,7 +1730,6 @@ public class Lexer
         int badcomment = 0;
         // pass by reference
         boolean[] isempty = new boolean[1];
-        boolean inDTDSubset = false;
         AttVal attributes = null;
 
         if (this.pushed)
@@ -2341,44 +2344,20 @@ public class Lexer
                 case LEX_DOCTYPE :
                     // seen <!d so look for '> ' munging whitespace
 
-                    if (TidyUtils.isWhite((char) c))
-                    {
-                        if (this.waswhite)
-                        {
-                            this.lexsize -= 1;
-                        }
-
-                        this.waswhite = true;
-                    }
-                    else
-                    {
-                        this.waswhite = false;
-                    }
-
-                    if (inDTDSubset)
-                    {
-                        if (c == ']')
-                        {
-                            inDTDSubset = false;
-                        }
-                    }
-                    else if (c == '[')
-                    {
-                        inDTDSubset = true;
-                    }
-                    if (inDTDSubset || c != '>')
-                    {
-                        continue;
-                    }
-
+                	/* use ParseDocTypeDecl() to tokenize doctype declaration */
+                    in.ungetChar(c);
                     this.lexsize -= 1;
+                    token = parseDocTypeDecl();
+                    
                     this.txtend = this.lexsize;
-                    this.lexbuf[this.lexsize] = (byte) '\0';
+//                    this.lexbuf[this.lexsize] = (byte) '\0';
                     this.state = LEX_CONTENT;
                     this.waswhite = false;
-                    this.token = newNode(NodeType.DocTypeTag, this.lexbuf, this.txtstart, this.txtend);
+
                     // make a note of the version named by the doctype
-                    this.doctype = findGivenVersion(this.token);
+                    if (doctype == VERS_UNKNOWN && token != null && !configuration.isXmlTags()) {
+                    	this.doctype = findGivenVersion(this.token);
+                    }
                     return this.token;
 
                 case LEX_PROCINSTR :
@@ -3856,5 +3835,160 @@ public class Lexer
 			this.si = si;
 		}
     }
-}
+    
+    private enum ParseDocTypeDeclState {
+      DT_INTERMEDIATE,
+      DT_DOCTYPENAME,
+      DT_PUBLICSYSTEM,
+      DT_QUOTEDSTRING,
+      DT_INTSUBSET
+    };
+    
+    /*
+    Returns document type declarations like
 
+    <!DOCTYPE foo PUBLIC "fpi" "sysid">
+    <!DOCTYPE bar SYSTEM "sysid">
+    <!DOCTYPE baz [ <!ENTITY ouml "&#246"> ]>
+
+    as
+
+    <foo PUBLIC="fpi" SYSTEM="sysid" />
+    <bar SYSTEM="sysid" />
+    <baz> &lt;!ENTITY ouml &quot;&amp;#246&quot;&gt; </baz>
+  */
+    private Node parseDocTypeDecl() {
+        int start = lexsize;
+        ParseDocTypeDeclState state = ParseDocTypeDeclState.DT_DOCTYPENAME;
+        int c;
+        int delim = 0;
+        boolean hasfpi = true;
+
+        Node node = newNode(NodeType.DocTypeTag, lexbuf, txtstart, txtend);
+
+        waswhite = false;
+
+        /* todo: reset lexsize when appropriate to avoid wasting memory */
+
+        while ((c = in.readChar()) != StreamIn.END_OF_STREAM) {
+            /* convert newlines to spaces */
+            if (state != ParseDocTypeDeclState.DT_INTSUBSET) {
+                c = c == '\n' ? ' ' : c;
+            }
+
+            /* convert white-space sequences to single space character */
+            if (TidyUtils.isWhite((char) c) && state != ParseDocTypeDeclState.DT_INTSUBSET) {
+                if (!waswhite) {
+                	addCharToLexer(c);
+                    waswhite = true;
+                } else {
+                    /* discard space */
+                    continue;
+                }
+            } else {
+                addCharToLexer(c);
+                waswhite = false;
+            }
+
+            switch(state) {
+            case DT_INTERMEDIATE:
+                /* determine what's next */
+                if (TidyUtils.toUpper((char) c) == 'P' || TidyUtils.toUpper((char) c) == 'S') {
+                    start = lexsize - 1;
+                    state = ParseDocTypeDeclState.DT_PUBLICSYSTEM;
+                    continue;
+                }
+                else if (c == '[') {
+                    start = lexsize;
+                    state = ParseDocTypeDeclState.DT_INTSUBSET;
+                    continue;
+                }
+                else if (c == '\'' || c == '"') {
+                    start = lexsize;
+                    delim = c;
+                    state = ParseDocTypeDeclState.DT_QUOTEDSTRING;
+                    continue;
+                }
+                else if (c == '>') {
+                    AttVal si;
+
+                    node.end = --(lexsize);
+
+                    si = node.getAttrByName("SYSTEM");
+                    if (si != null) {
+                    	AttrCheckImpl.URL.check(this, node, si);
+                    }
+                    if (node.element == null || !TidyUtils.isValidXMLID(node.element)) {
+                        report.error(this, null, null, Report.MALFORMED_DOCTYPE);
+                        return null;
+                    }
+//    #ifdef TIDY_STORE_ORIGINAL_TEXT
+//                    StoreOriginalTextInToken(doc, node, 0);
+//    #endif
+                    return node;
+                }
+                else {
+                    /* error */
+                }
+                break;
+            case DT_DOCTYPENAME:
+                /* read document type name */
+                if (TidyUtils.isWhite((char) c) || c == '>' || c == '[') {
+                    node.element = TidyUtils.getString(lexbuf, start, lexsize - start - 1);
+                    if (c == '>' || c == '[') {
+                        --(lexsize);
+                        in.ungetChar(c);
+                    }
+
+                    state = ParseDocTypeDeclState.DT_INTERMEDIATE;
+                    continue;
+                }
+                break;
+            case DT_PUBLICSYSTEM:
+                /* read PUBLIC/SYSTEM */
+                if (TidyUtils.isWhite((char) c) || c == '>') {
+                    String attname = TidyUtils.getString(lexbuf, start, lexsize - start - 1);
+                    hasfpi = !attname.equalsIgnoreCase("SYSTEM");
+
+                    /* todo: report an error if SYSTEM/PUBLIC not uppercase */
+
+                    if (c == '>') {
+                        --(lexsize);
+                        in.ungetChar(c);
+                    }
+
+                    state = ParseDocTypeDeclState.DT_INTERMEDIATE;
+                    continue;
+                }
+                break;
+            case DT_QUOTEDSTRING:
+                /* read quoted string */
+                if (c == delim) {
+                    String value = TidyUtils.getString(lexbuf, start, lexsize - start - 1);
+                    AttVal att = node.addAttribute(hasfpi ? "PUBLIC" : "SYSTEM", value);
+                    att.delim = delim;
+                    hasfpi = false;
+                    state = ParseDocTypeDeclState.DT_INTERMEDIATE;
+                    delim = 0;
+                    continue;
+                }
+                break;
+            case DT_INTSUBSET:
+                /* read internal subset */
+                if (c == ']') {
+                    Node subset;
+                    txtstart = start;
+                    txtend = lexsize - 1;
+                    subset = textToken();
+                    node.insertNodeAtEnd(subset);
+                    state = ParseDocTypeDeclState.DT_INTERMEDIATE;
+                }
+                break;
+            }
+        }
+
+        /* document type declaration not finished */
+        report.error(this, null, null, Report.MALFORMED_DOCTYPE);
+        return null;
+    }
+}
