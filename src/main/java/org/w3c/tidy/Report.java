@@ -718,6 +718,17 @@ public final class Report
 
         lexer.errout.println(resource);
     }
+    
+    private void simpleMessage(int errorCode, Lexer lexer, String message, Object[] params, Level level) {
+        String resource;
+        try {
+            resource = getMessage(errorCode, null, message, params, level);
+        } catch (MissingResourceException e) {
+            lexer.errout.println(e.toString());
+            return;
+        }
+        lexer.errout.println(resource);
+    }
 
     /**
      * Prints a message to errout after calling getMessage(). Used when lexer is not yet defined.
@@ -1704,7 +1715,7 @@ public final class Report
                 }
             }
 
-            printMessage(
+            simpleMessage(
                 DOCTYPE_GIVEN_SUMMARY,
                 lexer,
                 "doctype_given",
@@ -1712,7 +1723,7 @@ public final class Report
                 Level.INFO);
         }
 
-        printMessage(REPORT_VERSION_SUMMARY, lexer, "report_version", new Object[]{
+        simpleMessage(REPORT_VERSION_SUMMARY, lexer, "report_version", new Object[]{
             filename,
             (vers != null ? vers : "HTML proprietary")}, Level.INFO);
     }
