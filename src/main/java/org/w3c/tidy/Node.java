@@ -395,13 +395,24 @@ public class Node {
             }
         }
     }
+    
+    AttVal repairAttrValue(final String name, final String value) {
+        final AttVal old = getAttrByName(name);
+        if (old != null) {
+        	old.value = value;
+            return old;
+        } else {
+            return addAttribute(name, value);
+        }
+    }
 
     /**
      * Adds an attribute to the node.
      * @param name attribute name
      * @param value attribute value
+     * @return 
      */
-    public void addAttribute(String name, String value)
+    public AttVal addAttribute(String name, String value)
     {
         AttVal av = new AttVal(null, null, null, null, '"', name, value);
         av.dict = AttributeTable.getDefaultAttributeTable().findAttribute(av);
@@ -422,6 +433,7 @@ public class Node {
 
             here.next = av;
         }
+        return av;
     }
 
     /**
