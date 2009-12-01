@@ -1719,12 +1719,11 @@ public final class Report
                 DOCTYPE_GIVEN_SUMMARY,
                 lexer,
                 "doctype_given",
-                new Object[]{filename, doctypeBuffer},
+                new Object[]{doctypeBuffer},
                 Level.INFO);
         }
 
         simpleMessage(REPORT_VERSION_SUMMARY, lexer, "report_version", new Object[]{
-            filename,
             (vers != null ? vers : "HTML proprietary")}, Level.INFO);
     }
 
