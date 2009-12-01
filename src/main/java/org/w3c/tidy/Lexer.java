@@ -972,13 +972,7 @@ public class Lexer
         return null;
     }
 
-    /**
-     * Choose what version to use for new doctype.
-     * @return html version name
-     */
-    public String htmlVersionName() {
-        int vers = apparentVersion();
-        
+    static String getNameFromVers(final int vers) {
         for (W3CDoctype d : W3C_DOCTYPES) {
             if (d.vers == vers) {
                 return d.name;

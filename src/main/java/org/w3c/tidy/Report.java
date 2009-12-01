@@ -1683,7 +1683,8 @@ public final class Report
     {
         int i, c;
         int state = 0;
-        String vers = lexer.htmlVersionName();
+        int apparentVers = lexer.apparentVersion();
+        String vers = Lexer.getNameFromVers(apparentVers);
         int[] cc = new int[1];
 
         // adjust reported position to first line
