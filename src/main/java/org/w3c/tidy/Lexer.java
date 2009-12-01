@@ -989,6 +989,28 @@ public class Lexer
     	}
         return 0;
     }
+    
+    boolean warnMissingSIInEmittedDocType() {
+        boolean isXhtml = isvoyager;
+        Node doctype;
+        /* Do not warn in XHTML mode */
+        if (isXhtml) {
+            return false;
+        }
+        /* Do not warn if emitted doctype is proprietary */
+        if (getNameFromVers(versionEmitted) == null) {
+            return false;
+        }
+        /* Do not warn if no SI is possible */
+        if (getSIFromVers(versionEmitted) == null) {
+            return false;
+        }
+        if ((doctype = root.findDocType()) != null
+             && doctype.getAttrByName("SYSTEM") == null) {
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Add meta element for Tidy. If the meta tag is already present, update release date.

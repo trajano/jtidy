@@ -1726,6 +1726,9 @@ public final class Report
 
         simpleMessage(REPORT_VERSION_SUMMARY, lexer, "report_version", new Object[]{
             (vers != null ? vers : "HTML proprietary")}, Level.INFO);
+        if (lexer.warnMissingSIInEmittedDocType()) {
+        	simpleMessage(-1, lexer, "no_si", null, Level.INFO);
+        }
     }
 
     /**
