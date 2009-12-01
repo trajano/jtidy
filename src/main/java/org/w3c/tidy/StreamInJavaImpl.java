@@ -245,7 +245,9 @@ public class StreamInJavaImpl implements StreamIn
 
         if (c == '\t')
         {
-            this.tabs = this.tabsize - ((this.curcol - 1) % this.tabsize) - 1;
+            this.tabs = tabsize > 0 ?
+            		this.tabsize - ((this.curcol - 1) % this.tabsize) - 1
+            		: 0;
             this.curcol++;
             c = ' ';
             return c;
