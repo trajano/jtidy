@@ -774,7 +774,7 @@ public class ReportTest extends TestCase
             lexer,
             "doctype_given",
             new Object[]{"test", "bee"},
-            TidyMessage.Level.SUMMARY);
+            null);
         assertEquals("test: Doctype given is \"bee\"", message);
     }
 
@@ -789,7 +789,7 @@ public class ReportTest extends TestCase
             lexer,
             "report_version",
             new Object[]{"test", "bee"},
-            TidyMessage.Level.SUMMARY);
+            null);
         assertEquals("test: Document content looks like bee", message);
     }
 
@@ -804,7 +804,7 @@ public class ReportTest extends TestCase
             lexer,
             "num_warnings",
             new Object[]{new Integer(0), new Integer(33)},
-            TidyMessage.Level.SUMMARY);
+            null);
         assertEquals("no warnings, 33 errors were found!", message);
     }
 
