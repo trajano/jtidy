@@ -925,37 +925,32 @@ public class Lexer
      * Choose what version to use for new doctype.
      * @return html version constant
      */
-    public short htmlVersion()
-    {
-        if (TidyUtils.toBoolean(versions & VERS_HTML20))
-        {
-            return VERS_HTML20;
+    public int htmlVersion() {
+    	int j = 0;
+        int score = 0;
+        int vers = versions;
+        int dtver = doctype;
+        DoctypeModes dtmode = configuration.getDocTypeMode();
+        boolean xhtml = (configuration.isXmlOut() || isvoyager) &&
+                     !configuration.isHtmlOut();
+        boolean html4 = dtmode == DoctypeModes.Strict || dtmode == DoctypeModes.Loose
+        		|| (VERS_FROM40 & dtver) != 0;
+
+        for (int i = 0; i < W3C_DOCTYPES.length; ++i) {
+        	if ((xhtml && (VERS_XHTML & W3C_DOCTYPES[i].vers) == 0) ||
+                (html4 && (VERS_FROM40 & W3C_DOCTYPES[i].vers) == 0)) {
+                continue;
+            }
+            if ((vers & W3C_DOCTYPES[i].vers) != 0 &&
+            		(W3C_DOCTYPES[i].score < score || score == 0)) {
+                score = W3C_DOCTYPES[i].score;
+                j = i;
+            }
         }
 
-        if (!(this.configuration.isXmlOut() | this.configuration.isXmlTags() | this.isvoyager)
-            && TidyUtils.toBoolean(versions & VERS_HTML32))
-        {
-            return VERS_HTML32;
+        if (score != 0) {
+            return W3C_DOCTYPES[j].vers;
         }
-        if (TidyUtils.toBoolean(versions & VERS_XHTML11))
-        {
-            return VERS_XHTML11;
-        }
-        if (TidyUtils.toBoolean(versions & VERS_HTML40_STRICT))
-        {
-            return VERS_HTML40_STRICT;
-        }
-
-        if (TidyUtils.toBoolean(versions & VERS_HTML40_LOOSE))
-        {
-            return VERS_HTML40_LOOSE;
-        }
-
-        if (TidyUtils.toBoolean(versions & VERS_FRAMESET))
-        {
-            return VERS_FRAMESET;
-        }
-
         return VERS_UNKNOWN;
     }
     
@@ -1339,74 +1334,13 @@ public class Lexer
      * Return the html version used in document.
      * @return version code
      */
-    public short apparentVersion()
-    {
-        switch (this.doctype)
-        {
-            case VERS_UNKNOWN :
-                return htmlVersion();
-
-            case VERS_HTML20 :
-                if (TidyUtils.toBoolean(this.versions & VERS_HTML20))
-                {
-                    return VERS_HTML20;
-                }
-
-                break;
-
-            case VERS_HTML32 :
-                if (TidyUtils.toBoolean(this.versions & VERS_HTML32))
-                {
-                    return VERS_HTML32;
-                }
-
-                break; // to replace old version by new
-
-            case VERS_HTML40_STRICT :
-                if (TidyUtils.toBoolean(this.versions & VERS_HTML40_STRICT))
-                {
-                    return VERS_HTML40_STRICT;
-                }
-
-                break;
-
-            case VERS_HTML40_LOOSE :
-                if (TidyUtils.toBoolean(this.versions & VERS_HTML40_LOOSE))
-                {
-                    return VERS_HTML40_LOOSE;
-                }
-
-                break; // to replace old version by new
-
-            case VERS_FRAMESET :
-                if (TidyUtils.toBoolean(this.versions & VERS_FRAMESET))
-                {
-                    return VERS_FRAMESET;
-                }
-
-                break;
-
-            case VERS_XHTML11 :
-                if (TidyUtils.toBoolean(this.versions & VERS_XHTML11))
-                {
-                    return VERS_XHTML11;
-                }
-
-                break;
-            default :
-                // should never reach here
-                break;
-        }
-
-        // kludge to avoid error appearing at end of file
-        // it would be better to note the actual position
-        // when first encountering the doctype declaration
-
-        this.lines = 1;
-        this.columns = 1;
-
-        report.warning(this, null, null, Report.INCONSISTENT_VERSION);
-        return this.htmlVersion();
+    public int apparentVersion() {
+    	if ((doctype == XH11 || doctype == XB10) &&
+    	        (versions & doctype) != 0) {
+   	        return doctype;
+    	} else {
+    		return htmlVersion();
+    	}
     }
 
     /**
