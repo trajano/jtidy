@@ -382,6 +382,9 @@ public class Configuration implements Serializable
         for (Object o : properties.keySet())
         {
         	String key = (String) o;
+        	if (key.startsWith("//")) {
+            	continue;
+            }
         	Option flag = Options.getOption(key);
             if (flag == null)
             {
