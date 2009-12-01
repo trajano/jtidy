@@ -466,7 +466,10 @@ public final class ParserImpl
                     }
                     else
                     {
-                        lexer.report.warning(lexer, html, node, Report.NOFRAMES_CONTENT);
+                        lexer.report.error(lexer, html, node, Report.NOFRAMES_CONTENT);
+                        if (noframes.type == NodeType.StartEndTag) {
+                        	noframes.type = NodeType.StartTag;
+                        }
                     }
 
                     lexer.constrainVersion(VERS_FRAMESET);
@@ -1660,6 +1663,9 @@ public final class ParserImpl
 
                     for (parent = list.parent; parent != null; parent = parent.parent)
                     {
+                    	if (parent.is(TagId.BODY)) {
+                    		break;
+                    	}
                         if (node.tag == parent.tag)
                         {
                             lexer.report.warning(lexer, list, node, Report.MISSING_ENDTAG_BEFORE);
@@ -1786,6 +1792,7 @@ public final class ParserImpl
 
                 if (node.type == NodeType.EndTag)
                 {
+                	boolean discardIt = false;
                     if (node.is(TagId.FORM))
                     {
                         badForm(lexer);
@@ -1795,6 +1802,10 @@ public final class ParserImpl
 
                     for (parent = list.parent; parent != null; parent = parent.parent)
                     {
+                    	if (parent.is(TagId.BODY)) {
+                    		discardIt = true;
+                    		break;
+                    	}
                         if (node.tag == parent.tag)
                         {
                             lexer.report.warning(lexer, list, node, Report.MISSING_ENDTAG_BEFORE);
@@ -1803,6 +1814,10 @@ public final class ParserImpl
                             Node.trimEmptyElement(lexer, list);
                             return;
                         }
+                    }
+                    if (discardIt) {
+                        lexer.report.error(lexer, list, node, Report.DISCARDING_UNEXPECTED);
+                        continue;
                     }
                 }
 
