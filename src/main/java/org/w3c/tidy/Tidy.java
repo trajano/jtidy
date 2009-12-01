@@ -560,6 +560,10 @@ public class Tidy implements Serializable
         {
             this.report.errorSummary(lexer);
         }
+        
+        if (errout != null) {
+        	errout.flush();
+        }
 
         return document;
     }
