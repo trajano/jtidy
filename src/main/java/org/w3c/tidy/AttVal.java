@@ -202,6 +202,38 @@ public class AttVal extends Object implements Cloneable
 
         return false;
     }
+    
+    boolean isEvent() {
+        AttrId atid = dict.id;
+
+        return (atid == AttrId.OnAFTERUPDATE     ||
+                atid == AttrId.OnBEFOREUNLOAD    ||
+                atid == AttrId.OnBEFOREUPDATE    ||
+                atid == AttrId.OnBLUR            ||
+                atid == AttrId.OnCHANGE          ||
+                atid == AttrId.OnCLICK           ||
+                atid == AttrId.OnDATAAVAILABLE   ||
+                atid == AttrId.OnDATASETCHANGED  ||
+                atid == AttrId.OnDATASETCOMPLETE ||
+                atid == AttrId.OnDBLCLICK        ||
+                atid == AttrId.OnERRORUPDATE     ||
+                atid == AttrId.OnFOCUS           ||
+                atid == AttrId.OnKEYDOWN         ||
+                atid == AttrId.OnKEYPRESS        ||
+                atid == AttrId.OnKEYUP           ||
+                atid == AttrId.OnLOAD            ||
+                atid == AttrId.OnMOUSEDOWN       ||
+                atid == AttrId.OnMOUSEMOVE       ||
+                atid == AttrId.OnMOUSEOUT        ||
+                atid == AttrId.OnMOUSEOVER       ||
+                atid == AttrId.OnMOUSEUP         ||
+                atid == AttrId.OnRESET           ||
+                atid == AttrId.OnROWENTER        ||
+                atid == AttrId.OnROWEXIT         ||
+                atid == AttrId.OnSELECT          ||
+                atid == AttrId.OnSUBMIT          ||
+                atid == AttrId.OnUNLOAD);
+    }
 
     /**
      * Check the attribute value for uppercase letters (only if the value should be lowercase, required for literal
