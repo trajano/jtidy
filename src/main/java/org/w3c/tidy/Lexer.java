@@ -133,18 +133,25 @@ public class Lexer
     /**
      * lists all the known versions.
      */
-    private static final Lexer.W3CVersionInfo[] W3CVERSION = {
-        new W3CVersionInfo("HTML 4.01", "XHTML 1.0 Strict", VOYAGER_STRICT, VERS_HTML40_STRICT),
-        new W3CVersionInfo("HTML 4.01 Transitional", "XHTML 1.0 Transitional", VOYAGER_LOOSE, VERS_HTML40_LOOSE),
-        new W3CVersionInfo("HTML 4.01 Frameset", "XHTML 1.0 Frameset", VOYAGER_FRAMESET, VERS_FRAMESET),
-        new W3CVersionInfo("HTML 4.0", "XHTML 1.0 Strict", VOYAGER_STRICT, VERS_HTML40_STRICT),
-        new W3CVersionInfo("HTML 4.0 Transitional", "XHTML 1.0 Transitional", VOYAGER_LOOSE, VERS_HTML40_LOOSE),
-        new W3CVersionInfo("HTML 4.0 Frameset", "XHTML 1.0 Frameset", VOYAGER_FRAMESET, VERS_FRAMESET),
-        new W3CVersionInfo("HTML 3.2", "XHTML 1.0 Transitional", VOYAGER_LOOSE, VERS_HTML32),
-        new W3CVersionInfo("HTML 3.2 Final", "XHTML 1.0 Transitional", VOYAGER_LOOSE, VERS_HTML32),
-        new W3CVersionInfo("HTML 3.2 Draft", "XHTML 1.0 Transitional", VOYAGER_LOOSE, VERS_HTML32),
-        new W3CVersionInfo("HTML 2.0", "XHTML 1.0 Strict", VOYAGER_STRICT, VERS_HTML20),
-        new W3CVersionInfo("HTML 4.01", "XHTML 1.1", VOYAGER_STRICT, VERS_XHTML11)};
+    private static final W3CDoctype[] W3C_DOCTYPES = {
+    	new W3CDoctype(  2, HT20, "HTML 2.0",               "-//IETF//DTD HTML 2.0//EN",              null                                                        ),
+    	new W3CDoctype(  2, HT20, "HTML 2.0",               "-//IETF//DTD HTML//EN",                  null                                                        ),
+    	new W3CDoctype(  2, HT20, "HTML 2.0",               "-//W3C//DTD HTML 2.0//EN",               null                                                        ),
+    	new W3CDoctype(  1, HT32, "HTML 3.2",               "-//W3C//DTD HTML 3.2//EN",               null                                                        ),
+    	new W3CDoctype(  1, HT32, "HTML 3.2",               "-//W3C//DTD HTML 3.2 Final//EN",         null                                                        ),
+    	new W3CDoctype(  1, HT32, "HTML 3.2",               "-//W3C//DTD HTML 3.2 Draft//EN",         null                                                        ),
+    	new W3CDoctype(  6, H40S, "HTML 4.0 Strict",        "-//W3C//DTD HTML 4.0//EN",               "http://www.w3.org/TR/REC-html40/strict.dtd"                ),
+    	new W3CDoctype(  8, H40T, "HTML 4.0 Transitional",  "-//W3C//DTD HTML 4.0 Transitional//EN",  "http://www.w3.org/TR/REC-html40/loose.dtd"                 ),
+    	new W3CDoctype(  7, H40F, "HTML 4.0 Frameset",      "-//W3C//DTD HTML 4.0 Frameset//EN",      "http://www.w3.org/TR/REC-html40/frameset.dtd"              ),
+    	new W3CDoctype(  3, H41S, "HTML 4.01 Strict",       "-//W3C//DTD HTML 4.01//EN",              "http://www.w3.org/TR/html4/strict.dtd"                     ),
+    	new W3CDoctype(  5, H41T, "HTML 4.01 Transitional", "-//W3C//DTD HTML 4.01 Transitional//EN", "http://www.w3.org/TR/html4/loose.dtd"                      ),
+    	new W3CDoctype(  4, H41F, "HTML 4.01 Frameset",     "-//W3C//DTD HTML 4.01 Frameset//EN",     "http://www.w3.org/TR/html4/frameset.dtd"                   ),
+    	new W3CDoctype(  9, X10S, "XHTML 1.0 Strict",       "-//W3C//DTD XHTML 1.0 Strict//EN",       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"         ),
+    	new W3CDoctype( 11, X10T, "XHTML 1.0 Transitional", "-//W3C//DTD XHTML 1.0 Transitional//EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"   ),
+    	new W3CDoctype( 10, X10F, "XHTML 1.0 Frameset",     "-//W3C//DTD XHTML 1.0 Frameset//EN",     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"       ),
+    	new W3CDoctype( 12, XH11, "XHTML 1.1",              "-//W3C//DTD XHTML 1.1//EN",              "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"              ),
+    	new W3CDoctype( 13, XB10, "XHTML Basic 1.0",        "-//W3C//DTD XHTML Basic 1.0//EN",        "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"        ),
+    };
 
     /**
      * getToken state: content.
@@ -300,6 +307,8 @@ public class Lexer
      * version as given by doctype (if any).
      */
     protected int doctype;
+    
+    protected int versionEmitted;
 
     /**
      * set if html or PUBLIC is missing.
@@ -945,32 +954,47 @@ public class Lexer
 
         return VERS_UNKNOWN;
     }
+    
+    private static String getFPIFromVers(final int vers) {
+        for (W3CDoctype d : W3C_DOCTYPES) {
+            if (d.vers == vers) {
+                return d.fpi;
+            }
+        }
+        return null;
+    }
+    
+    private static String getSIFromVers(final int vers) {
+        for (W3CDoctype d : W3C_DOCTYPES) {
+            if (d.vers == vers) {
+                return d.si;
+            }
+        }
+        return null;
+    }
 
     /**
      * Choose what version to use for new doctype.
      * @return html version name
      */
-    public String htmlVersionName()
-    {
-        short guessed;
-        int j;
-
-        guessed = apparentVersion();
-
-        for (j = 0; j < W3CVERSION.length; ++j)
-        {
-            if (guessed == W3CVERSION[j].code)
-            {
-                if (this.isvoyager)
-                {
-                    return W3CVERSION[j].voyagerName;
-                }
-
-                return W3CVERSION[j].name;
+    public String htmlVersionName() {
+        int vers = apparentVersion();
+        
+        for (W3CDoctype d : W3C_DOCTYPES) {
+            if (d.vers == vers) {
+                return d.name;
             }
         }
-
         return null;
+    }
+    
+    private static int getVersFromFPI(final String fpi) {
+    	for (W3CDoctype d : W3C_DOCTYPES) {
+            if (d.fpi.equalsIgnoreCase(fpi)) {
+                return d.vers;
+            }
+    	}
+        return 0;
     }
 
     /**
@@ -1042,100 +1066,22 @@ public class Lexer
      * @param doctype doctype node
      * @return version code
      */
-    public int findGivenVersion(Node doctype)
-    {
-        String p, s;
-        int i, j;
-        int len;
-        String str1;
-        String str2;
+    public int findGivenVersion(final Node doctype) {
+    	AttVal fpi = doctype.getAttrByName("PUBLIC");
 
-        // if root tag for doctype isn't html give up now
-        str1 = TidyUtils.getString(this.lexbuf, doctype.start, 5);
-        if (!"html ".equalsIgnoreCase(str1))
-        {
-            return 0;
+        if (fpi == null || fpi.value == null) {
+            return VERS_UNKNOWN;
         }
+        int vers = getVersFromFPI(fpi.value);
 
-        if (!checkDocTypeKeyWords(doctype))
-        {
-            report.warning(this, doctype, null, Report.DTYPE_NOT_UPPER_CASE);
+        if ((VERS_XHTML & vers) != 0) {
+        	configuration.setXmlOut(true);
+        	configuration.setXHTML(true);
+            isvoyager = true;
         }
-
-        // give up if all we are given is the system id for the doctype
-        str1 = TidyUtils.getString(this.lexbuf, doctype.start + 5, 7);
-        if ("SYSTEM ".equalsIgnoreCase(str1))
-        {
-            // but at least ensure the case is correct
-            if (!str1.substring(0, 6).equals("SYSTEM"))
-            {
-                System.arraycopy(TidyUtils.getBytes("SYSTEM"), 0, this.lexbuf, doctype.start + 5, 6);
-            }
-            return 0; // unrecognized
-        }
-
-        if ("PUBLIC ".equalsIgnoreCase(str1))
-        {
-            if (!str1.substring(0, 6).equals("PUBLIC"))
-            {
-                System.arraycopy(TidyUtils.getBytes("PUBLIC "), 0, this.lexbuf, doctype.start + 5, 6);
-            }
-        }
-        else
-        {
-            this.badDoctype = true;
-        }
-
-        for (i = doctype.start; i < doctype.end; ++i)
-        {
-            if (this.lexbuf[i] == (byte) '"')
-            {
-                str1 = TidyUtils.getString(this.lexbuf, i + 1, 12);
-                str2 = TidyUtils.getString(this.lexbuf, i + 1, 13);
-                if (str1.equals("-//W3C//DTD "))
-                {
-                    // compute length of identifier e.g. "HTML 4.0 Transitional"
-                    for (j = i + 13; j < doctype.end && this.lexbuf[j] != (byte) '/'; ++j)
-                    {
-                        //
-                    }
-                    len = j - i - 13;
-                    p = TidyUtils.getString(this.lexbuf, i + 13, len);
-
-                    for (j = 1; j < W3CVERSION.length; ++j)
-                    {
-                        s = W3CVERSION[j].name;
-                        if (len == s.length() && s.equals(p))
-                        {
-                            return W3CVERSION[j].code;
-                        }
-                    }
-
-                    // else unrecognized version
-                }
-                else if (str2.equals("-//IETF//DTD "))
-                {
-                    // compute length of identifier e.g. "HTML 2.0"
-                    for (j = i + 14; j < doctype.end && this.lexbuf[j] != (byte) '/'; ++j)
-                    {
-                        //
-                    }
-                    len = j - i - 14;
-
-                    p = TidyUtils.getString(this.lexbuf, i + 14, len);
-                    s = W3CVERSION[0].name;
-                    if (len == s.length() && s.equals(p))
-                    {
-                        return W3CVERSION[0].code;
-                    }
-
-                    // else unrecognized version
-                }
-                break;
-            }
-        }
-
-        return 0;
+        /* todo: add a warning if case does not match? */
+        fpi.value = getFPIFromVers(vers);
+        return vers;
     }
 
     /**
@@ -1464,205 +1410,69 @@ public class Lexer
      * @param root root node
      * @return <code>false</code> if current version has not been identified
      */
-    public boolean fixDocType(Node root)
-    {
-        Node doctype;
-        int guessed = VERS_HTML40_STRICT, i;
+    public boolean fixDocType(Node root) {
+        Node doctype = root.findDocType();
+        DoctypeModes dtmode = configuration.getDocTypeMode();
+        int guessed = VERS_UNKNOWN;
+        boolean hadSI = false;
 
-        if (this.badDoctype)
-        {
-            report.warning(this, null, null, Report.MALFORMED_DOCTYPE);
+        if (dtmode == DoctypeModes.Auto &&
+            (this.versions & this.doctype) != 0 &&
+            !((VERS_XHTML & this.doctype) != 0 && !isvoyager)
+            && doctype != null) {
+            versionEmitted = this.doctype;
+            return true;
         }
 
-        doctype = root.findDocType();
-
-        if (this.configuration.getDocTypeMode() == DoctypeModes.Omit)
-        {
-            if (doctype != null)
-            {
+        if (dtmode == DoctypeModes.Omit) {
+            if (doctype != null) {
                 Node.discardElement(doctype);
             }
+            versionEmitted = apparentVersion();
             return true;
         }
 
-        if (this.configuration.isXmlOut())
-        {
+        if (configuration.isXmlOut()) {
             return true;
         }
-
-        if (this.configuration.getDocTypeMode() == DoctypeModes.Strict)
-        {
+        if (doctype != null) {
+            hadSI = doctype.getAttrByName("SYSTEM") != null;
+        }
+        if ((dtmode == DoctypeModes.Strict ||
+             dtmode == DoctypeModes.Loose) && doctype != null) {
             Node.discardElement(doctype);
             doctype = null;
-            guessed = VERS_HTML40_STRICT;
         }
-        else if (this.configuration.getDocTypeMode() == DoctypeModes.Loose)
+
+        switch (dtmode)
         {
-            Node.discardElement(doctype);
-            doctype = null;
-            guessed = VERS_HTML40_LOOSE;
-        }
-        else if (this.configuration.getDocTypeMode() == DoctypeModes.Auto)
-        {
-            if (doctype != null)
-            {
-                if (this.doctype == VERS_UNKNOWN)
-                {
-                    return false;
-                }
-
-                switch (this.doctype)
-                {
-                    case VERS_UNKNOWN :
-                        return false;
-
-                    case VERS_HTML20 :
-                        if (TidyUtils.toBoolean(this.versions & VERS_HTML20))
-                        {
-                            return true;
-                        }
-
-                        break; // to replace old version by new
-
-                    case VERS_HTML32 :
-                        if (TidyUtils.toBoolean(this.versions & VERS_HTML32))
-                        {
-                            return true;
-                        }
-
-                        break; // to replace old version by new
-
-                    case VERS_HTML40_STRICT :
-                        if (TidyUtils.toBoolean(this.versions & VERS_HTML40_STRICT))
-                        {
-                            return true;
-                        }
-
-                        break; // to replace old version by new
-
-                    case VERS_HTML40_LOOSE :
-                        if (TidyUtils.toBoolean(this.versions & VERS_HTML40_LOOSE))
-                        {
-                            return true;
-                        }
-
-                        break; // to replace old version by new
-
-                    case VERS_FRAMESET :
-                        if (TidyUtils.toBoolean(this.versions & VERS_FRAMESET))
-                        {
-                            return true;
-                        }
-
-                        break; // to replace old version by new
-
-                    case VERS_XHTML11 :
-                        if (TidyUtils.toBoolean(this.versions & VERS_XHTML11))
-                        {
-                            return true;
-                        }
-
-                        break; // to replace old version by new
-                    default :
-                        // should never reach here
-                        break;
-                }
-
-                // INCONSISTENT_VERSION warning is now issued by ApparentVersion()
-            }
-
-            // choose new doctype
+        case Strict:
+            guessed = H41S;
+            break;
+        case Loose:
+            guessed = H41T;
+            break;
+        case Auto:
             guessed = htmlVersion();
+            break;
         }
 
-        if (guessed == VERS_UNKNOWN)
-        {
+        versionEmitted = guessed;
+        if (guessed == VERS_UNKNOWN) {
             return false;
         }
-
-        // for XML use the Voyager system identifier
-        if (this.configuration.isXmlOut() || this.configuration.isXmlTags() || this.isvoyager)
-        {
-            if (doctype != null)
-            {
-                Node.discardElement(doctype);
-            }
-
-            fixHTMLNameSpace(root, XHTML_NAMESPACE);
-
-            // Namespace is the same for all XHTML variants
-            // Also, don't return yet. Still need to add DOCTYPE declaration.
-            //
-            // for (i = 0; i < W3CVersion.length; ++i)
-            // {
-            // if (guessed == W3CVersion[i].code)
-            // {
-            // fixHTMLNameSpace(root, W3CVersion[i].profile);
-            // break;
-            // }
-            // }
-            // return true;
+        if (doctype != null) {
+            doctype.element = doctype.element.toLowerCase();
+        } else {
+            doctype = newXhtmlDocTypeNode(root);
+            doctype.element = "html";
         }
 
-        if (doctype == null)
-        {
-            if ((doctype = newXhtmlDocTypeNode(root)) == null)
-            {
-                return false;
-            }
+        doctype.repairAttrValue("PUBLIC", getFPIFromVers(guessed));
+
+        if (hadSI) {
+            doctype.repairAttrValue("SYSTEM", getSIFromVers(guessed));
         }
-
-        this.txtstart = this.lexsize;
-        this.txtend = this.lexsize;
-
-        // use the appropriate public identifier
-        addStringLiteral("html PUBLIC ");
-
-        if (this.configuration.getDocTypeMode() == DoctypeModes.User
-            && this.configuration.getDocTypeStr() != null
-            && this.configuration.getDocTypeStr().length() > 0)
-        {
-            // check if the fpi is quoted or not
-            if (this.configuration.getDocTypeStr().charAt(0) == '"')
-            {
-                addStringLiteral(this.configuration.getDocTypeStr());
-            }
-            else
-            {
-                addStringLiteral("\""); // #431889 - fix by Dave Bryan 04 Jan 2001
-                addStringLiteral(this.configuration.getDocTypeStr());
-                addStringLiteral("\""); // #431889 - fix by Dave Bryan 04 Jan 2001
-            }
-        }
-        else if (guessed == VERS_HTML20)
-        {
-            addStringLiteral("\"-//IETF//DTD HTML 2.0//EN\"");
-        }
-        else
-        {
-            addStringLiteral("\"-//W3C//DTD ");
-
-            for (i = 0; i < W3CVERSION.length; ++i)
-            {
-                if (guessed == W3CVERSION[i].code)
-                {
-                    addStringLiteral(W3CVERSION[i].name);
-                    break;
-                }
-            }
-
-            addStringLiteral("//EN\"");
-        }
-
-        this.txtend = this.lexsize;
-
-        int length = this.txtend - this.txtstart;
-        doctype.textarray = new byte[length];
-
-        System.arraycopy(this.lexbuf, this.txtstart, doctype.textarray, 0, length);
-        doctype.start = 0;
-        doctype.end = length;
-
         return true;
     }
 
@@ -4031,44 +3841,20 @@ public class Lexer
     /**
      * document type.
      */
-    private static class W3CVersionInfo
-    {
-
-        /**
-         * name.
-         */
+    private static class W3CDoctype {
+    	int score;
+    	int vers;
         String name;
-
-        /**
-         * voyager name.
-         */
-        String voyagerName;
-
-        /**
-         * profile.
-         */
-        String profile;
-
-        /**
-         * code.
-         */
-        int code;
-
-        /**
-         * Instantiates a new W3CVersionInfo.
-         * @param name version name
-         * @param voyagerName voyager (xhtml) name
-         * @param profile VOYAGER_STRICT | VOYAGER_LOOSE | VOYAGER_FRAMESET
-         * @param code unique code for this version info
-         */
-        public W3CVersionInfo(String name, String voyagerName, String profile, int code)
-        {
-            this.name = name;
-            this.voyagerName = voyagerName;
-            this.profile = profile;
-            this.code = code;
-        }
+        String fpi;
+        String si;
+        
+		public W3CDoctype(final int score, final int vers, final String name, final String fpi, final String si) {
+			this.score = score;
+			this.vers = vers;
+			this.name = name;
+			this.fpi = fpi;
+			this.si = si;
+		}
     }
-
 }
 
