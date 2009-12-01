@@ -1469,4 +1469,13 @@ public class Node {
         return false;
     }
 
+    /** Finds parent container element */
+    Node findContainer() {
+    	Node node;
+        for (node = parent;
+              node != null && node.hasCM(Dict.CM_INLINE);
+              node = node.parent )
+            /**/;
+        return node;
+    }
 }
