@@ -471,7 +471,7 @@ public class Tidy implements Serializable
             // replaces presentational markup by style rules
             if (configuration.isMakeClean() || configuration.isDropFontTags())
             {
-                cleaner.cleanTree(lexer, document);
+                cleaner.cleanDocument(lexer, document);
             }
 
             if (!document.checkNodeIntegrity())

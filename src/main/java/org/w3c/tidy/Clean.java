@@ -90,7 +90,7 @@ public class Clean
     /**
      * sequential number for generated css classes.
      */
-    private int classNum = 1;
+    private int classNum;
 
     /**
      * Tag table.
@@ -301,17 +301,14 @@ public class Clean
     /**
      * Generates a new css class name.
      * @param lexer Lexer
-     * @param tag Tag
      * @return generated css class
      */
-    private String gensymClass(Lexer lexer, String tag)
-    {
-        String str;
-
-        str = lexer.configuration.getCssPrefix() == null ? lexer.configuration.getCssPrefix() + this.classNum : "c"
-            + this.classNum;
-        this.classNum++;
-        return str;
+    private String gensymClass(final Lexer lexer) {
+        String pfx = lexer.configuration.getCssPrefix();
+        if (pfx == null) {
+        	pfx = "c";
+        }
+        return pfx + ++classNum;
     }
 
     /**
@@ -333,7 +330,7 @@ public class Clean
             }
         }
 
-        style = new Style(tag, gensymClass(lexer, tag), properties, lexer.styles);
+        style = new Style(tag, gensymClass(lexer), properties, lexer.styles);
         lexer.styles = style;
         return style.tagClass;
     }
@@ -1574,7 +1571,7 @@ public class Clean
      * @param prepl passed in as array to allow modifications
      * @return cleaned Node
      */
-    private Node createStyleProperties(Lexer lexer, Node node, Node[] prepl)
+    private Node cleanTree(Lexer lexer, Node node, Node[] prepl)
     {
         Node child = node.content;
 
@@ -1584,7 +1581,7 @@ public class Clean
             repl[0] = node;
             while (child != null)
             {
-                child = createStyleProperties(lexer, child, repl);
+                child = cleanTree(lexer, child, repl);
                 if (repl[0] != node)
                 {
                     return repl[0];
@@ -1626,13 +1623,13 @@ public class Clean
      * @param lexer Lexer
      * @param doc root node
      */
-    public void cleanTree(Lexer lexer, Node doc)
+    public void cleanDocument(Lexer lexer, Node doc)
     {
         Node[] repl = new Node[1];
         repl[0] = doc;
-        doc = createStyleProperties(lexer, doc, repl);
+        doc = cleanTree(lexer, doc, repl);
 
-        if (!lexer.configuration.isMakeClean())
+        if (lexer.configuration.isMakeClean())
         {
             defineStyleRules(lexer, doc);
             createStyleElement(lexer, doc);
