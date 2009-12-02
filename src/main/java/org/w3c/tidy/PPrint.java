@@ -158,7 +158,7 @@ public class PPrint
     
     private int ixInd;
 
-    class TidyIndent {
+    static class TidyIndent {
     	int spaces;
         int attrValStart;
         int attrStringStart;
@@ -168,6 +168,11 @@ public class PPrint
         	attrValStart = -1;
         	attrStringStart = -1;
         }
+
+		@Override
+		public String toString() {
+			return "(" + spaces + ", " + attrValStart + ", " + attrStringStart + ")";
+		}
     }
 
     private TidyIndent indent[] = new TidyIndent[2];
@@ -1187,7 +1192,7 @@ public class PPrint
 		if (node.element == null) {
 			return spaces;
 		}
-		if (node.hasCM(Dict.CM_INLINE) || !shouldIndent(node.parent != null ? node.parent : node)) {
+		if (!node.hasCM(Dict.CM_INLINE) || !shouldIndent(node.parent != null ? node.parent : node)) {
 			return xtra + node.element.length();
 		}
 		if (null != (node = node.findContainer())) {
@@ -1242,7 +1247,7 @@ public class PPrint
             }
         }
 
-        if (!first && setWrap(indent)) {
+        if (!first && !setWrap(indent)) {
             flushLine(fout, indent + xtra);  /* Put it on next line */
         }
         else if (linelen > 0) {
