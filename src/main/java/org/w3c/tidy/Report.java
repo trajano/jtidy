@@ -875,8 +875,8 @@ public final class Report
             String buf = Integer.toHexString(c);
 
             // An encoding mismatch is currently treated as a non-fatal error
-            if ((code & ~DISCARDED_CHAR) == ENCODING_MISMATCH)
-            {
+            switch(code & ~DISCARDED_CHAR) {
+            case ENCODING_MISMATCH:
                 // actual encoding passed in "c"
                 lexer.badChars |= ENCODING_MISMATCH;
                 printMessage(
@@ -887,9 +887,8 @@ public final class Report
                         lexer.configuration.getInCharEncodingName(),
                         ParsePropertyImpl.CHAR_ENCODING.getFriendlyName(null, new Integer(c), lexer.configuration)},
                     Level.WARNING);
-            }
-            else if ((code & ~DISCARDED_CHAR) == VENDOR_SPECIFIC_CHARS)
-            {
+                break;
+            case VENDOR_SPECIFIC_CHARS:
                 lexer.badChars |= VENDOR_SPECIFIC_CHARS;
                 printMessage(
                     code,
@@ -897,9 +896,8 @@ public final class Report
                     "invalid_char",
                     new Object[]{new Integer(code & DISCARDED_CHAR), buf},
                     Level.WARNING);
-            }
-            else if ((code & ~DISCARDED_CHAR) == INVALID_SGML_CHARS)
-            {
+                break;
+            case INVALID_SGML_CHARS:
                 lexer.badChars |= INVALID_SGML_CHARS;
                 printMessage(
                     code,
@@ -907,9 +905,8 @@ public final class Report
                     "invalid_char",
                     new Object[]{new Integer(code & DISCARDED_CHAR), buf},
                     Level.WARNING);
-            }
-            else if ((code & ~DISCARDED_CHAR) == INVALID_UTF8)
-            {
+                break;
+            case INVALID_UTF8:
                 lexer.badChars |= INVALID_UTF8;
                 printMessage(
                     code,
@@ -917,10 +914,8 @@ public final class Report
                     "invalid_utf8",
                     new Object[]{new Integer(code & DISCARDED_CHAR), buf},
                     Level.WARNING);
-            }
-
-            else if ((code & ~DISCARDED_CHAR) == INVALID_UTF16)
-            {
+                break;
+            case INVALID_UTF16:
                 lexer.badChars |= INVALID_UTF16;
                 printMessage(
                     code,
@@ -928,11 +923,8 @@ public final class Report
                     "invalid_utf16",
                     new Object[]{new Integer(code & DISCARDED_CHAR), buf},
                     Level.WARNING);
-
-            }
-
-            else if ((code & ~DISCARDED_CHAR) == INVALID_NCR)
-            {
+                break;
+            case INVALID_NCR:
                 lexer.badChars |= INVALID_NCR;
                 printMessage(
                     code,
@@ -940,8 +932,8 @@ public final class Report
                     "invalid_ncr",
                     new Object[]{new Integer(code & DISCARDED_CHAR), buf},
                     Level.WARNING);
+                break;
             }
-
         }
     }
 
@@ -1446,20 +1438,17 @@ public final class Report
             return;
         }
 
-        if (code == SUSPECTED_MISSING_QUOTE)
-        {
+        switch (code) {
+        case SUSPECTED_MISSING_QUOTE:
             printMessage(code, lexer, "suspected_missing_quote", null, Level.ERROR);
-        }
-        else if (code == DUPLICATE_FRAMESET)
-        {
+            break;
+        case DUPLICATE_FRAMESET:
             printMessage(code, lexer, "duplicate_frameset", null, Level.ERROR);
-        }
-        else if (code == UNKNOWN_ELEMENT)
-        {
+            break;
+        case UNKNOWN_ELEMENT:
             printMessage(code, lexer, "unknown_element", new Object[]{getTagName(node)}, Level.ERROR);
-        }
-        else if (code == UNEXPECTED_ENDTAG)
-        {
+            break;
+        case UNEXPECTED_ENDTAG:
             if (element != null)
             {
                 printMessage(
@@ -1473,6 +1462,7 @@ public final class Report
             {
                 printMessage(code, lexer, "unexpected_endtag", new Object[]{node.element}, Level.ERROR);
             }
+            break;
         }
     }
 
