@@ -261,7 +261,7 @@ public final class AttrCheckImpl
             boolean backslashFound = false;
 
             if (!attval.hasValue()) {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+                lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
                 return;
             }
 
@@ -300,19 +300,19 @@ public final class AttrCheckImpl
             }
             if (backslashFound) {
                 if (lexer.configuration.isFixBackslash() && !isJavascript) {
-                    lexer.report.attrError(lexer, node, attval, Report.FIXED_BACKSLASH);
+                    lexer.report.attrError(lexer, node, attval, ErrorCode.FIXED_BACKSLASH);
                 } else {
-                    lexer.report.attrError(lexer, node, attval, Report.BACKSLASH_IN_URI);
+                    lexer.report.attrError(lexer, node, attval, ErrorCode.BACKSLASH_IN_URI);
                 }
             }
             if (escapeCount > 0) {
                 if (lexer.configuration.isFixUri()) {
-                    lexer.report.attrError(lexer, node, attval, Report.ESCAPED_ILLEGAL_URI);
+                    lexer.report.attrError(lexer, node, attval, ErrorCode.ESCAPED_ILLEGAL_URI);
                 } else {
-                    lexer.report.attrError(lexer, node, attval, Report.ILLEGAL_URI_REFERENCE);
+                    lexer.report.attrError(lexer, node, attval, ErrorCode.ILLEGAL_URI_REFERENCE);
                 }
 
-                lexer.badChars |= Report.INVALID_URI;
+                lexer.badChars |= Report.BC_INVALID_URI;
             }
         }
     }
@@ -347,14 +347,14 @@ public final class AttrCheckImpl
     private static void checkAttrValidity(final Lexer lexer, final Node node, final AttVal attval,
             final String list[]) {
     	if (!attval.hasValue()) {
-    		lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+    		lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
     		return;
     	}
 
     	attval.checkLowerCaseAttrValue(lexer, node);
 
     	if (!attval.valueIsAmong(list)) {
-    		lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+    		lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE);
     	}
     }
 
@@ -368,16 +368,16 @@ public final class AttrCheckImpl
          */
         public void check(Lexer lexer, Node node, AttVal attval) {
             if (!attval.hasValue()) {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+                lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
                 return;
             }
             if (node.isAnchorElement()) {
             	if (lexer.configuration.isXmlOut() && !TidyUtils.isValidNMTOKEN(attval.value)) {
-            		lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+            		lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE);
             	}
             	final Node old = lexer.configuration.tt.getNodeByAnchor(attval.value);
                 if (old != null && old != node) {
-                    lexer.report.attrError(lexer, node, attval, Report.ANCHOR_NOT_UNIQUE);
+                    lexer.report.attrError(lexer, node, attval, ErrorCode.ANCHOR_NOT_UNIQUE);
                 } else {
                     lexer.configuration.tt.addAnchor(attval.value, node);
                 }
@@ -395,20 +395,20 @@ public final class AttrCheckImpl
          */
         public void check(Lexer lexer, Node node, AttVal attval) {
             if (!attval.hasValue()) {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+                lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
                 return;
             }
             if (!TidyUtils.isValidHTMLID(attval.value)) {
                 if (lexer.isvoyager && TidyUtils.isValidXMLID(attval.value)) {
-                    lexer.report.attrError(lexer, node, attval, Report.XML_ID_SYNTAX);
+                    lexer.report.attrError(lexer, node, attval, ErrorCode.XML_ID_SYNTAX);
                 } else {
-                	lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+                	lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE);
                 }
             }
 
             final Node old = lexer.configuration.tt.getNodeByAnchor(attval.value);
             if (old != null && old != node) {
-            	lexer.report.attrError(lexer, node, attval, Report.ANCHOR_NOT_UNIQUE);
+            	lexer.report.attrError(lexer, node, attval, ErrorCode.ANCHOR_NOT_UNIQUE);
             } else {
             	lexer.configuration.tt.addAnchor(attval.value, node);
             }
@@ -453,7 +453,7 @@ public final class AttrCheckImpl
             }
 
             if (!attval.hasValue()) {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+                lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
                 return;
             }
 
@@ -468,7 +468,7 @@ public final class AttrCheckImpl
             	// align="char" is allowed for elements with CM_TABLE|CM_ROW
                 // except CAPTION which is excluded above
             	if (!(attval.valueIs("char") && node.hasCM(Dict.CM_TABLE|Dict.CM_ROW))) {
-            		lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+            		lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE);
             	}
             }
         }
@@ -503,7 +503,7 @@ public final class AttrCheckImpl
          */
         public void check(Lexer lexer, Node node, AttVal attval) {
             if (!attval.hasValue()) {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+                lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
                 return;
             }
 
@@ -513,13 +513,13 @@ public final class AttrCheckImpl
                 // all is fine
             } else if (attval.valueIsAmong(VALID_VALUES_IMG)) {
                 if (!(node.tag != null && ((node.tag.model & Dict.CM_IMG) != 0))) {
-                    lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+                    lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE);
                 }
             } else if (attval.valueIsAmong(VALID_VALUES_PROPRIETARY)) {
                 lexer.constrainVersion(VERS_PROPRIETARY);
-                lexer.report.attrError(lexer, node, attval, Report.PROPRIETARY_ATTR_VALUE);
+                lexer.report.attrError(lexer, node, attval, ErrorCode.PROPRIETARY_ATTR_VALUE);
             } else {
-                lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+                lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE);
             }
         }
     }
@@ -535,7 +535,7 @@ public final class AttrCheckImpl
         public void check(Lexer lexer, Node node, AttVal attval) {
 
             if (!attval.hasValue()) {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+                lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
                 return;
             }
 
@@ -547,11 +547,11 @@ public final class AttrCheckImpl
             String p = attval.value;
 
             if (p.length() == 0 || !Character.isDigit(p.charAt(0))) {
-                lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+                lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE);
             } else {
                 for (int j = 1; j < p.length(); j++) {
                     if (!Character.isDigit(p.charAt(j)) && p.charAt(j) != '%') {
-                        lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+                        lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE);
                         break;
                     }
                 }
@@ -575,7 +575,7 @@ public final class AttrCheckImpl
         public void check(Lexer lexer, Node node, AttVal attval) {
 
             if (!attval.hasValue()) {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+                lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
                 return;
             }
 
@@ -588,7 +588,7 @@ public final class AttrCheckImpl
 
             // or be one of the allowed list
             if (!attval.valueIsAmong(VALID_VALUES)) {
-                lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+                lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE);
             }
         }
     }
@@ -626,7 +626,7 @@ public final class AttrCheckImpl
          */
         public void check(Lexer lexer, Node node, AttVal attval) {
         	if (!attval.hasValue()) {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+                lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
                 if (attval.value == null) { // TODO redundant check?
                 	attval.value = "none";
                 }
@@ -636,7 +636,7 @@ public final class AttrCheckImpl
             attval.checkLowerCaseAttrValue(lexer, node);
 
             if (!attval.valueIsAmong(VALID_VALUES)) {
-                lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+                lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE);
             }
         }
     }
@@ -688,7 +688,7 @@ public final class AttrCheckImpl
         public void check(Lexer lexer, Node node, AttVal attval) {
 
             if (!attval.hasValue()) {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+                lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
                 return;
             }
 
@@ -708,7 +708,7 @@ public final class AttrCheckImpl
 
             for (; j < p.length(); j++) {
                 if (!Character.isDigit(p.charAt(j))) {
-                    lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+                    lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE);
                     break;
                 }
             }
@@ -780,7 +780,7 @@ public final class AttrCheckImpl
          */
         public void check(Lexer lexer, Node node, AttVal attval) {
             if (!attval.hasValue()) {
-                lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+                lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
                 return;
             }
 
@@ -790,7 +790,7 @@ public final class AttrCheckImpl
             // 727851 - add hash to hash-less color values
             if (given.length() > 0 && given.charAt(0) != '#' && (valid = isValidColorCode(given))) {
             	String s = '#' + given;
-            	lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE_REPLACED);
+            	lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE_REPLACED);
                 given = attval.value = s;
             }
             
@@ -816,7 +816,7 @@ public final class AttrCheckImpl
             	attval.value = attval.value.toLowerCase();
             }
             if (!valid) {
-            	lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+            	lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE);
             }
         }
     }
@@ -887,7 +887,7 @@ public final class AttrCheckImpl
         	// empty xml:lang is allowed through XML 1.0 SE errata
         	if (!attval.hasValue() && !attval.is(AttrId.XML_LANG)) {
         		if (lexer.configuration.getAccessibilityCheckLevel() == 0) {
-        			lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+        			lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
         		}
         		return;
         	}
@@ -912,21 +912,21 @@ public final class AttrCheckImpl
 	            checkAttrValidity(lexer, node, attval, valuesUL);
 	        } else if (node.is(TagId.OL)) {
 	            if (!attval.hasValue()) {
-	            	lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+	            	lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
 	                return;
 	            }
 	            if (!attval.valueIsAmong(valuesOL)) {
-	            	lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+	            	lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE);
 	            }
 	        } else if (node.is(TagId.LI)) {
 	            if (!attval.hasValue()) {
-	            	lexer.report.attrError(lexer, node, attval, Report.MISSING_ATTR_VALUE);
+	            	lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
 	                return;
 	            }
 	            if (attval.valueIsAmong(valuesUL)) {
 	            	attval.checkLowerCaseAttrValue(lexer, node);
 	            } else if (!attval.valueIsAmong(valuesOL)) {
-	            	lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+	            	lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE);
 	            }
 	        }
 	        return;

@@ -63,6 +63,8 @@ import java.util.ResourceBundle;
 import org.w3c.tidy.Node.NodeType;
 import org.w3c.tidy.TidyMessage.Level;
 
+import static org.w3c.tidy.ErrorCode.*;
+
 /**
  * Error/informational message reporter. You should only need to edit the file TidyMessages.properties to localize HTML
  * tidy.
@@ -96,450 +98,6 @@ public final class Report
 		return p.getProperty("date");
     }
 
-    /**
-     * invalid entity: missing semicolon.
-     */
-    public static final short MISSING_SEMICOLON = 1;
-
-    /**
-     * invalid entity: missing semicolon.
-     */
-    public static final short MISSING_SEMICOLON_NCR = 2;
-
-    /**
-     * invalid entity: unknown entity.
-     */
-    public static final short UNKNOWN_ENTITY = 3;
-
-    /**
-     * invalid entity: unescaped ampersand.
-     */
-    public static final short UNESCAPED_AMPERSAND = 4;
-
-    /**
-     * invalid entity: apos undefined in current definition.
-     */
-    public static final short APOS_UNDEFINED = 5;
-
-    /**
-     * missing an end tag.
-     */
-    public static final short MISSING_ENDTAG_FOR = 6;
-
-    /**
-     * missing end tag before.
-     */
-    public static final short MISSING_ENDTAG_BEFORE = 7;
-
-    /**
-     * discarding unexpected element.
-     */
-    public static final short DISCARDING_UNEXPECTED = 8;
-
-    /**
-     * nested emphasis.
-     */
-    public static final short NESTED_EMPHASIS = 9;
-
-    /**
-     * non matching end tag.
-     */
-    public static final short NON_MATCHING_ENDTAG = 10;
-
-    /**
-     * tag not allowed in.
-     */
-    public static final short TAG_NOT_ALLOWED_IN = 11;
-
-    /**
-     * missing start tag.
-     */
-    public static final short MISSING_STARTTAG = 12;
-
-    /**
-     * unexpected end tag.
-     */
-    public static final short UNEXPECTED_ENDTAG = 13;
-
-    /**
-     * unsing br in place of.
-     */
-    public static final short USING_BR_INPLACE_OF = 14;
-
-    /**
-     * inserting tag.
-     */
-    public static final short INSERTING_TAG = 15;
-
-    /**
-     * suspected missing quote.
-     */
-    public static final short SUSPECTED_MISSING_QUOTE = 16;
-
-    /**
-     * missing title element.
-     */
-    public static final short MISSING_TITLE_ELEMENT = 17;
-
-    /**
-     * duplicate frameset.
-     */
-    public static final short DUPLICATE_FRAMESET = 18;
-
-    /**
-     * elments can be nested.
-     */
-    public static final short CANT_BE_NESTED = 19;
-
-    /**
-     * obsolete element.
-     */
-    public static final short OBSOLETE_ELEMENT = 20;
-
-    /**
-     * proprietary element.
-     */
-    public static final short PROPRIETARY_ELEMENT = 21;
-
-    /**
-     * unknown element.
-     */
-    public static final short UNKNOWN_ELEMENT = 22;
-
-    /**
-     * trim empty element.
-     */
-    public static final short TRIM_EMPTY_ELEMENT = 23;
-
-    /**
-     * coerce to end tag.
-     */
-    public static final short COERCE_TO_ENDTAG = 24;
-
-    /**
-     * illegal nesting.
-     */
-    public static final short ILLEGAL_NESTING = 25;
-
-    /**
-     * noframes content.
-     */
-    public static final short NOFRAMES_CONTENT = 26;
-
-    /**
-     * content after body.
-     */
-    public static final short CONTENT_AFTER_BODY = 27;
-
-    /**
-     * inconsistent version.
-     */
-    public static final short INCONSISTENT_VERSION = 28;
-
-    /**
-     * malformed comment.
-     */
-    public static final short MALFORMED_COMMENT = 29;
-
-    /**
-     * bad coment chars.
-     */
-    public static final short BAD_COMMENT_CHARS = 30;
-
-    /**
-     * bad xml comment.
-     */
-    public static final short BAD_XML_COMMENT = 31;
-
-    /**
-     * bad cdata comment.
-     */
-    public static final short BAD_CDATA_CONTENT = 32;
-
-    /**
-     * inconsistent namespace.
-     */
-    public static final short INCONSISTENT_NAMESPACE = 33;
-
-    /**
-     * doctype after tags.
-     */
-    public static final short DOCTYPE_AFTER_TAGS = 34;
-
-    /**
-     * malformed doctype.
-     */
-    public static final short MALFORMED_DOCTYPE = 35;
-
-    /**
-     * unexpected end of file.
-     */
-    public static final short UNEXPECTED_END_OF_FILE = 36;
-
-    /**
-     * doctype not upper case.
-     */
-    public static final short DTYPE_NOT_UPPER_CASE = 37;
-
-    /**
-     * too many element.
-     */
-    public static final short TOO_MANY_ELEMENTS = 38;
-
-    /**
-     * unescaped element.
-     */
-    public static final short UNESCAPED_ELEMENT = 39;
-
-    /**
-     * nested quotation.
-     */
-    public static final short NESTED_QUOTATION = 40;
-
-    /**
-     * element not empty.
-     */
-    public static final short ELEMENT_NOT_EMPTY = 41;
-
-    /**
-     * encoding IO conflict.
-     */
-    public static final short ENCODING_IO_CONFLICT = 42;
-
-    /**
-     * mixed content in block.
-     */
-    public static final short MIXED_CONTENT_IN_BLOCK = 43;
-
-    /**
-     * missing doctype.
-     */
-    public static final short MISSING_DOCTYPE = 44;
-
-    /**
-     * space preceding xml declaration.
-     */
-    public static final short SPACE_PRECEDING_XMLDECL = 45;
-
-    /**
-     * too many elements in.
-     */
-    public static final short TOO_MANY_ELEMENTS_IN = 46;
-
-    /**
-     * unexpected endag in.
-     */
-    public static final short UNEXPECTED_ENDTAG_IN = 47;
-
-    /**
-     * replacing element.
-     */
-    public static final short REPLACING_ELEMENT = 83;
-
-    /**
-     * replacing unexcaped element.
-     */
-    public static final short REPLACING_UNEX_ELEMENT = 84;
-
-    /**
-     * coerce to endtag.
-     */
-    public static final short COERCE_TO_ENDTAG_WARN = 85;
-
-    /**
-     * attribute: unknown attribute.
-     */
-    public static final short UNKNOWN_ATTRIBUTE = 48;
-
-    /**
-     * attribute: missing attribute.
-     */
-    public static final short MISSING_ATTRIBUTE = 49;
-
-    /**
-     * attribute: missing attribute value.
-     */
-    public static final short MISSING_ATTR_VALUE = 50;
-
-    /**
-     * attribute: bad attribute value.
-     */
-    public static final short BAD_ATTRIBUTE_VALUE = 51;
-
-    /**
-     * attribute: unexpected gt.
-     */
-    public static final short UNEXPECTED_GT = 52;
-
-    /**
-     * attribute: proprietary attribute.
-     */
-    public static final short PROPRIETARY_ATTRIBUTE = 53;
-
-    /**
-     * attribute: proprietary attribute value.
-     */
-    public static final short PROPRIETARY_ATTR_VALUE = 54;
-
-    /**
-     * attribute: repeated attribute.
-     */
-    public static final short REPEATED_ATTRIBUTE = 55;
-
-    /**
-     * attribute: missing image map.
-     */
-    public static final short MISSING_IMAGEMAP = 56;
-
-    /**
-     * attribute: xml attribute value.
-     */
-    public static final short XML_ATTRIBUTE_VALUE = 57;
-
-    /**
-     * attribute: missing quotemark.
-     */
-    public static final short MISSING_QUOTEMARK = 58;
-
-    /**
-     * attribute: unexpected quotemark.
-     */
-    public static final short UNEXPECTED_QUOTEMARK = 59;
-
-    /**
-     * attribute: id and name mismatch.
-     */
-    public static final short ID_NAME_MISMATCH = 60;
-
-    /**
-     * attribute: backslash in URI.
-     */
-    public static final short BACKSLASH_IN_URI = 61;
-
-    /**
-     * attribute: fixed backslash.
-     */
-    public static final short FIXED_BACKSLASH = 62;
-
-    /**
-     * attribute: illegal URI reference.
-     */
-    public static final short ILLEGAL_URI_REFERENCE = 63;
-
-    /**
-     * attribute: escaped illegal URI.
-     */
-    public static final short ESCAPED_ILLEGAL_URI = 64;
-
-    /**
-     * attribute: newline in URI.
-     */
-    public static final short NEWLINE_IN_URI = 65;
-
-    /**
-     * attribute: anchor not unique.
-     */
-    public static final short ANCHOR_NOT_UNIQUE = 66;
-
-    /**
-     * attribute: entity in id.
-     */
-    public static final short ENTITY_IN_ID = 67;
-
-    /**
-     * attribute: joining attribute.
-     */
-    public static final short JOINING_ATTRIBUTE = 68;
-
-    /**
-     * attribute: expected equalsign.
-     */
-    public static final short UNEXPECTED_EQUALSIGN = 69;
-
-    /**
-     * attribute: attribute value not lower case.
-     */
-    public static final short ATTR_VALUE_NOT_LCASE = 70;
-
-    /**
-     * attribute: id sintax.
-     */
-    public static final short XML_ID_SYNTAX = 71;
-
-    /**
-     * attribute: invalid attribute.
-     */
-    public static final short INVALID_ATTRIBUTE = 72;
-
-    /**
-     * attribute: bad attribute value replaced.
-     */
-    public static final short BAD_ATTRIBUTE_VALUE_REPLACED = 73;
-
-    /**
-     * attribute: invalid xml id.
-     */
-    public static final short INVALID_XML_ID = 74;
-
-    /**
-     * attribute: unexpected end of file.
-     */
-    public static final short UNEXPECTED_END_OF_FILE_ATTR = 75;
-
-    /**
-     * character encoding: vendor specific chars.
-     */
-    public static final short VENDOR_SPECIFIC_CHARS = 76;
-
-    /**
-     * character encoding: invalid sgml chars.
-     */
-    public static final short INVALID_SGML_CHARS = 77;
-
-    /**
-     * character encoding: invalid utf8.
-     */
-    public static final short INVALID_UTF8 = 78;
-
-    /**
-     * character encoding: invalid utf16.
-     */
-    public static final short INVALID_UTF16 = 79;
-
-    /**
-     * character encoding: encoding mismatch.
-     */
-    public static final short ENCODING_MISMATCH = 80;
-
-    /**
-     * character encoding: nvalid URI.
-     */
-    public static final short INVALID_URI = 81;
-
-    /**
-     * character encoding: invalid NCR.
-     */
-    public static final short INVALID_NCR = 82;
-
-    /**
-     * Constant used for reporting of given doctype.
-     */
-    public static final short DOCTYPE_GIVEN_SUMMARY = 110;
-
-    /**
-     * Constant used for reporting of version summary.
-     */
-    public static final short REPORT_VERSION_SUMMARY = 111;
-
-    /**
-     * Constant used for reporting of bad access summary.
-     */
-    public static final short BADACCESS_SUMMARY = 112;
-
-    /**
-     * Constant used for reporting of bad form summary.
-     */
-    public static final short BADFORM_SUMMARY = 113;
 
     /**
      * accessibility flaw: missing image map.
@@ -617,9 +175,19 @@ public final class Report
     public static final short REPLACED_CHAR = 0;
 
     /**
-     * char has been discarder.
+     * char has been discarded.
      */
     public static final short DISCARDED_CHAR = 1;
+    
+    /* badchar bit field */
+
+    public static final int BC_VENDOR_SPECIFIC_CHARS  = 1;
+    public static final int BC_INVALID_SGML_CHARS     = 2;
+    public static final int BC_INVALID_UTF8           = 4;
+    public static final int BC_INVALID_UTF16          = 8;
+    public static final int BC_ENCODING_MISMATCH      = 16; /* fatal error */
+    public static final int BC_INVALID_URI            = 32;
+    public static final int BC_INVALID_NCR            = 64;
 
     /**
      * Resource bundle with messages.
@@ -703,6 +271,10 @@ public final class Report
      * <code>TidyMessage.LEVEL_WARNING</code>,<code>TidyMessage.LEVEL_INFO</code>
      * @see TidyMessage
      */
+    private void printMessage(final ErrorCode errorCode, final Lexer lexer, final String message, final Object[] params, final Level level) {
+    	printMessage(errorCode.code(), lexer, message, params, level);
+    }
+    
     private void printMessage(int errorCode, Lexer lexer, String message, Object[] params, Level level)
     {
         String resource;
@@ -861,7 +433,7 @@ public final class Report
      * @param code error code
      * @param c invalid char
      */
-    public void encodingError(Lexer lexer, int code, int c)
+    public void encodingError(Lexer lexer, ErrorCode code, int c, int replaceMode)
     {
         lexer.warnings++;
 
@@ -875,10 +447,10 @@ public final class Report
             String buf = Integer.toHexString(c);
 
             // An encoding mismatch is currently treated as a non-fatal error
-            switch(code & ~DISCARDED_CHAR) {
+            switch(code) {
             case ENCODING_MISMATCH:
                 // actual encoding passed in "c"
-                lexer.badChars |= ENCODING_MISMATCH;
+                lexer.badChars |= BC_ENCODING_MISMATCH;
                 printMessage(
                     code,
                     lexer,
@@ -889,48 +461,48 @@ public final class Report
                     Level.WARNING);
                 break;
             case VENDOR_SPECIFIC_CHARS:
-                lexer.badChars |= VENDOR_SPECIFIC_CHARS;
+                lexer.badChars |= BC_VENDOR_SPECIFIC_CHARS;
                 printMessage(
                     code,
                     lexer,
                     "invalid_char",
-                    new Object[]{new Integer(code & DISCARDED_CHAR), buf},
+                    new Object[]{replaceMode, buf},
                     Level.WARNING);
                 break;
             case INVALID_SGML_CHARS:
-                lexer.badChars |= INVALID_SGML_CHARS;
+                lexer.badChars |= BC_INVALID_SGML_CHARS;
                 printMessage(
                     code,
                     lexer,
                     "invalid_char",
-                    new Object[]{new Integer(code & DISCARDED_CHAR), buf},
+                    new Object[]{replaceMode, buf},
                     Level.WARNING);
                 break;
             case INVALID_UTF8:
-                lexer.badChars |= INVALID_UTF8;
+                lexer.badChars |= BC_INVALID_UTF8;
                 printMessage(
                     code,
                     lexer,
                     "invalid_utf8",
-                    new Object[]{new Integer(code & DISCARDED_CHAR), buf},
+                    new Object[]{replaceMode, buf},
                     Level.WARNING);
                 break;
             case INVALID_UTF16:
-                lexer.badChars |= INVALID_UTF16;
+                lexer.badChars |= BC_INVALID_UTF16;
                 printMessage(
                     code,
                     lexer,
                     "invalid_utf16",
-                    new Object[]{new Integer(code & DISCARDED_CHAR), buf},
+                    new Object[]{replaceMode, buf},
                     Level.WARNING);
                 break;
             case INVALID_NCR:
-                lexer.badChars |= INVALID_NCR;
+                lexer.badChars |= BC_INVALID_NCR;
                 printMessage(
                     code,
                     lexer,
                     "invalid_ncr",
-                    new Object[]{new Integer(code & DISCARDED_CHAR), buf},
+                    new Object[]{replaceMode, buf},
                     Level.WARNING);
                 break;
             }
@@ -944,7 +516,7 @@ public final class Report
      * @param entity invalid entity String
      * @param c invalid char
      */
-    public void entityError(Lexer lexer, short code, String entity, int c)
+    public void entityError(Lexer lexer, ErrorCode code, String entity, int c)
     {
         lexer.warnings++;
 
@@ -986,7 +558,7 @@ public final class Report
      * @param attribute attribute
      * @param code error code
      */
-    public void attrError(Lexer lexer, Node node, AttVal attribute, short code)
+    public void attrError(Lexer lexer, Node node, AttVal attribute, ErrorCode code)
     {
         if (code == UNEXPECTED_GT)
         {
@@ -1175,7 +747,7 @@ public final class Report
      * @param node current tag
      * @param code error code
      */
-    public void warning(Lexer lexer, Node element, Node node, short code)
+    public void warning(Lexer lexer, Node element, Node node, ErrorCode code)
     {
         if (!((code == DISCARDING_UNEXPECTED) && lexer.badForm != 0)) // lexer->errors++; already done in BadForm()
         {
@@ -1428,7 +1000,7 @@ public final class Report
      * @param node current tag
      * @param code error code
      */
-    public void error(Lexer lexer, Node element, Node node, short code)
+    public void error(Lexer lexer, Node element, Node node, ErrorCode code)
     {
         lexer.errors++;
 
@@ -1482,7 +1054,7 @@ public final class Report
         }
         if (lexer.badChars != 0)
         {
-            if ((lexer.badChars & VENDOR_SPECIFIC_CHARS) != 0)
+            if ((lexer.badChars & BC_VENDOR_SPECIFIC_CHARS) != 0)
             {
                 int encodingChoiche = 0;
 
@@ -1499,7 +1071,7 @@ public final class Report
                     encodingChoiche)}, null);
             }
 
-            if ((lexer.badChars & INVALID_SGML_CHARS) != 0 || (lexer.badChars & INVALID_NCR) != 0)
+            if ((lexer.badChars & BC_INVALID_SGML_CHARS) != 0 || (lexer.badChars & BC_INVALID_NCR) != 0)
             {
                 int encodingChoiche = 0;
 
@@ -1516,17 +1088,17 @@ public final class Report
                     encodingChoiche)}, null);
             }
 
-            if ((lexer.badChars & INVALID_UTF8) != 0)
+            if ((lexer.badChars & BC_INVALID_UTF8) != 0)
             {
                 printMessage(INVALID_UTF8, lexer, "invalid_utf8_summary", null, null);
             }
 
-            if ((lexer.badChars & INVALID_UTF16) != 0)
+            if ((lexer.badChars & BC_INVALID_UTF16) != 0)
             {
                 printMessage(INVALID_UTF16, lexer, "invalid_utf16_summary", null, null);
             }
 
-            if ((lexer.badChars & INVALID_URI) != 0)
+            if ((lexer.badChars & BC_INVALID_URI) != 0)
             {
                 printMessage(INVALID_URI, lexer, "invaliduri_summary", null, null);
             }
@@ -1707,14 +1279,14 @@ public final class Report
             }
 
             simpleMessage(
-                DOCTYPE_GIVEN_SUMMARY,
+                DOCTYPE_GIVEN_SUMMARY.code(),
                 lexer,
                 "doctype_given",
                 new Object[]{doctypeBuffer},
                 Level.INFO);
         }
 
-        simpleMessage(REPORT_VERSION_SUMMARY, lexer, "report_version", new Object[]{
+        simpleMessage(REPORT_VERSION_SUMMARY.code(), lexer, "report_version", new Object[]{
             (vers != null ? vers : "HTML Proprietary")}, Level.INFO);
         if (lexer.warnMissingSIInEmittedDocType()) {
         	simpleMessage(-1, lexer, "no_si", null, Level.INFO);

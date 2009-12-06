@@ -741,7 +741,7 @@ public class Lexer
 
         if ("&apos".equals(str) && !configuration.isXmlOut() && !this.isvoyager && !configuration.isXHTML())
         {
-            report.entityError(this, Report.APOS_UNDEFINED, str, 39);
+            report.entityError(this, ErrorCode.APOS_UNDEFINED, str, 39);
         }
 
         ch = EntityTable.getDefaultEntityTable().entityCode(str);
@@ -787,10 +787,10 @@ public class Lexer
 
                     if (c != ';') /* issue warning if not terminated by ';' */
                     {
-                        report.entityError(this, Report.MISSING_SEMICOLON_NCR, str, c);
+                        report.entityError(this, ErrorCode.MISSING_SEMICOLON_NCR, str, c);
                     }
 
-                    report.encodingError(this, (short) (Report.INVALID_NCR | replaceMode), ch);
+                    report.encodingError(this, ErrorCode.INVALID_NCR, ch, replaceMode);
 
                     if (c1 != 0)
                     {
@@ -809,7 +809,7 @@ public class Lexer
                 }
                 else
                 {
-                    report.entityError(this, Report.UNKNOWN_ENTITY, str, ch);
+                    report.entityError(this, ErrorCode.UNKNOWN_ENTITY, str, ch);
                 }
 
                 if (semicolon)
@@ -820,7 +820,7 @@ public class Lexer
             else
             {
                 // naked &
-                report.entityError(this, Report.UNESCAPED_AMPERSAND, str, ch);
+                report.entityError(this, ErrorCode.UNESCAPED_AMPERSAND, str, ch);
             }
         }
         else
@@ -831,7 +831,7 @@ public class Lexer
                 // set error position just before offending character
                 this.lines = this.in.getCurline();
                 this.columns = startcol;
-                report.entityError(this, Report.MISSING_SEMICOLON, str, c);
+                report.entityError(this, ErrorCode.MISSING_SEMICOLON, str, c);
             }
 
             this.lexsize = start;
@@ -1131,7 +1131,7 @@ public class Lexer
             {
                 if (!attr.value.equals(profile))
                 {
-                    report.warning(this, node, null, Report.INCONSISTENT_NAMESPACE);
+                    report.warning(this, node, null, ErrorCode.INCONSISTENT_NAMESPACE);
                     attr.value = profile;
                 }
             }
@@ -1622,7 +1622,7 @@ public class Lexer
                 	lines = in.getCurline();
                     columns = in.getCurcol();
                     columns -= 3;
-                    report.error(this, null, null, Report.BAD_CDATA_CONTENT);
+                    report.error(this, null, null, ErrorCode.BAD_CDATA_CONTENT);
 
                     /* if javascript insert backslash before / */
                     if (container.isJavaScript()) {
@@ -1642,7 +1642,7 @@ public class Lexer
             txtend = lexsize;
         }
         if (c == StreamIn.END_OF_STREAM) {
-            report.error(this, container, null, Report.MISSING_ENDTAG_FOR);
+            report.error(this, container, null, ErrorCode.MISSING_ENDTAG_FOR);
         }
 	    /* this was disabled for some reason... */
 //	    #if 0
@@ -1880,7 +1880,7 @@ public class Lexer
                                 continue;
                             }
 
-                            report.warning(this, null, null, Report.MALFORMED_COMMENT);
+                            report.warning(this, null, null, ErrorCode.MALFORMED_COMMENT);
                         }
                         else if (c == 'd' || c == 'D')
                         {
@@ -2083,7 +2083,7 @@ public class Lexer
                     if (c == StreamIn.END_OF_STREAM)
                     {
                         this.in.ungetChar(c);
-                        report.attrError(this, this.token, null, Report.UNEXPECTED_GT);
+                        report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_GT);
                         continue;
                     }
 
@@ -2091,7 +2091,7 @@ public class Lexer
                     if (c != '>') {
                         this.in.ungetChar(c);
                         c = '>';
-                        report.attrError(this, this.token, null, Report.UNEXPECTED_GT);
+                        report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_GT);
                     }
 
                     this.state = LEX_CONTENT;
@@ -2169,7 +2169,7 @@ public class Lexer
 
                     if (this.token.tag == null)
                     {
-                        report.error(this, null, this.token, Report.UNKNOWN_ELEMENT);
+                        report.error(this, null, this.token, ErrorCode.UNKNOWN_ELEMENT);
                     }
                     else if (!this.configuration.isXmlTags())
                     {
@@ -2181,12 +2181,12 @@ public class Lexer
                             if (this.configuration.isMakeClean() && (!this.token.is(TagId.NOBR) && //
                                 !this.token.is(TagId.WBR)))
                             {
-                                report.warning(this, null, this.token, Report.PROPRIETARY_ELEMENT);
+                                report.warning(this, null, this.token, ErrorCode.PROPRIETARY_ELEMENT);
                             }
                             // #427810 - fix by Terry Teague 2 Jul 01
                             else if (!this.configuration.isMakeClean())
                             {
-                                report.warning(this, null, this.token, Report.PROPRIETARY_ELEMENT);
+                                report.warning(this, null, this.token, ErrorCode.PROPRIETARY_ELEMENT);
                             }
                         }
 
@@ -2230,7 +2230,7 @@ public class Lexer
                         {
                             if (badcomment != 0)
                             {
-                                report.warning(this, null, null, Report.MALFORMED_COMMENT);
+                                report.warning(this, null, null, ErrorCode.MALFORMED_COMMENT);
                             }
 
                             this.txtend = this.lexsize - 2; // AQ 8Jul2000
@@ -2346,7 +2346,7 @@ public class Lexer
 
                         if (c == StreamIn.END_OF_STREAM)
                         {
-                            report.warning(this, null, null, Report.UNEXPECTED_END_OF_FILE);
+                            report.warning(this, null, null, ErrorCode.UNEXPECTED_END_OF_FILE);
                             this.in.ungetChar(c);
                             continue;
                         }
@@ -2582,7 +2582,7 @@ public class Lexer
         {
             if (c == StreamIn.END_OF_STREAM)
             {
-                report.warning(this, null, null, Report.MALFORMED_COMMENT);
+                report.warning(this, null, null, ErrorCode.MALFORMED_COMMENT);
             }
 
             this.txtend = this.lexsize;
@@ -2751,25 +2751,25 @@ public class Lexer
                 {
                     this.in.ungetChar('<'); // fix for 433360
                 }
-                report.attrError(this, this.token, null, Report.UNEXPECTED_GT);
+                report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_GT);
                 return null;
             }
 
             if (c == '=')
             {
-                report.attrError(this, this.token, null, Report.UNEXPECTED_EQUALSIGN);
+                report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_EQUALSIGN);
                 continue;
             }
 
             if (c == '"' || c == '\'')
             {
-                report.attrError(this, this.token, null, Report.UNEXPECTED_QUOTEMARK);
+                report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_QUOTEMARK);
                 continue;
             }
 
             if (c == StreamIn.END_OF_STREAM)
             {
-                report.attrError(this, this.token, null, Report.UNEXPECTED_END_OF_FILE);
+                report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_END_OF_FILE);
                 this.in.ungetChar(c);
                 return null;
             }
@@ -2893,14 +2893,14 @@ public class Lexer
 
                     if (endOfInput()) // #427840 - fix by Terry Teague 30 Jun 01
                     {
-                        report.attrError(this, this.token, null, Report.UNEXPECTED_END_OF_FILE);
+                        report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_END_OF_FILE);
                         this.in.ungetChar(c);
                         return 0;
                     }
                     if (c == '>') // #427840 - fix by Terry Teague 30 Jun 01
                     {
                         this.in.ungetChar(c);
-                        report.attrError(this, this.token, null, Report.UNEXPECTED_GT);
+                        report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_GT);
                         return 0;
                     }
 
@@ -2919,14 +2919,14 @@ public class Lexer
 
                     if (endOfInput()) // #427840 - fix by Terry Teague 30 Jun 01
                     {
-                        report.attrError(this, this.token, null, Report.UNEXPECTED_END_OF_FILE);
+                        report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_END_OF_FILE);
                         this.in.ungetChar(c);
                         return 0;
                     }
                     if (c == '>') // #427840 - fix by Terry Teague 30 Jun 01
                     {
                         this.in.ungetChar(c);
-                        report.attrError(this, this.token, null, Report.UNEXPECTED_GT);
+                        report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_GT);
                         return 0;
                     }
 
@@ -3047,7 +3047,7 @@ public class Lexer
 
             if (c == StreamIn.END_OF_STREAM)
             {
-                report.attrError(this, this.token, null, Report.UNEXPECTED_END_OF_FILE);
+                report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_END_OF_FILE);
                 this.in.ungetChar(c);
                 break;
             }
@@ -3063,7 +3063,7 @@ public class Lexer
                 if (c == '"' || c == '\'')
                 {
                     int q = c;
-                    report.attrError(this, this.token, null, Report.UNEXPECTED_QUOTEMARK);
+                    report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_QUOTEMARK);
                     
                     /* handle <input onclick=s("btn1")> and <a title=foo""">...</a> */
                     /* this doesn't handle <a title=foo"/> which browsers treat as  */
@@ -3085,7 +3085,7 @@ public class Lexer
                     this.in.ungetChar(c); // fix for 433360
                     c = '>';
                     this.in.ungetChar(c);
-                    report.attrError(this, this.token, null, Report.UNEXPECTED_GT);
+                    report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_GT);
                     break;
                 }
 
@@ -3147,7 +3147,7 @@ public class Lexer
                 // no entities in ID attributes
                 if ("id".equalsIgnoreCase(name))
                 {
-                    report.attrError(this, null, null, Report.ENTITY_IN_ID);
+                    report.attrError(this, null, null, ErrorCode.ENTITY_IN_ID);
                     continue;
                 }
 
@@ -3184,7 +3184,7 @@ public class Lexer
                     if (c == '\n' && AttributeTable.getDefaultAttributeTable().isUrl(name))
                     {
                         // warn that we discard this newline
-                        report.attrError(this, this.token, null, Report.NEWLINE_IN_URI);
+                        report.attrError(this, this.token, null, ErrorCode.NEWLINE_IN_URI);
                         continue;
                     }
 
@@ -3218,7 +3218,7 @@ public class Lexer
                 && !"<xml ".equals(TidyUtils.getString(this.lexbuf, start, 5))) // #500236 - fix by Klaus Johannes Rusch
             // 06 Jan 02
             {
-                report.error(this, null, null, Report.SUSPECTED_MISSING_QUOTE);
+                report.error(this, null, null, ErrorCode.SUSPECTED_MISSING_QUOTE);
             }
         }
 
@@ -3407,15 +3407,15 @@ public class Lexer
                 // #427664 - fix by Gary Peskin 04 Aug 00; other fixes by Dave Raggett
                 if (value != null)
                 {
-                    report.attrError(this, this.token, av, Report.BAD_ATTRIBUTE_VALUE);
+                    report.attrError(this, this.token, av, ErrorCode.BAD_ATTRIBUTE_VALUE);
                 }
                 else if (TidyUtils.lastChar(attribute) == '"')
                 {
-                    report.attrError(this, this.token, av, Report.MISSING_QUOTEMARK);
+                    report.attrError(this, this.token, av, ErrorCode.MISSING_QUOTEMARK);
                 }
                 else
                 {
-                    report.attrError(this, this.token, av, Report.UNKNOWN_ATTRIBUTE);
+                    report.attrError(this, this.token, av, ErrorCode.UNKNOWN_ATTRIBUTE);
                 }
             }
         }
@@ -3716,7 +3716,7 @@ public class Lexer
             {
                 if (id.value != null && !id.value.equals(name.value))
                 {
-                    report.attrError(this, node, name, Report.ID_NAME_MISMATCH);
+                    report.attrError(this, node, name, ErrorCode.ID_NAME_MISMATCH);
                 }
             }
             else if (this.configuration.isXmlOut())
@@ -3869,7 +3869,7 @@ public class Lexer
                     	AttrCheckImpl.URL.check(this, node, si);
                     }
                     if (node.element == null || !TidyUtils.isValidXMLID(node.element)) {
-                        report.error(this, null, null, Report.MALFORMED_DOCTYPE);
+                        report.error(this, null, null, ErrorCode.MALFORMED_DOCTYPE);
                         return null;
                     }
 //    #ifdef TIDY_STORE_ORIGINAL_TEXT
@@ -3938,7 +3938,7 @@ public class Lexer
         }
 
         /* document type declaration not finished */
-        report.error(this, null, null, Report.MALFORMED_DOCTYPE);
+        report.error(this, null, null, ErrorCode.MALFORMED_DOCTYPE);
         return null;
     }
 }

@@ -254,7 +254,7 @@ public class AttVal extends Object implements Cloneable
         {
             if (lexer.isvoyager)
             {
-                lexer.report.attrError(lexer, node, this, Report.ATTR_VALUE_NOT_LCASE);
+                lexer.report.attrError(lexer, node, this, ErrorCode.ATTR_VALUE_NOT_LCASE);
             }
 
             if (lexer.isvoyager || lexer.configuration.isLowerLiterals())
@@ -283,7 +283,7 @@ public class AttVal extends Object implements Cloneable
             {
                 if (!(lexer.configuration.isXmlTags() || lexer.configuration.isXmlOut()))
                 {
-                    lexer.report.attrError(lexer, node, this, Report.XML_ATTRIBUTE_VALUE);
+                    lexer.report.attrError(lexer, node, this, ErrorCode.XML_ATTRIBUTE_VALUE);
                 }
             }
             // title first appeared in HTML 4.0 except for a/link
@@ -298,7 +298,7 @@ public class AttVal extends Object implements Cloneable
             }
             else if (TidyUtils.toBoolean(this.dict.getVersions() & VERS_PROPRIETARY))
             {
-                lexer.report.attrError(lexer, node, this, Report.PROPRIETARY_ATTRIBUTE);
+                lexer.report.attrError(lexer, node, this, ErrorCode.PROPRIETARY_ATTRIBUTE);
             }
 
         }
@@ -307,7 +307,7 @@ public class AttVal extends Object implements Cloneable
             && this.asp == null
             && !(node.tag != null && (TidyUtils.toBoolean(node.tag.versions & VERS_PROPRIETARY))))
         {
-            lexer.report.attrError(lexer, node, this, Report.UNKNOWN_ATTRIBUTE);
+            lexer.report.attrError(lexer, node, this, ErrorCode.UNKNOWN_ATTRIBUTE);
         }
 
         return attr;

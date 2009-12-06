@@ -307,7 +307,7 @@ public class Node {
                                 current = current.next;
                             }
 
-                            lexer.report.attrError(lexer, this, attval, Report.JOINING_ATTRIBUTE);
+                            lexer.report.attrError(lexer, this, attval, ErrorCode.JOINING_ATTRIBUTE);
 
                             removeAttribute(attval);
                             attval = temp;
@@ -348,7 +348,7 @@ public class Node {
                                 current = current.next;
                             }
 
-                            lexer.report.attrError(lexer, this, attval, Report.JOINING_ATTRIBUTE);
+                            lexer.report.attrError(lexer, this, attval, ErrorCode.JOINING_ATTRIBUTE);
 
                             removeAttribute(attval);
                             attval = temp;
@@ -358,7 +358,7 @@ public class Node {
                         {
                             temp = current.next;
 
-                            lexer.report.attrError(lexer, this, current, Report.REPEATED_ATTRIBUTE);
+                            lexer.report.attrError(lexer, this, current, ErrorCode.REPEATED_ATTRIBUTE);
 
                             removeAttribute(current);
                             current = temp;
@@ -376,7 +376,7 @@ public class Node {
                                 current = current.next;
                             }
 
-                            lexer.report.attrError(lexer, this, attval, Report.REPEATED_ATTRIBUTE);
+                            lexer.report.attrError(lexer, this, attval, ErrorCode.REPEATED_ATTRIBUTE);
 
                             removeAttribute(attval);
                             attval = temp;
@@ -683,7 +683,7 @@ public class Node {
             {
                 if (element.type != NodeType.TextNode)
                 {
-                    lexer.report.warning(lexer, element, null, Report.TRIM_EMPTY_ELEMENT);
+                    lexer.report.warning(lexer, element, null, ErrorCode.TRIM_EMPTY_ELEMENT);
                 }
 
                 discardElement(element);
@@ -932,7 +932,7 @@ public class Node {
      */
     public static void insertDocType(Lexer lexer, Node element, Node doctype)
     {
-        lexer.report.warning(lexer, element, doctype, Report.DOCTYPE_AFTER_TAGS);
+        lexer.report.warning(lexer, element, doctype, ErrorCode.DOCTYPE_AFTER_TAGS);
 
         while (!element.is(TagId.HTML))
         {
@@ -1048,7 +1048,7 @@ public class Node {
         {
             cell = lexer.inferredTag(TagId.TD);
             row.insertNodeAtEnd(cell);
-            lexer.report.warning(lexer, row, cell, Report.MISSING_STARTTAG);
+            lexer.report.warning(lexer, row, cell, ErrorCode.MISSING_STARTTAG);
         }
     }
 
@@ -1061,7 +1061,7 @@ public class Node {
     public static void coerceNode(final Lexer lexer, final Node node, final TagId tid) {
     	final Dict tag = lexer.configuration.tt.lookup(tid);
         Node tmp = lexer.inferredTag(tag.id);
-        lexer.report.warning(lexer, node, tmp, Report.OBSOLETE_ELEMENT);
+        lexer.report.warning(lexer, node, tmp, ErrorCode.OBSOLETE_ELEMENT);
         node.was = node.tag;
         node.tag = tag;
         node.type = NodeType.StartTag;

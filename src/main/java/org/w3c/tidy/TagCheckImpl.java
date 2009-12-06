@@ -207,7 +207,7 @@ public final class TagCheckImpl
             if (type == null)
             {
                 AttVal missingType = new AttVal(null, null, '"', "type", "");
-                lexer.report.attrError(lexer, node, missingType, Report.MISSING_ATTRIBUTE);
+                lexer.report.attrError(lexer, node, missingType, ErrorCode.MISSING_ATTRIBUTE);
 
                 // check for javascript
                 if (lang != null)
@@ -253,7 +253,7 @@ public final class TagCheckImpl
 
                 // summary is not required, should be only an accessibility warning
                 // AttVal missingSummary = new AttVal(null, null, '"', "summary", "");
-                // lexer.report.attrError(lexer, node, missingSummary, Report.MISSING_ATTRIBUTE);
+                // lexer.report.attrError(lexer, node, missingSummary, ErrorCode.MISSING_ATTRIBUTE);
             }
 
             /* convert <table border> to <table border="1"> */
@@ -272,7 +272,7 @@ public final class TagCheckImpl
             /* <table height="..."> is proprietary */
             if ((attval = node.getAttrByName("height")) != null)
             {
-                lexer.report.attrError(lexer, node, attval, Report.PROPRIETARY_ATTRIBUTE);
+                lexer.report.attrError(lexer, node, attval, ErrorCode.PROPRIETARY_ATTRIBUTE);
                 lexer.versions &= VERS_PROPRIETARY;
             }
 
@@ -317,7 +317,7 @@ public final class TagCheckImpl
                 }
                 else
                 {
-                    lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
+                    lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE);
                 }
             }
         }
@@ -341,7 +341,7 @@ public final class TagCheckImpl
 
             if (av != null)
             {
-                lexer.report.attrError(lexer, node, av, Report.PROPRIETARY_ATTR_VALUE);
+                lexer.report.attrError(lexer, node, av, ErrorCode.PROPRIETARY_ATTR_VALUE);
             }
         }
     }
@@ -367,7 +367,7 @@ public final class TagCheckImpl
             {
                 lexer.badAccess |= Report.MISSING_IMAGE_ALT;
                 AttVal missingAlt = new AttVal(null, null, '"', "alt", "");
-                lexer.report.attrError(lexer, node, missingAlt, Report.MISSING_ATTRIBUTE);
+                lexer.report.attrError(lexer, node, missingAlt, ErrorCode.MISSING_ATTRIBUTE);
                 if (lexer.configuration.getAltText() != null)
                 {
                     node.addAttribute("alt", lexer.configuration.getAltText());
@@ -377,13 +377,13 @@ public final class TagCheckImpl
             if (!hasSrc && !hasDataFld)
             {
                 AttVal missingSrc = new AttVal(null, null, '"', "src", "");
-                lexer.report.attrError(lexer, node, missingSrc, Report.MISSING_ATTRIBUTE);
+                lexer.report.attrError(lexer, node, missingSrc, ErrorCode.MISSING_ATTRIBUTE);
             }
 
             if (hasIsMap && !hasUseMap)
             {
                 AttVal missingIsMap = new AttVal(null, null, '"', "ismap", "");
-                lexer.report.attrError(lexer, node, missingIsMap, Report.MISSING_IMAGEMAP);
+                lexer.report.attrError(lexer, node, missingIsMap, ErrorCode.MISSING_IMAGEMAP);
             }
         }
 
@@ -408,12 +408,12 @@ public final class TagCheckImpl
             {
                 lexer.badAccess |= Report.MISSING_LINK_ALT;
                 AttVal missingAlt = new AttVal(null, null, '"', "alt", "");
-                lexer.report.attrError(lexer, node, missingAlt, Report.MISSING_ATTRIBUTE);
+                lexer.report.attrError(lexer, node, missingAlt, ErrorCode.MISSING_ATTRIBUTE);
             }
             if (!hasHref && !hasNoHref)
             {
                 AttVal missingHref = new AttVal(null, null, '"', "href", "");
-                lexer.report.attrError(lexer, node, missingHref, Report.MISSING_ATTRIBUTE);
+                lexer.report.attrError(lexer, node, missingHref, ErrorCode.MISSING_ATTRIBUTE);
             }
         }
 
@@ -471,7 +471,7 @@ public final class TagCheckImpl
             if (type == null)
             {
                 AttVal missingType = new AttVal(null, null, '"', "type", "");
-                lexer.report.attrError(lexer, node, missingType, Report.MISSING_ATTRIBUTE);
+                lexer.report.attrError(lexer, node, missingType, ErrorCode.MISSING_ATTRIBUTE);
 
                 node.addAttribute("type", "text/css");
             }
@@ -496,7 +496,7 @@ public final class TagCheckImpl
             if (action == null)
             {
                 AttVal missingAttribute = new AttVal(null, null, '"', "action", "");
-                lexer.report.attrError(lexer, node, missingAttribute, Report.MISSING_ATTRIBUTE);
+                lexer.report.attrError(lexer, node, missingAttribute, ErrorCode.MISSING_ATTRIBUTE);
             }
         }
     }
@@ -519,7 +519,7 @@ public final class TagCheckImpl
             if (content == null)
             {
                 AttVal missingAttribute = new AttVal(null, null, '"', "content", "");
-                lexer.report.attrError(lexer, node, missingAttribute, Report.MISSING_ATTRIBUTE);
+                lexer.report.attrError(lexer, node, missingAttribute, ErrorCode.MISSING_ATTRIBUTE);
             }
 
             // name or http-equiv attribute must also be set
@@ -570,7 +570,7 @@ public final class TagCheckImpl
                 if (type == null)
                 {
                     AttVal missingType = new AttVal(null, null, '"', "type", "");
-                    lexer.report.attrError(lexer, node, missingType, Report.MISSING_ATTRIBUTE);
+                    lexer.report.attrError(lexer, node, missingType, ErrorCode.MISSING_ATTRIBUTE);
 
                     node.addAttribute("type", "text/css");
                 }
