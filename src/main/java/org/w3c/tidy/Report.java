@@ -302,13 +302,13 @@ public final class Report
     /**
      * Prints a message to errout after calling getMessage(). Used when lexer is not yet defined.
      * @param errout PrintWriter
-     * @param message key for the ResourceBundle
      * @param level message level. One of <code>TidyMessage.LEVEL_ERROR</code>,
      * <code>TidyMessage.LEVEL_WARNING</code>,<code>TidyMessage.LEVEL_INFO</code>
+     * @param message key for the ResourceBundle
      * @param params optional parameters added with MessageFormat
      * @see TidyMessage
      */
-    private void printMessage(PrintWriter errout, String message, Level level, Object... params) {
+    private void printMessage(PrintWriter errout, Level level, String message, Object... params) {
         try {
         	errout.println(getMessageLexer(-1, null, level, message, params));
         } catch (MissingResourceException e) {
@@ -321,7 +321,7 @@ public final class Report
      * @param p printWriter
      */
     public void showVersion(final PrintWriter p) {
-        printMessage(p, "version_summary", null, RELEASE_DATE_STRING);
+        printMessage(p, null, "version_summary", RELEASE_DATE_STRING);
     }
 
     /**
@@ -1147,7 +1147,7 @@ public final class Report
      */
     public void unknownOption(PrintWriter errout, char c)
     {
-        printMessage(errout, "unrecognized_option", Level.ERROR, new String(new char[]{c}));
+        printMessage(errout, Level.ERROR, "unrecognized_option", new String(new char[]{c}));
     }
 
     /**
@@ -1157,7 +1157,7 @@ public final class Report
      */
     public void unknownFile(PrintWriter errout, String file)
     {
-        printMessage(errout, "unknown_file", Level.ERROR, "Tidy", file);
+        printMessage(errout, Level.ERROR, "unknown_file", "Tidy", file);
     }
 
     /**
@@ -1166,7 +1166,7 @@ public final class Report
      */
     public void needsAuthorIntervention(PrintWriter errout)
     {
-        printMessage(errout, "needs_author_intervention", null);
+        printMessage(errout, null, "needs_author_intervention");
     }
 
     /**
@@ -1175,7 +1175,7 @@ public final class Report
      */
     public void missingBody(PrintWriter errout)
     {
-        printMessage(errout, "missing_body", Level.ERROR);
+        printMessage(errout, Level.ERROR, "missing_body");
     }
 
     /**
@@ -1185,7 +1185,7 @@ public final class Report
      */
     public void reportNumberOfSlides(PrintWriter errout, int count)
     {
-        printMessage(errout, "slides_found", null, new Integer(count));
+        printMessage(errout, null, "slides_found", new Integer(count));
     }
 
     /**
@@ -1194,7 +1194,7 @@ public final class Report
      */
     public void generalInfo(PrintWriter errout)
     {
-        printMessage(errout, "general_info", null);
+        printMessage(errout, null, "general_info");
     }
 
     /**
@@ -1276,13 +1276,13 @@ public final class Report
         {
             printMessage(
                 errout,
-                "num_warnings",
                 null,
+                "num_warnings",
                 new Integer(lexer.warnings), new Integer(lexer.errors));
         }
         else
         {
-            printMessage(errout, "no_warnings", null);
+            printMessage(errout, null, "no_warnings");
         }
     }
 
@@ -1292,7 +1292,7 @@ public final class Report
      */
     public void helpText(PrintWriter out)
     {
-        printMessage(out, "help_text", null, "Tidy", RELEASE_DATE_STRING);
+        printMessage(out, null, "help_text", "Tidy", RELEASE_DATE_STRING);
     }
 
     /**
@@ -1301,7 +1301,7 @@ public final class Report
      */
     public void badTree(PrintWriter errout)
     {
-        printMessage(errout, "bad_tree", Level.ERROR);
+        printMessage(errout, Level.ERROR, "bad_tree");
     }
 
     /**
