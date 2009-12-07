@@ -676,29 +676,14 @@ public class Node {
      * @param lexer Lexer
      * @param element empty node to be removed
      */
-    public static void trimEmptyElement(Lexer lexer, Node element)
-    {
-        // don't trim if user explicitely set trim-empty-elements to false
-        // empty element can be needed in css sites
-        if (lexer.configuration.isTrimEmpty())
-        {
-            if (lexer.canPrune(element))
-            {
-                if (element.type != NodeType.TextNode)
-                {
-                    lexer.report.warning(lexer, element, null, ErrorCode.TRIM_EMPTY_ELEMENT);
-                }
-
-                discardElement(element);
+    public static Node trimEmptyElement(final Lexer lexer, final Node element) {
+    	if (lexer.canPrune(element)) {
+            if (element.type != NodeType.TextNode) {
+                lexer.report.warning(lexer, element, null, ErrorCode.TRIM_EMPTY_ELEMENT);
             }
-            else if (element.is(TagId.P) && element.content == null)
-            {
-                // replace <p></p> by <br><br> to preserve formatting
-                Node node = lexer.inferredTag(TagId.BR);
-                Node.coerceNode(lexer, element, TagId.BR);
-                element.insertNodeAfterElement(node);
-            }
+            return discardElement(element);
         }
+        return element.next;
     }
 
     /**
