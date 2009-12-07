@@ -1839,7 +1839,9 @@ public final class ParserImpl
                     }
 
                     // and parse contents of center
+                    lexer.excludeBlocks = false;
                     parseTag(lexer, node, mode);
+                    lexer.excludeBlocks = true;
 
                     // now create a new dl element
                     list = lexer.inferredTag(TagId.DL);
