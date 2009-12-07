@@ -245,6 +245,8 @@ public final class TagCheckImpl
         {
             AttVal attval;
             boolean hasSummary = node.getAttrById(AttrId.SUMMARY) != null;
+            
+            node.checkAttributes(lexer);
 
             /* suppress warning for missing summary for HTML 2.0 and HTML 3.2 */
             if (!hasSummary && lexer.doctype != VERS_HTML20 && lexer.doctype != VERS_HTML32)
