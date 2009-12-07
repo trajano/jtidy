@@ -2198,18 +2198,7 @@ public class Lexer
                             }
                         }
 
-                        if (this.token.tag.getChkattrs() != null)
-                        {
-                            this.token.tag.getChkattrs().check(this, this.token);
-                        }
-                        else
-                        {
-                            this.token.checkAttributes(this);
-                        }
-
-                        // should this be called before attribute checks?
                         this.token.repairDuplicateAttributes(this);
-
                     }
 
                     return this.token; // return start tag
