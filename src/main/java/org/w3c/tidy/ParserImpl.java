@@ -3336,6 +3336,128 @@ public final class ParserImpl
         }
         return node;
     }
+    
+    private static boolean isPreDescendant(final Node node) {
+        Node parent = node.parent;
+
+        while (parent != null) {
+            if (parent.tag != null && parent.tag.getParser() == ParserImpl.PRE) {
+                return true;
+            }
+            parent = parent.parent;
+        }
+        return false;
+    }
+    
+    private static boolean cleanTrailingWhitespace(final Lexer lexer, final Node node) {
+        Node next;
+
+        if (!node.isText()) {
+            return false;
+        }
+        if (node.parent.type == NodeType.DocTypeTag) {
+            return false;
+        }
+        if (isPreDescendant(node)) {
+            return false;
+        }
+        if (node.parent.tag != null && node.parent.tag.getParser() == ParserImpl.SCRIPT) {
+            return false;
+        }
+        next = node.next;
+
+        /* <p>... </p> */
+        if (next == null && !node.parent.hasCM(Dict.CM_INLINE)) {
+            return true;
+        }
+        /* <div><small>... </small><h3>...</h3></div> */
+        if (next == null && node.parent.next != null && !node.parent.next.hasCM(Dict.CM_INLINE)) {
+            return true;
+        }
+        if (next == null) {
+            return false;
+        }
+        if (next.is(TagId.BR)) {
+            return true;
+        }
+        if (next.hasCM(Dict.CM_INLINE)) {
+            return false;
+        }
+        /* <a href='/'>...</a> <p>...</p> */
+        if (next.type == NodeType.StartTag) {
+            return true;
+        }
+        /* <strong>...</strong> <hr /> */
+        if (next.type == NodeType.StartEndTag) {
+            return true;
+        }
+        /* evil adjacent text nodes, Tidy should not generate these :-( */
+        if (next.isText() && next.start < next.end
+            && TidyUtils.isWhite((char) lexer.lexbuf[next.start])) {
+            return true;
+        }
+        return false;
+    }
+
+    private static boolean cleanLeadingWhitespace(final Node node) {
+        if (!node.isText()) {
+            return false;
+        }
+        if (node.parent.type == NodeType.DocTypeTag) {
+            return false;
+        }
+        if (isPreDescendant(node)) {
+            return false;
+        }
+        if (node.parent.tag != null && node.parent.tag.getParser() == ParserImpl.SCRIPT) {
+            return false;
+        }
+        /* <p>...<br> <em>...</em>...</p> */
+        if (node.prev != null && node.prev.is(TagId.BR)) {
+            return true;
+        }
+        /* <p> ...</p> */
+        if (node.prev == null && !node.parent.hasCM(Dict.CM_INLINE)) {
+            return true;
+        }
+        /* <h4>...</h4> <em>...</em> */
+        if (node.prev != null && !node.prev.hasCM(Dict.CM_INLINE) && node.prev.isElement()) {
+            return true;
+        }
+        /* <p><span> ...</span></p> */
+        if (node.prev == null && node.parent.prev == null && !node.parent.parent.hasCM(Dict.CM_INLINE)) {
+            return true;
+        }
+        return false;
+    }
+    
+    private static void cleanSpaces(final Lexer lexer, Node node) {
+        Node next;
+
+        while (node != null) {
+            next = node.next;
+
+            if (node.isText() && cleanLeadingWhitespace(node)) {
+                while (node.start < node.end && TidyUtils.isWhite((char) lexer.lexbuf[node.start])) {
+                    ++(node.start);
+                }
+            }
+            if (node.isText() && cleanTrailingWhitespace(lexer, node)) {
+                while (node.end > node.start && TidyUtils.isWhite((char) lexer.lexbuf[node.end - 1])) {
+                    --(node.end);
+                }
+            }
+            if (node.isText() && !(node.start < node.end)) {
+            	node.removeNode();
+                node = next;
+                continue;
+            }
+            if (node.content != null) {
+                cleanSpaces(lexer, node.content);
+            }
+            node = next;
+        }
+    }
 
     /**
      * HTML is the top level element.
@@ -3413,6 +3535,7 @@ public final class ParserImpl
         
         attributeChecks(lexer, lexer.root);
         dropEmptyElements(lexer, lexer.root);
+        cleanSpaces(lexer, lexer.root);
 
         return document;
     }
