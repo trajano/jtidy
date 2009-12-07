@@ -1480,4 +1480,37 @@ public class Node {
             /**/;
         return node;
     }
+    
+    protected int getAttributeVersions(final AttVal attval) {
+    	if (attval == null || attval.dict == null) {
+            return Versions.VERS_UNKNOWN;
+    	}
+        if (tag == null || tag.attrvers == null) {
+            return attval.dict.getVersions();
+        }
+        if (tag.attrvers.containsKey(attval.dict.id)) {
+        	return tag.attrvers.get(attval.dict.id);
+        }
+        return (attval.dict.getVersions() & Versions.VERS_ALL) != 0
+                 ? Versions.VERS_UNKNOWN
+                 : attval.dict.getVersions();
+    }
+    
+    /* returns true if the element is a W3C defined element */
+    /* but the element/attribute combination is not         */
+    protected boolean attributeIsProprietary(final AttVal attval) {
+        if (attval == null) {
+            return false;
+        }
+        if (tag == null) {
+            return false;
+        }
+        if ((tag.versions & Versions.VERS_ALL) == 0) {
+            return false;
+        }
+        if ((getAttributeVersions(attval) & Versions.VERS_ALL) != 0) {
+            return false;
+        }
+        return true;
+    }
 }
