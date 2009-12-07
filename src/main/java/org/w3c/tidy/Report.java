@@ -234,23 +234,28 @@ public final class Report
      * </ul>
      * @param errorCode tidy error code
      * @param lexer Lexer
-     * @param message key for the ResourceBundle
      * @param level message level. One of <code>TidyMessage.LEVEL_ERROR</code>,
      * <code>TidyMessage.LEVEL_WARNING</code>,<code>TidyMessage.LEVEL_INFO</code>
+     * @param messageKey key for the ResourceBundle
      * @param params optional parameters added with MessageFormat
      * @return formatted message
      * @throws MissingResourceException if <code>message</code> key is not available in jtidy resource bundle.
      * @see TidyMessage
      */
-    protected String getMessage(int errorCode, Lexer lexer, String message, Level level, Object... params)
+    protected String getMessageLexer(int errorCode, Lexer lexer, Level level, String messageKey, Object... params)
         	throws MissingResourceException {
-    	String resource = res.getString(message);
-    	String position = lexer == null || level == null ? "" : getPosition(lexer);
+    	final boolean b = lexer != null && level != null;
+    	return getMessagePos(errorCode, lexer, level, b ? lexer.lines : 0, b ? lexer.columns : 0,
+    			messageKey, params);
+    }
+    
+    private String getMessagePos(final int errorCode, final Lexer lexer, final Level level, final int line, final int col,
+    		final String messageKey, final Object... args) throws MissingResourceException {
+    	String position = line > 0 && col > 0 ? "" : getPosition(lexer, line, col);
         String prefix = level == null ? "" : (level + ": ");
-        String messageString = MessageFormat.format(resource, params);
+        String messageString = MessageFormat.format(res.getString(messageKey), args);
         if (listener != null) {
-            TidyMessage msg = new TidyMessage(errorCode, (lexer != null) ? lexer.lines : 0, (lexer != null)
-                ? lexer.columns : 0, level, messageString);
+            TidyMessage msg = new TidyMessage(errorCode, line, col, level, messageString);
             listener.messageReceived(msg);
         }
         return position + prefix + messageString;
@@ -260,43 +265,40 @@ public final class Report
      * Prints a message to lexer.errout after calling getMessage().
      * @param errorCode tidy error code
      * @param lexer Lexer
-     * @param message key for the ResourceBundle
      * @param level message level. One of <code>TidyMessage.LEVEL_ERROR</code>,
      * <code>TidyMessage.LEVEL_WARNING</code>,<code>TidyMessage.LEVEL_INFO</code>
+     * @param messageKey key for the ResourceBundle
      * @param params optional parameters added with MessageFormat
      * @see TidyMessage
      */
-    private void printMessage(final ErrorCode errorCode, final Lexer lexer, final String message, final Level level, final Object... params) {
-    	printMessage(errorCode.code(), lexer, message, level, params);
+    private void messageLexer(final ErrorCode errorCode, final Lexer lexer, final Level level, final String messageKey,
+    		final Object... params) {
+    	messageLexer(errorCode.code(), lexer, level, messageKey, params);
     }
     
-    private void printMessage(int errorCode, Lexer lexer, String message, Level level, Object... params)
-    {
-        String resource;
-        try
-        {
-            resource = getMessage(errorCode, lexer, message, level, params);
-        }
-        catch (MissingResourceException e)
-        {
-            lexer.errout.println(e.toString());
-            return;
-        }
-
-        lexer.errout.println(resource);
-    }
-    
-    private void simpleMessage(int errorCode, Lexer lexer, String message, Level level, Object... params) {
-        String resource;
+    private void messagePos(final int errorCode, final Lexer lexer, final Level level, final int line, final int col,
+    		final String messageKey, final Object... params) {
         try {
-            resource = getMessage(errorCode, null, message, level, params);
+            final String s = getMessagePos(errorCode, lexer, level, line, col, messageKey, params);
+            if (s != null) {
+            	lexer.errout.println(s);
+            }
         } catch (MissingResourceException e) {
             lexer.errout.println(e.toString());
-            return;
         }
-        lexer.errout.println(resource);
     }
-
+    
+    private void messageLexer(final int errorCode, final Lexer lexer, final Level level, final String messageKey,
+    		final Object... params) {
+    	final boolean b = lexer != null && level != null;
+    	messagePos(errorCode, lexer, level, b ? lexer.lines : 0, b ? lexer.columns : 0, messageKey, params);
+    }
+    
+    private void simpleMessage(final int errorCode, final Lexer lexer, final Level level, final String messageKey,
+    		final Object... params) {
+    	messagePos(errorCode, lexer, level, 0, 0, messageKey, params);
+    }
+    
     /**
      * Prints a message to errout after calling getMessage(). Used when lexer is not yet defined.
      * @param errout PrintWriter
@@ -306,19 +308,12 @@ public final class Report
      * @param params optional parameters added with MessageFormat
      * @see TidyMessage
      */
-    private void printMessage(PrintWriter errout, String message, Level level, Object... params)
-    {
-        String resource;
-        try
-        {
-            resource = getMessage(-1, null, message, level, params);
-        }
-        catch (MissingResourceException e)
-        {
+    private void printMessage(PrintWriter errout, String message, Level level, Object... params) {
+        try {
+        	errout.println(getMessageLexer(-1, null, level, message, params));
+        } catch (MissingResourceException e) {
             errout.println(e.toString());
-            return;
         }
-        errout.println(resource);
     }
 
     /**
@@ -393,33 +388,15 @@ public final class Report
 
     /**
      * Returns a formatted String describing the current position in file.
-     * @param lexer Lexer
-     * @return String position ("line:column")
      */
-    private String getPosition(Lexer lexer)
-    {
-        try
-        {
-            // Change formatting to be parsable by GNU Emacs
-            if (lexer.configuration.isEmacs())
-            {
-                return MessageFormat.format(res.getString("emacs_format"), 
-                    this.currentFile,
-                    new Integer(lexer.lines),
-                    new Integer(lexer.columns))
-                    + " ";
-            }
-            // traditional format
-            return MessageFormat.format(res.getString("line_column"), 
-                new Integer(lexer.lines),
-                new Integer(lexer.columns));
-
+    private String getPosition(final Lexer lexer, final int line, final int col) {
+        // Change formatting to be parsable by GNU Emacs
+        if (lexer.configuration.isEmacs()) {
+            return MessageFormat.format(res.getString("emacs_format"), this.currentFile,
+                line, col) + " ";
         }
-        catch (MissingResourceException e)
-        {
-            lexer.errout.println(e.toString());
-        }
-        return "";
+        // traditional format
+        return MessageFormat.format(res.getString("line_column"), line, col);
     }
 
     /**
@@ -446,58 +423,58 @@ public final class Report
             case ENCODING_MISMATCH:
                 // actual encoding passed in "c"
                 lexer.badChars |= BC_ENCODING_MISMATCH;
-                printMessage(
+                messageLexer(
                     code,
                     lexer,
-                    "encoding_mismatch",
                     Level.WARNING,
+                    "encoding_mismatch",
                     
                         lexer.configuration.getInCharEncodingName(),
                         ParsePropertyImpl.CHAR_ENCODING.getFriendlyName(null, new Integer(c), lexer.configuration));
                 break;
             case VENDOR_SPECIFIC_CHARS:
                 lexer.badChars |= BC_VENDOR_SPECIFIC_CHARS;
-                printMessage(
+                messageLexer(
                     code,
                     lexer,
-                    "invalid_char",
                     Level.WARNING,
+                    "invalid_char",
                     replaceMode, buf);
                 break;
             case INVALID_SGML_CHARS:
                 lexer.badChars |= BC_INVALID_SGML_CHARS;
-                printMessage(
+                messageLexer(
                     code,
                     lexer,
-                    "invalid_char",
                     Level.WARNING,
+                    "invalid_char",
                     replaceMode, buf);
                 break;
             case INVALID_UTF8:
                 lexer.badChars |= BC_INVALID_UTF8;
-                printMessage(
+                messageLexer(
                     code,
                     lexer,
-                    "invalid_utf8",
                     Level.WARNING,
+                    "invalid_utf8",
                     replaceMode, buf);
                 break;
             case INVALID_UTF16:
                 lexer.badChars |= BC_INVALID_UTF16;
-                printMessage(
+                messageLexer(
                     code,
                     lexer,
-                    "invalid_utf16",
                     Level.WARNING,
+                    "invalid_utf16",
                     replaceMode, buf);
                 break;
             case INVALID_NCR:
                 lexer.badChars |= BC_INVALID_NCR;
-                printMessage(
+                messageLexer(
                     code,
                     lexer,
-                    "invalid_ncr",
                     Level.WARNING,
+                    "invalid_ncr",
                     replaceMode, buf);
                 break;
             }
@@ -525,19 +502,19 @@ public final class Report
             switch (code)
             {
                 case MISSING_SEMICOLON :
-                    printMessage(code, lexer, "missing_semicolon", Level.WARNING, entity);
+                    messageLexer(code, lexer, Level.WARNING, "missing_semicolon", entity);
                     break;
                 case MISSING_SEMICOLON_NCR :
-                    printMessage(code, lexer, "missing_semicolon_ncr", Level.WARNING, entity);
+                    messageLexer(code, lexer, Level.WARNING, "missing_semicolon_ncr", entity);
                     break;
                 case UNKNOWN_ENTITY :
-                    printMessage(code, lexer, "unknown_entity", Level.WARNING, entity);
+                    messageLexer(code, lexer, Level.WARNING, "unknown_entity", entity);
                     break;
                 case UNESCAPED_AMPERSAND :
-                    printMessage(code, lexer, "unescaped_ampersand", Level.WARNING);
+                    messageLexer(code, lexer, Level.WARNING, "unescaped_ampersand");
                     break;
                 case APOS_UNDEFINED :
-                    printMessage(code, lexer, "apos_undefined", Level.WARNING);
+                    messageLexer(code, lexer, Level.WARNING, "apos_undefined");
                     break;
                 default :
                     // should not reach here
@@ -571,7 +548,7 @@ public final class Report
 
         if (code == UNEXPECTED_GT) // error
         {
-            printMessage(code, lexer, "unexpected_gt", Level.ERROR, getTagName(node));
+            messageLexer(code, lexer, Level.ERROR, "unexpected_gt", getTagName(node));
         }
 
         if (!lexer.configuration.isShowWarnings()) // warnings
@@ -582,87 +559,87 @@ public final class Report
         switch (code)
         {
             case UNKNOWN_ATTRIBUTE :
-                printMessage(code, lexer, "unknown_attribute", Level.WARNING, attribute.attribute);
+                messageLexer(code, lexer, Level.WARNING, "unknown_attribute", attribute.attribute);
                 break;
 
             case MISSING_ATTRIBUTE :
-                printMessage(
+                messageLexer(
                     code,
                     lexer,
-                    "missing_attribute",
                     Level.WARNING,
+                    "missing_attribute",
                     getTagName(node), attribute.attribute);
                 break;
 
             case MISSING_ATTR_VALUE :
-                printMessage(
+                messageLexer(
                     code,
                     lexer,
-                    "missing_attr_value",
                     Level.WARNING,
+                    "missing_attr_value",
                     getTagName(node), attribute.attribute);
                 break;
 
             case MISSING_IMAGEMAP :
-                printMessage(code, lexer, "missing_imagemap", Level.WARNING, getTagName(node));
+                messageLexer(code, lexer, Level.WARNING, "missing_imagemap", getTagName(node));
                 lexer.badAccess |= MISSING_IMAGE_MAP;
                 break;
 
             case BAD_ATTRIBUTE_VALUE :
-                printMessage(code, lexer, "bad_attribute_value", Level.WARNING, 
+                messageLexer(code, lexer, Level.WARNING, "bad_attribute_value", 
 					    getTagName(node),
 					    attribute.attribute,
 					    attribute.value);
                 break;
 
             case XML_ID_SYNTAX :
-                printMessage(
+                messageLexer(
                     code,
                     lexer,
-                    "xml_id_sintax",
                     Level.WARNING,
+                    "xml_id_sintax",
                     getTagName(node), attribute.attribute);
                 break;
 
             case XML_ATTRIBUTE_VALUE :
-                printMessage(
+                messageLexer(
                     code,
                     lexer,
-                    "xml_attribute_value",
                     Level.WARNING,
+                    "xml_attribute_value",
                     getTagName(node), attribute.attribute);
                 break;
 
             case UNEXPECTED_QUOTEMARK :
-                printMessage(code, lexer, "unexpected_quotemark", Level.WARNING, getTagName(node));
+                messageLexer(code, lexer, Level.WARNING, "unexpected_quotemark", getTagName(node));
                 break;
 
             case MISSING_QUOTEMARK :
-                printMessage(code, lexer, "missing_quotemark", Level.WARNING, getTagName(node));
+                messageLexer(code, lexer, Level.WARNING, "missing_quotemark", getTagName(node));
                 break;
 
             case REPEATED_ATTRIBUTE :
-                printMessage(code, lexer, "repeated_attribute", Level.WARNING, 
+                messageLexer(code, lexer, Level.WARNING, "repeated_attribute", 
 					    getTagName(node),
 					    attribute.value,
 					    attribute.attribute);
                 break;
 
             case PROPRIETARY_ATTR_VALUE :
-                printMessage(
+                messageLexer(
                     code,
                     lexer,
-                    "proprietary_attr_value",
                     Level.WARNING,
+                    "proprietary_attr_value",
                     getTagName(node), attribute.value);
                 break;
 
             case PROPRIETARY_ATTRIBUTE :
-                printMessage(
+                messageLexer(
                     code,
                     lexer,
-                    "proprietary_attribute",
                     Level.WARNING,
+                    "proprietary_attribute",
                     getTagName(node), attribute.attribute);
                 break;
 
@@ -670,61 +647,61 @@ public final class Report
                 // on end of file adjust reported position to end of input
                 lexer.lines = lexer.in.getCurline();
                 lexer.columns = lexer.in.getCurcol();
-                printMessage(code, lexer, "unexpected_end_of_file", Level.WARNING, getTagName(node));
+                messageLexer(code, lexer, Level.WARNING, "unexpected_end_of_file", getTagName(node));
                 break;
 
             case ID_NAME_MISMATCH :
-                printMessage(code, lexer, "id_name_mismatch", Level.WARNING, getTagName(node));
+                messageLexer(code, lexer, Level.WARNING, "id_name_mismatch", getTagName(node));
                 break;
 
             case BACKSLASH_IN_URI :
-                printMessage(code, lexer, "backslash_in_uri", Level.WARNING, getTagName(node));
+                messageLexer(code, lexer, Level.WARNING, "backslash_in_uri", getTagName(node));
                 break;
 
             case FIXED_BACKSLASH :
-                printMessage(code, lexer, "fixed_backslash", Level.WARNING, getTagName(node));
+                messageLexer(code, lexer, Level.WARNING, "fixed_backslash", getTagName(node));
                 break;
 
             case ILLEGAL_URI_REFERENCE :
-                printMessage(code, lexer, "illegal_uri_reference", Level.WARNING, getTagName(node));
+                messageLexer(code, lexer, Level.WARNING, "illegal_uri_reference", getTagName(node));
                 break;
 
             case ESCAPED_ILLEGAL_URI :
-                printMessage(code, lexer, "escaped_illegal_uri", Level.WARNING, getTagName(node));
+                messageLexer(code, lexer, Level.WARNING, "escaped_illegal_uri", getTagName(node));
                 break;
 
             case NEWLINE_IN_URI :
-                printMessage(code, lexer, "newline_in_uri", Level.WARNING, getTagName(node));
+                messageLexer(code, lexer, Level.WARNING, "newline_in_uri", getTagName(node));
                 break;
 
             case ANCHOR_NOT_UNIQUE :
-                printMessage(
+                messageLexer(
                     code,
                     lexer,
-                    "anchor_not_unique",
                     Level.WARNING,
+                    "anchor_not_unique",
                     getTagName(node), attribute.value);
                 break;
 
             case ENTITY_IN_ID :
-                printMessage(code, lexer, "entity_in_id", Level.WARNING);
+                messageLexer(code, lexer, Level.WARNING, "entity_in_id");
                 break;
 
             case JOINING_ATTRIBUTE :
-                printMessage(
+                messageLexer(
                     code,
                     lexer,
-                    "joining_attribute",
                     Level.WARNING,
+                    "joining_attribute",
                     getTagName(node), attribute.attribute);
                 break;
 
             case UNEXPECTED_EQUALSIGN :
-                printMessage(code, lexer, "expected_equalsign", Level.WARNING, getTagName(node));
+                messageLexer(code, lexer, Level.WARNING, "expected_equalsign", getTagName(node));
                 break;
 
             case ATTR_VALUE_NOT_LCASE :
-                printMessage(code, lexer, "attr_value_not_lcase", Level.WARNING, 
+                messageLexer(code, lexer, Level.WARNING, "attr_value_not_lcase", 
 					    getTagName(node),
 					    attribute.value,
 					    attribute.attribute);
@@ -760,15 +737,15 @@ public final class Report
             switch (code)
             {
                 case MISSING_ENDTAG_FOR :
-                    printMessage(code, lexer, "missing_endtag_for", Level.WARNING, element.element);
+                    messageLexer(code, lexer, Level.WARNING, "missing_endtag_for", element.element);
                     break;
 
                 case MISSING_ENDTAG_BEFORE :
-                    printMessage(
+                    messageLexer(
                         code,
                         lexer,
-                        "missing_endtag_before",
                         Level.WARNING,
+                        "missing_endtag_before",
                         element.element, getTagName(node));
                     break;
 
@@ -776,95 +753,95 @@ public final class Report
                     if (lexer.badForm == 0)
                     {
                         // the case for when this is an error not a warning, is handled later
-                        printMessage(
+                        messageLexer(
                             code,
                             lexer,
-                            "discarding_unexpected",
                             Level.WARNING,
+                            "discarding_unexpected",
                             getTagName(node));
                     }
                     break;
 
                 case NESTED_EMPHASIS :
-                    printMessage(code, lexer, "nested_emphasis", Level.INFO, getTagName(node));
+                    messageLexer(code, lexer, Level.INFO, "nested_emphasis", getTagName(node));
                     break;
 
                 case COERCE_TO_ENDTAG :
-                    printMessage(code, lexer, "coerce_to_endtag", Level.INFO, element.element);
+                    messageLexer(code, lexer, Level.INFO, "coerce_to_endtag", element.element);
                     break;
 
                 case NON_MATCHING_ENDTAG :
-                    printMessage(
+                    messageLexer(
                         code,
                         lexer,
-                        "non_matching_endtag",
                         Level.WARNING,
+                        "non_matching_endtag",
                         getTagName(node), element.element);
                     break;
 
                 case TAG_NOT_ALLOWED_IN :
-                    printMessage(
+                    messageLexer(
                         code,
                         lexer,
-                        "tag_not_allowed_in",
                         Level.WARNING,
+                        "tag_not_allowed_in",
                         getTagName(node), element.element);
                     break;
 
                 case DOCTYPE_AFTER_TAGS :
-                    printMessage(code, lexer, "doctype_after_tags", Level.WARNING);
+                    messageLexer(code, lexer, Level.WARNING, "doctype_after_tags");
                     break;
 
                 case MISSING_STARTTAG :
-                    printMessage(code, lexer, "missing_starttag", Level.WARNING, node.element);
+                    messageLexer(code, lexer, Level.WARNING, "missing_starttag", node.element);
                     break;
 
                 case UNEXPECTED_ENDTAG :
                     if (element != null)
                     {
-                        printMessage(
+                        messageLexer(
                             code,
                             lexer,
-                            "unexpected_endtag_in",
                             Level.WARNING,
+                            "unexpected_endtag_in",
                             node.element, element.element);
                     }
                     else
                     {
-                        printMessage(code, lexer, "unexpected_endtag", Level.WARNING, node.element);
+                        messageLexer(code, lexer, Level.WARNING, "unexpected_endtag", node.element);
                     }
                     break;
 
                 case TOO_MANY_ELEMENTS :
                     if (element != null)
                     {
-                        printMessage(
+                        messageLexer(
                             code,
                             lexer,
-                            "too_many_elements_in",
                             Level.WARNING,
+                            "too_many_elements_in",
                             node.element, element.element);
                     }
                     else
                     {
-                        printMessage(code, lexer, "too_many_elements", Level.WARNING, node.element);
+                        messageLexer(code, lexer, Level.WARNING, "too_many_elements", node.element);
                     }
                     break;
 
                 case USING_BR_INPLACE_OF :
-                    printMessage(code, lexer, "using_br_inplace_of", Level.WARNING, getTagName(node));
+                    messageLexer(code, lexer, Level.WARNING, "using_br_inplace_of", getTagName(node));
                     break;
 
                 case INSERTING_TAG :
-                    printMessage(code, lexer, "inserting_tag", Level.WARNING, node.element);
+                    messageLexer(code, lexer, Level.WARNING, "inserting_tag", node.element);
                     break;
 
                 case CANT_BE_NESTED :
-                    printMessage(code, lexer, "cant_be_nested", Level.WARNING, getTagName(node));
+                    messageLexer(code, lexer, Level.WARNING, "cant_be_nested", getTagName(node));
                     break;
 
                 case PROPRIETARY_ELEMENT :
-                    printMessage(code, lexer, "proprietary_element", Level.WARNING, getTagName(node));
+                    messageLexer(code, lexer, Level.WARNING, "proprietary_element", getTagName(node));
 
                     if (node.is(TagId.LAYER))
                     {
@@ -883,96 +860,96 @@ public final class Report
                 case OBSOLETE_ELEMENT :
                     if (element.tag != null && (element.tag.model & Dict.CM_OBSOLETE) != 0)
                     {
-                        printMessage(code, lexer, "obsolete_element", Level.WARNING, 
+                        messageLexer(code, lexer, Level.WARNING, "obsolete_element", 
 							    getTagName(element),
 							    getTagName(node));
                     }
                     else
                     {
-                        printMessage(code, lexer, "replacing_element", Level.WARNING, 
+                        messageLexer(code, lexer, Level.WARNING, "replacing_element", 
 							    getTagName(element),
 							    getTagName(node));
                     }
                     break;
 
                 case UNESCAPED_ELEMENT :
-                    printMessage(code, lexer, "unescaped_element", Level.WARNING, getTagName(element));
+                    messageLexer(code, lexer, Level.WARNING, "unescaped_element", getTagName(element));
                     break;
 
                 case TRIM_EMPTY_ELEMENT :
-                    printMessage(code, lexer, "trim_empty_element", Level.WARNING, getTagName(element));
+                    messageLexer(code, lexer, Level.WARNING, "trim_empty_element", getTagName(element));
                     break;
 
                 case MISSING_TITLE_ELEMENT :
-                    printMessage(code, lexer, "missing_title_element", Level.WARNING);
+                    messageLexer(code, lexer, Level.WARNING, "missing_title_element");
                     break;
 
                 case ILLEGAL_NESTING :
-                    printMessage(code, lexer, "illegal_nesting", Level.WARNING, getTagName(element));
+                    messageLexer(code, lexer, Level.WARNING, "illegal_nesting", getTagName(element));
                     break;
 
                 case NOFRAMES_CONTENT :
-                    printMessage(code, lexer, "noframes_content", Level.WARNING, getTagName(node));
+                    messageLexer(code, lexer, Level.WARNING, "noframes_content", getTagName(node));
                     break;
 
                 case INCONSISTENT_VERSION :
-                    printMessage(code, lexer, "inconsistent_version", Level.WARNING);
+                    messageLexer(code, lexer, Level.WARNING, "inconsistent_version");
                     break;
 
                 case MALFORMED_DOCTYPE :
-                    printMessage(code, lexer, "malformed_doctype", Level.WARNING);
+                    messageLexer(code, lexer, Level.WARNING, "malformed_doctype");
                     break;
 
                 case CONTENT_AFTER_BODY :
-                    printMessage(code, lexer, "content_after_body", Level.WARNING);
+                    messageLexer(code, lexer, Level.WARNING, "content_after_body");
                     break;
 
                 case MALFORMED_COMMENT :
-                    printMessage(code, lexer, "malformed_comment", Level.WARNING);
+                    messageLexer(code, lexer, Level.WARNING, "malformed_comment");
                     break;
 
                 case BAD_COMMENT_CHARS :
-                    printMessage(code, lexer, "bad_comment_chars", Level.WARNING);
+                    messageLexer(code, lexer, Level.WARNING, "bad_comment_chars");
                     break;
 
                 case BAD_XML_COMMENT :
-                    printMessage(code, lexer, "bad_xml_comment", Level.WARNING);
+                    messageLexer(code, lexer, Level.WARNING, "bad_xml_comment");
                     break;
 
                 case BAD_CDATA_CONTENT :
-                    printMessage(code, lexer, "bad_cdata_content", Level.WARNING);
+                    messageLexer(code, lexer, Level.WARNING, "bad_cdata_content");
                     break;
 
                 case INCONSISTENT_NAMESPACE :
-                    printMessage(code, lexer, "inconsistent_namespace", Level.WARNING);
+                    messageLexer(code, lexer, Level.WARNING, "inconsistent_namespace");
                     break;
 
                 case DTYPE_NOT_UPPER_CASE :
-                    printMessage(code, lexer, "dtype_not_upper_case", Level.WARNING);
+                    messageLexer(code, lexer, Level.WARNING, "dtype_not_upper_case");
                     break;
 
                 case UNEXPECTED_END_OF_FILE :
                     // on end of file adjust reported position to end of input
                     lexer.lines = lexer.in.getCurline();
                     lexer.columns = lexer.in.getCurcol();
-                    printMessage(
+                    messageLexer(
                         code,
                         lexer,
-                        "unexpected_end_of_file",
                         Level.WARNING,
+                        "unexpected_end_of_file",
                         getTagName(element));
                     break;
 
                 case NESTED_QUOTATION :
-                    printMessage(code, lexer, "nested_quotation", Level.WARNING);
+                    messageLexer(code, lexer, Level.WARNING, "nested_quotation");
                     break;
 
                 case ELEMENT_NOT_EMPTY :
-                    printMessage(code, lexer, "element_not_empty", Level.WARNING, getTagName(element));
+                    messageLexer(code, lexer, Level.WARNING, "element_not_empty", getTagName(element));
                     break;
 
                 case MISSING_DOCTYPE :
-                    printMessage(code, lexer, "missing_doctype", Level.WARNING);
+                    messageLexer(code, lexer, Level.WARNING, "missing_doctype");
                     break;
 
                 default :
@@ -983,7 +960,7 @@ public final class Report
         if ((code == DISCARDING_UNEXPECTED) && lexer.badForm != 0)
         {
             // the case for when this is a warning not an error, is handled earlier
-            printMessage(code, lexer, "discarding_unexpected", Level.ERROR, getTagName(node));
+            messageLexer(code, lexer, Level.ERROR, "discarding_unexpected", getTagName(node));
         }
 
     }
@@ -1007,27 +984,27 @@ public final class Report
 
         switch (code) {
         case SUSPECTED_MISSING_QUOTE:
-            printMessage(code, lexer, "suspected_missing_quote", Level.ERROR);
+            messageLexer(code, lexer, Level.ERROR, "suspected_missing_quote");
             break;
         case DUPLICATE_FRAMESET:
-            printMessage(code, lexer, "duplicate_frameset", Level.ERROR);
+            messageLexer(code, lexer, Level.ERROR, "duplicate_frameset");
             break;
         case UNKNOWN_ELEMENT:
-            printMessage(code, lexer, "unknown_element", Level.ERROR, getTagName(node));
+            messageLexer(code, lexer, Level.ERROR, "unknown_element", getTagName(node));
             break;
         case UNEXPECTED_ENDTAG:
             if (element != null)
             {
-                printMessage(
+                messageLexer(
                     code,
                     lexer,
-                    "unexpected_endtag_in",
                     Level.ERROR,
+                    "unexpected_endtag_in",
                     node.element, element.element);
             }
             else
             {
-                printMessage(code, lexer, "unexpected_endtag", Level.ERROR, node.element);
+                messageLexer(code, lexer, Level.ERROR, "unexpected_endtag", node.element);
             }
             break;
         }
@@ -1062,7 +1039,7 @@ public final class Report
                     encodingChoiche = 2;
                 }
 
-                printMessage(VENDOR_SPECIFIC_CHARS, lexer, "vendor_specific_chars_summary", null, new Integer(
+                messageLexer(VENDOR_SPECIFIC_CHARS, lexer, null, "vendor_specific_chars_summary", new Integer(
 					    encodingChoiche));
             }
 
@@ -1079,86 +1056,86 @@ public final class Report
                     encodingChoiche = 2;
                 }
 
-                printMessage(INVALID_SGML_CHARS, lexer, "invalid_sgml_chars_summary", null, new Integer(
+                messageLexer(INVALID_SGML_CHARS, lexer, null, "invalid_sgml_chars_summary", new Integer(
 					    encodingChoiche));
             }
 
             if ((lexer.badChars & BC_INVALID_UTF8) != 0)
             {
-                printMessage(INVALID_UTF8, lexer, "invalid_utf8_summary", null);
+                messageLexer(INVALID_UTF8, lexer, null, "invalid_utf8_summary");
             }
 
             if ((lexer.badChars & BC_INVALID_UTF16) != 0)
             {
-                printMessage(INVALID_UTF16, lexer, "invalid_utf16_summary", null);
+                messageLexer(INVALID_UTF16, lexer, null, "invalid_utf16_summary");
             }
 
             if ((lexer.badChars & BC_INVALID_URI) != 0)
             {
-                printMessage(INVALID_URI, lexer, "invaliduri_summary", null);
+                messageLexer(INVALID_URI, lexer, null, "invaliduri_summary");
             }
         }
 
         if (lexer.badForm != 0)
         {
-            printMessage(BADFORM_SUMMARY, lexer, "badform_summary", null);
+            messageLexer(BADFORM_SUMMARY, lexer, null, "badform_summary");
         }
 
         if (lexer.badAccess != 0)
         {
             if ((lexer.badAccess & MISSING_SUMMARY) != 0)
             {
-                printMessage(MISSING_SUMMARY, lexer, "badaccess_missing_summary", null);
+                messageLexer(MISSING_SUMMARY, lexer, null, "badaccess_missing_summary");
             }
 
             if ((lexer.badAccess & MISSING_IMAGE_ALT) != 0)
             {
-                printMessage(MISSING_IMAGE_ALT, lexer, "badaccess_missing_image_alt", null);
+                messageLexer(MISSING_IMAGE_ALT, lexer, null, "badaccess_missing_image_alt");
             }
 
             if ((lexer.badAccess & MISSING_IMAGE_MAP) != 0)
             {
-                printMessage(MISSING_IMAGE_MAP, lexer, "badaccess_missing_image_map", null);
+                messageLexer(MISSING_IMAGE_MAP, lexer, null, "badaccess_missing_image_map");
             }
 
             if ((lexer.badAccess & MISSING_LINK_ALT) != 0)
             {
-                printMessage(MISSING_LINK_ALT, lexer, "badaccess_missing_link_alt", null);
+                messageLexer(MISSING_LINK_ALT, lexer, null, "badaccess_missing_link_alt");
             }
 
             if (((lexer.badAccess & USING_FRAMES) != 0) && ((lexer.badAccess & USING_NOFRAMES) == 0))
             {
-                printMessage(USING_FRAMES, lexer, "badaccess_frames", null);
+                messageLexer(USING_FRAMES, lexer, null, "badaccess_frames");
             }
 
-            printMessage(BADACCESS_SUMMARY, lexer, "badaccess_summary", null, ACCESS_URL);
+            messageLexer(BADACCESS_SUMMARY, lexer, null, "badaccess_summary", ACCESS_URL);
         }
 
         if (lexer.badLayout != 0)
         {
             if ((lexer.badLayout & USING_LAYER) != 0)
             {
-                printMessage(USING_LAYER, lexer, "badlayout_using_layer", null);
+                messageLexer(USING_LAYER, lexer, null, "badlayout_using_layer");
             }
 
             if ((lexer.badLayout & USING_SPACER) != 0)
             {
-                printMessage(USING_SPACER, lexer, "badlayout_using_spacer", null);
+                messageLexer(USING_SPACER, lexer, null, "badlayout_using_spacer");
             }
 
             if ((lexer.badLayout & USING_FONT) != 0)
             {
-                printMessage(USING_FONT, lexer, "badlayout_using_font", null);
+                messageLexer(USING_FONT, lexer, null, "badlayout_using_font");
             }
 
             if ((lexer.badLayout & USING_NOBR) != 0)
             {
-                printMessage(USING_NOBR, lexer, "badlayout_using_nobr", null);
+                messageLexer(USING_NOBR, lexer, null, "badlayout_using_nobr");
             }
 
             if ((lexer.badLayout & USING_BODY) != 0)
             {
-                printMessage(USING_BODY, lexer, "badlayout_using_body", null);
+                messageLexer(USING_BODY, lexer, null, "badlayout_using_body");
             }
         }
     }
@@ -1276,15 +1253,15 @@ public final class Report
             simpleMessage(
                 DOCTYPE_GIVEN_SUMMARY.code(),
                 lexer,
-                "doctype_given",
                 Level.INFO,
+                "doctype_given",
                 doctypeBuffer);
         }
 
-        simpleMessage(REPORT_VERSION_SUMMARY.code(), lexer, "report_version", Level.INFO, 
+        simpleMessage(REPORT_VERSION_SUMMARY.code(), lexer, Level.INFO, "report_version", 
 			    (vers != null ? vers : "HTML Proprietary"));
         if (lexer.warnMissingSIInEmittedDocType()) {
-        	simpleMessage(-1, lexer, "no_si", Level.INFO);
+        	simpleMessage(-1, lexer, Level.INFO, "no_si");
         }
     }
 
