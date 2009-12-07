@@ -2145,9 +2145,7 @@ public class Lexer
                     // this doesn't apply to empty elements
                     // nor to preformatted content that needs escaping
 
-                    if (
-
-                    (mode != PREFORMATTED || preContent(this.token))
+                    if ((mode != PREFORMATTED || preContent(this.token))
                         && (this.token.expectsContent() || this.token.is(TagId.BR)))
                     {
 
