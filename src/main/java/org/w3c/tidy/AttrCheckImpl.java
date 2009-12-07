@@ -290,7 +290,7 @@ public final class AttrCheckImpl
                 for (int i = 0; i < p.length(); ++i) {
                     char c = p.charAt(i);
                     if ((c > 0x7e) || (c <= 0x20) || (c == '<') || (c == '>')) {
-                        dest.append(String.format("%%%02X", c));
+                        dest.append(String.format("%%%02X", (int) c));
                     } else {
                         dest.append(c);
                     }
