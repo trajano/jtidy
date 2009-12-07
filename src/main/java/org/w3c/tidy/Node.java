@@ -957,7 +957,7 @@ public class Node {
             node = node.next;
         }
 
-        if (node.is(TagId.FRAMESET))
+        if (node != null && node.is(TagId.FRAMESET))
         {
             node = node.content;
 
