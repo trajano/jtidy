@@ -761,11 +761,11 @@ public final class Report
             switch (code)
             {
                 case MISSING_ENDTAG_FOR :
-                    messageLexer(lexer, Level.WARNING, code, element.element);
+                    messageNode(lexer, Level.WARNING, rpt, code, element.element);
                     break;
 
                 case MISSING_ENDTAG_BEFORE :
-                	messageNode(lexer, Level.WARNING, rpt, code, element.element, getTagName(node));
+                	messageNode(lexer, Level.WARNING, rpt, code, element.element, nodedesc);
                     break;
 
                 case DISCARDING_UNEXPECTED :
