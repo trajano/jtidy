@@ -274,6 +274,14 @@ public final class Report
     	messageLexer(errorCode.code(), lexer, level, errorCode.name().toLowerCase(), params);
     }
     
+    private void messageNode(final Lexer lexer, final Level level, final Node node, final ErrorCode errorCode, final Object... params) {
+    	if (node == null) {
+    		messageLexer(lexer, level, errorCode, params);
+    	} else {
+    		messagePos(errorCode.code(), lexer, level, node.line, node.column, errorCode.name().toLowerCase(), params);
+    	}
+    }
+    
     private void messagePos(final int errorCode, final Lexer lexer, final Level level, final int line, final int col,
     		final String messageKey, final Object... params) {
         try {
@@ -708,6 +716,8 @@ public final class Report
      */
     public void warning(Lexer lexer, Node element, Node node, ErrorCode code)
     {
+    	final String nodedesc = getTagName(node);
+    	
         if (!((code == DISCARDING_UNEXPECTED) && lexer.badForm != 0)) // lexer->errors++; already done in BadForm()
         {
             lexer.warnings++;
@@ -764,11 +774,10 @@ public final class Report
                     break;
 
                 case TAG_NOT_ALLOWED_IN :
-                    messageLexer(
-                        lexer,
-                        Level.WARNING,
-                        code,
-                        getTagName(node), element.element);
+                	messageNode(lexer, Level.WARNING, node, code, nodedesc, element.element);
+                    if (lexer.configuration.isShowWarnings()) {
+                    	messageNode(lexer, Level.INFO, element, PREVIOUS_LOCATION, element.element);
+                    }
                     break;
 
                 case DOCTYPE_AFTER_TAGS :
