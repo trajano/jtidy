@@ -1850,12 +1850,9 @@ public class PPrint
         int contentIndent = -1;
         final boolean xhtmlOut = lexer.configuration.isXHTML();
 
-        if (insideHead(node))
-        {
+        if (insideHead(node)) {
             flushLine(fout, indent);
         }
-
-        indent = 0;
 
         // start script
         printTag(lexer, fout, mode, indent, node);
@@ -1887,7 +1884,7 @@ public class PPrint
             if (!hasCData)
             {
                 // disable wrapping
-                int savewraplen = lexer.configuration.getWraplen();
+                int savewrap = lexer.configuration.getWraplen();
                 lexer.configuration.setWraplen(0xFFFFFF); // a very large number
 
                 linelen = addAsciiString(commentStart, linelen);
@@ -1896,7 +1893,7 @@ public class PPrint
                 condFlushLine(fout, indent);
 
                 // restore wrapping
-                lexer.configuration.setWraplen(savewraplen);
+                lexer.configuration.setWraplen(savewrap);
             }
         }
 
@@ -1922,25 +1919,15 @@ public class PPrint
             if (!hasCData)
             {
                 // disable wrapping
-                int ix, savewraplen = lexer.configuration.getWraplen();
+                int savewrap = lexer.configuration.getWraplen();
                 lexer.configuration.setWraplen(0xFFFFFF); // a very large number
-
-                // Add spaces to last text node to align w/ indent
-                if (contentIndent > 0 && linelen < contentIndent)
-                {
-                    linelen = contentIndent;
-                }
-                for (ix = 0; contentIndent < indent && ix < indent - contentIndent; ++ix)
-                {
-                    addC(' ', linelen++);
-                }
 
                 linelen = addAsciiString(commentStart, linelen);
                 linelen = addAsciiString(CDATA_END, linelen);
                 linelen = addAsciiString(commentEnd, linelen);
 
                 // restore wrapping
-                lexer.configuration.setWraplen(savewraplen);
+                lexer.configuration.setWraplen(savewrap);
                 condFlushLine(fout, indent);
             }
         }
