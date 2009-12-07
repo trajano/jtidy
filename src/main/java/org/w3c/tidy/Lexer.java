@@ -435,6 +435,8 @@ public class Lexer
     {
         Node node = new Node();
         this.nodeList.add(node);
+        node.line = lines;
+        node.column = columns;
         return node;
     }
 
@@ -450,6 +452,8 @@ public class Lexer
     {
         Node node = new Node(type, textarray, start, end);
         this.nodeList.add(node);
+        node.line = lines;
+        node.column = columns;
         return node;
     }
     
@@ -470,6 +474,8 @@ public class Lexer
     {
         Node node = new Node(type, textarray, start, end, element, this.configuration.tt);
         this.nodeList.add(node);
+        node.line = lines;
+        node.column = columns;
         return node;
     }
 
@@ -481,6 +487,8 @@ public class Lexer
     public Node cloneNode(Node node)
     {
         Node cnode = node.cloneNode(false);
+        cnode.line = lines;
+        cnode.column = columns;
         this.nodeList.add(cnode);
         for (AttVal att = cnode.attributes; att != null; att = att.next)
         {

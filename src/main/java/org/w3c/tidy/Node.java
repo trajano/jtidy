@@ -110,6 +110,9 @@ public class Node {
      * TextNode, StartTag, EndTag etc.
      */
     protected NodeType type;
+    
+    protected int line;
+    protected int column;
 
     /**
      * true if closed by explicit end tag.
@@ -1371,6 +1374,8 @@ public class Node {
         node.implicit = implicit;
         node.tag = tag;
         node.element = element;
+        node.line = line;
+        node.column = column;
         if (attributes != null) {
         	node.attributes = (AttVal) attributes.clone();
         }
