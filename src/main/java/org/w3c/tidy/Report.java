@@ -750,6 +750,7 @@ public final class Report
     public void warning(Lexer lexer, Node element, Node node, ErrorCode code)
     {
     	final String nodedesc = getTagName(node);
+    	final Node rpt = element != null ? element : node;
     	
         // keep quiet after <showErrors> errors
         if (lexer.errors > lexer.configuration.getShowErrors())
@@ -766,11 +767,7 @@ public final class Report
                     break;
 
                 case MISSING_ENDTAG_BEFORE :
-                    messageLexer(
-                        lexer,
-                        Level.WARNING,
-                        code,
-                        element.element, getTagName(node));
+                	messageNode(lexer, Level.WARNING, rpt, code, element.element, getTagName(node));
                     break;
 
                 case DISCARDING_UNEXPECTED :
