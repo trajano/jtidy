@@ -425,6 +425,8 @@ public enum ErrorCode {
      * character encoding: invalid NCR.
      */
     INVALID_NCR(82),
+    
+    PREVIOUS_LOCATION(88),
 
     /**
      * Constant used for reporting of given doctype.
