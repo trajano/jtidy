@@ -201,7 +201,6 @@ public final class ParserImpl
 
         if (node.type == NodeType.StartEndTag)
         {
-            Node.trimEmptyElement(lexer, node);
             return;
         }
 
@@ -1169,7 +1168,6 @@ public final class ParserImpl
                     }
                     element.closed = true;
                     Node.trimSpaces(lexer, element);
-                    Node.trimEmptyElement(lexer, element);
                     return;
                 }
 
@@ -1242,7 +1240,6 @@ public final class ParserImpl
                     {
                         Node.trimSpaces(lexer, element);
                     }
-                    Node.trimEmptyElement(lexer, element);
                     return;
                 }
 
@@ -1313,7 +1310,6 @@ public final class ParserImpl
                             {
                                 Node.trimSpaces(lexer, element);
                             }
-                            Node.trimEmptyElement(lexer, element);
                             return;
                         }
 
@@ -1325,7 +1321,6 @@ public final class ParserImpl
                     {
                         lexer.ungetToken();
                         Node.trimSpaces(lexer, element);
-                        Node.trimEmptyElement(lexer, element);
                         return;
                     }
                 }
@@ -1346,7 +1341,6 @@ public final class ParserImpl
                     {
                         Node.trimSpaces(lexer, element);
                     }
-                    Node.trimEmptyElement(lexer, element);
                     return;
                 }
 
@@ -1378,7 +1372,6 @@ public final class ParserImpl
                     {
                         Node.trimSpaces(lexer, element);
                     }
-                    Node.trimEmptyElement(lexer, element);
                     return;
                 }
 
@@ -1514,7 +1507,6 @@ public final class ParserImpl
                                 Node.trimSpaces(lexer, element);
                             }
 
-                            Node.trimEmptyElement(lexer, element);
                             return;
                         }
                     }
@@ -1563,7 +1555,6 @@ public final class ParserImpl
                         Node.trimSpaces(lexer, element);
                     }
 
-                    Node.trimEmptyElement(lexer, element);
                     return;
                 }
 
@@ -1595,8 +1586,6 @@ public final class ParserImpl
             {
                 lexer.report.warning(lexer, element, node, ErrorCode.MISSING_ENDTAG_FOR);
             }
-
-            Node.trimEmptyElement(lexer, element);
         }
     }
 
@@ -1628,7 +1617,6 @@ public final class ParserImpl
                     }
 
                     list.closed = true;
-                    Node.trimEmptyElement(lexer, list);
                     return;
                 }
 
@@ -1677,7 +1665,6 @@ public final class ParserImpl
                                 Node.coerceNode(lexer, list, TagId.UL);
                             }
 
-                            Node.trimEmptyElement(lexer, list);
                             return;
                         }
                     }
@@ -1693,7 +1680,6 @@ public final class ParserImpl
                     if (node.tag != null && (node.tag.model & Dict.CM_BLOCK) != 0 && lexer.excludeBlocks)
                     {
                         lexer.report.warning(lexer, list, node, ErrorCode.MISSING_ENDTAG_BEFORE);
-                        Node.trimEmptyElement(lexer, list);
                         return;
                     }
 
@@ -1713,9 +1699,7 @@ public final class ParserImpl
             }
 
             lexer.report.warning(lexer, list, node, ErrorCode.MISSING_ENDTAG_FOR);
-            Node.trimEmptyElement(lexer, list);
         }
-
     }
 
     /**
@@ -1766,7 +1750,6 @@ public final class ParserImpl
                 if (node.tag == list.tag && node.type == NodeType.EndTag)
                 {
                     list.closed = true;
-                    Node.trimEmptyElement(lexer, list);
                     return;
                 }
 
@@ -1812,7 +1795,6 @@ public final class ParserImpl
                             lexer.report.warning(lexer, list, node, ErrorCode.MISSING_ENDTAG_BEFORE);
 
                             lexer.ungetToken();
-                            Node.trimEmptyElement(lexer, list);
                             return;
                         }
                     }
@@ -1856,14 +1838,12 @@ public final class ParserImpl
                     if (!((node.tag.model & (Dict.CM_BLOCK | Dict.CM_INLINE)) != 0))
                     {
                         lexer.report.warning(lexer, list, node, ErrorCode.TAG_NOT_ALLOWED_IN);
-                        Node.trimEmptyElement(lexer, list);
                         return;
                     }
 
                     // if DD appeared directly in BODY then exclude blocks
                     if (!((node.tag.model & Dict.CM_INLINE) != 0) && lexer.excludeBlocks)
                     {
-                        Node.trimEmptyElement(lexer, list);
                         return;
                     }
 
@@ -1883,9 +1863,7 @@ public final class ParserImpl
             }
 
             lexer.report.warning(lexer, list, node, ErrorCode.MISSING_ENDTAG_FOR);
-            Node.trimEmptyElement(lexer, list);
         }
-
     }
 
     /**
@@ -1919,7 +1897,6 @@ public final class ParserImpl
                 {
                     Node.trimSpaces(lexer, pre);
                     pre.closed = true;
-                    Node.trimEmptyElement(lexer, pre);
                     return;
                 }
 
@@ -2008,9 +1985,7 @@ public final class ParserImpl
             }
 
             lexer.report.warning(lexer, pre, node, ErrorCode.MISSING_ENDTAG_FOR);
-            Node.trimEmptyElement(lexer, pre);
         }
-
     }
 
     /**
@@ -2081,7 +2056,6 @@ public final class ParserImpl
 
                     element.closed = true;
                     Node.trimSpaces(lexer, element);
-                    Node.trimEmptyElement(lexer, element);
                     return;
                 }
 
@@ -2139,7 +2113,6 @@ public final class ParserImpl
                                 }
 
                                 Node.trimSpaces(lexer, element);
-                                Node.trimEmptyElement(lexer, element);
                                 return;
                             }
                         }
@@ -2148,7 +2121,6 @@ public final class ParserImpl
                         {
                             lexer.ungetToken();
                             Node.trimSpaces(lexer, element);
-                            Node.trimEmptyElement(lexer, element);
                             return;
                         }
                     }
@@ -2311,7 +2283,6 @@ public final class ParserImpl
                         {
                             lexer.ungetToken();
                             Node.trimSpaces(lexer, element);
-                            Node.trimEmptyElement(lexer, element);
                             return;
                         }
                     }
@@ -2332,7 +2303,6 @@ public final class ParserImpl
                             }
 
                             Node.trimSpaces(lexer, element);
-                            Node.trimEmptyElement(lexer, element);
                             return;
                         }
                     }
@@ -2379,7 +2349,6 @@ public final class ParserImpl
                                 && element.parent.tag.getParser() == LIST)
                             {
                                 Node.trimSpaces(lexer, element);
-                                Node.trimEmptyElement(lexer, element);
                                 return;
                             }
 
@@ -2391,7 +2360,6 @@ public final class ParserImpl
                             if (element.parent.is(TagId.DL))
                             {
                                 Node.trimSpaces(lexer, element);
-                                Node.trimEmptyElement(lexer, element);
                                 return;
                             }
 
@@ -2410,14 +2378,12 @@ public final class ParserImpl
                             }
                             lexer.istackbase = istackbase;
                             Node.trimSpaces(lexer, element);
-                            Node.trimEmptyElement(lexer, element);
                             return;
 
                         }
                         else
                         {
                             Node.trimSpaces(lexer, element);
-                            Node.trimEmptyElement(lexer, element);
                             return;
                         }
                     }
@@ -2505,7 +2471,6 @@ public final class ParserImpl
             }
 
             Node.trimSpaces(lexer, element);
-            Node.trimEmptyElement(lexer, element);
         }
 
     }
@@ -2534,7 +2499,6 @@ public final class ParserImpl
                 {
                     lexer.istackbase = istackbase;
                     table.closed = true;
-                    Node.trimEmptyElement(lexer, table);
                     return;
                 }
 
@@ -2608,7 +2572,6 @@ public final class ParserImpl
                             lexer.report.warning(lexer, table, node, ErrorCode.MISSING_ENDTAG_BEFORE);
                             lexer.ungetToken();
                             lexer.istackbase = istackbase;
-                            Node.trimEmptyElement(lexer, table);
                             return;
                         }
                     }
@@ -2619,7 +2582,6 @@ public final class ParserImpl
                     lexer.ungetToken();
                     lexer.report.warning(lexer, table, node, ErrorCode.TAG_NOT_ALLOWED_IN);
                     lexer.istackbase = istackbase;
-                    Node.trimEmptyElement(lexer, table);
                     return;
                 }
 
@@ -2636,7 +2598,6 @@ public final class ParserImpl
             }
 
             lexer.report.warning(lexer, table, node, ErrorCode.MISSING_ENDTAG_FOR);
-            Node.trimEmptyElement(lexer, table);
             lexer.istackbase = istackbase;
         }
 
@@ -2754,7 +2715,6 @@ public final class ParserImpl
                     if (node.type == NodeType.EndTag)
                     {
                         rowgroup.closed = true;
-                        Node.trimEmptyElement(lexer, rowgroup);
                         return;
                     }
 
@@ -2766,7 +2726,6 @@ public final class ParserImpl
                 if (node.is(TagId.TABLE) && node.type == NodeType.EndTag)
                 {
                     lexer.ungetToken();
-                    Node.trimEmptyElement(lexer, rowgroup);
                     return;
                 }
 
@@ -2844,7 +2803,6 @@ public final class ParserImpl
                         if (node.tag == parent.tag)
                         {
                             lexer.ungetToken();
-                            Node.trimEmptyElement(lexer, rowgroup);
                             return;
                         }
                     }
@@ -2860,7 +2818,6 @@ public final class ParserImpl
                         lexer.ungetToken();
                     }
 
-                    Node.trimEmptyElement(lexer, rowgroup);
                     return;
                 }
 
@@ -2881,7 +2838,6 @@ public final class ParserImpl
                 rowgroup.insertNodeAtEnd(node);
                 parseTag(lexer, node, Lexer.IGNORE_WHITESPACE);
             }
-            Node.trimEmptyElement(lexer, rowgroup);
         }
     }
 
@@ -2951,7 +2907,6 @@ public final class ParserImpl
                         if (node.tag == parent.tag)
                         {
                             lexer.ungetToken();
-                            Node.trimEmptyElement(lexer, row);
                             return;
                         }
                     }
@@ -2981,7 +2936,6 @@ public final class ParserImpl
                 if (node.tag != null && (node.tag.model & Dict.CM_ROWGRP) != 0)
                 {
                     lexer.ungetToken();
-                    Node.trimEmptyElement(lexer, row);
                     return;
                 }
 
@@ -3043,10 +2997,7 @@ public final class ParserImpl
                     lexer.popInline(null);
                 }
             }
-
-            Node.trimEmptyElement(lexer, row);
         }
-
     }
 
     /**
@@ -3364,6 +3315,27 @@ public final class ParserImpl
             node = next;
         }
     }
+    
+    private static Node dropEmptyElements(final Lexer lexer, Node node) {
+        Node next;
+
+        while (node != null) {
+            next = node.next;
+
+            if (node.content != null) {
+                dropEmptyElements(lexer, node.content);
+            }
+
+            if (!node.isElement() && !(node.isText() && !(node.start < node.end))) {
+                node = next;
+                continue;
+            }
+
+            next = Node.trimEmptyElement(lexer, node);
+            node = next;
+        }
+        return node;
+    }
 
     /**
      * HTML is the top level element.
@@ -3440,6 +3412,7 @@ public final class ParserImpl
         }
         
         attributeChecks(lexer, lexer.root);
+        dropEmptyElements(lexer, lexer.root);
 
         return document;
     }
