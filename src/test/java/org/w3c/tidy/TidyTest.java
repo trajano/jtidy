@@ -46,7 +46,7 @@ public class TidyTest extends TestCase {
 				is = new FileInputStream(base + "input/in_" + t + ".xml");
 			} catch (FileNotFoundException e1) {
 				try {
-					is = new FileInputStream(base + "input/in_" + t + ".xhml");
+					is = new FileInputStream(base + "input/in_" + t + ".xhtml");
 				} catch (FileNotFoundException e2) {
 					throw new RuntimeException("can't find input file");
 				}
