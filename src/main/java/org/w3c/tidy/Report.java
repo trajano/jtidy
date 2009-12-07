@@ -326,7 +326,7 @@ public final class Report
      * @param p printWriter
      */
     public void showVersion(final PrintWriter p) {
-        printMessage(p, "version_summary", null, new Object[]{RELEASE_DATE_STRING});
+        printMessage(p, "version_summary", null, RELEASE_DATE_STRING);
     }
 
     /**
@@ -370,7 +370,7 @@ public final class Report
     {
         try
         {
-            System.err.println(MessageFormat.format(res.getString("unknown_option"), new Object[]{option}));
+            System.err.println(MessageFormat.format(res.getString("unknown_option"), option));
         }
         catch (MissingResourceException e)
         {
@@ -403,16 +403,16 @@ public final class Report
             // Change formatting to be parsable by GNU Emacs
             if (lexer.configuration.isEmacs())
             {
-                return MessageFormat.format(res.getString("emacs_format"), new Object[]{
+                return MessageFormat.format(res.getString("emacs_format"), 
                     this.currentFile,
                     new Integer(lexer.lines),
-                    new Integer(lexer.columns)})
+                    new Integer(lexer.columns))
                     + " ";
             }
             // traditional format
-            return MessageFormat.format(res.getString("line_column"), new Object[]{
+            return MessageFormat.format(res.getString("line_column"), 
                 new Integer(lexer.lines),
-                new Integer(lexer.columns)});
+                new Integer(lexer.columns));
 
         }
         catch (MissingResourceException e)
@@ -451,9 +451,9 @@ public final class Report
                     lexer,
                     "encoding_mismatch",
                     Level.WARNING,
-                    new Object[]{
+                    
                         lexer.configuration.getInCharEncodingName(),
-                        ParsePropertyImpl.CHAR_ENCODING.getFriendlyName(null, new Integer(c), lexer.configuration)});
+                        ParsePropertyImpl.CHAR_ENCODING.getFriendlyName(null, new Integer(c), lexer.configuration));
                 break;
             case VENDOR_SPECIFIC_CHARS:
                 lexer.badChars |= BC_VENDOR_SPECIFIC_CHARS;
@@ -462,7 +462,7 @@ public final class Report
                     lexer,
                     "invalid_char",
                     Level.WARNING,
-                    new Object[]{replaceMode, buf});
+                    replaceMode, buf);
                 break;
             case INVALID_SGML_CHARS:
                 lexer.badChars |= BC_INVALID_SGML_CHARS;
@@ -471,7 +471,7 @@ public final class Report
                     lexer,
                     "invalid_char",
                     Level.WARNING,
-                    new Object[]{replaceMode, buf});
+                    replaceMode, buf);
                 break;
             case INVALID_UTF8:
                 lexer.badChars |= BC_INVALID_UTF8;
@@ -480,7 +480,7 @@ public final class Report
                     lexer,
                     "invalid_utf8",
                     Level.WARNING,
-                    new Object[]{replaceMode, buf});
+                    replaceMode, buf);
                 break;
             case INVALID_UTF16:
                 lexer.badChars |= BC_INVALID_UTF16;
@@ -489,7 +489,7 @@ public final class Report
                     lexer,
                     "invalid_utf16",
                     Level.WARNING,
-                    new Object[]{replaceMode, buf});
+                    replaceMode, buf);
                 break;
             case INVALID_NCR:
                 lexer.badChars |= BC_INVALID_NCR;
@@ -498,7 +498,7 @@ public final class Report
                     lexer,
                     "invalid_ncr",
                     Level.WARNING,
-                    new Object[]{replaceMode, buf});
+                    replaceMode, buf);
                 break;
             }
         }
@@ -525,13 +525,13 @@ public final class Report
             switch (code)
             {
                 case MISSING_SEMICOLON :
-                    printMessage(code, lexer, "missing_semicolon", Level.WARNING, new Object[]{entity});
+                    printMessage(code, lexer, "missing_semicolon", Level.WARNING, entity);
                     break;
                 case MISSING_SEMICOLON_NCR :
-                    printMessage(code, lexer, "missing_semicolon_ncr", Level.WARNING, new Object[]{entity});
+                    printMessage(code, lexer, "missing_semicolon_ncr", Level.WARNING, entity);
                     break;
                 case UNKNOWN_ENTITY :
-                    printMessage(code, lexer, "unknown_entity", Level.WARNING, new Object[]{entity});
+                    printMessage(code, lexer, "unknown_entity", Level.WARNING, entity);
                     break;
                 case UNESCAPED_AMPERSAND :
                     printMessage(code, lexer, "unescaped_ampersand", Level.WARNING);
@@ -571,7 +571,7 @@ public final class Report
 
         if (code == UNEXPECTED_GT) // error
         {
-            printMessage(code, lexer, "unexpected_gt", Level.ERROR, new Object[]{getTagName(node)});
+            printMessage(code, lexer, "unexpected_gt", Level.ERROR, getTagName(node));
         }
 
         if (!lexer.configuration.isShowWarnings()) // warnings
@@ -582,7 +582,7 @@ public final class Report
         switch (code)
         {
             case UNKNOWN_ATTRIBUTE :
-                printMessage(code, lexer, "unknown_attribute", Level.WARNING, new Object[]{attribute.attribute});
+                printMessage(code, lexer, "unknown_attribute", Level.WARNING, attribute.attribute);
                 break;
 
             case MISSING_ATTRIBUTE :
@@ -591,7 +591,7 @@ public final class Report
                     lexer,
                     "missing_attribute",
                     Level.WARNING,
-                    new Object[]{getTagName(node), attribute.attribute});
+                    getTagName(node), attribute.attribute);
                 break;
 
             case MISSING_ATTR_VALUE :
@@ -600,19 +600,19 @@ public final class Report
                     lexer,
                     "missing_attr_value",
                     Level.WARNING,
-                    new Object[]{getTagName(node), attribute.attribute});
+                    getTagName(node), attribute.attribute);
                 break;
 
             case MISSING_IMAGEMAP :
-                printMessage(code, lexer, "missing_imagemap", Level.WARNING, new Object[]{getTagName(node)});
+                printMessage(code, lexer, "missing_imagemap", Level.WARNING, getTagName(node));
                 lexer.badAccess |= MISSING_IMAGE_MAP;
                 break;
 
             case BAD_ATTRIBUTE_VALUE :
-                printMessage(code, lexer, "bad_attribute_value", Level.WARNING, new Object[]{
+                printMessage(code, lexer, "bad_attribute_value", Level.WARNING, 
 					    getTagName(node),
 					    attribute.attribute,
-					    attribute.value});
+					    attribute.value);
                 break;
 
             case XML_ID_SYNTAX :
@@ -621,7 +621,7 @@ public final class Report
                     lexer,
                     "xml_id_sintax",
                     Level.WARNING,
-                    new Object[]{getTagName(node), attribute.attribute});
+                    getTagName(node), attribute.attribute);
                 break;
 
             case XML_ATTRIBUTE_VALUE :
@@ -630,22 +630,22 @@ public final class Report
                     lexer,
                     "xml_attribute_value",
                     Level.WARNING,
-                    new Object[]{getTagName(node), attribute.attribute});
+                    getTagName(node), attribute.attribute);
                 break;
 
             case UNEXPECTED_QUOTEMARK :
-                printMessage(code, lexer, "unexpected_quotemark", Level.WARNING, new Object[]{getTagName(node)});
+                printMessage(code, lexer, "unexpected_quotemark", Level.WARNING, getTagName(node));
                 break;
 
             case MISSING_QUOTEMARK :
-                printMessage(code, lexer, "missing_quotemark", Level.WARNING, new Object[]{getTagName(node)});
+                printMessage(code, lexer, "missing_quotemark", Level.WARNING, getTagName(node));
                 break;
 
             case REPEATED_ATTRIBUTE :
-                printMessage(code, lexer, "repeated_attribute", Level.WARNING, new Object[]{
+                printMessage(code, lexer, "repeated_attribute", Level.WARNING, 
 					    getTagName(node),
 					    attribute.value,
-					    attribute.attribute});
+					    attribute.attribute);
                 break;
 
             case PROPRIETARY_ATTR_VALUE :
@@ -654,7 +654,7 @@ public final class Report
                     lexer,
                     "proprietary_attr_value",
                     Level.WARNING,
-                    new Object[]{getTagName(node), attribute.value});
+                    getTagName(node), attribute.value);
                 break;
 
             case PROPRIETARY_ATTRIBUTE :
@@ -663,38 +663,38 @@ public final class Report
                     lexer,
                     "proprietary_attribute",
                     Level.WARNING,
-                    new Object[]{getTagName(node), attribute.attribute});
+                    getTagName(node), attribute.attribute);
                 break;
 
             case UNEXPECTED_END_OF_FILE :
                 // on end of file adjust reported position to end of input
                 lexer.lines = lexer.in.getCurline();
                 lexer.columns = lexer.in.getCurcol();
-                printMessage(code, lexer, "unexpected_end_of_file", Level.WARNING, new Object[]{getTagName(node)});
+                printMessage(code, lexer, "unexpected_end_of_file", Level.WARNING, getTagName(node));
                 break;
 
             case ID_NAME_MISMATCH :
-                printMessage(code, lexer, "id_name_mismatch", Level.WARNING, new Object[]{getTagName(node)});
+                printMessage(code, lexer, "id_name_mismatch", Level.WARNING, getTagName(node));
                 break;
 
             case BACKSLASH_IN_URI :
-                printMessage(code, lexer, "backslash_in_uri", Level.WARNING, new Object[]{getTagName(node)});
+                printMessage(code, lexer, "backslash_in_uri", Level.WARNING, getTagName(node));
                 break;
 
             case FIXED_BACKSLASH :
-                printMessage(code, lexer, "fixed_backslash", Level.WARNING, new Object[]{getTagName(node)});
+                printMessage(code, lexer, "fixed_backslash", Level.WARNING, getTagName(node));
                 break;
 
             case ILLEGAL_URI_REFERENCE :
-                printMessage(code, lexer, "illegal_uri_reference", Level.WARNING, new Object[]{getTagName(node)});
+                printMessage(code, lexer, "illegal_uri_reference", Level.WARNING, getTagName(node));
                 break;
 
             case ESCAPED_ILLEGAL_URI :
-                printMessage(code, lexer, "escaped_illegal_uri", Level.WARNING, new Object[]{getTagName(node)});
+                printMessage(code, lexer, "escaped_illegal_uri", Level.WARNING, getTagName(node));
                 break;
 
             case NEWLINE_IN_URI :
-                printMessage(code, lexer, "newline_in_uri", Level.WARNING, new Object[]{getTagName(node)});
+                printMessage(code, lexer, "newline_in_uri", Level.WARNING, getTagName(node));
                 break;
 
             case ANCHOR_NOT_UNIQUE :
@@ -703,7 +703,7 @@ public final class Report
                     lexer,
                     "anchor_not_unique",
                     Level.WARNING,
-                    new Object[]{getTagName(node), attribute.value});
+                    getTagName(node), attribute.value);
                 break;
 
             case ENTITY_IN_ID :
@@ -716,18 +716,18 @@ public final class Report
                     lexer,
                     "joining_attribute",
                     Level.WARNING,
-                    new Object[]{getTagName(node), attribute.attribute});
+                    getTagName(node), attribute.attribute);
                 break;
 
             case UNEXPECTED_EQUALSIGN :
-                printMessage(code, lexer, "expected_equalsign", Level.WARNING, new Object[]{getTagName(node)});
+                printMessage(code, lexer, "expected_equalsign", Level.WARNING, getTagName(node));
                 break;
 
             case ATTR_VALUE_NOT_LCASE :
-                printMessage(code, lexer, "attr_value_not_lcase", Level.WARNING, new Object[]{
+                printMessage(code, lexer, "attr_value_not_lcase", Level.WARNING, 
 					    getTagName(node),
 					    attribute.value,
-					    attribute.attribute});
+					    attribute.attribute);
                 break;
 
             default :
@@ -760,7 +760,7 @@ public final class Report
             switch (code)
             {
                 case MISSING_ENDTAG_FOR :
-                    printMessage(code, lexer, "missing_endtag_for", Level.WARNING, new Object[]{element.element});
+                    printMessage(code, lexer, "missing_endtag_for", Level.WARNING, element.element);
                     break;
 
                 case MISSING_ENDTAG_BEFORE :
@@ -769,7 +769,7 @@ public final class Report
                         lexer,
                         "missing_endtag_before",
                         Level.WARNING,
-                        new Object[]{element.element, getTagName(node)});
+                        element.element, getTagName(node));
                     break;
 
                 case DISCARDING_UNEXPECTED :
@@ -781,16 +781,16 @@ public final class Report
                             lexer,
                             "discarding_unexpected",
                             Level.WARNING,
-                            new Object[]{getTagName(node)});
+                            getTagName(node));
                     }
                     break;
 
                 case NESTED_EMPHASIS :
-                    printMessage(code, lexer, "nested_emphasis", Level.INFO, new Object[]{getTagName(node)});
+                    printMessage(code, lexer, "nested_emphasis", Level.INFO, getTagName(node));
                     break;
 
                 case COERCE_TO_ENDTAG :
-                    printMessage(code, lexer, "coerce_to_endtag", Level.INFO, new Object[]{element.element});
+                    printMessage(code, lexer, "coerce_to_endtag", Level.INFO, element.element);
                     break;
 
                 case NON_MATCHING_ENDTAG :
@@ -799,7 +799,7 @@ public final class Report
                         lexer,
                         "non_matching_endtag",
                         Level.WARNING,
-                        new Object[]{getTagName(node), element.element});
+                        getTagName(node), element.element);
                     break;
 
                 case TAG_NOT_ALLOWED_IN :
@@ -808,7 +808,7 @@ public final class Report
                         lexer,
                         "tag_not_allowed_in",
                         Level.WARNING,
-                        new Object[]{getTagName(node), element.element});
+                        getTagName(node), element.element);
                     break;
 
                 case DOCTYPE_AFTER_TAGS :
@@ -816,7 +816,7 @@ public final class Report
                     break;
 
                 case MISSING_STARTTAG :
-                    printMessage(code, lexer, "missing_starttag", Level.WARNING, new Object[]{node.element});
+                    printMessage(code, lexer, "missing_starttag", Level.WARNING, node.element);
                     break;
 
                 case UNEXPECTED_ENDTAG :
@@ -827,11 +827,11 @@ public final class Report
                             lexer,
                             "unexpected_endtag_in",
                             Level.WARNING,
-                            new Object[]{node.element, element.element});
+                            node.element, element.element);
                     }
                     else
                     {
-                        printMessage(code, lexer, "unexpected_endtag", Level.WARNING, new Object[]{node.element});
+                        printMessage(code, lexer, "unexpected_endtag", Level.WARNING, node.element);
                     }
                     break;
 
@@ -843,28 +843,28 @@ public final class Report
                             lexer,
                             "too_many_elements_in",
                             Level.WARNING,
-                            new Object[]{node.element, element.element});
+                            node.element, element.element);
                     }
                     else
                     {
-                        printMessage(code, lexer, "too_many_elements", Level.WARNING, new Object[]{node.element});
+                        printMessage(code, lexer, "too_many_elements", Level.WARNING, node.element);
                     }
                     break;
 
                 case USING_BR_INPLACE_OF :
-                    printMessage(code, lexer, "using_br_inplace_of", Level.WARNING, new Object[]{getTagName(node)});
+                    printMessage(code, lexer, "using_br_inplace_of", Level.WARNING, getTagName(node));
                     break;
 
                 case INSERTING_TAG :
-                    printMessage(code, lexer, "inserting_tag", Level.WARNING, new Object[]{node.element});
+                    printMessage(code, lexer, "inserting_tag", Level.WARNING, node.element);
                     break;
 
                 case CANT_BE_NESTED :
-                    printMessage(code, lexer, "cant_be_nested", Level.WARNING, new Object[]{getTagName(node)});
+                    printMessage(code, lexer, "cant_be_nested", Level.WARNING, getTagName(node));
                     break;
 
                 case PROPRIETARY_ELEMENT :
-                    printMessage(code, lexer, "proprietary_element", Level.WARNING, new Object[]{getTagName(node)});
+                    printMessage(code, lexer, "proprietary_element", Level.WARNING, getTagName(node));
 
                     if (node.is(TagId.LAYER))
                     {
@@ -883,24 +883,24 @@ public final class Report
                 case OBSOLETE_ELEMENT :
                     if (element.tag != null && (element.tag.model & Dict.CM_OBSOLETE) != 0)
                     {
-                        printMessage(code, lexer, "obsolete_element", Level.WARNING, new Object[]{
+                        printMessage(code, lexer, "obsolete_element", Level.WARNING, 
 							    getTagName(element),
-							    getTagName(node)});
+							    getTagName(node));
                     }
                     else
                     {
-                        printMessage(code, lexer, "replacing_element", Level.WARNING, new Object[]{
+                        printMessage(code, lexer, "replacing_element", Level.WARNING, 
 							    getTagName(element),
-							    getTagName(node)});
+							    getTagName(node));
                     }
                     break;
 
                 case UNESCAPED_ELEMENT :
-                    printMessage(code, lexer, "unescaped_element", Level.WARNING, new Object[]{getTagName(element)});
+                    printMessage(code, lexer, "unescaped_element", Level.WARNING, getTagName(element));
                     break;
 
                 case TRIM_EMPTY_ELEMENT :
-                    printMessage(code, lexer, "trim_empty_element", Level.WARNING, new Object[]{getTagName(element)});
+                    printMessage(code, lexer, "trim_empty_element", Level.WARNING, getTagName(element));
                     break;
 
                 case MISSING_TITLE_ELEMENT :
@@ -908,11 +908,11 @@ public final class Report
                     break;
 
                 case ILLEGAL_NESTING :
-                    printMessage(code, lexer, "illegal_nesting", Level.WARNING, new Object[]{getTagName(element)});
+                    printMessage(code, lexer, "illegal_nesting", Level.WARNING, getTagName(element));
                     break;
 
                 case NOFRAMES_CONTENT :
-                    printMessage(code, lexer, "noframes_content", Level.WARNING, new Object[]{getTagName(node)});
+                    printMessage(code, lexer, "noframes_content", Level.WARNING, getTagName(node));
                     break;
 
                 case INCONSISTENT_VERSION :
@@ -960,7 +960,7 @@ public final class Report
                         lexer,
                         "unexpected_end_of_file",
                         Level.WARNING,
-                        new Object[]{getTagName(element)});
+                        getTagName(element));
                     break;
 
                 case NESTED_QUOTATION :
@@ -968,7 +968,7 @@ public final class Report
                     break;
 
                 case ELEMENT_NOT_EMPTY :
-                    printMessage(code, lexer, "element_not_empty", Level.WARNING, new Object[]{getTagName(element)});
+                    printMessage(code, lexer, "element_not_empty", Level.WARNING, getTagName(element));
                     break;
 
                 case MISSING_DOCTYPE :
@@ -983,7 +983,7 @@ public final class Report
         if ((code == DISCARDING_UNEXPECTED) && lexer.badForm != 0)
         {
             // the case for when this is a warning not an error, is handled earlier
-            printMessage(code, lexer, "discarding_unexpected", Level.ERROR, new Object[]{getTagName(node)});
+            printMessage(code, lexer, "discarding_unexpected", Level.ERROR, getTagName(node));
         }
 
     }
@@ -1013,7 +1013,7 @@ public final class Report
             printMessage(code, lexer, "duplicate_frameset", Level.ERROR);
             break;
         case UNKNOWN_ELEMENT:
-            printMessage(code, lexer, "unknown_element", Level.ERROR, new Object[]{getTagName(node)});
+            printMessage(code, lexer, "unknown_element", Level.ERROR, getTagName(node));
             break;
         case UNEXPECTED_ENDTAG:
             if (element != null)
@@ -1023,11 +1023,11 @@ public final class Report
                     lexer,
                     "unexpected_endtag_in",
                     Level.ERROR,
-                    new Object[]{node.element, element.element});
+                    node.element, element.element);
             }
             else
             {
-                printMessage(code, lexer, "unexpected_endtag", Level.ERROR, new Object[]{node.element});
+                printMessage(code, lexer, "unexpected_endtag", Level.ERROR, node.element);
             }
             break;
         }
@@ -1062,8 +1062,8 @@ public final class Report
                     encodingChoiche = 2;
                 }
 
-                printMessage(VENDOR_SPECIFIC_CHARS, lexer, "vendor_specific_chars_summary", null, new Object[]{new Integer(
-					    encodingChoiche)});
+                printMessage(VENDOR_SPECIFIC_CHARS, lexer, "vendor_specific_chars_summary", null, new Integer(
+					    encodingChoiche));
             }
 
             if ((lexer.badChars & BC_INVALID_SGML_CHARS) != 0 || (lexer.badChars & BC_INVALID_NCR) != 0)
@@ -1079,8 +1079,8 @@ public final class Report
                     encodingChoiche = 2;
                 }
 
-                printMessage(INVALID_SGML_CHARS, lexer, "invalid_sgml_chars_summary", null, new Object[]{new Integer(
-					    encodingChoiche)});
+                printMessage(INVALID_SGML_CHARS, lexer, "invalid_sgml_chars_summary", null, new Integer(
+					    encodingChoiche));
             }
 
             if ((lexer.badChars & BC_INVALID_UTF8) != 0)
@@ -1131,7 +1131,7 @@ public final class Report
                 printMessage(USING_FRAMES, lexer, "badaccess_frames", null);
             }
 
-            printMessage(BADACCESS_SUMMARY, lexer, "badaccess_summary", null, new Object[]{ACCESS_URL});
+            printMessage(BADACCESS_SUMMARY, lexer, "badaccess_summary", null, ACCESS_URL);
         }
 
         if (lexer.badLayout != 0)
@@ -1170,7 +1170,7 @@ public final class Report
      */
     public void unknownOption(PrintWriter errout, char c)
     {
-        printMessage(errout, "unrecognized_option", Level.ERROR, new Object[]{new String(new char[]{c})});
+        printMessage(errout, "unrecognized_option", Level.ERROR, new String(new char[]{c}));
     }
 
     /**
@@ -1180,7 +1180,7 @@ public final class Report
      */
     public void unknownFile(PrintWriter errout, String file)
     {
-        printMessage(errout, "unknown_file", Level.ERROR, new Object[]{"Tidy", file});
+        printMessage(errout, "unknown_file", Level.ERROR, "Tidy", file);
     }
 
     /**
@@ -1208,7 +1208,7 @@ public final class Report
      */
     public void reportNumberOfSlides(PrintWriter errout, int count)
     {
-        printMessage(errout, "slides_found", null, new Object[]{new Integer(count)});
+        printMessage(errout, "slides_found", null, new Integer(count));
     }
 
     /**
@@ -1278,11 +1278,11 @@ public final class Report
                 lexer,
                 "doctype_given",
                 Level.INFO,
-                new Object[]{doctypeBuffer});
+                doctypeBuffer);
         }
 
-        simpleMessage(REPORT_VERSION_SUMMARY.code(), lexer, "report_version", Level.INFO, new Object[]{
-			    (vers != null ? vers : "HTML Proprietary")});
+        simpleMessage(REPORT_VERSION_SUMMARY.code(), lexer, "report_version", Level.INFO, 
+			    (vers != null ? vers : "HTML Proprietary"));
         if (lexer.warnMissingSIInEmittedDocType()) {
         	simpleMessage(-1, lexer, "no_si", Level.INFO);
         }
@@ -1301,7 +1301,7 @@ public final class Report
                 errout,
                 "num_warnings",
                 null,
-                new Object[]{new Integer(lexer.warnings), new Integer(lexer.errors)});
+                new Integer(lexer.warnings), new Integer(lexer.errors));
         }
         else
         {
@@ -1315,7 +1315,7 @@ public final class Report
      */
     public void helpText(PrintWriter out)
     {
-        printMessage(out, "help_text", null, new Object[]{"Tidy", RELEASE_DATE_STRING});
+        printMessage(out, "help_text", null, "Tidy", RELEASE_DATE_STRING);
     }
 
     /**
