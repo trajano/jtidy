@@ -1831,10 +1831,7 @@ public class Lexer
                             this.in.ungetChar(c);
                             this.state = LEX_ENDTAG;
                             this.lexbuf[this.lexsize] = (byte) '\0'; // debug
-
-                            // changed from
-                            // this.in.curcol -= 2;
-                            this.columns -= 2;
+                            in.moveCurcol(-2);
 
                             // if some text before the </ return it now
                             if (this.txtend > this.txtstart)
@@ -2051,6 +2048,7 @@ public class Lexer
                     if (TidyUtils.isLetter((char) c))
                     {
                         this.in.ungetChar(c); // push back letter
+                        in.ungetChar('<');
                         this.lexsize -= 2; // discard " <" + letter
                         this.txtend = this.lexsize;
                         this.state = LEX_STARTTAG; // ready to read tag name
@@ -2073,11 +2071,7 @@ public class Lexer
                 case LEX_ENDTAG :
                     // </letter
                     this.txtstart = this.lexsize - 1;
-
-                    // changed from
-                    // this.in.curcol -= 2;
-                    this.columns -= 2;
-
+                    in.moveCurcol(2);
                     c = parseTagName();
                     this.token = newNode(NodeType.EndTag, // create endtag token
                         this.lexbuf,
@@ -2112,6 +2106,8 @@ public class Lexer
                     return this.token; // the endtag token
 
                 case LEX_STARTTAG :
+                	c = in.readChar();
+                	changeChar((byte)c);
                     // first letter of tagname
                     this.txtstart = this.lexsize - 1; // set txtstart to first letter
                     c = parseTagName();
