@@ -3400,18 +3400,12 @@ public class Lexer
             {
                 av = new AttVal(null, null, null, null, 0, attribute, value);
 
-                // #427664 - fix by Gary Peskin 04 Aug 00; other fixes by Dave Raggett
-                if (value != null)
-                {
-                    report.attrError(this, this.token, av, ErrorCode.BAD_ATTRIBUTE_VALUE);
-                }
-                else if (TidyUtils.lastChar(attribute) == '"')
-                {
+                if (TidyUtils.lastChar(attribute) == '"') {
                     report.attrError(this, this.token, av, ErrorCode.MISSING_QUOTEMARK);
-                }
-                else
-                {
-                    report.attrError(this, this.token, av, ErrorCode.UNKNOWN_ATTRIBUTE);
+                } else if (value == null) {
+                	report.attrError(this, this.token, av, ErrorCode.MISSING_ATTR_VALUE);
+                } else {
+                	report.attrError(this, this.token, av, ErrorCode.INVALID_ATTRIBUTE);
                 }
             }
         }
