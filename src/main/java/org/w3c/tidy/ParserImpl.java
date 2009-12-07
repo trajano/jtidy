@@ -3339,7 +3339,28 @@ public final class ParserImpl
                 lexer.report.warning(lexer, field, node, ErrorCode.DISCARDING_UNEXPECTED);
             }
         }
+    }
+    
+    private static void attributeChecks(final Lexer lexer, Node node) {
+        Node next;
 
+        while (node != null) {
+            next = node.next;
+
+            if (node.isElement()) {
+                if (node.tag.getChkattrs() != null) {
+                    node.tag.getChkattrs().check(lexer, node);
+                } else {
+                    node.checkAttributes(lexer);
+                }
+            }
+            if (node.content != null) {
+                attributeChecks(lexer, node.content);
+            }
+
+            assert(next != node); /* http://tidy.sf.net/issue/1603538 */
+            node = next;
+        }
     }
 
     /**
@@ -3415,6 +3436,8 @@ public final class ParserImpl
             lexer.report.warning(lexer, head, null, ErrorCode.MISSING_TITLE_ELEMENT);
             head.insertNodeAtEnd(lexer.inferredTag(TagId.TITLE));
         }
+        
+        attributeChecks(lexer, lexer.root);
 
         return document;
     }
