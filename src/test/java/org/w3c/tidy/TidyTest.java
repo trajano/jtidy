@@ -79,11 +79,11 @@ public class TidyTest extends TestCase {
     		int b1 = s1.read();
     		int b2 = s2.read();
     		if (b1 != b2) {
-    			if (b1 == -1 && b2 == 10) {
-    				final byte[] b = new byte[20];
+    			if (b1 == -1 && b2 == 'T') {
+    				final byte[] b = new byte[19];
     				s2.read(b);
     				final String s = new String(b);
-    				if (s.equals("To learn more about ")) {
+    				if (s.equals("o learn more about ")) {
     					break;
     				}
     			}
