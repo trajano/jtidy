@@ -1407,13 +1407,13 @@ public class PPrint
             		wraphere = linelen;
             	}
             }
+	        /* flush the current buffer only if it is known to be safe,
+	        i.e. it will not introduce some spurious white spaces.
+	        See bug #996484 */
+		    else if ((mode & NOWRAP) != 0 || node.is(TagId.BR) || afterSpace(lexer, node)) {
+		         condFlushLine(fout, indent);
+		    }
         }
-        /* flush the current buffer only if it is known to be safe,
-        i.e. it will not introduce some spurious white spaces.
-        See bug #996484 */
-	    else if ((mode & NOWRAP) != 0 || node.is(TagId.BR) || afterSpace(lexer, node)) {
-	         condFlushLine(fout, indent);
-	    }
     }
 
     /**
@@ -1848,21 +1848,22 @@ public class PPrint
         String commentEnd = DEFAULT_COMMENT_END;
         boolean hasCData = false;
         int contentIndent = -1;
+        final boolean xhtmlOut = lexer.configuration.isXHTML();
 
         if (insideHead(node))
         {
-            // flushLine(fout, indent);
+            flushLine(fout, indent);
         }
 
         indent = 0;
 
         // start script
         printTag(lexer, fout, mode, indent, node);
-        // flushLine(fout, indent); // extra newline
+        flushLine(fout, 0);
 
-        if (lexer.configuration.isXHTML() && node.content != null)
+		if (xhtmlOut && node.content != null)
         {
-            AttVal type = node.getAttrByName("type");
+            AttVal type = node.getAttrById(AttrId.TYPE);
             if (type != null)
             {
                 if ("text/javascript".equalsIgnoreCase(type.value))
@@ -1901,9 +1902,9 @@ public class PPrint
 
         for (content = node.content; content != null; content = content.next)
         {
-            printTree(fout, (short) (mode | PREFORMATTED | NOWRAP | CDATA), 0, lexer, content);
+            printTree(fout, (short) (mode | PREFORMATTED | NOWRAP | CDATA), indent, lexer, content);
 
-            if (content.next == null)
+            if (content == node.last)
             {
                 contentIndent = textEndsWithNewline(lexer, content, CDATA);
             }
@@ -1916,7 +1917,7 @@ public class PPrint
             contentIndent = 0;
         }
 
-        if (lexer.configuration.isXHTML() && node.content != null)
+        if (xhtmlOut && node.content != null)
         {
             if (!hasCData)
             {
@@ -1940,7 +1941,7 @@ public class PPrint
 
                 // restore wrapping
                 lexer.configuration.setWraplen(savewraplen);
-                condFlushLine(fout, 0);
+                condFlushLine(fout, indent);
             }
         }
 
