@@ -1496,6 +1496,17 @@ public class Node {
                  : attval.dict.getVersions();
     }
     
+    /* return the version of the attribute "id" of element "node" */
+    protected int getAttributeVersions(final AttrId id) {
+        if (tag == null || tag.attrvers == null) {
+            return Versions.VERS_UNKNOWN;
+        }
+        if (tag.attrvers.containsKey(id)) {
+        	return tag.attrvers.get(id);
+        }
+        return Versions.VERS_UNKNOWN;
+    }
+    
     /* returns true if the element is a W3C defined element */
     /* but the element/attribute combination is not         */
     protected boolean attributeIsProprietary(final AttVal attval) {
