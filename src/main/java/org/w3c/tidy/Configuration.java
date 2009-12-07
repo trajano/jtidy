@@ -1220,4 +1220,12 @@ public class Configuration implements Serializable
 	protected boolean isVertSpace() {
 		return getBool(Option.VertSpace);
 	}
+	
+	protected void setAnchorAsName(final boolean anchorAsName) {
+		set(Option.AnchorAsName, anchorAsName);
+	}
+	
+	protected boolean isAnchorAsName() {
+		return getBool(Option.AnchorAsName);
+	}
 }
