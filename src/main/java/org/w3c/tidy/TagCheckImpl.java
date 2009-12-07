@@ -366,8 +366,7 @@ public final class TagCheckImpl
             if (!hasAlt)
             {
                 lexer.badAccess |= Report.MISSING_IMAGE_ALT;
-                AttVal missingAlt = new AttVal(null, null, '"', "alt", "");
-                lexer.report.attrError(lexer, node, missingAlt, ErrorCode.MISSING_ATTRIBUTE);
+                lexer.report.missingAttr(lexer, node, "alt");
                 if (lexer.configuration.getAltText() != null)
                 {
                     node.addAttribute("alt", lexer.configuration.getAltText());
