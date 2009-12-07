@@ -1659,7 +1659,7 @@ public class Lexer
 //	        else
 //	            return NULL;
 //	    #else
-	        return newNode(NodeType.TextNode, lexbuf, txtstart, txtend);
+	        return textToken();
 //	    #endif
     }
 
@@ -1841,7 +1841,7 @@ public class Lexer
                                     this.txtend = this.lexsize;
                                 }
 
-                                this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
+                                this.token = textToken();
                                 return this.token;
                             }
 
@@ -1880,7 +1880,7 @@ public class Lexer
                                 // if some text before < return it now
                                 if (this.txtend > this.txtstart)
                                 {
-                                    this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
+                                    this.token = textToken();
                                     return this.token;
                                 }
 
@@ -1941,7 +1941,7 @@ public class Lexer
                             // if some text before < return it now
                             if (this.txtend > this.txtstart)
                             {
-                                this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
+                                this.token = textToken();
                                 return this.token;
                             }
 
@@ -1958,7 +1958,7 @@ public class Lexer
                             // if some text before < return it now
                             if (this.txtend > this.txtstart)
                             {
-                                this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
+                                this.token = textToken();
                                 return this.token;
                             }
 
@@ -1998,7 +1998,7 @@ public class Lexer
                         // if some text before < return it now
                         if (this.txtend > this.txtstart)
                         {
-                            this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
+                            this.token = textToken();
                             return this.token;
                         }
 
@@ -2016,7 +2016,7 @@ public class Lexer
                         // if some text before < return it now
                         if (this.txtend > this.txtstart)
                         {
-                            this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
+                            this.token = textToken();
                             return this.token;
                         }
 
@@ -2034,7 +2034,7 @@ public class Lexer
                         // if some text before < return it now
                         if (this.txtend > this.txtstart)
                         {
-                            this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
+                            this.token = textToken();
                             return this.token;
                         }
 
@@ -2053,7 +2053,7 @@ public class Lexer
                         // if some text before < return it now
                         if (this.txtend > this.txtstart)
                         {
-                            this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
+                            this.token = textToken();
                             return this.token;
                         }
 
@@ -2582,7 +2582,7 @@ public class Lexer
                     this.txtend = this.lexsize;
                 }
 
-                this.token = newNode(NodeType.TextNode, this.lexbuf, this.txtstart, this.txtend);
+                this.token = textToken();
                 return this.token;
             }
         }
@@ -3646,6 +3646,10 @@ public class Lexer
 
         if (element.content != null)
         {
+            return false;
+        }
+        
+        if (element.hasCM(Dict.CM_BLOCK) && element.attributes != null) {
             return false;
         }
 
