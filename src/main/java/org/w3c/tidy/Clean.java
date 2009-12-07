@@ -2400,5 +2400,66 @@ public class Clean
             }
         }
     }
+    
+    protected void fixAnchors(final Lexer lexer, Node node, final boolean wantName, final boolean wantId) {
+        Node next;
 
+        while (node != null) {
+            next = node.next;
+
+            if (node.isAnchorElement()) {
+                AttVal name = node.getAttrById(AttrId.NAME);
+                AttVal id = node.getAttrById(AttrId.ID);
+                boolean hadName = name != null;
+                boolean hadId = id != null;
+                boolean IdEmitted = false;
+                boolean NameEmitted = false;
+
+                /* todo: how are empty name/id attributes handled? */
+
+                if (name != null && id != null) {
+                	boolean NameHasValue = name.hasValue();
+                	boolean IdHasValue = id.hasValue();
+                    if ((NameHasValue != IdHasValue) || (NameHasValue && IdHasValue &&
+                        !name.value.equals(id.value))) {
+                        lexer.report.attrError(lexer, node, name, ErrorCode.ID_NAME_MISMATCH);
+                    }
+                } else if (name != null && wantId) {
+                    if ((node.getAttributeVersions(AttrId.ID) & lexer.versionEmitted) != 0) {
+                        if (TidyUtils.isValidHTMLID(name.value)) {
+                            node.repairAttrValue("id", name.value);
+                            IdEmitted = true;
+                        } else {
+                            lexer.report.attrError(lexer, node, name, ErrorCode.INVALID_XML_ID);
+                        }
+                     }
+                } else if (id != null && wantName) {
+                    if ((node.getAttributeVersions(AttrId.NAME) & lexer.versionEmitted) != 0) {
+                        /* todo: do not assume id is valid */
+                        node.repairAttrValue("name", id.value);
+                        NameEmitted = true;
+                    }
+                }
+
+                if (id != null && !wantId
+                    /* make sure that Name has been emitted if requested */
+                    && (hadName || !wantName || NameEmitted)) {
+                    node.removeAttribute(id);
+                }
+                if (name != null && !wantName
+                    /* make sure that Id has been emitted if requested */
+                    && (hadId || !wantId || IdEmitted)) {
+                	node.removeAttribute(name);
+                }
+                if (node.getAttrById(AttrId.NAME) == null &&
+                    node.getAttrById(AttrId.ID) == null) {
+                    tt.removeAnchorByNode(node);
+                }
+            }
+            if (node.content != null) {
+                fixAnchors(lexer, node.content, wantName, wantId);
+            }
+            node = next;
+        }
+    }
 }

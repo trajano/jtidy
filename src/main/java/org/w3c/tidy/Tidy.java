@@ -487,16 +487,17 @@ public class Tidy implements Serializable
             {
                 doctype = doctype.cloneNode(false);
             }
+            
+            final boolean wantNameAttr = configuration.isAnchorAsName();
 
             if (document.content != null)
             {
-                if (configuration.isXHTML())
-                {
+                if (configuration.isXHTML() && !configuration.isHtmlOut()) {
                     lexer.setXHTMLDocType(document);
-                }
-                else
-                {
+                    cleaner.fixAnchors(lexer, lexer.root, wantNameAttr, true);
+                } else {
                     lexer.fixDocType(document);
+                    cleaner.fixAnchors(lexer, lexer.root, wantNameAttr, true);
                 }
 
                 if (configuration.isTidyMark())
