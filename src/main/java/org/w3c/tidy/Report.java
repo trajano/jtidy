@@ -591,6 +591,10 @@ public final class Report
         {
             return;
         }
+        
+        final String tagdesc = getTagName(node);
+        final String name = attribute == null ? null : attribute.attribute;
+        final String value = attribute == null ? null : attribute.value;
 
         switch (code)
         {
@@ -620,10 +624,8 @@ public final class Report
                 break;
 
             case BAD_ATTRIBUTE_VALUE :
-                messageLexer(lexer, Level.WARNING, code, 
-					    getTagName(node),
-					    attribute.attribute,
-					    attribute.value);
+            case INVALID_ATTRIBUTE:
+                messageNode(lexer, Level.WARNING, node, code, tagdesc, name, value);
                 break;
 
             case XML_ID_SYNTAX :
@@ -666,11 +668,7 @@ public final class Report
                 break;
 
             case PROPRIETARY_ATTRIBUTE :
-                messageLexer(
-                    lexer,
-                    Level.WARNING,
-                    code,
-                    getTagName(node), attribute.attribute);
+            	messageNode(lexer, Level.WARNING, node, code, tagdesc, name);
                 break;
 
             case UNEXPECTED_END_OF_FILE :
@@ -957,8 +955,6 @@ public final class Report
      */
     public void error(Lexer lexer, Node element, Node node, ErrorCode code)
     {
-        lexer.errors++;
-
         // keep quiet after <showErrors> errors
         if (lexer.errors > lexer.configuration.getShowErrors())
         {
