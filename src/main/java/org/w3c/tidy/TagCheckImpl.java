@@ -494,10 +494,8 @@ public final class TagCheckImpl
 
             node.checkAttributes(lexer);
 
-            if (action == null)
-            {
-                AttVal missingAttribute = new AttVal(null, null, '"', "action", "");
-                lexer.report.attrError(lexer, node, missingAttribute, ErrorCode.MISSING_ATTRIBUTE);
+            if (action == null) {
+            	lexer.report.missingAttr(lexer, node, "action");
             }
         }
     }
