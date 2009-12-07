@@ -249,16 +249,58 @@ public final class Report
     			messageKey, params);
     }
     
+    /* Updates document message counts and
+     ** compares counts to options to see if message
+     ** display should go forward.
+     */
+ 	private boolean updateCount(final Lexer lexer, final Level level) {
+ 		if (lexer == null || level == null) {
+ 			return true;
+ 		}
+ 		/* keep quiet after <ShowErrors> errors */
+ 		boolean go = lexer.errors < lexer.configuration.getShowErrors();
+
+ 		switch (level) {
+ 		case INFO:
+ 			lexer.infoMessages++;
+ 			break;
+ 		case WARNING:
+ 			lexer.warnings++;
+ 			go = go && lexer.configuration.isShowWarnings();
+ 			break;
+ 		case CONFIG:
+ 			lexer.optionErrors++;
+ 			break;
+ 		case ACCESS:
+ 			lexer.accessErrors++;
+ 			break;
+ 		case ERROR:
+ 			lexer.errors++;
+ 			break;
+ 		case BAD_DOCUMENT:
+ 			lexer.docErrors++;
+ 			break;
+ 		case FATAL:
+ 			/* Ack! */;
+ 			break;
+ 		}
+ 		return go;
+ 	}
+    
     private String getMessagePos(final int errorCode, final Lexer lexer, final Level level, final int line, final int col,
     		final String messageKey, final Object... args) throws MissingResourceException {
-    	String position = line > 0 && col > 0 ? getPosition(lexer, line, col) : "";
-        String prefix = level == null ? "" : (level + ": ");
-        String messageString = MessageFormat.format(res.getString(messageKey), args);
-        if (listener != null) {
-            TidyMessage msg = new TidyMessage(errorCode, line, col, level, messageString);
-            listener.messageReceived(msg);
-        }
-        return position + prefix + messageString;
+    	boolean go = updateCount(lexer, level);
+    	if (go) {
+	    	String position = line > 0 && col > 0 ? getPosition(lexer, line, col) : "";
+	        String prefix = level == null ? "" : (level + ": ");
+	        String messageString = MessageFormat.format(res.getString(messageKey), args);
+	        if (listener != null) {
+	            TidyMessage msg = new TidyMessage(errorCode, line, col, level, messageString);
+	            listener.messageReceived(msg);
+	        }
+	        return position + prefix + messageString;
+    	}
+    	return null;
     }
 
     /**
@@ -417,8 +459,6 @@ public final class Report
      */
     public void encodingError(Lexer lexer, ErrorCode code, int c, int replaceMode)
     {
-        lexer.warnings++;
-
         if (lexer.errors > lexer.configuration.getShowErrors()) // keep quiet after <showErrors> errors
         {
             return;
@@ -497,8 +537,6 @@ public final class Report
      */
     public void entityError(Lexer lexer, ErrorCode code, String entity, int c)
     {
-        lexer.warnings++;
-
         if (lexer.errors > lexer.configuration.getShowErrors()) // keep quiet after <showErrors> errors
         {
             return;
@@ -539,15 +577,6 @@ public final class Report
      */
     public void attrError(Lexer lexer, Node node, AttVal attribute, ErrorCode code)
     {
-        if (code == UNEXPECTED_GT)
-        {
-            lexer.errors++;
-        }
-        else
-        {
-            lexer.warnings++;
-        }
-
         if (lexer.errors > lexer.configuration.getShowErrors()) // keep quiet after <showErrors> errors
         {
             return;
@@ -722,11 +751,6 @@ public final class Report
     {
     	final String nodedesc = getTagName(node);
     	
-        if (!((code == DISCARDING_UNEXPECTED) && lexer.badForm != 0)) // lexer->errors++; already done in BadForm()
-        {
-            lexer.warnings++;
-        }
-
         // keep quiet after <showErrors> errors
         if (lexer.errors > lexer.configuration.getShowErrors())
         {
@@ -1226,7 +1250,7 @@ public final class Report
                 errout,
                 null,
                 "num_warnings",
-                new Integer(lexer.warnings), new Integer(lexer.errors));
+                lexer.warnings, lexer.errors);
         }
         else
         {
