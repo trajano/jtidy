@@ -251,12 +251,17 @@ public class Lexer
     /**
      * count of warnings in this document.
      */
-    protected short warnings;
+    protected int warnings;
 
     /**
      * count of errors.
      */
-    protected short errors;
+    protected int errors;
+    
+    protected int optionErrors;
+    protected int accessErrors;
+    protected int infoMessages;
+    protected int docErrors;
 
     /**
      * lines seen.
