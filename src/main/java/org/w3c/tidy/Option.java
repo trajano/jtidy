@@ -136,7 +136,7 @@ enum Option {
 	/** If true attributes may use newlines */
 	LiteralAttribs          (MU, "literal-attributes",          BL, false,                 BOOL,                Bool.class),
 	/** Output BODY content only */
-	BodyOnly                (MU, "show-body-only",              IN, false,                 AUTOBOOL,            TriState.class),
+	BodyOnly                (MU, "show-body-only",              IN, TriState.No,           AUTOBOOL,            TriState.class),
 	/** Applies URI encoding if necessary */
 	FixUri                  (MU, "fix-uri",                     BL, true,                  BOOL,                Bool.class),
 	/** Folds known attribute values to lower case */

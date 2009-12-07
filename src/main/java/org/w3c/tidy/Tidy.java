@@ -538,7 +538,7 @@ public class Tidy implements Serializable
                 // the document contains proprietary features) to ensure well-formedness.
                 configuration.setNumEntities(true);
             }
-            if (configuration.isBodyOnly())
+            if (configuration.getBodyOnly() == TriState.Yes)
             {
                 // Feature request #434940 - fix by Dave Raggett/Ignacio Vazquez-Abrams 21 Jun 01
                 pprint.printBody(o, lexer, document, configuration.isXmlOut());
@@ -1870,7 +1870,7 @@ public class Tidy implements Serializable
      * @param bodyOnly true = print only the document body
      * @see Configuration#bodyOnly
      */
-    public void setPrintBodyOnly(boolean bodyOnly)
+    public void setPrintBodyOnly(TriState bodyOnly)
     {
         configuration.setBodyOnly(bodyOnly);
     }
@@ -1879,9 +1879,9 @@ public class Tidy implements Serializable
      * <code>print-body-only</code>- output BODY content only.
      * @return true if tidy will print only the document body
      */
-    public boolean getPrintBodyOnly()
+    public TriState getPrintBodyOnly()
     {
-        return configuration.isBodyOnly();
+        return configuration.getBodyOnly();
     }
 
     /**

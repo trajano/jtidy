@@ -203,8 +203,8 @@ public class ConfigurationTest extends TestCase
         tidy.setShowMarkup(false);
         assertEquals(false, tidy.isShowMarkup());
 
-        tidy.setPrintBodyOnly(true);
-        assertEquals(true, tidy.getPrintBodyOnly());
+        tidy.setPrintBodyOnly(TriState.Yes);
+        assertEquals(TriState.Yes, tidy.getPrintBodyOnly());
 
         tidy.setQuiet(true);
         assertEquals(true, tidy.getQuiet());

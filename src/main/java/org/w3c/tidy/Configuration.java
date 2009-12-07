@@ -1061,12 +1061,12 @@ public class Configuration implements Serializable
 		return getBool(Option.LiteralAttribs);
 	}
 
-	protected void setBodyOnly(final boolean bodyOnly) {
+	protected void setBodyOnly(final TriState bodyOnly) {
 		set(Option.BodyOnly, bodyOnly);
 	}
 
-	protected boolean isBodyOnly() {
-		return getBool(Option.BodyOnly);
+	protected TriState getBodyOnly() {
+		return (TriState) getOptionEnum(Option.BodyOnly);
 	}
 
 	protected void setFixUri(final boolean fixUri) {
