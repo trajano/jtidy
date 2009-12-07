@@ -282,6 +282,10 @@ public final class Report
     	}
     }
     
+    public void missingAttr(final Lexer lexer, final Node node, final String name) {
+        messageNode(lexer, Level.WARNING, node, MISSING_ATTRIBUTE, getTagName(node), name);
+    }
+    
     private void messagePos(final int errorCode, final Lexer lexer, final Level level, final int line, final int col,
     		final String messageKey, final Object... params) {
         try {
@@ -836,7 +840,7 @@ public final class Report
                     break;
 
                 case TRIM_EMPTY_ELEMENT :
-                    messageLexer(lexer, Level.WARNING, code, getTagName(element));
+                	messageNode(lexer, Level.WARNING, element, code, getTagName(element));
                     break;
 
                 case MISSING_TITLE_ELEMENT :
