@@ -270,46 +270,32 @@ public class AttVal extends Object implements Cloneable
      * @param node node which contains this attribute
      * @return Attribute
      */
-    public Attribute checkAttribute(Lexer lexer, Node node)
-    {
+    public Attribute checkAttribute(Lexer lexer, Node node) {
         Attribute attr = this.dict;
 
         // ignore unknown attributes for proprietary elements
-        if (attr != null)
-        {
-
+        if (attr != null) {
             // if attribute looks like <foo/> check XML is ok
-            if (TidyUtils.toBoolean(attr.getVersions() & VERS_XML))
-            {
-                if (!(lexer.configuration.isXmlTags() || lexer.configuration.isXmlOut()))
-                {
-                    lexer.report.attrError(lexer, node, this, ErrorCode.XML_ATTRIBUTE_VALUE);
+            if (TidyUtils.toBoolean(attr.getVersions() & VERS_XML)) {
+            	lexer.isvoyager = true;
+                if (!lexer.configuration.isHtmlOut()) {
+                	lexer.configuration.setXHTML(true);
+                	lexer.configuration.setXmlOut(true);
                 }
             }
-            // title first appeared in HTML 4.0 except for a/link
-            else if (attr.id != AttrId.TITLE || !(node.is(TagId.A) || node.is(TagId.LINK)))
-            {
-                lexer.constrainVersion(attr.getVersions());
-            }
+            lexer.constrainVersion(node.getAttributeVersions(this));
 
-            if (attr.getAttrchk() != null)
-            {
+            if (attr.getAttrchk() != null) {
                 attr.getAttrchk().check(lexer, node, this);
             }
-            else if (TidyUtils.toBoolean(this.dict.getVersions() & VERS_PROPRIETARY))
-            {
-                lexer.report.attrError(lexer, node, this, ErrorCode.PROPRIETARY_ATTRIBUTE);
+        }
+        
+        if (node.attributeIsProprietary(this)) {
+            lexer.report.attrError(lexer, node, this, ErrorCode.PROPRIETARY_ATTRIBUTE);
+            if (lexer.configuration.isDropProprietaryAttributes()) {
+            	node.removeAttribute(this);
             }
-
         }
-        else if (!lexer.configuration.isXmlTags()
-            && !(node.tag == null)
-            && this.asp == null
-            && !(node.tag != null && (TidyUtils.toBoolean(node.tag.versions & VERS_PROPRIETARY))))
-        {
-            lexer.report.attrError(lexer, node, this, ErrorCode.UNKNOWN_ATTRIBUTE);
-        }
-
         return attr;
     }
 
