@@ -645,11 +645,14 @@ public final class Report
                 break;
 
             case UNEXPECTED_QUOTEMARK :
-                messageLexer(lexer, Level.WARNING, code, getTagName(node));
-                break;
-
             case MISSING_QUOTEMARK :
-                messageLexer(lexer, Level.WARNING, code, getTagName(node));
+            case ID_NAME_MISMATCH :
+            case BACKSLASH_IN_URI :
+            case FIXED_BACKSLASH :
+            case ILLEGAL_URI_REFERENCE :
+            case ESCAPED_ILLEGAL_URI :
+            case NEWLINE_IN_URI :
+                messageNode(lexer, Level.WARNING, node, code, tagdesc);
                 break;
 
             case REPEATED_ATTRIBUTE :
@@ -675,30 +678,6 @@ public final class Report
                 // on end of file adjust reported position to end of input
                 lexer.lines = lexer.in.getCurline();
                 lexer.columns = lexer.in.getCurcol();
-                messageLexer(lexer, Level.WARNING, code, getTagName(node));
-                break;
-
-            case ID_NAME_MISMATCH :
-                messageLexer(lexer, Level.WARNING, code, getTagName(node));
-                break;
-
-            case BACKSLASH_IN_URI :
-                messageLexer(lexer, Level.WARNING, code, getTagName(node));
-                break;
-
-            case FIXED_BACKSLASH :
-                messageLexer(lexer, Level.WARNING, code, getTagName(node));
-                break;
-
-            case ILLEGAL_URI_REFERENCE :
-                messageLexer(lexer, Level.WARNING, code, getTagName(node));
-                break;
-
-            case ESCAPED_ILLEGAL_URI :
-                messageLexer(lexer, Level.WARNING, code, getTagName(node));
-                break;
-
-            case NEWLINE_IN_URI :
                 messageLexer(lexer, Level.WARNING, code, getTagName(node));
                 break;
 
@@ -808,44 +787,16 @@ public final class Report
                     break;
 
                 case MISSING_STARTTAG :
-                    messageLexer(lexer, Level.WARNING, code, node.element);
-                    break;
-
                 case UNEXPECTED_ENDTAG :
-                    messageLexer(lexer, Level.WARNING, code, node.element);
-                    break;
-
                 case TOO_MANY_ELEMENTS :
-                    messageLexer(lexer, Level.WARNING, code, node.element);
+                case INSERTING_TAG :
+                	messageNode(lexer, Level.WARNING, node, code, node.element);
                     break;
 
                 case USING_BR_INPLACE_OF :
-                    messageLexer(lexer, Level.WARNING, code, getTagName(node));
-                    break;
-
-                case INSERTING_TAG :
-                    messageLexer(lexer, Level.WARNING, code, node.element);
-                    break;
-
                 case CANT_BE_NESTED :
-                    messageLexer(lexer, Level.WARNING, code, getTagName(node));
-                    break;
-
                 case PROPRIETARY_ELEMENT :
-                    messageLexer(lexer, Level.WARNING, code, getTagName(node));
-
-                    if (node.is(TagId.LAYER))
-                    {
-                        lexer.badLayout |= USING_LAYER;
-                    }
-                    else if (node.is(TagId.SPACER))
-                    {
-                        lexer.badLayout |= USING_SPACER;
-                    }
-                    else if (node.is(TagId.NOBR))
-                    {
-                        lexer.badLayout |= USING_NOBR;
-                    }
+                	messageNode(lexer, Level.WARNING, node, code, nodedesc);
                     break;
 
                 case OBSOLETE_ELEMENT :
@@ -862,10 +813,6 @@ public final class Report
                 	messageNode(lexer, Level.WARNING, element, code, getTagName(element));
                     break;
 
-                case MISSING_TITLE_ELEMENT :
-                    messageLexer(lexer, Level.WARNING, code);
-                    break;
-
                 case ILLEGAL_NESTING :
                     messageLexer(lexer, Level.WARNING, code, getTagName(element));
                     break;
@@ -874,40 +821,17 @@ public final class Report
                     messageLexer(lexer, Level.WARNING, code, getTagName(node));
                     break;
 
+                case MISSING_TITLE_ELEMENT :
                 case INCONSISTENT_VERSION :
-                    messageLexer(lexer, Level.WARNING, code);
-                    break;
-
                 case MALFORMED_DOCTYPE :
-                    messageLexer(lexer, Level.WARNING, code);
-                    break;
-
                 case CONTENT_AFTER_BODY :
-                    messageLexer(lexer, Level.WARNING, code);
-                    break;
-
                 case MALFORMED_COMMENT :
-                    messageLexer(lexer, Level.WARNING, code);
-                    break;
-
                 case BAD_COMMENT_CHARS :
-                    messageLexer(lexer, Level.WARNING, code);
-                    break;
-
                 case BAD_XML_COMMENT :
-                    messageLexer(lexer, Level.WARNING, code);
-                    break;
-
                 case BAD_CDATA_CONTENT :
-                    messageLexer(lexer, Level.WARNING, code);
-                    break;
-
                 case INCONSISTENT_NAMESPACE :
-                    messageLexer(lexer, Level.WARNING, code);
-                    break;
-
                 case DTYPE_NOT_UPPER_CASE :
-                    messageLexer(lexer, Level.WARNING, code);
+                	messageNode(lexer, Level.WARNING, rpt, code);
                     break;
 
                 case UNEXPECTED_END_OF_FILE :
