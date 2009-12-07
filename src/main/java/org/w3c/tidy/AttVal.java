@@ -457,4 +457,17 @@ public class AttVal extends Object implements Cloneable
     public boolean is(final AttrId id) {
     	return dict != null && dict.id == id;
     }
+    
+    protected static AttVal addAttrToList(final AttVal list, final AttVal av) {
+    	if (list == null) {
+    	    return av;
+    	} else {
+    	    AttVal here = list;
+    	    while (here.next != null) {
+    	    	here = here.next;
+    	    }
+    	    here.next = av;
+    	    return list;
+    	}
+    }
 }

@@ -3392,9 +3392,9 @@ public class Lexer
 
             if (attribute != null && isValidAttrName(attribute))
             {
-                av = new AttVal(list, null, null, null, delim[0], attribute, value);
+                av = new AttVal(null, null, null, null, delim[0], attribute, value);
                 av.dict = AttributeTable.getDefaultAttributeTable().findAttribute(av);
-                list = av;
+                list = AttVal.addAttrToList(list, av);
             }
             else
             {
