@@ -72,6 +72,7 @@ public class StreamInJavaImpl implements StreamIn
      * number of characters kept in buffer.
      */
     private static final int CHARBUF_SIZE = 16;
+    private static final int LASTPOS_SIZE = 64;
 
     /**
      * character buffer.
@@ -102,11 +103,10 @@ public class StreamInJavaImpl implements StreamIn
      * current column number.
      */
     private int curcol;
-
-    /**
-     * last column.
-     */
-    private int lastcol;
+    
+    private int lastcols[] = new int[LASTPOS_SIZE];
+    private int curlastpos; /* current last position in lastcols */ 
+    private int firstlastpos; /* first valid last position in lastcols */ 
 
     /**
      * current line number.
@@ -134,7 +134,6 @@ public class StreamInJavaImpl implements StreamIn
         this.tabsize = tabsize;
         this.curline = 1;
         this.curcol = 1;
-        this.endOfStream = false;
     }
 
     /**
@@ -150,7 +149,6 @@ public class StreamInJavaImpl implements StreamIn
         this.tabsize = tabsize;
         this.curline = 1;
         this.curcol = 1;
-        this.endOfStream = false;
     }
 
     /**
@@ -162,9 +160,9 @@ public class StreamInJavaImpl implements StreamIn
         try
         {
             c = reader.read();
-            if (c < 0)
-            {
+            if (c < 0) {
                 endOfStream = true;
+                return END_OF_STREAM;
             }
 
         }
@@ -177,37 +175,52 @@ public class StreamInJavaImpl implements StreamIn
 
         return c;
     }
+    
+    private void popLastPos() {
+        curlastpos = (curlastpos + 1) % LASTPOS_SIZE;
+        if (curlastpos == firstlastpos) {
+            firstlastpos = (firstlastpos + 1) % LASTPOS_SIZE;
+        }
+    }
+
+    private void saveLastPos() {
+        popLastPos();
+        lastcols[curlastpos] = curcol;
+    }
+    
+    private int popChar() {
+        int c = END_OF_STREAM;
+        if (pushed) {
+            assert(bufpos > 0);
+            c = charbuf[--bufpos];
+            if (bufpos == 0) {
+                pushed = false;
+            }
+            if (c == '\n') {
+                curcol = 1;
+                curline++;
+                popLastPos();
+                return c;
+            }
+            this.curcol++;
+            popLastPos();
+        }
+        return c;
+    }
 
     /**
      * @see org.w3c.tidy.StreamIn#readChar()
      */
-    public int readChar()
-    {
-        int c;
+    public int readChar() {
+        int c = END_OF_STREAM;
 
-        if (this.pushed)
-        {
-            c = this.charbuf[--(this.bufpos)];
-            if ((this.bufpos) == 0)
-            {
-                this.pushed = false;
-            }
-
-            if (c == '\n')
-            {
-                this.curcol = 1;
-                this.curline++;
-                return c;
-            }
-
-            this.curcol++;
-            return c;
+        if (this.pushed) {
+            return popChar();
         }
 
-        this.lastcol = this.curcol;
+        saveLastPos();
 
-        if (this.tabs > 0)
-        {
+        if (this.tabs > 0) {
             this.curcol++;
             this.tabs--;
             return ' ';
@@ -215,36 +228,17 @@ public class StreamInJavaImpl implements StreamIn
 
         c = readCharFromStream();
 
-        if (c < 0)
-        {
+        if (END_OF_STREAM == c) {
             endOfStream = true;
             return END_OF_STREAM;
         }
 
-        if (c == '\n')
-        {
+        if (c == '\n') {
             this.curcol = 1;
             this.curline++;
             return c;
         }
-        else if (c == '\r') // \r\n
-        {
-            c = readCharFromStream();
-            if (c != '\n')
-            {
-                if (c != END_OF_STREAM)
-                {
-                    ungetChar(c);
-                }
-                c = '\n';
-            }
-            this.curcol = 1;
-            this.curline++;
-            return c;
-        }
-
-        if (c == '\t')
-        {
+        if (c == '\t') {
             this.tabs = tabsize > 0 ?
             		this.tabsize - ((this.curcol - 1) % this.tabsize) - 1
             		: 0;
@@ -252,10 +246,34 @@ public class StreamInJavaImpl implements StreamIn
             c = ' ';
             return c;
         }
+        if (c == '\r') {
+            c = readCharFromStream();
+            if (c != '\n') {
+                if (c != END_OF_STREAM) {
+                    ungetChar(c);
+                }
+                c = '\n';
+            } else {
+            	this.curcol = 1;
+            	this.curline++;
+            	return c;
+            }
+        }
 
         this.curcol++;
-
         return c;
+    }
+
+    private void restoreLastPos() {
+        if (firstlastpos == curlastpos) {
+            curcol = 0;
+        } else {
+            curcol = lastcols[curlastpos];
+            if (curlastpos == 0) {
+                curlastpos = LASTPOS_SIZE;
+            }
+            curlastpos--;
+        }
     }
 
     /**
@@ -263,6 +281,9 @@ public class StreamInJavaImpl implements StreamIn
      */
     public void ungetChar(int c)
     {
+    	if (c == END_OF_STREAM) {
+    		return;
+    	}
         this.pushed = true;
         if (this.bufpos >= CHARBUF_SIZE)
         {
@@ -276,8 +297,7 @@ public class StreamInJavaImpl implements StreamIn
         {
             --this.curline;
         }
-
-        this.curcol = this.lastcol;
+        restoreLastPos();
     }
 
     /**
@@ -295,6 +315,10 @@ public class StreamInJavaImpl implements StreamIn
     public int getCurcol()
     {
         return this.curcol;
+    }
+
+    public void moveCurcol(int x) {
+        curcol += x;
     }
 
     /**
