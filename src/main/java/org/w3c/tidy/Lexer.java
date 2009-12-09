@@ -462,8 +462,14 @@ public class Lexer
         return node;
     }
     
-    Node textToken() {
+    protected Node textToken() {
         return newNode(NodeType.TextNode, lexbuf, txtstart, txtend);
+    }
+    
+    protected Node newLiteralTextNode(final String s) {
+    	final int start = lexsize;
+    	addStringToLexer(s);
+        return newNode(NodeType.TextNode, lexbuf, start, lexsize);
     }
 
     /**
