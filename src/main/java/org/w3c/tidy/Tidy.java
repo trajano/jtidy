@@ -443,6 +443,8 @@ public class Tidy implements Serializable
                 }
                 return null;
             }
+            
+            // tidyCleanAndRepair
 
             Clean cleaner = new Clean(configuration.tt);
 
@@ -511,6 +513,8 @@ public class Tidy implements Serializable
             {
                 lexer.fixXmlDecl(document);
             }
+            
+            // tidyRunDiagnostics
 
             if (!configuration.isQuiet() && document.content != null)
             {
@@ -531,14 +535,15 @@ public class Tidy implements Serializable
         }
 
         if (configuration.isShowMarkup() && (lexer.errors == 0 || configuration.isForceOutput()) && o != null) {
+        	
+        	// tidySaveStream
+        	
+        	if (configuration.isMakeClean()) {
+        		Clean.wbrToSpace(lexer, lexer.root);
+        	}
+        	
             pprint = new PPrint(configuration);
 
-            if (document.findDocType() == null)
-            {
-                // only use numeric character references if no doctype could be determined (e.g., because
-                // the document contains proprietary features) to ensure well-formedness.
-                configuration.setNumEntities(true);
-            }
             if (configuration.getBodyOnly() == TriState.Yes)
             {
                 // Feature request #434940 - fix by Dave Raggett/Ignacio Vazquez-Abrams 21 Jun 01
