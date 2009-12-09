@@ -470,4 +470,9 @@ public class AttVal extends Object implements Cloneable
     	    return list;
     	}
     }
+
+	@Override
+	public String toString() {
+		return attribute + "=" + value;
+	}
 }
