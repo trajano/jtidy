@@ -2462,4 +2462,25 @@ public class Clean
             node = next;
         }
     }
+    
+    protected static void wbrToSpace(final Lexer lexer, Node node) {
+        Node next;
+
+        while (node != null) {
+            next = node.next;
+
+            if (node.is(TagId.WBR)) {
+                Node text = lexer.newLiteralTextNode(" ");
+                node.insertNodeAfterElement(text);
+                node.removeNode();
+                node = next;
+                continue;
+            }
+
+            if (node.content != null) {
+                wbrToSpace(lexer, node.content);
+            }
+            node = next;
+        }
+    }
 }
