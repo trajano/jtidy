@@ -67,6 +67,8 @@ public class Entity
      * entity name.
      */
     private String name;
+    
+    private final int versions;
 
     /**
      * entity code.
@@ -78,9 +80,9 @@ public class Entity
      * @param name entity name
      * @param code entity code (will be casted to short)
      */
-    public Entity(String name, int code)
-    {
+    public Entity(final String name, final int versions, final int code) {
         this.name = name;
+        this.versions = versions;
         this.code = (short) code;
     }
 
@@ -101,4 +103,8 @@ public class Entity
     {
         return this.name;
     }
+
+	public int getVersions() {
+		return versions;
+	}
 }
