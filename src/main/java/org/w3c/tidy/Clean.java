@@ -2134,7 +2134,7 @@ public class Clean
                 {
                     Node pre;
                     Node next;
-                    Node.coerceNode(lexer, node, TagId.PRE);
+                    Node.coerceNode(lexer, node, TagId.PRE, false, true);
 
                     purgeWord2000Attributes(node);
 
@@ -2226,7 +2226,7 @@ public class Clean
                         listType = TagId.OL;
                     }
 
-                    Node.coerceNode(lexer, node, TagId.LI);
+                    Node.coerceNode(lexer, node, TagId.LI, false, true);
 
                     if (list == null || !list.is(listType))
                     {

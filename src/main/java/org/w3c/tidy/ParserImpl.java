@@ -466,7 +466,7 @@ public final class ParserImpl
                     }
                     else
                     {
-                        lexer.report.error(lexer, html, node, ErrorCode.NOFRAMES_CONTENT);
+                        lexer.report.warning(lexer, html, node, ErrorCode.NOFRAMES_CONTENT);
                         if (noframes.type == NodeType.StartEndTag) {
                         	noframes.type = NodeType.StartTag;
                         }
@@ -926,9 +926,8 @@ public final class ParserImpl
                     }
                     else if (node.is(TagId.P))
                     {
-                        Node.coerceNode(lexer, node, TagId.BR);
-                        body.insertNodeAtEnd(node);
-                        node = lexer.inferredTag(TagId.BR);
+                    	node.type = NodeType.StartEndTag;
+                    	node.implicit = true;
                     }
                     else if ((node.tag.model & Dict.CM_INLINE) != 0)
                     {
@@ -1284,7 +1283,7 @@ public final class ParserImpl
                         // coerce unmatched </p> to <br><br>
                         if (!element.isDescendantOf(TagId.P))
                         {
-                            Node.coerceNode(lexer, node, TagId.BR);
+                            Node.coerceNode(lexer, node, TagId.BR, false, false);
                             Node.trimSpaces(lexer, element);
                             element.insertNodeAtEnd(node);
                             node = lexer.inferredTag(TagId.BR);
@@ -1616,11 +1615,6 @@ public final class ParserImpl
             {
                 if (node.tag == list.tag && node.type == NodeType.EndTag)
                 {
-                    if ((list.tag.model & Dict.CM_OBSOLETE) != 0)
-                    {
-                        Node.coerceNode(lexer, list, TagId.UL);
-                    }
-
                     list.closed = true;
                     return;
                 }
@@ -1664,12 +1658,6 @@ public final class ParserImpl
                         {
                             lexer.report.warning(lexer, list, node, ErrorCode.MISSING_ENDTAG_BEFORE);
                             lexer.ungetToken();
-
-                            if ((list.tag.model & Dict.CM_OBSOLETE) != 0)
-                            {
-                                Node.coerceNode(lexer, list, TagId.UL);
-                            }
-
                             return;
                         }
                     }
@@ -1696,11 +1684,6 @@ public final class ParserImpl
                 // node should be <LI>
                 list.insertNodeAtEnd(node);
                 parseTag(lexer, node, Lexer.IGNORE_WHITESPACE);
-            }
-
-            if ((list.tag.model & Dict.CM_OBSOLETE) != 0)
-            {
-                Node.coerceNode(lexer, list, TagId.UL);
             }
 
             lexer.report.warning(lexer, list, node, ErrorCode.MISSING_ENDTAG_FOR);
@@ -1889,11 +1872,6 @@ public final class ParserImpl
                 return;
             }
 
-            if ((pre.tag.model & Dict.CM_OBSOLETE) != 0)
-            {
-                Node.coerceNode(lexer, pre, TagId.PRE);
-            }
-
             lexer.inlineDup(null); // tell lexer to insert inlines if needed
 
             while ((node = lexer.getToken(Lexer.PREFORMATTED)) != null)
@@ -1962,7 +1940,7 @@ public final class ParserImpl
                         Node.trimSpaces(lexer, pre);
 
                         // coerce both <p> and </p> to <br>
-                        Node.coerceNode(lexer, node, TagId.BR);
+                        Node.coerceNode(lexer, node, TagId.BR, false, false);
                         pre.insertNodeAtEnd(node);
                     }
                     else
@@ -2088,9 +2066,8 @@ public final class ParserImpl
                     }
                     else if (node.is(TagId.P))
                     {
-                        Node.coerceNode(lexer, node, TagId.BR);
-                        element.insertNodeAtEnd(node);
-                        node = lexer.inferredTag(TagId.BR);
+                    	node.type = NodeType.StartEndTag;
+                    	node.implicit = true;
                     }
                     else
                     {
@@ -3074,7 +3051,7 @@ public final class ParserImpl
 
                     if (seenbody)
                     {
-                        Node.coerceNode(lexer, node, TagId.DIV);
+                        Node.coerceNode(lexer, node, TagId.DIV, false, false);
                         moveNodeToBody(lexer, node);
                     }
                     continue;
@@ -3296,6 +3273,24 @@ public final class ParserImpl
                 // discard unexpected tags
                 lexer.report.warning(lexer, field, node, ErrorCode.DISCARDING_UNEXPECTED);
             }
+        }
+    }
+    
+    private static void replaceObsoleteElements(final Lexer lexer, Node node) {
+        Node next;
+
+        while (node != null) {
+            next = node.next;
+            if (node.is(TagId.DIR) || node.is(TagId.MENU)) {
+                Node.coerceNode(lexer, node, TagId.UL, true, true);
+            }
+            if (node.is(TagId.XMP) || node.is(TagId.LISTING) || node.is(TagId.PLAINTEXT)) {
+            	Node.coerceNode(lexer, node, TagId.PRE, true, true);
+            }
+            if (node.content != null) {
+                replaceObsoleteElements(lexer, node.content);
+            }
+            node = next;
         }
     }
     
@@ -3538,6 +3533,7 @@ public final class ParserImpl
             head.insertNodeAtEnd(lexer.inferredTag(TagId.TITLE));
         }
         
+        replaceObsoleteElements(lexer, lexer.root);
         attributeChecks(lexer, lexer.root);
         dropEmptyElements(lexer, lexer.root);
         cleanSpaces(lexer, lexer.root);

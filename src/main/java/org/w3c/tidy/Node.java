@@ -1046,10 +1046,17 @@ public class Node {
      * @param node Node
      * @param tag tag dictionary reference
      */
-    public static void coerceNode(final Lexer lexer, final Node node, final TagId tid) {
+    public static void coerceNode(final Lexer lexer, final Node node, final TagId tid, final boolean obsolete,
+    		final boolean unexpected) {
     	final Dict tag = lexer.configuration.tt.lookup(tid);
         Node tmp = lexer.inferredTag(tag.id);
-        lexer.report.warning(lexer, node, tmp, ErrorCode.OBSOLETE_ELEMENT);
+        if (obsolete) {
+        	lexer.report.warning(lexer, node, tmp, ErrorCode.OBSOLETE_ELEMENT);
+        } else if (unexpected) {
+        	lexer.report.warning(lexer, node, tmp, ErrorCode.REPLACING_UNEX_ELEMENT);
+        } else {
+        	lexer.report.warning(lexer, node, tmp, ErrorCode.REPLACING_ELEMENT);
+        }
         node.was = node.tag;
         node.tag = tag;
         node.type = NodeType.StartTag;
