@@ -3531,79 +3531,66 @@ public class Lexer
      * @param element node
      * @return <code>true</code> if he element can be removed
      */
-    public boolean canPrune(Node element)
-    {
-        if (element.type == NodeType.TextNode)
-        {
+    public boolean canPrune(final Node element) {
+        if (element.type == NodeType.TextNode) {
             return true;
         }
-
-        if (element.content != null)
-        {
+        if (element.content != null) {
             return false;
         }
-        
         if (element.hasCM(Dict.CM_BLOCK) && element.attributes != null) {
             return false;
         }
-
-        if (element.is(TagId.A) && element.attributes != null)
-        {
+        if (element.is(TagId.A) && element.attributes != null) {
             return false;
         }
-
-        if (element.is(TagId.P) && !this.configuration.isDropEmptyParas())
-        {
+        if (element.is(TagId.P) && !this.configuration.isDropEmptyParas()) {
             return false;
         }
-
-        if (element.tag == null)
-        {
+        if (element.hasCM(Dict.CM_ROW)) {
             return false;
         }
-
-        if (TidyUtils.toBoolean(element.tag.model & Dict.CM_ROW))
-        {
+        if (element.hasCM(Dict.CM_EMPTY)) {
             return false;
         }
-
-        if (TidyUtils.toBoolean(element.tag.model & Dict.CM_EMPTY))
-        {
+        if (element.is(TagId.APPLET)) {
             return false;
         }
-
-        if (element.is(TagId.APPLET))
-        {
+        if (element.is(TagId.OBJECT)) {
             return false;
         }
-
-        if (element.is(TagId.OBJECT))
-        {
+        if (element.is(TagId.SCRIPT) && element.getAttrById(AttrId.SRC) != null) {
             return false;
         }
-
-        if (element.is(TagId.SCRIPT) && element.getAttrByName("src") != null)
-        {
+        if (element.is(TagId.TITLE)) {
             return false;
         }
-
-        // #540555 Empty title tag is trimmed
-        if (element.is(TagId.TITLE))
-        {
-            return false;
-        }
-
         // #433359 - fix by Randy Waki 12 Mar 01 - Empty iframe is trimmed
-        if (element.is(TagId.IFRAME))
-        {
+        if (element.is(TagId.IFRAME)) {
             return false;
         }
-
-        if (element.getAttrByName("id") != null || element.getAttrByName("name") != null)
-        {
+        /* fix for bug 770297 */
+        if (element.is(TagId.TEXTAREA)) {
             return false;
         }
-
+        if (element.getAttrById(AttrId.ID) != null || element.getAttrById(AttrId.NAME) != null) {
+            return false;
+        }
+        /* fix for bug 695408; a better fix would look for unknown and    */
+        /* known proprietary attributes that make the element significant */
+        if (element.getAttrById(AttrId.DATAFLD) != null) {
+            return false;
+        }
+        /* fix for bug 723772, don't trim new-...-tags */
+        if (element.tag.id == TagId.UNKNOWN) {
+            return false;
+        }
+        if (element.is(TagId.BODY)) {
+            return false;
+        }
+        if (element.is(TagId.COLGROUP)) {
+            return false;
+        }
         return true;
     }
 
