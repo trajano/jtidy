@@ -96,6 +96,8 @@ public final class TidyUtils
      * char type: uppercase.
      */
     private static final short UPPERCASE = 64;
+    
+    private static final short DIGITHEX = 128;
 
     /**
      * used to classify chars for lexical purposes.
@@ -107,9 +109,10 @@ public final class TidyUtils
         mapStr("\r\n\f", (short) (NEWLINE | WHITE));
         mapStr(" \t", WHITE);
         mapStr("-.:_", NAMECHAR);
-        mapStr("0123456789", (short) (DIGIT | NAMECHAR));
+        mapStr("0123456789", (short) (DIGIT | DIGITHEX | NAMECHAR));
         mapStr("abcdefghijklmnopqrstuvwxyz", (short) (LOWERCASE | LETTER | NAMECHAR));
         mapStr("ABCDEFGHIJKLMNOPQRSTUVWXYZ", (short) (UPPERCASE | LETTER | NAMECHAR));
+        mapStr("abcdefABCDEF", DIGITHEX);
     }
 
     /**
@@ -698,6 +701,10 @@ public final class TidyUtils
         short m;
         m = map(c);
         return TidyUtils.toBoolean(m & DIGIT);
+    }
+    
+    public static boolean isDigitHex(final char c) {
+        return (map(c) & DIGITHEX) != 0;
     }
 
     /**
