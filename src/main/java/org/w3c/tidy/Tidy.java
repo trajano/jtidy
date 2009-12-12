@@ -497,9 +497,11 @@ public class Tidy implements Serializable
                 if (configuration.isXHTML() && !configuration.isHtmlOut()) {
                     lexer.setXHTMLDocType(document);
                     cleaner.fixAnchors(lexer, lexer.root, wantNameAttr, true);
+                    Clean.fixXhtmlNamespace(lexer.root, true);
                 } else {
                     lexer.fixDocType(document);
                     cleaner.fixAnchors(lexer, lexer.root, wantNameAttr, true);
+                    Clean.fixXhtmlNamespace(lexer.root, false);
                 }
 
                 if (configuration.isTidyMark())

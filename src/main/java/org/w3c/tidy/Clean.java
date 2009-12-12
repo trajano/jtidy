@@ -86,6 +86,10 @@ import org.w3c.tidy.Node.NodeType;
  */
 public class Clean
 {
+	/**
+     * xhtml namespace.
+     */
+    private static final String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
 
     /**
      * sequential number for generated css classes.
@@ -2398,6 +2402,25 @@ public class Clean
                     }
                 }
             }
+        }
+    }
+    
+    /*
+      Set/fix/remove <html xmlns='...'>
+    */
+    protected static void fixXhtmlNamespace(final Node root, final boolean wantXmlns) {
+        Node html = root.findHTML();
+        if (html == null) {
+            return;
+        }
+        AttVal xmlns = html.getAttrById(AttrId.XMLNS);
+        if (wantXmlns) {
+            if (xmlns == null || !xmlns.valueIs(XHTML_NAMESPACE)) {
+            	html.repairAttrValue("xmlns", XHTML_NAMESPACE);
+            }
+        }
+        else if (xmlns != null) {
+            html.removeAttribute(xmlns);
         }
     }
     
