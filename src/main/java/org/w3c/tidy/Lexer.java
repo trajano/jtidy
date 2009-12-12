@@ -102,35 +102,6 @@ public class Lexer
     public static final short IGNORE_MARKUP = 3;
 
     /**
-     * URI for XHTML 1.0 transitional DTD.
-     */
-    private static final String VOYAGER_LOOSE = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd";
-
-    /**
-     * URI for XHTML 1.0 strict DTD.
-     */
-    private static final String VOYAGER_STRICT = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd";
-
-    /**
-     * URI for XHTML 1.0 frameset DTD.
-     */
-    private static final String VOYAGER_FRAMESET = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd";
-
-    /**
-     * URI for XHTML 1.1.
-     */
-    private static final String VOYAGER_11 = "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd";
-
-    /**
-     * URI for XHTML Basic 1.0.
-     */
-    // private static final String VOYAGER_BASIC = "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd";
-    /**
-     * xhtml namespace.
-     */
-    private static final String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
-
-    /**
      * lists all the known versions.
      */
     private static final W3CDoctype[] W3C_DOCTYPES = {
@@ -1169,7 +1140,7 @@ public class Lexer
      * @param root root node
      * @return new doctype node
      */
-    Node newXhtmlDocTypeNode(Node root)
+    Node newDocTypeNode(Node root)
     {
         Node html = root.findHTML();
         if (html == null)
@@ -1205,163 +1176,93 @@ public class Lexer
      * @param root root node
      * @return <code>true</code> if a doctype has been added
      */
-    public boolean setXHTMLDocType(Node root)
-    {
-        String fpi = " ";
-        String sysid = "";
-        String namespace = XHTML_NAMESPACE;
-        String dtdsub = null;
-        Node doctype;
-        int dtdlen = 0;
-
-        doctype = root.findDocType();
-
-        fixHTMLNameSpace(root, namespace); // #427839 - fix by Evan Lenz 05 Sep 00
-
-        if (this.configuration.getDocTypeMode() == DoctypeModes.Omit)
-        {
-            if (doctype != null)
-            {
-                Node.discardElement(doctype);
+    public boolean setXHTMLDocType(final Node root) {
+    	Node doctype = root.findDocType();
+    	DoctypeModes dtmode = configuration.getDocTypeMode();
+    	final String pub = "PUBLIC";
+    	final String sys = "SYSTEM";
+    	
+    	versionEmitted = apparentVersion();
+    	if (dtmode == DoctypeModes.Omit) {
+    		if (doctype != null) {
+    			Node.discardElement(doctype);
+    		}
+    	}
+    	if (dtmode == DoctypeModes.User && configuration.getDocTypeStr() == null) {
+    		return false;
+    	}
+    	if (doctype == null) {
+    		doctype = newDocTypeNode(root);
+    		doctype.element = "html";
+    	} else {
+    		doctype.element = doctype.element.toLowerCase();
+    	}
+    	
+    	switch(dtmode) {
+        case Strict:
+            /* XHTML 1.0 Strict */
+        	doctype.repairAttrValue(pub, getFPIFromVers(X10S));
+        	doctype.repairAttrValue(sys, getSIFromVers(X10S));
+            versionEmitted = X10S;
+            break;
+        case Loose:
+            /* XHTML 1.0 Transitional */
+        	doctype.repairAttrValue(pub, getFPIFromVers(X10T));
+        	doctype.repairAttrValue(sys, getSIFromVers(X10T));
+            versionEmitted = X10T;
+            break;
+        case User:
+            /* user defined document type declaration */
+        	doctype.repairAttrValue(pub, configuration.getDocTypeStr());
+        	doctype.repairAttrValue(sys, "");
+            break;
+        case Auto:
+            if ((versions & XH11) != 0 && this.doctype == XH11) {
+                if (doctype.getAttrByName(sys) == null) {
+                	doctype.repairAttrValue(sys, getSIFromVers(XH11));
+                }
+                versionEmitted = XH11;
+                return true;
             }
-            return true;
-        }
-
-        if (this.configuration.getDocTypeMode() == DoctypeModes.Auto)
-        {
-            // see what flavor of XHTML this document matches
-            if (TidyUtils.toBoolean(this.versions & VERS_HTML40_STRICT))
-            {
-                // use XHTML strict
-                fpi = "-//W3C//DTD XHTML 1.0 Strict//EN";
-                sysid = VOYAGER_STRICT;
+            else if ((versions & XH11) != 0 && (versions & VERS_HTML40) == 0) {
+            	doctype.repairAttrValue(pub, getFPIFromVers(XH11));
+            	doctype.repairAttrValue(sys, getSIFromVers(XH11));
+            	
+                versionEmitted = XH11;
             }
-            else if (TidyUtils.toBoolean(this.versions & VERS_FRAMESET))
-            {
-                // use XHTML frames
-                fpi = "-//W3C//DTD XHTML 1.0 Frameset//EN";
-                sysid = VOYAGER_FRAMESET;
+            else if ((versions & XB10) != 0 && this.doctype == XB10) {
+                if (doctype.getAttrByName(sys) == null) {
+                	doctype.repairAttrValue(sys, getSIFromVers(XB10));
+                }
+                versionEmitted = XB10;
+                return true;
             }
-            else if (TidyUtils.toBoolean(this.versions & VERS_LOOSE))
-            {
-                fpi = "-//W3C//DTD XHTML 1.0 Transitional//EN";
-                sysid = VOYAGER_LOOSE;
+            else if ((versions & VERS_HTML40_STRICT) != 0) {
+            	doctype.repairAttrValue(pub, getFPIFromVers(X10S));
+            	doctype.repairAttrValue(sys, getSIFromVers(X10S));
+                versionEmitted = X10S;
             }
-            else if (TidyUtils.toBoolean(this.versions & VERS_XHTML11))
-            {
-                // use XHTML 1.1
-                fpi = "-//W3C//DTD XHTML 1.1//EN";
-                sysid = VOYAGER_11;
+            else if ((versions & VERS_FRAMESET) != 0) {
+            	doctype.repairAttrValue(pub, getFPIFromVers(X10F));
+            	doctype.repairAttrValue(sys, getSIFromVers(X10F));
+                versionEmitted = X10F;
             }
-            else
-            {
-                // proprietary
-                fpi = null;
-                sysid = "";
-                if (doctype != null)// #473490 - fix by Bjšrn Hšhrmann 10 Oct 01
-                {
+            else if ((versions & VERS_LOOSE) != 0) {
+            	doctype.repairAttrValue(pub, getFPIFromVers(X10T));
+            	doctype.repairAttrValue(sys, getSIFromVers(X10T));
+                versionEmitted = X10T;
+            }
+            else {
+                if (doctype != null) {
                     Node.discardElement(doctype);
                 }
-            }
-        }
-        else if (this.configuration.getDocTypeMode() == DoctypeModes.Strict)
-        {
-            fpi = "-//W3C//DTD XHTML 1.0 Strict//EN";
-            sysid = VOYAGER_STRICT;
-        }
-        else if (this.configuration.getDocTypeMode() == DoctypeModes.Loose)
-        {
-            fpi = "-//W3C//DTD XHTML 1.0 Transitional//EN";
-            sysid = VOYAGER_LOOSE;
-        }
-
-        if (this.configuration.getDocTypeMode() == DoctypeModes.User && this.configuration.getDocTypeStr() != null)
-        {
-            fpi = this.configuration.getDocTypeStr();
-            sysid = "";
-        }
-
-        if (fpi == null)
-        {
-            return false;
-        }
-
-        if (doctype != null)
-        {
-            // Look for internal DTD subset
-            if (configuration.isXHTML() || configuration.isXmlOut())
-            {
-
-                int len = doctype.end - doctype.start + 1;
-                String start = TidyUtils.getString(this.lexbuf, doctype.start, len);
-
-                int dtdbeg = start.indexOf('[');
-                if (dtdbeg >= 0)
-                {
-                    int dtdend = start.substring(dtdbeg).indexOf(']');
-                    if (dtdend >= 0)
-                    {
-                        dtdlen = dtdend + 1;
-                        dtdsub = start.substring(dtdbeg);
-                    }
-                }
-            }
-        }
-        else
-        {
-            if ((doctype = newXhtmlDocTypeNode(root)) == null)
-            {
                 return false;
             }
+            break;
+        case Omit:
+            assert(false);
+            break;
         }
-
-        this.txtstart = this.lexsize;
-        this.txtend = this.lexsize;
-
-        // add public identifier
-        addStringLiteral("html PUBLIC ");
-
-        // check if the fpi is quoted or not
-        if (fpi.charAt(0) == '"')
-        {
-            addStringLiteral(fpi);
-        }
-        else
-        {
-            addStringLiteral("\"");
-            addStringLiteral(fpi);
-            addStringLiteral("\"");
-        }
-
-        if (this.configuration.getWraplen() != 0 && sysid.length() + 6 >= this.configuration.getWraplen())
-        {
-            addStringLiteral("\n\"");
-        }
-        else
-        {
-            // FG: don't wrap
-            addStringLiteral(" \"");
-        }
-
-        // add system identifier
-        addStringLiteral(sysid);
-        addStringLiteral("\"");
-
-        if (dtdlen > 0 && dtdsub != null)
-        {
-            addCharToLexer(' ');
-            addStringLiteralLen(dtdsub, dtdlen);
-        }
-
-        this.txtend = this.lexsize;
-
-        int length = this.txtend - this.txtstart;
-        doctype.textarray = new byte[length];
-
-        System.arraycopy(this.lexbuf, this.txtstart, doctype.textarray, 0, length);
-        doctype.start = 0;
-        doctype.end = length;
-
         return false;
     }
 
@@ -1437,7 +1338,7 @@ public class Lexer
         if (doctype != null) {
             doctype.element = doctype.element.toLowerCase();
         } else {
-            doctype = newXhtmlDocTypeNode(root);
+            doctype = newDocTypeNode(root);
             doctype.element = "html";
         }
 
