@@ -1228,4 +1228,12 @@ public class Configuration implements Serializable
 	protected boolean isAnchorAsName() {
 		return getBool(Option.AnchorAsName);
 	}
+	
+	protected void setPreserveEntities(final boolean preserveEntities) {
+		set(Option.PreserveEntities, preserveEntities);
+	}
+	
+	protected boolean isPreserveEntities() {
+		return getBool(Option.PreserveEntities);
+	}
 }
