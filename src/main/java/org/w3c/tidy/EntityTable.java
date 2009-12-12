@@ -379,10 +379,10 @@ public final class EntityTable
      * @return entity code or 0 for unknown entity names
      */
     public Entity entityInfo(final String name, final boolean isXml) {
-    	assert(name != null && name.length() > 1 && name.charAt(0) == '&');
+    	assert(name != null && name.charAt(0) == '&');
 
         // numeric entitity: name = "&#" followed by number
-        if (name.charAt(1) == '#') {
+        if (name.length() > 1 && name.charAt(1) == '#') {
             int c = 0; // zero on missing/bad number
 
             // 'x' prefix denotes hexadecimal number format
