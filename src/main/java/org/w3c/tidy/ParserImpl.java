@@ -707,7 +707,12 @@ public final class ParserImpl
 
             while ((node = lexer.getToken(mode)) != null)
             {
-
+            	/* find and discard multiple <body> elements */
+                if (node.tag == body.tag && node.type == NodeType.StartTag) {
+                    lexer.report.warning(lexer, body, node, ErrorCode.DISCARDING_UNEXPECTED);
+                    continue;
+                }
+                
                 // #538536 Extra endtags not detected
                 if (node.is(TagId.HTML))
                 {
