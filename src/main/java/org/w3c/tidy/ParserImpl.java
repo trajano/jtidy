@@ -1804,7 +1804,7 @@ public final class ParserImpl
                         }
                     }
                     if (discardIt) {
-                        lexer.report.error(lexer, list, node, ErrorCode.DISCARDING_UNEXPECTED);
+                        lexer.report.warning(lexer, list, node, ErrorCode.DISCARDING_UNEXPECTED);
                         continue;
                     }
                 }
