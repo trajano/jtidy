@@ -2367,6 +2367,7 @@ public class Lexer
                         av.value = this.parseValue(name, true, isempty, pdelim);
                         av.delim = pdelim[0];
                         av.next = attributes;
+                        av.dict = AttributeTable.getDefaultAttributeTable().findAttribute(av);
 
                         attributes = av;
                         // continue;
