@@ -382,6 +382,16 @@ public class PPrint
         return wantIt;
     }
     
+    private int wrapOff() {
+        final int saveWrap = configuration.getWraplen();
+        configuration.setWraplen(0xFFFFFFF); /* very large number */
+        return saveWrap;
+    }
+
+    private void wrapOn(final int saveWrap) {
+    	configuration.setWraplen(saveWrap);
+    }
+    
     private boolean setWrapAttr(final int indent, final int attrStart, final int strStart) {
 		TidyIndent ind = this.indent[0];
 		
@@ -1559,29 +1569,37 @@ public class PPrint
      * @param indent
      * @param node
      */
-    private void printXmlDecl(final Lexer lexer, final Out fout, final int indent, final Node node)
-    {
-        if (indent + linelen < this.configuration.getWraplen())
-        {
-            wraphere = linelen;
+    private void printXmlDecl(final Lexer lexer, final Out fout, final int indent, final Node node) {
+    	AttVal att;
+    	setWrap(indent);
+    	final int saveWrap = wrapOff();
+    	
+    	/* no case translation for XML declaration pseudo attributes */
+        final boolean ucAttrs = configuration.isUpperCaseAttrs();
+        configuration.setUpperCaseAttrs(false);
+        
+        addString("<?xml");
+        
+        /* Force order of XML declaration attributes */
+        if (null != (att = node.getAttrById(AttrId.VERSION))) {
+            printAttribute(fout, indent, node, att);
         }
-
-        addC('<', linelen++);
-        addC('?', linelen++);
-        addC('x', linelen++);
-        addC('m', linelen++);
-        addC('l', linelen++);
-
-        printAttrs(lexer, fout, indent, node);
-
-        if (node.end <= 0 || node.textarray[node.end - 1] != '?') // #542029 - fix by Terry Teague 10 Apr 02
-        {
-            addC('?', linelen++);
+        if (null != (att = node.getAttrById(AttrId.ENCODING))) {
+            printAttribute(fout, indent, node, att);
         }
+        if (null != (att = node.getAttrByName("standalone"))) {
+            printAttribute(fout, indent, node, att);
+        }
+        
+        /* restore old config value */
+        configuration.setUpperCaseAttrs(ucAttrs);
 
-        addC('>', linelen++);
-
-        condFlushLine(fout, indent);
+        if (node.end <= 0 || lexer.lexbuf[node.end - 1] != '?') {
+            addChar('?');
+        }
+        addChar('>');
+        wrapOn(saveWrap);
+        flushLine(fout, indent);
     }
 
     /**
