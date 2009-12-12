@@ -582,11 +582,6 @@ public final class Report
             return;
         }
 
-        if (code == UNEXPECTED_GT) // error
-        {
-            messageLexer(lexer, Level.ERROR, code, getTagName(node));
-        }
-
         if (!lexer.configuration.isShowWarnings()) // warnings
         {
             return;
@@ -652,6 +647,7 @@ public final class Report
             case ILLEGAL_URI_REFERENCE :
             case ESCAPED_ILLEGAL_URI :
             case NEWLINE_IN_URI :
+            case UNEXPECTED_GT:
                 messageNode(lexer, Level.WARNING, node, code, tagdesc);
                 break;
 
