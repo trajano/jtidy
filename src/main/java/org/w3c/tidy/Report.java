@@ -856,6 +856,11 @@ public final class Report
                 case MISSING_DOCTYPE :
                     messageLexer(lexer, Level.WARNING, code);
                     break;
+                    
+                case REPLACING_ELEMENT:
+                case REPLACING_UNEX_ELEMENT:
+                    messageNode(lexer, Level.WARNING, rpt, code, getTagName(element), nodedesc);
+                    break;
 
                 default :
                     break;
