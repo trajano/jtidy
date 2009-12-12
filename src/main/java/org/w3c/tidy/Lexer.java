@@ -647,13 +647,40 @@ public class Lexer
             addCharToLexer(str.charAt(i));
         }
     }
+    
+    private void setLocus() {
+        lines = in.getCurline();
+        columns = in.getCurcol();
+    }
+    
+    private enum ENTState {
+        DEFAULT {
+			@Override
+			public boolean check(final int x) {
+				return TidyUtils.isNamechar((char) x);
+			}
+		},
+        NUMDEC {
+			@Override
+			public boolean check(final int x) {
+				return TidyUtils.isDigit((char) x);
+			}
+		},
+        NUMHEX {
+			@Override
+			public boolean check(final int x) {
+				return TidyUtils.isDigitHex((char) x);
+			}
+		};
+        
+        public abstract boolean check(int x);
+    }
 
     /**
      * Parse an html entity.
      * @param mode mode
      */
-    public void parseEntity(short mode)
-    {
+    public void parseEntity(final short mode) {
         // No longer attempts to insert missing ';' for unknown
         // entities unless one was present already, since this
         // gives unexpected results.
@@ -681,43 +708,45 @@ public class Lexer
         // numeric character references. Invalid NCR's are now reported.
 
         int start;
-        boolean first = true;
+        ENTState entState = ENTState.DEFAULT;
+        int charRead = 0;
         boolean semicolon = false;
-        int c, ch, startcol;
-        String str;
+        boolean isXml = configuration.isXmlTags();
+        boolean preserveEntities = configuration.isPreserveEntities();
+        int c, startcol;
 
         start = this.lexsize - 1; // to start at "&"
         startcol = this.in.getCurcol() - 1;
 
-        while ((c = this.in.readChar()) != StreamIn.END_OF_STREAM)
-        {
-            if (c == ';')
-            {
+        while ((c = this.in.readChar()) != StreamIn.END_OF_STREAM) {
+            if (c == ';') {
                 semicolon = true;
                 break;
             }
+            ++charRead;
 
-            if (first && c == '#')
-            {
+            if (charRead == 1 && c == '#') {
                 // #431953 - start RJ
                 if (!this.configuration.isNcr()
                     || "BIG5".equals(this.configuration.getInCharEncodingName())
-                    || "SHIFTJIS".equals(this.configuration.getInCharEncodingName()))
-                {
-                    this.in.ungetChar(c);
+                    || "SHIFTJIS".equals(this.configuration.getInCharEncodingName())) {
+                    this.in.ungetChar('#');
                     return;
                 }
                 // #431953 - end RJ
 
                 addCharToLexer(c);
-                first = false;
+                entState = ENTState.NUMDEC;
                 continue;
             }
-
-            first = false;
-
-            if (TidyUtils.isNamechar((char) c))
-            {
+            else if (charRead == 2 && entState == ENTState.NUMDEC
+                    && (c == 'x' || (!isXml && c == 'X'))) {
+            	addCharToLexer(c);
+                entState = ENTState.NUMHEX;
+                continue;
+            }
+            
+            if (entState.check(c)) {
                 addCharToLexer(c);
                 continue;
             }
@@ -726,120 +755,95 @@ public class Lexer
             this.in.ungetChar(c);
             break;
         }
+        
+        final String str = TidyUtils.getString(this.lexbuf, start, this.lexsize - start);
 
-        str = TidyUtils.getString(this.lexbuf, start, this.lexsize - start);
-
-        if ("&apos".equals(str) && !configuration.isXmlOut() && !this.isvoyager && !configuration.isXHTML())
-        {
+        if ("&apos".equals(str) && !configuration.isXmlOut() && !this.isvoyager && !configuration.isXHTML()) {
             report.entityError(this, ErrorCode.APOS_UNDEFINED, str, 39);
         }
 
-        ch = EntityTable.getDefaultEntityTable().entityCode(str);
-
-        // drops invalid numeric entities from XML mode. Fix by Pablo Mayrgundter 17-08-2004
-        // if ((this.configuration.xmlOut || this.configuration.xHTML) // only for xml output
-        // && !((ch >= 0x20 && ch <= 0xD7FF) // Check the common-case first.
-        // || ch == 0x9 || ch == 0xA || ch == 0xD // Then white-space.
-        // || (ch >= 0xE000 && ch <= 0xFFFD)))
-        // {
-        // this.lexsize = start;
-        // return;
-        // }
+        final Entity ent = EntityTable.getDefaultEntityTable().entityInfo(str, isXml);
+        final boolean found = ent != null;
+        int ch = found ? ent.getCode() : 0;
+        final int entver = found ? ent.getVersions() : isXml ? VERS_XML : VERS_PROPRIETARY;
 
         // deal with unrecognized or invalid entities
         // #433012 - fix by Randy Waki 17 Feb 01
         // report invalid NCR's - Terry Teague 01 Sep 01
-        if (ch <= 0 || (ch >= 256 && c != ';'))
-        {
+        if (!found || (ch >= 128 && ch <= 159) || (ch >= 256 && c != ';')) {
             // set error position just before offending character
-            this.lines = this.in.getCurline();
-            this.columns = startcol;
+        	setLocus();
+        	columns = startcol;
 
-            if (this.lexsize > start + 1)
-            {
-                if (ch >= 128 && ch <= 159)
-                {
+            if (this.lexsize > start + 1) {
+                if (ch >= 128 && ch <= 159) {
                     // invalid numeric character reference
                     int c1 = 0;
+                    int replaceMode = Report.DISCARDED_CHAR;
 
-                    if ("WIN1252".equals(configuration.getReplacementCharEncoding()))
-                    {
+                    if ("WIN1252".equals(configuration.getReplacementCharEncoding())) {
                         c1 = EncodingUtils.decodeWin1252(ch);
                     }
-                    else if ("MACROMAN".equals(configuration.getReplacementCharEncoding()))
-                    {
+                    else if ("MACROMAN".equals(configuration.getReplacementCharEncoding())) {
                         c1 = EncodingUtils.decodeMacRoman(ch);
                     }
+                    
+                    if (c1 != 0) {
+                    	replaceMode = Report.REPLACED_CHAR;
+                    }
 
-                    // "or" DISCARDED_CHAR with the other errors if discarding char; otherwise default is replacing
-
-                    int replaceMode = c1 != 0 ? Report.REPLACED_CHAR : Report.DISCARDED_CHAR;
-
-                    if (c != ';') /* issue warning if not terminated by ';' */
-                    {
+                    if (c != ';') {/* issue warning if not terminated by ';' */
                         report.entityError(this, ErrorCode.MISSING_SEMICOLON_NCR, str, c);
                     }
 
                     report.encodingError(this, ErrorCode.INVALID_NCR, ch, replaceMode);
 
-                    if (c1 != 0)
-                    {
+                    if (c1 != 0) {
                         // make the replacement
                         this.lexsize = start;
                         addCharToLexer(c1);
                         semicolon = false;
-                    }
-                    else
-                    {
+                    } else {
                         /* discard */
                         this.lexsize = start;
                         semicolon = false;
                     }
-
-                }
-                else
-                {
+                } else {
                     report.entityError(this, ErrorCode.UNKNOWN_ENTITY, str, ch);
                 }
 
-                if (semicolon)
-                {
+                if (semicolon) {
                     addCharToLexer(';');
                 }
-            }
-            else
-            {
+            } else {
                 // naked &
                 report.entityError(this, ErrorCode.UNESCAPED_AMPERSAND, str, ch);
             }
-        }
-        else
-        {
+        } else {
             // issue warning if not terminated by ';'
-            if (c != ';')
-            {
+            if (c != ';') {
                 // set error position just before offending character
-                this.lines = this.in.getCurline();
+            	setLocus();
                 this.columns = startcol;
                 report.entityError(this, ErrorCode.MISSING_SEMICOLON, str, c);
             }
-
-            this.lexsize = start;
-
-            if (ch == 160 && TidyUtils.toBoolean(mode & PREFORMATTED))
-            {
-                ch = ' ';
+            
+            if (preserveEntities) {
+            	addCharToLexer(';');
+            } else {
+	            this.lexsize = start;
+	
+	            if (ch == 160 && mode == PREFORMATTED) {
+	                ch = ' ';
+	            }
+	
+	            addCharToLexer(ch);
+	
+	            if (ch == '&' && !this.configuration.isQuoteAmpersand()) {
+	                addStringToLexer("amp;");
+	            }
             }
-
-            addCharToLexer(ch);
-
-            if (ch == '&' && !this.configuration.isQuoteAmpersand())
-            {
-                addCharToLexer('a');
-                addCharToLexer('m');
-                addCharToLexer('p');
-                addCharToLexer(';');
-            }
+            constrainVersion(entver);
         }
     }
 
