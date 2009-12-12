@@ -1206,7 +1206,7 @@ public class PPrint
 			return xtra + node.element.length();
 		}
 		if (null != (node = node.findContainer())) {
-			return xtra + node.element == null ? 0 : node.element.length();
+			return xtra + (node.element == null ? 0 : node.element.length());
 		}
 		return spaces;
 	}
