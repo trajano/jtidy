@@ -33,7 +33,7 @@ public class Options {
 		}
 	}
 	
-	static enum TriState implements OptionEnum {
+	public static enum TriState implements OptionEnum {
 		No("no", "false", "n", "f", "0"),
 		Yes("yes", "true", "y", "t", "1"),
 		/** Automatic */
@@ -56,7 +56,7 @@ public class Options {
 		}
 	}
 	
-	static enum DupAttrModes implements OptionEnum {
+	public static enum DupAttrModes implements OptionEnum {
 		KeepFirst("keep-first"),
 		KeepLast("keep-last");
 		
@@ -75,7 +75,7 @@ public class Options {
 		}
 	}
 	
-	static enum AccessibilityLevels implements OptionEnum {
+	public static enum AccessibilityLevels implements OptionEnum {
 		Level0("0 (Tidy Classic)"),
 		Level1("1 (Priority 1 Checks)"),
 		Level2("2 (Priority 2 Checks)"),
@@ -96,7 +96,7 @@ public class Options {
 		}
 	}
 	
-	static enum LineEnding implements OptionEnum {
+	public static enum LineEnding implements OptionEnum {
 		/** Use Unix style: LF */
 		LF("LF", "\n"),
 		/** Use DOS/Windows style: CR+LF */
@@ -127,7 +127,7 @@ public class Options {
 		}
 	}
 	
-	static enum DoctypeModes implements OptionEnum {
+	public static enum DoctypeModes implements OptionEnum {
 		/** Omit DOCTYPE altogether */
 		Omit("omit"),
 		/** Keep DOCTYPE in input.  Set version to content */
@@ -156,7 +156,7 @@ public class Options {
 		}
 	}
 	
-	static enum AttrSortStrategy implements OptionEnum {
+	public static enum AttrSortStrategy implements OptionEnum {
 		None("none"),
 		Alpha("alpha");
 		
