@@ -69,6 +69,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.w3c.tidy.Node.NodeType;
+import org.w3c.tidy.Options.DoctypeModes;
 import org.w3c.tidy.Options.DupAttrModes;
 import org.w3c.tidy.Options.TriState;
 
@@ -1688,6 +1689,14 @@ public class Tidy implements Serializable
                 break;
         }
         return result;
+    }
+    
+    public void setDocTypeMode(final DoctypeModes docTypeMode) {
+    	configuration.setDocTypeMode(docTypeMode);
+    }
+    
+    public DoctypeModes getDocTypeMode() {
+    	return configuration.getDocTypeMode();
     }
 
     /**
