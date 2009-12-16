@@ -54,6 +54,7 @@
 package org.w3c.tidy;
 
 import org.w3c.tidy.Node.NodeType;
+import org.w3c.tidy.Options.TriState;
 
 /**
  * Clean up misuse of presentation markup. Filters from other formats such as Microsoft Word often make excessive use of
@@ -1176,29 +1177,14 @@ public class Clean
      * @param node first div
      * @return true if the divs have been merged
      */
-    private boolean mergeDivs(Lexer lexer, Node node)
-    {
-        Node child;
-
-        if (!node.is(TagId.DIV))
-        {
+    private boolean mergeDivs(final Lexer lexer, final Node node, final TriState state) {
+        if (state == TriState.No || !node.is(TagId.DIV)) {
             return false;
         }
+        
+        final Node child = node.content;
 
-        child = node.content;
-
-        if (child == null)
-        {
-            return false;
-        }
-
-        if (!child.is(TagId.DIV))
-        {
-            return false;
-        }
-
-        if (child.next != null)
-        {
+        if (child == null || child.next != null || !child.is(TagId.DIV)) {
             return false;
         }
 
@@ -1504,6 +1490,7 @@ public class Clean
         Node next = null;
         Node[] o = new Node[1];
         boolean b = false;
+        final TriState mergeDivs = lexer.configuration.getMergeDivs();
 
         for (next = node; node != null && node.isElement(); node = next)
         {
@@ -1532,7 +1519,7 @@ public class Clean
                 continue;
             }
 
-            b = mergeDivs(lexer, node);
+            b = mergeDivs(lexer, node, mergeDivs);
             next = o[0];
             if (b)
             {
