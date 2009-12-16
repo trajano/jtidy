@@ -1236,4 +1236,13 @@ public class Configuration implements Serializable
 	protected boolean isPreserveEntities() {
 		return getBool(Option.PreserveEntities);
 	}
+	
+	protected void setMergeDivs(final TriState mergeDivs) {
+		set(Option.MergeDivs, mergeDivs);
+	}
+
+	protected TriState getMergeDivs() {
+		return (TriState) getOptionEnum(Option.MergeDivs);
+	}
+
 }

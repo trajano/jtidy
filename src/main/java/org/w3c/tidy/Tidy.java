@@ -2227,5 +2227,13 @@ public class Tidy implements Serializable
     {
         return configuration.getOutCharEncodingName();
     }
+    
+    public void setMergeDivs(final TriState mergeDivs) {
+        configuration.setMergeDivs(mergeDivs);
+    }
+
+    public TriState getMergeDivs() {
+        return configuration.getMergeDivs();
+    }
 
 }
