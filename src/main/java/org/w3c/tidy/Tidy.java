@@ -424,9 +424,9 @@ public class Tidy implements Serializable
             document = ParserImpl.parseXMLDocument(lexer);
             if (!document.checkNodeIntegrity())
             {
-                if (!configuration.isQuiet())
-                {
+                if (!configuration.isQuiet()) {
                     report.badTree(errout);
+                    errout.flush();
                 }
                 return null;
             }
@@ -439,9 +439,9 @@ public class Tidy implements Serializable
 
             if (!document.checkNodeIntegrity())
             {
-                if (!configuration.isQuiet())
-                {
-                    this.report.badTree(errout);
+                if (!configuration.isQuiet()) {
+                    report.badTree(errout);
+                    errout.flush();
                 }
                 return null;
             }
@@ -481,6 +481,7 @@ public class Tidy implements Serializable
             if (!document.checkNodeIntegrity())
             {
                 this.report.badTree(errout);
+                errout.flush();
                 return null;
             }
 
