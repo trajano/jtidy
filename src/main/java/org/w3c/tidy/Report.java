@@ -756,7 +756,7 @@ public final class Report
                     break;
 
                 case COERCE_TO_ENDTAG :
-                    messageLexer(lexer, Level.INFO, code, element.element);
+                    messageNode(lexer, Level.WARNING, rpt, code, element.element);
                     break;
 
                 case NON_MATCHING_ENDTAG :
