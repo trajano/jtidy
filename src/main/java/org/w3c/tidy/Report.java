@@ -381,28 +381,24 @@ public final class Report
      * @param tag Node
      * @return formatted tag name
      */
-    private String getTagName(Node tag)
-    {
-        if (tag != null)
-        {
-            if (tag.type == NodeType.StartTag)
-            {
+    private String getTagName(final Node tag) {
+        if (tag != null) {
+            if (tag.isElement()) {
                 return "<" + tag.element + ">";
             }
-            else if (tag.type == NodeType.EndTag)
-            {
+            else if (tag.type == NodeType.EndTag) {
                 return "</" + tag.element + ">";
             }
-            else if (tag.type == NodeType.DocTypeTag)
-            {
+            else if (tag.type == NodeType.DocTypeTag) {
                 return "<!DOCTYPE>";
             }
-            else if (tag.type == NodeType.TextNode)
-            {
+            else if (tag.type == NodeType.TextNode) {
                 return "plain text";
             }
-            else
-            {
+            else if (tag.type == NodeType.XmlDecl) {
+                return "XML declaration";
+            }
+            else if (tag.element != null) {
                 return tag.element;
             }
         }
