@@ -1078,21 +1078,15 @@ public final class ParserImpl
                 return;
             }
 
-            // ParseInline is used for some block level elements like H1 to H6 For such elements we need to insert
-            // inline emphasis tags currently on the inline stack. For Inline elements, we normally push them onto the
-            // inline stack provided they aren't implicit or OBJECT/APPLET. This test is carried out in PushInline and
-            // PopInline, see istack.c We don't push SPAN to replicate current browser behavior
-
-            if (TidyUtils.toBoolean(element.tag.model & Dict.CM_BLOCK) || (element.is(TagId.DT)))
-            {
+            // ParseInline is used for some block level elements like H1 to H6
+            // For such elements we need to insert inline emphasis tags currently on the inline stack.
+            // For Inline elements, we normally push them onto the inline stack
+            // provided they aren't implicit or OBJECT/APPLET.
+            // This test is carried out in PushInline and PopInline, see istack.c
+            if ((element.hasCM(Dict.CM_BLOCK) || element.is(TagId.DT)) && !element.hasCM(Dict.CM_MIXED)) {
                 lexer.inlineDup(null);
             }
-            else if (TidyUtils.toBoolean(element.tag.model & Dict.CM_INLINE)
-                    // EUNYEE: Add back this condition 
-                    // because this causes the infinite loop problem when the span does not have the ending tag.
-                    && !element.is(TagId.A) && !element.is(TagId.SPAN))
-            {
-                // && element.tag != tt.tagSpan #540571 Inconsistent behaviour with span inline element
+            else if (element.hasCM(Dict.CM_INLINE)) {
                 lexer.pushInline(element);
             }
 
