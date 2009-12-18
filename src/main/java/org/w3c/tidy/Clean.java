@@ -256,35 +256,19 @@ public class Clean
      * @param props StyleProp
      * @return css property as String
      */
-    private String createPropString(StyleProp props)
-    {
-        String style = "";
-        int len;
-        StyleProp prop;
-
-        // compute length
-        for (len = 0, prop = props; prop != null; prop = prop.next)
-        {
-            len += prop.name.length() + 2;
-            len += prop.value.length() + 2;
-        }
-
-        for (prop = props; prop != null; prop = prop.next)
-        {
-            style = style.concat(prop.name);
-            style = style.concat(": ");
-
-            style = style.concat(prop.value);
-
-            if (prop.next == null)
-            {
+    private static String createPropString(final StyleProp props) {
+        final StringBuilder style = new StringBuilder();
+        for (StyleProp prop = props; prop != null; prop = prop.next) {
+            style.append(prop.name);
+            if (prop.value != null) {
+            	style.append(": ").append(prop.value);
+            }
+            if (prop.next == null) {
                 break;
             }
-
-            style = style.concat("; ");
+            style.append("; ");
         }
-
-        return style;
+        return style.toString();
     }
 
     /**
@@ -2493,4 +2477,46 @@ public class Clean
             node = next;
         }
     }
+
+	public static void verifyHTTPEquiv(final Lexer lexer, final Node head) {
+	    StyleProp firstProp = null, lastProp = null, prop = null;
+	    final String enc = EncodingNameMapper.toIana(lexer.configuration.getOutCharEncodingName()).toLowerCase();
+
+	    if (enc == null) {
+	        return;
+	    }
+	    if (head == null) {
+	        return;
+	    }
+
+	    /* Find any <meta http-equiv='Content-Type' content='...' /> */
+	    for (Node node = head.content; null != node; node = node.next) {
+	        final AttVal httpEquiv = node.getAttrById(AttrId.HTTP_EQUIV);
+	        final AttVal metaContent = node.getAttrById(AttrId.CONTENT);
+
+	        if (!node.is(TagId.META) || metaContent == null || httpEquiv == null || !httpEquiv.valueIs("Content-Type")) {
+	            continue;
+	        }
+	        for (String t : metaContent.value.split(";")) {
+	        	prop = new StyleProp(t.trim(), null, null);
+                if (null != lastProp) {
+                    lastProp.next = prop;
+                } else {
+                    firstProp = prop;
+                }
+                lastProp = prop;
+	        }
+	        /*  find the charset property */
+	        for (prop = firstProp; null != prop; prop = prop.next) {
+	            if (prop.name.length() < 7 || !"charset".equalsIgnoreCase(prop.name.substring(0, 7))) {
+	                continue;
+	            }
+	            prop.name = "charset=" + enc;
+	            metaContent.value = createPropString(firstProp);
+	            break;
+	        }
+	        firstProp = null;
+	        lastProp = null;
+	    }
+	}
 }

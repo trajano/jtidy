@@ -477,6 +477,11 @@ public class Tidy implements Serializable
             {
                 cleaner.cleanDocument(lexer, document);
             }
+            
+            /*  Reconcile http-equiv meta element with output encoding  */
+            if (!"raw".equals(configuration.getOutCharEncodingName())) {
+            	Clean.verifyHTTPEquiv(lexer, document.findHEAD());
+            }
 
             if (!document.checkNodeIntegrity())
             {
