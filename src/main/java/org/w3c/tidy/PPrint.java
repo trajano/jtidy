@@ -1405,6 +1405,7 @@ public class PPrint
 
         if ((node.type != NodeType.StartEndTag || xhtmlOut) && (mode & PREFORMATTED) == 0) {
         	int wraplen = configuration.getWraplen();
+        	checkWrapIndent(fout, indent);
             if (indent + linelen < wraplen) {
             	/* wrap after start tag if is <br/> or if it's not inline.
                 Technically, it would be safe to call only AfterSpace.
