@@ -201,14 +201,11 @@ public final class TagCheckImpl
 
             node.checkAttributes(lexer);
 
-            lang = node.getAttrByName("language");
-            type = node.getAttrByName("type");
+            lang = node.getAttrById(AttrId.LANGUAGE);
+            type = node.getAttrById(AttrId.TYPE);
 
             if (type == null)
             {
-                AttVal missingType = new AttVal(null, null, '"', "type", "");
-                lexer.report.attrError(lexer, node, missingType, ErrorCode.MISSING_ATTRIBUTE);
-
                 // check for javascript
                 if (lang != null)
                 {
@@ -226,6 +223,13 @@ public final class TagCheckImpl
                 else
                 {
                     node.addAttribute("type", "text/javascript");
+                }
+                
+                type = node.getAttrById(AttrId.TYPE);
+                if (type != null) {
+                    lexer.report.attrError(lexer, node, type, ErrorCode.INSERTING_ATTRIBUTE);
+                } else {
+                	lexer.report.missingAttr(lexer, node, "type");
                 }
             }
         }
