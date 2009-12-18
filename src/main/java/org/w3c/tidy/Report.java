@@ -336,7 +336,7 @@ public final class Report
             	lexer.errout.println(s);
             }
         } catch (MissingResourceException e) {
-            lexer.errout.println(e.toString());
+            lexer.errout.println("Can't find message string for \"" + messageKey + "\"!");
         }
     }
     
@@ -364,7 +364,7 @@ public final class Report
         try {
         	errout.println(getMessageLexer(-1, null, level, message, params));
         } catch (MissingResourceException e) {
-            errout.println(e.toString());
+        	errout.println("Can't find message string for \"" + message + "\"!");
         }
     }
 
@@ -591,6 +591,10 @@ public final class Report
         {
             case UNKNOWN_ATTRIBUTE :
                 messageLexer(lexer, Level.WARNING, code, attribute.attribute);
+                break;
+                
+            case INSERTING_ATTRIBUTE:
+            	messageNode(lexer, Level.WARNING, node, code, tagdesc, name);
                 break;
 
             case MISSING_ATTRIBUTE :
