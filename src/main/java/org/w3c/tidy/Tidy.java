@@ -493,9 +493,11 @@ public class Tidy implements Serializable
             doctype = document.findDocType();
 
             // remember given doctype
-            if (doctype != null)
-            {
-                doctype = doctype.cloneNode(false);
+            if (doctype != null) {
+            	final AttVal fpi = doctype.getAttrByName("PUBLIC");
+            	if (fpi.hasValue()) {
+            		lexer.givenDoctype = fpi.value;
+            	}
             }
             
             final boolean wantNameAttr = configuration.isAnchorAsName();
@@ -528,7 +530,7 @@ public class Tidy implements Serializable
 
             if (!configuration.isQuiet() && document.content != null)
             {
-                this.report.reportVersion(errout, lexer, inputStreamName, doctype);
+                this.report.reportVersion(lexer);
             }
         }
 

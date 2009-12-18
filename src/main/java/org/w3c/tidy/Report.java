@@ -1098,61 +1098,23 @@ public final class Report
 
     /**
      * Prints information for html version in input file.
-     * @param errout PrintWriter
      * @param lexer Lexer
-     * @param filename file name
-     * @param doctype doctype Node
      */
-    public void reportVersion(PrintWriter errout, Lexer lexer, String filename, Node doctype)
-    {
-        int i, c;
-        int state = 0;
-        int apparentVers = lexer.apparentVersion();
-        String vers = Lexer.getNameFromVers(apparentVers);
-        int[] cc = new int[1];
-
-        // adjust reported position to first line
-        lexer.lines = 1;
-        lexer.columns = 1;
-
-        if (doctype != null)
-        {
-
-            StringBuffer doctypeBuffer = new StringBuffer();
-            for (i = doctype.start; i < doctype.end; ++i)
-            {
-                c = doctype.textarray[i];
-
-                // look for UTF-8 multibyte character
-                if (c < 0)
-                {
-                    i += PPrint.getUTF8(doctype.textarray, i, cc);
-                    c = cc[0];
-                }
-
-                if (c == '"')
-                {
-                    ++state;
-                }
-                else if (state == 1)
-                {
-                    doctypeBuffer.append((char) c);
-                }
+    public void reportVersion(final Lexer lexer) {
+    	if (lexer.givenDoctype != null) {
+    		simpleMessage(DOCTYPE_GIVEN_SUMMARY.code(), lexer, Level.INFO, "doctype_given",
+                    lexer.givenDoctype);
+    	}
+    	if (!lexer.configuration.isXmlTags()) {
+    		final int apparentVers = lexer.apparentVersion();
+    		final String vers = Lexer.getNameFromVers(apparentVers);
+    		
+            simpleMessage(REPORT_VERSION_SUMMARY.code(), lexer, Level.INFO, "report_version", 
+    			    (vers != null ? vers : "HTML Proprietary"));
+            if (lexer.warnMissingSIInEmittedDocType()) {
+            	simpleMessage(-1, lexer, Level.INFO, "no_si");
             }
-
-            simpleMessage(
-                DOCTYPE_GIVEN_SUMMARY.code(),
-                lexer,
-                Level.INFO,
-                "doctype_given",
-                doctypeBuffer);
-        }
-
-        simpleMessage(REPORT_VERSION_SUMMARY.code(), lexer, Level.INFO, "report_version", 
-			    (vers != null ? vers : "HTML Proprietary"));
-        if (lexer.warnMissingSIInEmittedDocType()) {
-        	simpleMessage(-1, lexer, Level.INFO, "no_si");
-        }
+    	}
     }
 
     /**

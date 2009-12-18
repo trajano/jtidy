@@ -381,6 +381,8 @@ public class Lexer
      * node list.
      */
     private List<Node> nodeList;
+    
+    protected String givenDoctype;
 
     /**
      * Instantiates a new Lexer.
