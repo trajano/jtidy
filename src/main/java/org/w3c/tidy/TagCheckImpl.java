@@ -364,6 +364,8 @@ public final class TagCheckImpl
             boolean hasUseMap = node.getAttrById(AttrId.USEMAP) != null;
             boolean hasIsMap = node.getAttrById(AttrId.ISMAP) != null;
             boolean hasDataFld = node.getAttrById(AttrId.DATAFLD) != null;
+            
+            node.checkAttributes(lexer);
 
             if (!hasAlt)
             {
