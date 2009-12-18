@@ -239,51 +239,35 @@ public final class TagCheckImpl
     /**
      * Checker implementation for table.
      */
-    public static class CheckTABLE implements TagCheck
-    {
+    public static class CheckTABLE implements TagCheck {
 
         /**
          * @see org.w3c.tidy.TagCheck#check(org.w3c.tidy.Lexer, org.w3c.tidy.Node)
          */
-        public void check(Lexer lexer, Node node)
-        {
-            AttVal attval;
+        public void check(Lexer lexer, Node node) {
             boolean hasSummary = node.getAttrById(AttrId.SUMMARY) != null;
             
             node.checkAttributes(lexer);
-
-            /* suppress warning for missing summary for HTML 2.0 and HTML 3.2 */
-            if (!hasSummary && lexer.doctype != VERS_HTML20 && lexer.doctype != VERS_HTML32)
-            {
-                lexer.badAccess |= Report.MISSING_SUMMARY;
-
-                // summary is not required, should be only an accessibility warning
-                // AttVal missingSummary = new AttVal(null, null, '"', "summary", "");
-                // lexer.report.attrError(lexer, node, missingSummary, ErrorCode.MISSING_ATTRIBUTE);
+            
+            /* a missing summary attribute is bad accessibility, no matter
+               what HTML version is involved; a document without is valid */
+            if (lexer.configuration.getAccessibilityCheckLevel() == 0) {
+                if (!hasSummary) {
+                    lexer.badAccess |= Report.MISSING_SUMMARY;
+                    lexer.report.missingAttr(lexer, node, "summary");
+                }
             }
 
             /* convert <table border> to <table border="1"> */
-            if (lexer.configuration.isXmlOut())
-            {
-                attval = node.getAttrByName("border");
-                if (attval != null)
-                {
-                    if (attval.value == null)
-                    {
+            if (lexer.configuration.isXmlOut()) {
+            	AttVal attval = node.getAttrByName("border");
+                if (attval != null) {
+                    if (attval.value == null) {
                         attval.value = "1";
                     }
                 }
             }
-
-            /* <table height="..."> is proprietary */
-            if ((attval = node.getAttrByName("height")) != null)
-            {
-                lexer.report.attrError(lexer, node, attval, ErrorCode.PROPRIETARY_ATTRIBUTE);
-                lexer.versions &= VERS_PROPRIETARY;
-            }
-
         }
-
     }
 
     /**
