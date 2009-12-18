@@ -92,7 +92,7 @@ public enum ErrorCode {
     DUPLICATE_FRAMESET(18),
 
     /**
-     * elments can be nested.
+     * elements can't be nested.
      */
     CANT_BE_NESTED(19),
 
@@ -147,7 +147,7 @@ public enum ErrorCode {
     MALFORMED_COMMENT(29),
 
     /**
-     * bad coment chars.
+     * bad comment chars.
      */
     BAD_COMMENT_CHARS(30),
 
@@ -242,7 +242,7 @@ public enum ErrorCode {
     REPLACING_ELEMENT(83),
 
     /**
-     * replacing unexcaped element.
+     * replacing unexpected element.
      */
     REPLACING_UNEX_ELEMENT(84),
 
@@ -256,11 +256,8 @@ public enum ErrorCode {
      */
     UNKNOWN_ATTRIBUTE(48),
 
-    /**
-     * attribute: missing attribute.
-     */
-    MISSING_ATTRIBUTE(49),
-
+    INSERTING_ATTRIBUTE(49),
+    
     /**
      * attribute: missing attribute value.
      */
@@ -357,7 +354,7 @@ public enum ErrorCode {
     JOINING_ATTRIBUTE(68),
 
     /**
-     * attribute: expected equalsign.
+     * attribute: expected equal sign.
      */
     UNEXPECTED_EQUALSIGN(69),
 
@@ -367,7 +364,7 @@ public enum ErrorCode {
     ATTR_VALUE_NOT_LCASE(70),
 
     /**
-     * attribute: id sintax.
+     * attribute: id syntax.
      */
     XML_ID_SYNTAX(71),
 
@@ -417,7 +414,7 @@ public enum ErrorCode {
     ENCODING_MISMATCH(80),
 
     /**
-     * character encoding: nvalid URI.
+     * character encoding: invalid URI.
      */
     INVALID_URI(81),
 
@@ -425,6 +422,11 @@ public enum ErrorCode {
      * character encoding: invalid NCR.
      */
     INVALID_NCR(82),
+    
+    /**
+     * attribute: missing attribute.
+     */
+    MISSING_ATTRIBUTE(86),
     
     PREVIOUS_LOCATION(88),
 
