@@ -3619,9 +3619,12 @@ public final class ParserImpl
             }
 
             // discard unexpected end tags
-            if (node.type == NodeType.EndTag)
-            {
-                lexer.report.error(lexer, element, node, ErrorCode.UNEXPECTED_ENDTAG);
+            if (node.type == NodeType.EndTag) {
+            	if (element != null) {
+            		lexer.report.error(lexer, element, node, ErrorCode.UNEXPECTED_ENDTAG_IN);
+            	} else {
+            		lexer.report.error(lexer, element, node, ErrorCode.UNEXPECTED_ENDTAG);
+            	}
                 continue;
             }
 
