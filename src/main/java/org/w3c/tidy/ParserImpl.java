@@ -252,11 +252,12 @@ public final class ParserImpl
      * @param lexer Lexer
      * @param node Node to insert
      */
-    static void moveNodeToBody(Lexer lexer, Node node)
-    {
-        node.removeNode();
-        Node body = lexer.root.findBody();
-        body.insertNodeAtEnd(node);
+    private static void moveNodeToBody(final Lexer lexer, final Node node) {
+    	final Node body = lexer.root.findBody();
+        if (body != null) {
+	        node.removeNode();
+	        body.insertNodeAtEnd(node);
+        }
     }
 
     /**
@@ -478,6 +479,7 @@ public final class ParserImpl
                 }
 
                 node = lexer.inferredTag(TagId.BODY);
+                lexer.report.warning(lexer, html, node, ErrorCode.INSERTING_TAG);
                 lexer.constrainVersion(~VERS_FRAMESET);
                 break;
             }
@@ -3059,7 +3061,10 @@ public final class ParserImpl
                     if (lexer.seenEndBody)
                     {
                         Node body = lexer.root.findBody();
-
+                        if (body == null) {
+                        	lexer.report.warning(lexer, noframes, node, ErrorCode.DISCARDING_UNEXPECTED);
+                            continue;
+                        }
                         if (node.type == NodeType.TextNode)
                         {
                             lexer.ungetToken();
