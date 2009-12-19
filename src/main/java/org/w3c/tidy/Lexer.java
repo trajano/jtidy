@@ -2086,7 +2086,7 @@ public class Lexer
 
                         if (TidyUtils.toBoolean(this.token.tag.versions & VERS_PROPRIETARY))
                         {
-                            if (this.configuration.isMakeClean() || (!this.token.is(TagId.NOBR) &&
+                            if (!this.configuration.isMakeClean() || (!this.token.is(TagId.NOBR) &&
                                 !this.token.is(TagId.WBR))) {
                                 report.warning(this, null, this.token, ErrorCode.PROPRIETARY_ELEMENT);
                                 
