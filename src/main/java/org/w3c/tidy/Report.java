@@ -835,7 +835,7 @@ public final class Report
                     break;
 
                 case NESTED_QUOTATION :
-                    messageLexer(lexer, Level.WARNING, code);
+                	messageNode(lexer, Level.WARNING, rpt, code);
                     break;
 
                 case ELEMENT_NOT_EMPTY :
