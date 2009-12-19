@@ -3747,10 +3747,7 @@ public final class ParserImpl
     /**
      * errors in positioning of form start or end tags generally require human intervention to fix.
      */
-    static void badForm(Lexer lexer)
-    {
+    private static void badForm(final Lexer lexer) {
         lexer.badForm = 1;
-        lexer.errors++;
     }
-
 }
