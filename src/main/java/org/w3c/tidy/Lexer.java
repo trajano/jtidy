@@ -2086,16 +2086,19 @@ public class Lexer
 
                         if (TidyUtils.toBoolean(this.token.tag.versions & VERS_PROPRIETARY))
                         {
-                            // #427810 - fix by Gary Deschaines 24 May 00
-                            if (this.configuration.isMakeClean() && (!this.token.is(TagId.NOBR) && //
-                                !this.token.is(TagId.WBR)))
-                            {
+                            if (this.configuration.isMakeClean() || (!this.token.is(TagId.NOBR) &&
+                                !this.token.is(TagId.WBR))) {
                                 report.warning(this, null, this.token, ErrorCode.PROPRIETARY_ELEMENT);
-                            }
-                            // #427810 - fix by Terry Teague 2 Jul 01
-                            else if (!this.configuration.isMakeClean())
-                            {
-                                report.warning(this, null, this.token, ErrorCode.PROPRIETARY_ELEMENT);
+                                
+                                if (token.is(TagId.LAYER)) {
+                                    badLayout |= Report.USING_LAYER;
+                                }
+                                else if (token.is(TagId.SPACER)) {
+                                    badLayout |= Report.USING_SPACER;
+                                }
+                                else if (token.is(TagId.NOBR)) {
+                                    badLayout |= Report.USING_NOBR;
+                                }
                             }
                         }
 
