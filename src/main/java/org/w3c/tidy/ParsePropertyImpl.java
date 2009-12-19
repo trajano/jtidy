@@ -720,8 +720,14 @@ public final class ParsePropertyImpl
         /**
          * @see org.w3c.tidy.ParseProperty#parse(java.lang.String, java.lang.String, org.w3c.tidy.Configuration)
          */
-        public Object parse(String value, Option option, Configuration configuration)
-        {
+        public Object parse(final String value, final Option option, final Configuration configuration) {
+        	if (value.length() < 2) {
+        		return value;
+        	}
+        	char c = value.charAt(0);
+        	if ((c == '"' || c == '\'') && value.charAt(value.length() - 1) == c) {
+        		return value.substring(1, value.length() - 1);
+        	}
             return value;
         }
 
