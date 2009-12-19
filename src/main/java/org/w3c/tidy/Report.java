@@ -696,10 +696,7 @@ public final class Report
                 break;
 
             case ATTR_VALUE_NOT_LCASE :
-                messageLexer(lexer, Level.WARNING, code, 
-					    getTagName(node),
-					    attribute.value,
-					    attribute.attribute);
+            	messageNode(lexer, Level.WARNING, node, code, tagdesc, value); 
                 break;
 
             default :
