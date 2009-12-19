@@ -3094,6 +3094,9 @@ public class Lexer
 
                     if (lastc == ' ')
                     {
+                    	if (AttributeTable.getDefaultAttributeTable().isUrl(name)) {
+                            report.attrError(this, token, null, ErrorCode.WHITE_IN_URI);
+                    	}
                         continue;
                     }
                 }

@@ -640,6 +640,7 @@ public final class Report
             case ILLEGAL_URI_REFERENCE :
             case ESCAPED_ILLEGAL_URI :
             case NEWLINE_IN_URI :
+            case WHITE_IN_URI:
             case UNEXPECTED_GT:
                 messageNode(lexer, Level.WARNING, node, code, tagdesc);
                 break;

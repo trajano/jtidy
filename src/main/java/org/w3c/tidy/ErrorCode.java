@@ -428,6 +428,8 @@ public enum ErrorCode {
      */
     MISSING_ATTRIBUTE(86),
     
+    WHITE_IN_URI(87),
+    
     PREVIOUS_LOCATION(88),
 
     /**
