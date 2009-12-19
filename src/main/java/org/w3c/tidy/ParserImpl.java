@@ -1193,7 +1193,9 @@ public final class ParserImpl
                         continue;
                     }
 
-                    lexer.report.warning(lexer, element, node, ErrorCode.NESTED_EMPHASIS);
+                    if (node.attributes == null || element.attributes == null) {
+                    	lexer.report.warning(lexer, element, node, ErrorCode.NESTED_EMPHASIS);
+                    }
                 }
                 else if (lexer.isPushed(node) && node.type == NodeType.StartTag && node.is(TagId.Q))
                 {
