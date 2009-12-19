@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import junit.framework.TestCase;
 
 public class TidyTest extends TestCase {
+	private static final String[] EXT = {"html", "xml", "xhtml"};
 
 	private final String t;
 	private final int r;
@@ -38,23 +39,25 @@ public class TidyTest extends TestCase {
     	final String cfg = base + "input/cfg_" + t + ".txt";
     	tidy.setConfigurationFromFile(new File(cfg).exists() ? cfg : base + "input/cfg_default.txt" );
     	tidy.setTidyMark(false);
-    	InputStream is = null;
-    	try {
-			is = new FileInputStream(base + "input/in_" + t + ".html");
-		} catch (FileNotFoundException e) {
-			try {
-				is = new FileInputStream(base + "input/in_" + t + ".xml");
-			} catch (FileNotFoundException e1) {
-				try {
-					is = new FileInputStream(base + "input/in_" + t + ".xhtml");
-				} catch (FileNotFoundException e2) {
-					throw new RuntimeException("can't find input file");
-				}
-			}
+    	String fname = null;
+    	File f = null;
+    	for (String s : EXT) {
+    		fname = "./input/in_" + t + '.' + s;
+    		f = new File(base, fname);
+    		if (f.exists()) {
+    			break;
+    		}
+    	}
+    	final InputStream is;
+		try {
+			is = new FileInputStream(f);
+		} catch (FileNotFoundException e1) {
+			throw new RuntimeException("can't find input file");
 		}
     	final ByteArrayOutputStream os = new ByteArrayOutputStream();
     	final ByteArrayOutputStream es = new ByteArrayOutputStream();
     	tidy.setErrout(new PrintWriter(es));
+    	tidy.setInputStreamName(fname);
     	tidy.parse(is, os);
     	int x = tidy.getParseErrors() > 0 ? 2 : tidy.getParseWarnings() > 0 ? 1 : 0;
     	try {
