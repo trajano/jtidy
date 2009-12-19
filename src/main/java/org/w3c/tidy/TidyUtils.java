@@ -657,7 +657,7 @@ public final class TidyUtils
     {
         try
         {
-            return new String(bytes, offset, length, "UTF8");
+            return length == 0 ? null : new String(bytes, offset, length, "UTF8");
         }
         catch (java.io.UnsupportedEncodingException e)
         {
