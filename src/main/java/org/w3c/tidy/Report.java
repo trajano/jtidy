@@ -607,7 +607,7 @@ public final class Report
                 break;
 
             case MISSING_IMAGEMAP :
-                messageLexer(lexer, Level.WARNING, code, getTagName(node));
+            	messageNode(lexer, Level.WARNING, node, code, tagdesc);
                 lexer.badAccess |= MISSING_IMAGE_MAP;
                 break;
 
@@ -871,20 +871,15 @@ public final class Report
      * @param node current tag
      * @param code error code
      */
-    public void error(Lexer lexer, Node element, Node node, ErrorCode code)
-    {
-        // keep quiet after <showErrors> errors
-        if (lexer.errors > lexer.configuration.getShowErrors())
-        {
-            return;
-        }
-
+    public void error(Lexer lexer, Node element, Node node, ErrorCode code) {
+    	final Node rpt = element != null ? element : node;
+    	
         switch (code) {
         case SUSPECTED_MISSING_QUOTE:
             messageLexer(lexer, Level.ERROR, code);
             break;
         case DUPLICATE_FRAMESET:
-            messageLexer(lexer, Level.ERROR, code);
+        	messageNode(lexer, Level.ERROR, rpt, code);
             break;
         case UNKNOWN_ELEMENT:
             messageLexer(lexer, Level.ERROR, code, getTagName(node));
