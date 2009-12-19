@@ -3058,9 +3058,8 @@ public final class ParserImpl
                 // implicit body element inferred
                 if (node.type == NodeType.TextNode || (node.tag != null && node.type != NodeType.EndTag))
                 {
-                    if (lexer.seenEndBody)
-                    {
-                        Node body = lexer.root.findBody();
+                	Node body = lexer.root.findBody();
+                    if (body != null || lexer.seenEndBody) {
                         if (body == null) {
                         	lexer.report.warning(lexer, noframes, node, ErrorCode.DISCARDING_UNEXPECTED);
                             continue;
