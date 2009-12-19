@@ -603,11 +603,10 @@ public final class ParserImpl
 
             while ((node = lexer.getToken(Lexer.MIXED_CONTENT)) != null)
             {
-                // [438658] : Missing / in title endtag makes 2 titles
-                if (node.tag == title.tag && node.type == NodeType.StartTag)
-                {
+                if (node.tag == title.tag && node.type == NodeType.StartTag) {
                     lexer.report.warning(lexer, title, node, ErrorCode.COERCE_TO_ENDTAG);
                     node.type = NodeType.EndTag;
+                    lexer.ungetToken();
                     continue;
                 }
                 else if (node.tag == title.tag && node.type == NodeType.EndTag)
