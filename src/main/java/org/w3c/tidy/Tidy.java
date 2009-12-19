@@ -534,10 +534,9 @@ public class Tidy implements Serializable
             }
         }
 
-        if (!configuration.isQuiet())
-        {
-            parseWarnings = lexer.warnings;
-            parseErrors = lexer.errors;
+        parseWarnings = lexer.warnings;
+        parseErrors = lexer.errors;
+        if (!configuration.isQuiet()) {
             this.report.reportNumWarnings(errout, lexer);
         }
 
