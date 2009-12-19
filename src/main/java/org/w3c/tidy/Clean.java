@@ -1780,23 +1780,21 @@ public class Clean
     {
         for (;;)
         {
+            if ((TidyUtils.getString(node.textarray, node.start, 21)).equals("if !supportEmptyParas")) {
+	            Node cell = findEnclosingCell(node);
+	            if (cell != null) {
+		            // Need to put &nbsp; into cell so it doesn't look weird
+		            Node nbsp = lexer.newLiteralTextNode("\u00a0");
+		            Node.insertNodeBeforeElement(node, nbsp);
+	            }
+            }
 
-            // FG: commented out - don't add &nbsp; to empty cells
-
-            // if ((Lexer.getString(node.textarray, node.start, 21)).equals("if !supportEmptyParas"))
-            // {
-            // Node cell = findEnclosingCell(node);
-            // if (cell != null)
-            // {
-            // // Need to put &nbsp; into cell so it doesn't look weird
-            // char onesixty[] = {(char) 160, (char) 0};
-            // Node nbsp = lexer.newLiteralTextNode(lexer, onesixty);
-            // Node.insertNodeBeforeElement(node, nbsp);
-            // }
-            // }
-
-            // discard node and returns next
-            node = Node.discardElement(node);
+            // discard node and returns next, unless it is a text node
+            if (node.type == NodeType.TextNode) {
+            	node = node.next;
+            } else {
+            	node = Node.discardElement(node);
+            }
 
             if (node == null)
             {
@@ -2164,6 +2162,14 @@ public class Clean
                     node = Node.discardElement(node);
                     continue;
                 }
+            }
+            
+            /* discards <o:p> which encodes the paragraph mark */
+            if (node.tag != null && "o:p".equals(node.tag.name)) {
+                Node[] next = new Node[1];
+                discardContainer(node, next);
+                node = next[0];
+                continue;
             }
 
             // discard empty paragraphs
