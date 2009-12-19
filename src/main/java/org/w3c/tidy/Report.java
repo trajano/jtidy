@@ -594,18 +594,11 @@ public final class Report
                 break;
                 
             case INSERTING_ATTRIBUTE:
+            case MISSING_ATTR_VALUE :
             	messageNode(lexer, Level.WARNING, node, code, tagdesc, name);
                 break;
 
             case MISSING_ATTRIBUTE :
-                messageLexer(
-                    lexer,
-                    Level.WARNING,
-                    code,
-                    getTagName(node), attribute.attribute);
-                break;
-
-            case MISSING_ATTR_VALUE :
                 messageLexer(
                     lexer,
                     Level.WARNING,
