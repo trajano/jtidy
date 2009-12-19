@@ -275,127 +275,99 @@ public class Node {
      * configuration.
      * @param lexer Lexer
      */
-    public void repairDuplicateAttributes(Lexer lexer)
-    {
-        AttVal attval;
+    public void repairDuplicateAttributes(Lexer lexer) {
+        for (AttVal first = this.attributes; first != null;) {
+        	if (!(first.asp == null && first.php == null)) {
+        		first = first.next;
+        		continue;
+        	}
+        	
+            for (AttVal second = first.next; second != null;) {
+                if (!(second.asp == null && second.php == null && first.attribute != null
+                		&& first.attribute.equalsIgnoreCase(second.attribute))) {
+                	second = second.next;
+                	continue;
+                }
+                
+                AttVal temp;
 
-        for (attval = this.attributes; attval != null;)
-        {
-            if (attval.asp == null && attval.php == null)
-            {
-                AttVal current;
-
-                for (current = attval.next; current != null;)
+                if ("class".equalsIgnoreCase(second.attribute) && lexer.configuration.isJoinClasses())
                 {
-                    if (current.asp == null
-                        && current.php == null
-                        && attval.attribute != null
-                        && attval.attribute.equalsIgnoreCase(current.attribute))
+                    // concatenate classes
+                    second.value = second.value + " " + first.value;
+
+                    temp = first.next;
+
+                    if (temp.next == null)
                     {
-                        AttVal temp;
-
-                        if ("class".equalsIgnoreCase(current.attribute) && lexer.configuration.isJoinClasses())
-                        {
-                            // concatenate classes
-                            current.value = current.value + " " + attval.value;
-
-                            temp = attval.next;
-
-                            if (temp.next == null)
-                            {
-                                current = null;
-                            }
-                            else
-                            {
-                                current = current.next;
-                            }
-
-                            lexer.report.attrError(lexer, this, attval, ErrorCode.JOINING_ATTRIBUTE);
-
-                            removeAttribute(attval);
-                            attval = temp;
-                        }
-                        else if ("style".equalsIgnoreCase(current.attribute) && lexer.configuration.isJoinStyles())
-                        {
-                            // concatenate styles
-
-                            // this doesn't handle CSS comments and leading/trailing white-space very well see
-                            // http://www.w3.org/TR/css-style-attr
-
-                            int end = current.value.length() - 1;
-
-                            if (current.value.charAt(end) == ';')
-                            {
-                                // attribute ends with declaration seperator
-                                current.value = current.value + " " + attval.value;
-                            }
-                            else if (current.value.charAt(end) == '}')
-                            {
-                                // attribute ends with rule set
-                                current.value = current.value + " { " + attval.value + " }";
-                            }
-                            else
-                            {
-                                // attribute ends with property value
-                                current.value = current.value + "; " + attval.value;
-                            }
-
-                            temp = attval.next;
-
-                            if (temp.next == null)
-                            {
-                                current = null;
-                            }
-                            else
-                            {
-                                current = current.next;
-                            }
-
-                            lexer.report.attrError(lexer, this, attval, ErrorCode.JOINING_ATTRIBUTE);
-
-                            removeAttribute(attval);
-                            attval = temp;
-
-                        }
-                        else if (lexer.configuration.getDuplicateAttrs() == DupAttrModes.KeepLast)
-                        {
-                            temp = current.next;
-
-                            lexer.report.attrError(lexer, this, current, ErrorCode.REPEATED_ATTRIBUTE);
-
-                            removeAttribute(current);
-                            current = temp;
-                        }
-                        else
-                        {
-                            temp = attval.next;
-
-                            if (attval.next == null)
-                            {
-                                current = null;
-                            }
-                            else
-                            {
-                                current = current.next;
-                            }
-
-                            lexer.report.attrError(lexer, this, attval, ErrorCode.REPEATED_ATTRIBUTE);
-
-                            removeAttribute(attval);
-                            attval = temp;
-                        }
+                        second = null;
                     }
                     else
                     {
-                        current = current.next;
+                        second = second.next;
                     }
+
+                    lexer.report.attrError(lexer, this, first, ErrorCode.JOINING_ATTRIBUTE);
+
+                    removeAttribute(first);
+                    first = temp;
                 }
-                attval = attval.next;
+                else if ("style".equalsIgnoreCase(second.attribute) && lexer.configuration.isJoinStyles())
+                {
+                    // concatenate styles
+
+                    // this doesn't handle CSS comments and leading/trailing white-space very well see
+                    // http://www.w3.org/TR/css-style-attr
+
+                    int end = second.value.length() - 1;
+
+                    if (second.value.charAt(end) == ';')
+                    {
+                        // attribute ends with declaration seperator
+                        second.value = second.value + " " + first.value;
+                    }
+                    else if (second.value.charAt(end) == '}')
+                    {
+                        // attribute ends with rule set
+                        second.value = second.value + " { " + first.value + " }";
+                    }
+                    else
+                    {
+                        // attribute ends with property value
+                        second.value = second.value + "; " + first.value;
+                    }
+
+                    temp = first.next;
+
+                    if (temp.next == null)
+                    {
+                        second = null;
+                    }
+                    else
+                    {
+                        second = second.next;
+                    }
+
+                    lexer.report.attrError(lexer, this, first, ErrorCode.JOINING_ATTRIBUTE);
+
+                    removeAttribute(first);
+                    first = temp;
+
+                }
+                else if (lexer.configuration.getDuplicateAttrs() == DupAttrModes.KeepLast)
+                {
+                    temp = first.next;
+                    lexer.report.attrError(lexer, this, first, ErrorCode.REPEATED_ATTRIBUTE);
+                    removeAttribute(first);
+                    first = temp;
+                } else {
+                    temp = second.next;
+                    lexer.report.attrError(lexer, this, second, ErrorCode.REPEATED_ATTRIBUTE);
+                    removeAttribute(second);
+                    second = temp;
+                }
             }
-            else
-            {
-                attval = attval.next;
-            }
+            first = first.next;
         }
     }
     
