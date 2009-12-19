@@ -889,6 +889,9 @@ public final class Report
         case UNKNOWN_ELEMENT:
             messageLexer(lexer, Level.ERROR, code, getTagName(node));
             break;
+        case UNEXPECTED_ENDTAG_IN:
+            messageLexer(lexer, Level.ERROR, code, node.element, element.element);
+            break;
         case UNEXPECTED_ENDTAG:
             messageLexer(lexer, Level.ERROR, code, node.element);
             break;
