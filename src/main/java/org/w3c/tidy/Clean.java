@@ -1243,9 +1243,7 @@ public class Clean
             // recognizing nested lists and just uses indents
             if (list.prev != null)
             {
-                if (list.prev.is(TagId.UL) || list.prev.is(TagId.OL))
-                {
-
+                if ((list.prev.is(TagId.UL) || list.prev.is(TagId.OL)) && list.prev.last != null) {
                     node = list;
                     list = node.prev;
 
