@@ -124,7 +124,7 @@ public class Clean
      * @param value property value
      * @return StyleProp containin the given property
      */
-    private StyleProp insertProperty(StyleProp props, String name, String value)
+    private static StyleProp insertProperty(StyleProp props, String name, String value)
     {
         StyleProp first, prev, prop;
         int cmp;
@@ -184,7 +184,7 @@ public class Clean
      * @param style style string
      * @return StyleProp with given style
      */
-    private StyleProp createProps(StyleProp prop, String style)
+    private static StyleProp createProps(StyleProp prop, String style)
     {
         int nameEnd;
         int valueEnd;
@@ -277,7 +277,7 @@ public class Clean
      * @param property css properties
      * @return merged string
      */
-    private String addProperty(String style, String property)
+    private static String addProperty(String style, String property)
     {
         StyleProp prop;
 
@@ -690,7 +690,7 @@ public class Clean
      * @param node node
      * @param property property added to node
      */
-    private void addStyleProperty(Node node, String property)
+    private static void addStyleProperty(Node node, String property)
     {
         AttVal av;
 
@@ -1020,6 +1020,18 @@ public class Clean
             prev = av;
         }
     }
+    
+    /*
+	    Symptom: <table bgcolor="red">
+	    Action: <table style="background-color: red">
+	*/
+	private static void tableBgColor(final Node node) {
+	    final AttVal attr = node.getAttrById(AttrId.BGCOLOR);
+	    if (null != attr) {
+	        node.removeAttribute(attr);
+	        addStyleProperty(node, "background-color: " + attr.value);
+	    }
+	}
 
     /**
      * Symptom: <code>&lt;dir>&lt;li></code> where <code>&lt;li></code> is only child. Action: coerce
@@ -1299,6 +1311,11 @@ public class Clean
     private boolean blockStyle(Lexer lexer, Node node)
     {
         Node child;
+        
+        /* check for bgcolor */
+        if (node.is(TagId.TABLE) || node.is(TagId.TD) || node.is(TagId.TH) || node.is(TagId.TR)) {
+            tableBgColor(node);
+        }
 
         if ((node.tag.model & (Dict.CM_BLOCK | Dict.CM_LIST | Dict.CM_DEFLIST | Dict.CM_TABLE)) != 0)
         {
