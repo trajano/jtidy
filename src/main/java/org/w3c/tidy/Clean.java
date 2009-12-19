@@ -2503,14 +2503,16 @@ public class Clean
 	        if (!node.is(TagId.META) || metaContent == null || httpEquiv == null || !httpEquiv.valueIs("Content-Type")) {
 	            continue;
 	        }
-	        for (String t : metaContent.value.split(";")) {
-	        	prop = new StyleProp(t.trim(), null, null);
-                if (null != lastProp) {
-                    lastProp.next = prop;
-                } else {
-                    firstProp = prop;
-                }
-                lastProp = prop;
+	        if (metaContent.value != null) {
+		        for (String t : metaContent.value.split(";")) {
+		        	prop = new StyleProp(t.trim(), null, null);
+	                if (null != lastProp) {
+	                    lastProp.next = prop;
+	                } else {
+	                    firstProp = prop;
+	                }
+	                lastProp = prop;
+		        }
 	        }
 	        /*  find the charset property */
 	        for (prop = firstProp; null != prop; prop = prop.next) {
