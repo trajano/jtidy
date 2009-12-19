@@ -455,16 +455,13 @@ public final class TagCheckImpl
          */
         public void check(Lexer lexer, Node node)
         {
-            AttVal type = node.getAttrByName("type");
+            AttVal type = node.getAttrById(AttrId.TYPE);
 
             node.checkAttributes(lexer);
 
-            if (type == null)
-            {
-                AttVal missingType = new AttVal(null, null, '"', "type", "");
-                lexer.report.attrError(lexer, node, missingType, ErrorCode.MISSING_ATTRIBUTE);
-
-                node.addAttribute("type", "text/css");
+            if (type == null || type.value == null || type.value.length() == 0) {
+            	type = node.repairAttrValue("type", "text/css");
+                lexer.report.attrError(lexer, node, type, ErrorCode.INSERTING_ATTRIBUTE);
             }
         }
     }
