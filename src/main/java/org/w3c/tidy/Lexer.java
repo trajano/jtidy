@@ -2101,11 +2101,11 @@ public class Lexer
                                 }
                             }
                         }
-
-                        this.token.repairDuplicateAttributes(this);
+                        token.repairDuplicateAttributes(this);
+                    } else {
+                    	token.repairDuplicateAttributes(this);
                     }
-
-                    return this.token; // return start tag
+                    return token; // return start tag
 
                 case LEX_COMMENT :
                     // seen <!-- so look for -->
