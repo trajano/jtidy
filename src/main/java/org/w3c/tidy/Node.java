@@ -281,6 +281,7 @@ public class Node {
         		first = first.next;
         		continue;
         	}
+        	boolean firstRedefined = false;
         	
             for (AttVal second = first.next; second != null;) {
                 if (!(second.asp == null && second.php == null && first.attribute != null
@@ -359,7 +360,9 @@ public class Node {
                     temp = first.next;
                     lexer.report.attrError(lexer, this, first, ErrorCode.REPEATED_ATTRIBUTE);
                     removeAttribute(first);
+                    firstRedefined = true;
                     first = temp;
+                    second = second.next;
                 } else {
                     temp = second.next;
                     lexer.report.attrError(lexer, this, second, ErrorCode.REPEATED_ATTRIBUTE);
@@ -367,7 +370,9 @@ public class Node {
                     second = temp;
                 }
             }
-            first = first.next;
+            if (!firstRedefined) {
+            	first = first.next;
+            }
         }
     }
     
