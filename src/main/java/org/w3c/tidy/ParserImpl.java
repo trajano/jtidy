@@ -56,7 +56,6 @@ package org.w3c.tidy;
 import static org.w3c.tidy.Versions.*;
 
 import org.w3c.tidy.Node.NodeType;
-import org.w3c.tidy.Options.TriState;
 
 /**
  * HTML Parser implementation.
@@ -3509,8 +3508,7 @@ public final class ParserImpl
                 html = node;
             }
 
-            if (document.findDocType() == null && lexer.configuration.getBodyOnly() != TriState.Yes)
-            {
+            if (document.findDocType() == null) {
                 lexer.report.warning(lexer, null, null, ErrorCode.MISSING_DOCTYPE);
             }
 

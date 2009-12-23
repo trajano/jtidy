@@ -385,6 +385,21 @@ public class Tidy implements Serializable
 
         pprint(((DOMNodeImpl) node).adaptee, out);
     }
+    
+    private static boolean showBodyOnly(final Lexer lexer) {
+        switch (lexer.configuration.getBodyOnly()) {
+        case No:
+            return false;
+        case Yes:
+            return true;
+        default:
+            final Node node = lexer.root.findBody();
+            if (node != null && node.implicit) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Internal routine that actually does the parsing.
@@ -557,8 +572,7 @@ public class Tidy implements Serializable
         	
             pprint = new PPrint(configuration);
 
-            if (configuration.getBodyOnly() == TriState.Yes)
-            {
+            if (showBodyOnly(lexer)) {
                 // Feature request #434940 - fix by Dave Raggett/Ignacio Vazquez-Abrams 21 Jun 01
                 pprint.printBody(o, lexer, document, configuration.isXmlOut());
             }
