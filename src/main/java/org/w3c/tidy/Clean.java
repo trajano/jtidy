@@ -2414,6 +2414,55 @@ public class Clean
     }
     
     /*
+      FixLanguageInformation ensures that the document contains (only)
+      the attributes for language information desired by the output
+      document type. For example, for XHTML 1.0 documents both
+      'xml:lang' and 'lang' are desired, for XHTML 1.1 only 'xml:lang'
+      is desired and for HTML 4.01 only 'lang' is desired.
+    */
+    protected static void fixLanguageInformation(final Lexer lexer, Node node,
+    		final boolean wantXmlLang, final boolean wantLang) {
+        while (node != null) {
+            Node next = node.next;
+            /* todo: report modifications made here to the report system */
+            if (node.isElement()) {
+                AttVal lang = node.getAttrById(AttrId.LANG);
+                AttVal xmlLang = node.getAttrById(AttrId.XML_LANG);
+
+                if (lang != null && xmlLang != null) {
+                    /*
+                      todo: check whether both attributes are in sync,
+                      here or elsewhere, where elsewhere is probably
+                      preferable.
+                      AD - March 2005: not mandatory according the standards.
+                    */
+                }
+                else if (lang != null && wantXmlLang) {
+                	if ((node.getAttributeVersions(AttrId.XML_LANG) & lexer.versionEmitted) != 0) {
+                        node.repairAttrValue("xml:lang", lang.value);
+                    }
+                }
+                else if (xmlLang != null && wantLang) {
+                	if ((node.getAttributeVersions(AttrId.LANG) & lexer.versionEmitted) != 0) {
+                		node.repairAttrValue("lang", xmlLang.value);
+                    }
+                }
+                if (lang != null && !wantLang) {
+                	node.removeAttribute(lang);
+                }
+                if (xmlLang != null && !wantXmlLang) {
+                	node.removeAttribute(xmlLang);
+                }
+            }
+
+            if (node.content != null) {
+                fixLanguageInformation(lexer, node.content, wantXmlLang, wantLang);
+            }
+            node = next;
+        }
+    }
+    
+    /*
       Set/fix/remove <html xmlns='...'>
     */
     protected static void fixXhtmlNamespace(final Node root, final boolean wantXmlns) {

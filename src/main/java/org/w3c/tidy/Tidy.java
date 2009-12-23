@@ -508,10 +508,12 @@ public class Tidy implements Serializable
                     lexer.setXHTMLDocType(document);
                     cleaner.fixAnchors(lexer, lexer.root, wantNameAttr, true);
                     Clean.fixXhtmlNamespace(lexer.root, true);
+                    Clean.fixLanguageInformation(lexer, lexer.root, true, true);
                 } else {
                     lexer.fixDocType(document);
                     cleaner.fixAnchors(lexer, lexer.root, wantNameAttr, true);
                     Clean.fixXhtmlNamespace(lexer.root, false);
+                    Clean.fixLanguageInformation(lexer, lexer.root, false, true);
                 }
 
                 if (configuration.isTidyMark())
