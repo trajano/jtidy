@@ -1281,6 +1281,42 @@ public class Clean
 
         return false;
     }
+    
+    private static class CSSSpanEq {
+    	public final TagId id;
+    	public final String cssEq;
+    	public final boolean deprecated;
+    	
+		private CSSSpanEq(final TagId id, final String cssEq, final boolean deprecated) {
+			this.id = id;
+			this.cssEq = cssEq;
+			this.deprecated = deprecated;
+		}
+    }
+    
+    private static final CSSSpanEq CSS_SPAN_EQ[] = {
+    	new CSSSpanEq(TagId.B, "font-weight: bold", false),
+        new CSSSpanEq(TagId.I, "font-style: italic", false),
+        new CSSSpanEq(TagId.S, "text-decoration: line-through", true),
+        new CSSSpanEq(TagId.STRIKE, "text-decoration: line-through", true),
+        new CSSSpanEq(TagId.U, "text-decoration: underline", true)
+    };
+    
+    /* Find CSS equivalent in a SPAN element */
+    private static String findCSSSpanEq(final Node node, final boolean deprecatedOnly) {
+        for (CSSSpanEq e : CSS_SPAN_EQ) {
+            if ((!deprecatedOnly || e.deprecated) && node.is(e.id)) {
+            	return e.cssEq;
+            }
+        }
+        return null; 
+    }
+
+    /* Necessary conditions to apply BlockStyle(). */
+    private static boolean canApplyBlockStyle(final Node node) {
+        return node.hasCM(Dict.CM_BLOCK | Dict.CM_LIST | Dict.CM_DEFLIST | Dict.CM_TABLE)
+            && !node.is(TagId.TABLE) && !node.is(TagId.TR) && !node.is(TagId.LI);
+    }
 
     /**
      * Symptom: the only child of a block-level element is a presentation element such as B, I or FONT. Action: add
@@ -1308,65 +1344,44 @@ public class Clean
      * @param node parent node
      * @return <code>true</code> if the child node has been removed
      */
-    private boolean blockStyle(Lexer lexer, Node node)
-    {
-        Node child;
-        
+    private boolean blockStyle(final Lexer lexer, final Node node) {
         /* check for bgcolor */
         if (node.is(TagId.TABLE) || node.is(TagId.TD) || node.is(TagId.TH) || node.is(TagId.TR)) {
             tableBgColor(node);
         }
-
-        if ((node.tag.model & (Dict.CM_BLOCK | Dict.CM_LIST | Dict.CM_DEFLIST | Dict.CM_TABLE)) != 0)
-        {
-            if (!node.is(TagId.TABLE) && !node.is(TagId.TR) && !node.is(TagId.LI))
-            {
-                // check for align attribute
-                if (!node.is(TagId.CAPTION))
-                {
-                    textAlign(lexer, node);
-                }
-
-                child = node.content;
-
-                if (child == null)
-                {
-                    return false;
-                }
-
-                // check child has no peers
-                if (child.next != null)
-                {
-                    return false;
-                }
-
-                if (child.is(TagId.B))
-                {
-                    mergeStyles(node, child);
-                    addStyleProperty(node, "font-weight: bold");
-                    stripOnlyChild(node);
-                    return true;
-                }
-
-                if (child.is(TagId.I))
-                {
-                    mergeStyles(node, child);
-                    addStyleProperty(node, "font-style: italic");
-                    stripOnlyChild(node);
-                    return true;
-                }
-
-                if (child.is(TagId.FONT))
-                {
-                    mergeStyles(node, child);
-                    addFontStyles(node, child.attributes);
-                    stripOnlyChild(node);
-                    return true;
-                }
+        if (canApplyBlockStyle(node)) {
+            // check for align attribute
+            if (!node.is(TagId.CAPTION)) {
+                textAlign(lexer, node);
+            }
+            final Node child = node.content;
+            if (child == null) {
+                return false;
+            }
+            // check child has no peers
+            if (child.next != null) {
+                return false;
+            }
+            final String cssEq = findCSSSpanEq(child, false);
+            if (cssEq != null) {
+                mergeStyles(node, child);
+                addStyleProperty(node, cssEq);
+                stripOnlyChild(node);
+                return true;
+            }
+            else if (child.is(TagId.FONT)) {
+                mergeStyles(node, child);
+                addFontStyles(node, child.attributes);
+                stripOnlyChild(node);
+                return true;
             }
         }
-
         return false;
+    }
+    
+    /* Necessary conditions to apply InlineStyle(). */
+    private static boolean canApplyInlineStyle(final Node node) {
+        return !node.is(TagId.FONT) && node.hasCM(Dict.CM_INLINE | Dict.CM_ROW);
     }
 
     /**
@@ -1377,52 +1392,51 @@ public class Clean
      * @param pnode passed as an array to allow modifications
      * @return <code>true</code> if child node has been stripped, replaced by style attributes.
      */
-    private boolean inlineStyle(Lexer lexer, Node node, Node[] pnode)
-    {
-        Node child;
-
-        if (!node.is(TagId.FONT) && (node.tag.model & (Dict.CM_INLINE | Dict.CM_ROW)) != 0)
-        {
-            child = node.content;
-
-            if (child == null)
-            {
+    private boolean inlineStyle(final Lexer lexer, final Node node, final Node[] pnode) {
+        if (canApplyInlineStyle(node)) {
+            final Node child = node.content;
+            if (child == null) {
                 return false;
             }
-
             // check child has no peers
-            if (child.next != null)
-            {
+            if (child.next != null) {
                 return false;
             }
-
-            if (child.is(TagId.B) && lexer.configuration.isLogicalEmphasis())
-            {
+            final String cssEq = findCSSSpanEq(child, false);
+            if (cssEq != null) {
                 mergeStyles(node, child);
-                addStyleProperty(node, "font-weight: bold");
+                addStyleProperty(node, cssEq);
                 stripOnlyChild(node);
                 return true;
             }
-
-            if (child.is(TagId.I) && lexer.configuration.isLogicalEmphasis())
-            {
-                mergeStyles(node, child);
-                addStyleProperty(node, "font-style: italic");
-                stripOnlyChild(node);
-                return true;
-            }
-
-            if (child.is(TagId.FONT))
-            {
+            else if (child.is(TagId.FONT)) {
                 mergeStyles(node, child);
                 addFontStyles(node, child.attributes);
                 stripOnlyChild(node);
                 return true;
             }
         }
-
         return false;
     }
+    
+    /*
+	    Transform element to equivalent CSS
+	*/
+    private boolean inlineElementToCSS(final Node node) {
+		/* if node is the only child of parent element then leave alone
+		Do so only if BlockStyle may be succesful. */
+		if (node.parent.content == node && node.next == null &&
+				(canApplyBlockStyle(node.parent) || canApplyInlineStyle(node.parent))) {
+			return false;
+		}
+		final String cssEq = findCSSSpanEq(node, true);
+		if (cssEq != null) {
+			renameElem(node, TagId.SPAN);
+			addStyleProperty(node, cssEq);
+			return true;
+		}
+		return false;
+	} 
 
     /**
      * Replace font elements by span elements, deleting the font element's attributes and replacing them by a single
@@ -1538,7 +1552,9 @@ public class Clean
             {
                 continue;
             }
-
+            if (inlineElementToCSS(node)) {
+            	continue;
+            }
             b = font2Span(lexer, node, o);
             next = o[0];
             if (b)
