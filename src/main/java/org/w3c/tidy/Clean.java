@@ -690,7 +690,7 @@ public class Clean
      * @param node node
      * @param property property added to node
      */
-    private static void addStyleProperty(Node node, String property)
+    protected static void addStyleProperty(Node node, String property)
     {
         AttVal av;
 
