@@ -642,6 +642,7 @@ public final class Report
             case NEWLINE_IN_URI :
             case WHITE_IN_URI:
             case UNEXPECTED_GT:
+            case INVALID_XML_ID:
                 messageNode(lexer, Level.WARNING, node, code, tagdesc);
                 break;
 
