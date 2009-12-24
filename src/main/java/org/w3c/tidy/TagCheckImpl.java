@@ -383,31 +383,27 @@ public final class TagCheckImpl
     /**
      * Checker implementation for area.
      */
-    public static class CheckAREA implements TagCheck
-    {
-
+    public static class CheckAREA implements TagCheck {
         /**
          * @see org.w3c.tidy.TagCheck#check(org.w3c.tidy.Lexer, org.w3c.tidy.Node)
          */
-        public void check(Lexer lexer, Node node)
-        {
-            boolean hasAlt = node.getAttrById(AttrId.ALT) != null;
-            boolean hasHref = node.getAttrById(AttrId.HREF) != null;
-            boolean hasNoHref = node.getAttrById(AttrId.NOHREF) != null;
+        public void check(final Lexer lexer, final Node node) {
+            final boolean hasAlt = node.getAttrById(AttrId.ALT) != null;
+            final boolean hasHref = node.getAttrById(AttrId.HREF) != null;
+            final boolean hasNoHref = node.getAttrById(AttrId.NOHREF) != null;
+            
+            node.checkAttributes(lexer);
 
-            if (!hasAlt)
-            {
-                lexer.badAccess |= Report.MISSING_LINK_ALT;
-                AttVal missingAlt = new AttVal(null, null, '"', "alt", "");
-                lexer.report.attrError(lexer, node, missingAlt, ErrorCode.MISSING_ATTRIBUTE);
+            if (!hasAlt) {
+            	if (lexer.configuration.getAccessibilityCheckLevel() == 0) {
+            		lexer.badAccess |= Report.MISSING_LINK_ALT;
+            		lexer.report.missingAttr(lexer, node, "alt");
+            	}
             }
-            if (!hasHref && !hasNoHref)
-            {
-                AttVal missingHref = new AttVal(null, null, '"', "href", "");
-                lexer.report.attrError(lexer, node, missingHref, ErrorCode.MISSING_ATTRIBUTE);
+            if (!hasHref && !hasNoHref) {
+            	lexer.report.missingAttr(lexer, node, "href");
             }
         }
-
     }
 
     /**
