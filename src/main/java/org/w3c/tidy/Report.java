@@ -531,37 +531,8 @@ public final class Report
      * @param entity invalid entity String
      * @param c invalid char
      */
-    public void entityError(Lexer lexer, ErrorCode code, String entity, int c)
-    {
-        if (lexer.errors > lexer.configuration.getShowErrors()) // keep quiet after <showErrors> errors
-        {
-            return;
-        }
-
-        if (lexer.configuration.isShowWarnings())
-        {
-            switch (code)
-            {
-                case MISSING_SEMICOLON :
-                    messageLexer(lexer, Level.WARNING, code, entity);
-                    break;
-                case MISSING_SEMICOLON_NCR :
-                    messageLexer(lexer, Level.WARNING, code, entity);
-                    break;
-                case UNKNOWN_ENTITY :
-                    messageLexer(lexer, Level.WARNING, code, entity);
-                    break;
-                case UNESCAPED_AMPERSAND :
-                    messageLexer(lexer, Level.WARNING, code);
-                    break;
-                case APOS_UNDEFINED :
-                    messageLexer(lexer, Level.WARNING, code);
-                    break;
-                default :
-                    // should not reach here
-                    break;
-            }
-        }
+    public void entityError(final Lexer lexer, final ErrorCode code, final String entity, int c) {
+        messageLexer(lexer, Level.WARNING, code, entity);
     }
 
     /**
