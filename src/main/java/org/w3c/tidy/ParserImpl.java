@@ -1588,6 +1588,16 @@ public final class ParserImpl
             }
         }
     }
+    
+    private static Node findLastLI(final Node list) {
+    	Node lastli = null;
+        for (Node node = list.content; node != null; node = node.next) {
+            if (node.is(TagId.LI) && node.type == NodeType.StartTag) {
+                lastli = node;
+            }
+        }
+        return lastli;
+    }
 
     /**
      * Parser for LIST.
@@ -1672,13 +1682,31 @@ public final class ParserImpl
                         return;
                     }
 
-                    node = lexer.inferredTag(TagId.LI);
-                    node.addAttribute("style", "list-style: none");
-                    lexer.report.warning(lexer, list, node, ErrorCode.MISSING_STARTTAG);
+                    /* http://tidy.sf.net/issue/836462
+                    If "list" is an unordered list, insert the next tag within 
+                    the last <li> to preserve the numbering to match the visual 
+                    rendering of most browsers. */
+                    final Node lastli = findLastLI(list);
+                    if (list.is(TagId.OL) && lastli != null) {
+                        /* Create a node for error reporting */
+                		node = lexer.inferredTag(TagId.LI);
+                		lexer.report.warning(lexer, list, node, ErrorCode.MISSING_STARTTAG);
+                        node = lastli;
+                    } else {
+                        /* Add an inferred <li> */
+                        final boolean wasblock = node.hasCM(Dict.CM_BLOCK);
+                        node = lexer.inferredTag(TagId.LI);
+                        /* Add "display: inline" to avoid a blank line after <li> with 
+                           Internet Explorer. See http://tidy.sf.net/issue/836462 */
+                        Clean.addStyleProperty(node, wasblock ? "list-style: none; display: inline"
+                        		: "list-style: none");
+                        lexer.report.warning(lexer, list, node, ErrorCode.MISSING_STARTTAG);
+                        list.insertNodeAtEnd(node);
+                    }
+                } else {
+                	// node should be <LI>
+                	list.insertNodeAtEnd(node);
                 }
-
-                // node should be <LI>
-                list.insertNodeAtEnd(node);
                 parseTag(lexer, node, Lexer.IGNORE_WHITESPACE);
             }
 
