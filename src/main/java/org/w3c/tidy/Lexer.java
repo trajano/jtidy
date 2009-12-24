@@ -1362,41 +1362,28 @@ public class Lexer
      * @param root root node
      * @return always true
      */
-    public boolean fixXmlDecl(Node root)
-    {
-        Node xml;
-        AttVal version;
-        AttVal encoding;
-
+    public boolean fixXmlDecl(final Node root) {
+        final Node xml;
         if (root.content != null && root.content.type == NodeType.XmlDecl) {
             xml = root.content;
         } else {
             xml = newNode(NodeType.XmlDecl, this.lexbuf, 0, 0);
             root.insertNodeAtStart(xml);
         }
-
-        version = xml.getAttrByName("version");
-        encoding = xml.getAttrByName("encoding");
+        final AttVal version = xml.getAttrByName("version");
+        final AttVal encoding = xml.getAttrByName("encoding");
 
         // We need to insert a check if declared encoding and output encoding mismatch
         // and fix the Xml declaration accordingly!!!
-        if (encoding == null && !"UTF8".equals(this.configuration.getOutCharEncodingName()))
-        {
-            if ("ISO8859_1".equals(this.configuration.getOutCharEncodingName()))
-            {
-                xml.addAttribute("encoding", "iso-8859-1");
-            }
-            if ("ISO2022".equals(this.configuration.getOutCharEncodingName()))
-            {
-                xml.addAttribute("encoding", "iso-2022");
+        if (encoding == null && !"UTF8".equals(this.configuration.getOutCharEncodingName())) {
+        	final String enc = EncodingNameMapper.toIana(configuration.getOutCharEncodingName()).toLowerCase();
+            if (enc != null) {
+                xml.addAttribute("encoding", enc);
             }
         }
-
-        if (version == null)
-        {
+        if (version == null) {
             xml.addAttribute("version", "1.0");
         }
-
         return true;
     }
 
