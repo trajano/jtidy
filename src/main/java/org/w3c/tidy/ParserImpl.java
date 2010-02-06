@@ -2556,9 +2556,7 @@ public final class ParserImpl
 
                 if (node.type == NodeType.EndTag)
                 {
-                    if (node.is(TagId.FORM)
-                        || (node.tag != null && ((node.tag.model & (Dict.CM_BLOCK | Dict.CM_INLINE)) != 0)))
-                    {
+                    if (node.is(TagId.FORM)) {
                         badForm(lexer);
                         lexer.report.warning(lexer, table, node, ErrorCode.DISCARDING_UNEXPECTED);
                         continue;
