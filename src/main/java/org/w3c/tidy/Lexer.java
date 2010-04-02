@@ -1524,7 +1524,7 @@ public class Lexer
                 	lines = in.getCurline();
                     columns = in.getCurcol();
                     columns -= 3;
-                    report.error(this, null, null, ErrorCode.BAD_CDATA_CONTENT);
+                    report.warning(this, null, null, ErrorCode.BAD_CDATA_CONTENT);
 
                     /* if javascript insert backslash before / */
                     if (container.isJavaScript()) {
@@ -1544,7 +1544,7 @@ public class Lexer
             txtend = lexsize;
         }
         if (c == StreamIn.END_OF_STREAM) {
-            report.error(this, container, null, ErrorCode.MISSING_ENDTAG_FOR);
+            report.warning(this, container, null, ErrorCode.MISSING_ENDTAG_FOR);
         }
 	    /* this was disabled for some reason... */
 //	    #if 0

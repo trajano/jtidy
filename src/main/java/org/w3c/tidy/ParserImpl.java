@@ -672,13 +672,13 @@ public final class ParserImpl
                 script.insertNodeAtEnd(node);
             } else {
                 /* handle e.g. a document like "<script>" */
-                lexer.report.error(lexer, script, null, ErrorCode.MISSING_ENDTAG_FOR);
+                lexer.report.warning(lexer, script, null, ErrorCode.MISSING_ENDTAG_FOR);
                 return;
             }
             node = lexer.getToken(Lexer.IGNORE_WHITESPACE);
             if (!(node != null && node.type == NodeType.EndTag && node.tag != null &&
             		node.tag.id == script.tag.id)) {
-                lexer.report.error(lexer, script, node, ErrorCode.MISSING_ENDTAG_FOR);
+                lexer.report.warning(lexer, script, node, ErrorCode.MISSING_ENDTAG_FOR);
                 if (node != null) {
                 	lexer.ungetToken();
                 }
