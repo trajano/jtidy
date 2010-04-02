@@ -131,6 +131,8 @@ public class Tidy implements Serializable
     private int parseWarnings;
 
     private Report report;
+    
+    private Lexer lexer;
 
     /**
      * Instantiates a new Tidy instance. It's reccomended that a new instance is used at each parsing.
@@ -409,7 +411,6 @@ public class Tidy implements Serializable
      */
     private Node parse(StreamIn streamIn, Out o)
     {
-        Lexer lexer;
         Node document = null;
         Node doctype;
         PPrint pprint;
@@ -689,8 +690,6 @@ public class Tidy implements Serializable
         {
 
             Out o = OutFactory.getOut(this.configuration, out);
-
-            Lexer lexer = new Lexer(null, this.configuration, this.report);
 
             pprint = new PPrint(configuration);
 
