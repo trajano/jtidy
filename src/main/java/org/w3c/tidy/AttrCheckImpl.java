@@ -279,7 +279,7 @@ public final class AttrCheckImpl
             }
 
             // backslashes found, fix them
-            if (lexer.configuration.isFixBackslash() && backslashFound) {
+            if (lexer.configuration.isFixBackslash() && backslashFound && !isJavascript) {
                 attval.value = p = p.replace('\\', '/');
             }
 
