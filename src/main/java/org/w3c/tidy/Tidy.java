@@ -1107,6 +1107,14 @@ public class Tidy implements Serializable
     {
         return configuration.isQuiet();
     }
+    
+    /**
+     * @deprecated Use the TriState version.
+     */
+    @Deprecated
+    public void setIndentContent(final boolean indentContent) {
+    	setIndentContent(TriState.fromBoolean(indentContent));
+    }
 
     /**
      * indent - indent content of appropriate tags.
@@ -1904,6 +1912,14 @@ public class Tidy implements Serializable
     {
         return configuration.isLiteralAttribs();
     }
+    
+    /**
+     * @deprecated Use the TriState version.
+     */
+    @Deprecated
+    public void setPrintBodyOnly(final boolean bodyOnly) {
+    	setPrintBodyOnly(TriState.fromBoolean(bodyOnly));
+    }
 
     /**
      * <code>print-body-only</code>- output BODY content only.
@@ -2248,6 +2264,14 @@ public class Tidy implements Serializable
     public String getOutputEncoding()
     {
         return configuration.getOutCharEncodingName();
+    }
+    
+    /**
+     * @deprecated Use the TriState version.
+     */
+    @Deprecated
+    public void setMergeDivs(final boolean mergeDivs) {
+    	setMergeDivs(TriState.fromBoolean(mergeDivs));
     }
     
     public void setMergeDivs(final TriState mergeDivs) {
