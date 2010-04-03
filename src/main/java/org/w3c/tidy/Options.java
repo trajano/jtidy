@@ -54,6 +54,10 @@ public class Options {
 		public String[] getSynonyms() {
 			return synonyms;
 		}
+		
+		public static TriState fromBoolean(final boolean b) {
+			return b ? Yes : No;
+		}
 	}
 	
 	public static enum DupAttrModes implements OptionEnum {
