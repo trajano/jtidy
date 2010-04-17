@@ -446,6 +446,7 @@ public enum ErrorCode {
      * Constant used for reporting of bad access summary.
      */
     BADACCESS_SUMMARY(112),
+    BADACCESS_SUMMARY_BAD(112),
 
     /**
      * Constant used for reporting of bad form summary.

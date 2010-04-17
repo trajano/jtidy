@@ -959,7 +959,8 @@ public final class Report
                 messageLexer(USING_FRAMES, lexer, null, "badaccess_frames");
             }
 
-            messageLexer(lexer, null, BADACCESS_SUMMARY, ACCESS_URL);
+            messageLexer(lexer, null, lexer.configuration.isTidyCompat() ? BADACCESS_SUMMARY_BAD
+            		: BADACCESS_SUMMARY, ACCESS_URL);
         }
 
         if (lexer.badLayout != 0)
