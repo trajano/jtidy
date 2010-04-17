@@ -1976,10 +1976,11 @@ public class Lexer
                         c = this.in.readChar();
                     }
 
-                    if (c == StreamIn.END_OF_STREAM)
-                    {
-                        this.in.ungetChar(c);
-                        report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_GT);
+                    if (c == StreamIn.END_OF_STREAM) {
+                        if (!configuration.isTidyCompat()) {
+                        	in.ungetChar(c);
+                        	report.attrError(this, token, null, ErrorCode.UNEXPECTED_GT);
+                        }
                         continue;
                     }
 
