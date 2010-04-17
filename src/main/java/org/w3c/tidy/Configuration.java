@@ -1245,4 +1245,11 @@ public class Configuration implements Serializable
 		return (TriState) getOptionEnum(Option.MergeDivs);
 	}
 
+	protected void setTidyCompat(final boolean tidyCompat) {
+		set(Option.TidyCompat, tidyCompat);
+	}
+
+	protected boolean isTidyCompat() {
+		return getBool(Option.TidyCompat);
+	}
 }

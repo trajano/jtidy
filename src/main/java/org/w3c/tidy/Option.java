@@ -199,7 +199,10 @@ enum Option {
 	/** Merge multiple SPANs */
 	MergeSpans              (MU, "merge-spans",                 IN, TriState.Auto,         AUTOBOOL,            TriState.class),
 	/** Define anchors as name attributes */
-	AnchorAsName            (MU, "anchor-as-name",              BL, true,                  BOOL,                Bool.class);
+	AnchorAsName            (MU, "anchor-as-name",              BL, true,                  BOOL,                Bool.class),
+	
+	/** Keep complete compatibility with Tidy, even for Tidy bugs that were fixed in JTidy */
+	TidyCompat				(MS, "tidy-compat",                 BL, false,                 BOOL,                Bool.class);
 	
 	static {
 		buildOptionsMap();

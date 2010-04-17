@@ -2281,5 +2281,18 @@ public class Tidy implements Serializable
     public TriState getMergeDivs() {
         return configuration.getMergeDivs();
     }
+    
+    /**
+     * @see Option#TidyCompat
+     */
+    public void setTidyCompat(final boolean tidyCompat) {
+        configuration.setTidyCompat(tidyCompat);
+    }
 
+    /**
+     * @see Option#TidyCompat
+     */
+    public boolean isTidyCompat() {
+        return configuration.isTidyCompat();
+    }
 }
