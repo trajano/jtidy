@@ -1609,14 +1609,8 @@ public class Lexer
 
         while ((c = this.in.readChar()) != StreamIn.END_OF_STREAM)
         {
-            // FG fix for [427846] different from tidy
-            // if (this.insertspace && (!TidyUtils.toBoolean(mode & IGNORE_WHITESPACE)))
-            if (this.insertspace && mode != IGNORE_WHITESPACE)
-            {
+        	if (this.insertspace) {
                 addCharToLexer(' ');
-            }
-            if (this.insertspace && (!TidyUtils.toBoolean(mode & IGNORE_WHITESPACE)))
-            {
                 this.waswhite = true;
                 this.insertspace = false;
             }
