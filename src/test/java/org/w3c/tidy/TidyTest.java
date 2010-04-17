@@ -1,5 +1,7 @@
 package org.w3c.tidy;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -8,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 
@@ -66,12 +69,13 @@ public class TidyTest extends TestCase {
     		write(es, base + "tmp/msg_" + t + ".txt");
     		InputStream os2 = null;
     		try {
-    			os2 = new FileInputStream(base + "output/out_" + t + ".html");
+    			os2 = new BufferedInputStream(new FileInputStream(base + "output/out_" + t + ".html"));
     		} catch (IOException e) {
     			os2 = new ByteArrayInputStream(new byte[0]);
     		}
 			diff("outputs", new ByteArrayInputStream(os.toByteArray()), os2);
-			diff("messages", new ByteArrayInputStream(es.toByteArray()), new FileInputStream(base + "output/msg_" + t + ".txt"));
+			diff("messages", new ByteArrayInputStream(es.toByteArray()),
+					new BufferedInputStream(new FileInputStream(base + "output/msg_" + t + ".txt")));
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
@@ -79,6 +83,8 @@ public class TidyTest extends TestCase {
     }
 
     private static void diff(final String what, final InputStream s1, final InputStream s2) throws IOException {
+    	s1.mark(100000);
+    	s2.mark(100000);
     	for (int x = 1; ; ++x) {
     		int b1 = s1.read();
     		int b2 = s2.read();
@@ -91,7 +97,22 @@ public class TidyTest extends TestCase {
     					break;
     				}
     			}
-    			fail(what + " differ at byte " + x);
+    			s1.reset();
+    			s2.reset();
+    			final BufferedReader br1 = new BufferedReader(new InputStreamReader(s1));
+    			final BufferedReader br2 = new BufferedReader(new InputStreamReader(s2));
+    			String l1 = "";
+    			String l2 = "";
+    			while (true) {
+    				l1 = br1.readLine();
+    				l2 = br2.readLine();
+    				if (l1 == null && l2 != null || !l1.equals(l2)) {
+    					break;
+    				}
+    			}
+    			br1.close();
+    			br2.close();
+    			fail(what + " differ at byte " + x + ":\nExpect: " + l2 + "\nActual: " + l1);
     		}
     		if (b1 == -1) {
     			break;
