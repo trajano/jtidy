@@ -39,6 +39,7 @@ public class TidyTest extends TestCase {
     	final String cfg = base + "input/cfg_" + t + ".txt";
     	tidy.setConfigurationFromFile(new File(cfg).exists() ? cfg : base + "input/cfg_default.txt" );
     	tidy.setTidyMark(false);
+    	tidy.setTidyCompat(true);
     	String fname = null;
     	File f = null;
     	for (String s : EXT) {
