@@ -53,6 +53,7 @@
  */
 package org.w3c.tidy;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -290,7 +291,13 @@ public final class AttrCheckImpl
                 for (int i = 0; i < p.length(); ++i) {
                     char c = p.charAt(i);
                     if ((c > 0x7e) || (c <= 0x20) || (c == '<') || (c == '>')) {
-                        dest.append(String.format("%%%02X", (int) c));
+                    	try {
+							for (byte b : String.valueOf(c).getBytes("UTF-8")) {
+								dest.append(String.format("%%%02X", b));
+							}
+						} catch (UnsupportedEncodingException e) {
+							throw new RuntimeException(e);
+						}
                     } else {
                         dest.append(c);
                     }
