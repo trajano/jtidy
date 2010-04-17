@@ -798,12 +798,10 @@ public class Node {
     {
         Node prev, node;
 
-        // #427677 - fix by Gary Peskin 31 Oct 00
-        if (text.type == NodeType.TextNode && text.textarray[text.start] == (byte) ' ' && (text.start < text.end))
+        if (text.type == NodeType.TextNode && lexer.lexbuf[text.start] == (byte) ' ' && (text.start < text.end))
         {
             if (TidyUtils.toBoolean(element.tag.model & Dict.CM_INLINE)
-                && !TidyUtils.toBoolean(element.tag.model & Dict.CM_FIELD)
-                && element.parent.content != element)
+                && !TidyUtils.toBoolean(element.tag.model & Dict.CM_FIELD))
             {
                 prev = element.prev;
 
@@ -838,14 +836,7 @@ public class Node {
                         node.textarray = element.textarray;
                     }
                     node.textarray[node.start] = (byte) ' ';
-                    node.prev = prev;
-                    if (prev != null)
-                    {
-                        prev.next = node;
-                    }
-                    node.next = element;
-                    element.prev = node;
-                    node.parent = element.parent;
+                    Node.insertNodeBeforeElement(element, node);
                 }
             }
 
