@@ -20,14 +20,14 @@
  *  have been possible without all of you.
  *
  *  COPYRIGHT NOTICE:
- * 
+ *
  *  This software and documentation is provided "as is," and
  *  the copyright holders and contributing author(s) make no
  *  representations or warranties, express or implied, including
  *  but not limited to, warranties of merchantability or fitness
  *  for any particular purpose or that the use of the software or
  *  documentation will not infringe any third party patents,
- *  copyrights, trademarks or other rights. 
+ *  copyrights, trademarks or other rights.
  *
  *  The copyright holders and contributing author(s) will not be
  *  liable for any direct, indirect, special or consequential damages
@@ -43,7 +43,7 @@
  *     not be misrepresented as being the original source.
  *  3. This Copyright notice may not be removed or altered from any
  *     source or altered source distribution.
- * 
+ *
  *  The copyright holders and contributing author(s) specifically
  *  permit, without fee, and encourage the use of this source code
  *  as a component for supporting the Hypertext Markup Language in
@@ -207,7 +207,7 @@ public class ReportTest extends TestCase
      */
     public void testGetMessageDoctypeAfterTags() throws Exception
     {
-        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "doctype_after_tags", null);
+        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "doctype_after_tags", (Object[])null);
         assertEquals("line 12 column 34 - Warning: <!DOCTYPE> isn't allowed after elements", message);
     }
 
@@ -337,7 +337,7 @@ public class ReportTest extends TestCase
      */
     public void testGetMessageMissingTitleElement() throws Exception
     {
-        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "missing_title_element", null);
+        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "missing_title_element", (Object[])null);
         assertEquals("line 12 column 34 - Warning: inserting missing 'title' element", message);
     }
 
@@ -377,7 +377,7 @@ public class ReportTest extends TestCase
      */
     public void testGetMessageInconsistentVersion() throws Exception
     {
-        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "inconsistent_version", null);
+        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "inconsistent_version", (Object[])null);
         assertEquals("line 12 column 34 - Warning: html doctype doesn't match content", message);
     }
 
@@ -387,7 +387,7 @@ public class ReportTest extends TestCase
      */
     public void testGetMessageMalformedDoctype() throws Exception
     {
-        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "malformed_doctype", null);
+        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "malformed_doctype", (Object[])null);
         assertEquals("line 12 column 34 - Warning: expected \"html PUBLIC\" or \"html SYSTEM\"", message);
     }
 
@@ -397,7 +397,7 @@ public class ReportTest extends TestCase
      */
     public void testGetMessageContentAfterBody() throws Exception
     {
-        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "content_after_body", null);
+        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "content_after_body", (Object[])null);
         assertEquals("line 12 column 34 - Warning: content occurs after end of body", message);
     }
 
@@ -407,7 +407,7 @@ public class ReportTest extends TestCase
      */
     public void testGetMessageMalformedComment() throws Exception
     {
-        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "malformed_comment", null);
+        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "malformed_comment", (Object[])null);
         assertEquals("line 12 column 34 - Warning: adjacent hyphens within comment", message);
     }
 
@@ -417,7 +417,7 @@ public class ReportTest extends TestCase
      */
     public void testGetMessageBadCommentChars() throws Exception
     {
-        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "bad_comment_chars", null);
+        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "bad_comment_chars", (Object[])null);
         assertEquals("line 12 column 34 - Warning: expecting -- or >", message);
     }
 
@@ -427,7 +427,7 @@ public class ReportTest extends TestCase
      */
     public void testGetMessageBadXmlComment() throws Exception
     {
-        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "bad_xml_comment", null);
+        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "bad_xml_comment", (Object[])null);
         assertEquals("line 12 column 34 - Warning: XML comments can't contain --", message);
     }
 
@@ -437,7 +437,7 @@ public class ReportTest extends TestCase
      */
     public void testGetMessageBadCdataComment() throws Exception
     {
-        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "bad_cdata_content", null);
+        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "bad_cdata_content", (Object[])null);
         assertEquals("line 12 column 34 - Warning: '<' + '/' + letter not allowed here", message);
     }
 
@@ -447,7 +447,7 @@ public class ReportTest extends TestCase
      */
     public void testGetMessageInconsistentNamespace() throws Exception
     {
-        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "inconsistent_namespace", null);
+        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "inconsistent_namespace", (Object[])null);
         assertEquals("line 12 column 34 - Warning: html namespace doesn't match content", message);
     }
 
@@ -457,7 +457,7 @@ public class ReportTest extends TestCase
      */
     public void testGetMessageDtypeNotUpperCase() throws Exception
     {
-        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "dtype_not_upper_case", null);
+        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "dtype_not_upper_case", (Object[])null);
         assertEquals("line 12 column 34 - Warning: SYSTEM, PUBLIC, W3C, DTD, EN must be upper case", message);
     }
 
@@ -482,7 +482,7 @@ public class ReportTest extends TestCase
      */
     public void testGetMessageSuspectedMissingQuote() throws Exception
     {
-        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.ERROR, "suspected_missing_quote", null);
+        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.ERROR, "suspected_missing_quote", (Object[])null);
         assertEquals("line 12 column 34 - Error: missing quotemark for attribute value", message);
     }
 
@@ -492,7 +492,7 @@ public class ReportTest extends TestCase
      */
     public void testGetMessageDuplicateFrameset() throws Exception
     {
-        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.ERROR, "duplicate_frameset", null);
+        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.ERROR, "duplicate_frameset", (Object[])null);
         assertEquals("line 12 column 34 - Error: repeated FRAMESET element", message);
     }
 
@@ -759,7 +759,7 @@ public class ReportTest extends TestCase
      */
     public void testGetMessageMissingDoctype() throws Exception
     {
-        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "missing_doctype", null);
+        String message = this.report.getMessageLexer(-1, lexer, TidyMessage.Level.WARNING, "missing_doctype", (Object[])null);
         assertEquals("line 12 column 34 - Warning: missing <!DOCTYPE> declaration", message);
     }
 
