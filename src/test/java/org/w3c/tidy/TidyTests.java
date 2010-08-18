@@ -23,7 +23,7 @@ public final class TidyTests {
         while (sc.hasNext()) {
         	final String t = sc.next();
         	final int r = sc.nextInt();
-        	suite.addTest(new TidyTest(base, t, r));
+        	suite.addTest(new TidyTester(base, t, r));
         }
         return suite;
     }

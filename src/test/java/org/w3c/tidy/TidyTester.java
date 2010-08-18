@@ -16,14 +16,14 @@ import java.io.PrintWriter;
 
 import junit.framework.TestCase;
 
-public class TidyTest extends TestCase {
+public class TidyTester extends TestCase {
 	private static final String[] EXT = {"html", "xml", "xhtml"};
 
 	private final String t;
 	private final int r;
 	private final String base;
 	
-    public TidyTest(final String base, final String t, final int r) {
+    public TidyTester(final String base, final String t, final int r) {
         super(t);
         this.t = t;
         this.r = r;
@@ -37,7 +37,8 @@ public class TidyTest extends TestCase {
     	o.close();
     }
     
-    public void runTest() {
+    @Override
+	public void runTest() {
     	final Tidy tidy = new Tidy();
     	final String cfg = base + "input/cfg_" + t + ".txt";
     	tidy.setConfigurationFromFile(new File(cfg).exists() ? cfg : base + "input/cfg_default.txt" );
