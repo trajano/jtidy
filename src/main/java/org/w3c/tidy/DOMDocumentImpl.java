@@ -20,14 +20,14 @@
  *  have been possible without all of you.
  *
  *  COPYRIGHT NOTICE:
- * 
+ *
  *  This software and documentation is provided "as is," and
  *  the copyright holders and contributing author(s) make no
  *  representations or warranties, express or implied, including
  *  but not limited to, warranties of merchantability or fitness
  *  for any particular purpose or that the use of the software or
  *  documentation will not infringe any third party patents,
- *  copyrights, trademarks or other rights. 
+ *  copyrights, trademarks or other rights.
  *
  *  The copyright holders and contributing author(s) will not be
  *  liable for any direct, indirect, special or consequential damages
@@ -43,7 +43,7 @@
  *     not be misrepresented as being the original source.
  *  3. This Copyright notice may not be removed or altered from any
  *     source or altered source distribution.
- * 
+ *
  *  The copyright holders and contributing author(s) specifically
  *  permit, without fee, and encourage the use of this source code
  *  as a component for supporting the Hypertext Markup Language in
@@ -159,16 +159,11 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
     public org.w3c.dom.Element createElement(String tagName) throws DOMException
     {
         Node node = new Node(NodeType.StartEndTag, null, 0, 0, tagName, this.tt);
-        if (node != null)
+        if (node.tag == null) // Fix Bug 121206
         {
-            if (node.tag == null) // Fix Bug 121206
-            {
-                node.tag = TagTable.XML_TAGS;
-            }
-            return (org.w3c.dom.Element) node.getAdapter();
+            node.tag = TagTable.XML_TAGS;
         }
-
-        return null;
+        return (org.w3c.dom.Element) node.getAdapter();
     }
 
     /**
@@ -187,12 +182,7 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
     {
         byte[] textarray = TidyUtils.getBytes(data);
         Node node = new Node(NodeType.TextNode, textarray, 0, textarray.length);
-        if (node != null)
-        {
-            return (org.w3c.dom.Text) node.getAdapter();
-        }
-
-        return null;
+        return (org.w3c.dom.Text) node.getAdapter();
     }
 
     /**
@@ -202,12 +192,7 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
     {
         byte[] textarray = TidyUtils.getBytes(data);
         Node node = new Node(NodeType.CommentTag, textarray, 0, textarray.length);
-        if (node != null)
-        {
-            return (org.w3c.dom.Comment) node.getAdapter();
-        }
-
-        return null;
+        return (org.w3c.dom.Comment) node.getAdapter();
     }
 
     /**
@@ -237,13 +222,8 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
     public org.w3c.dom.Attr createAttribute(String name) throws DOMException
     {
         AttVal av = new AttVal(null, null, '"', name, null);
-        if (av != null)
-        {
-            av.dict = AttributeTable.getDefaultAttributeTable().findAttribute(av);
-            return av.getAdapter();
-        }
-
-        return null;
+        av.dict = AttributeTable.getDefaultAttributeTable().findAttribute(av);
+        return av.getAdapter();
     }
 
     /**

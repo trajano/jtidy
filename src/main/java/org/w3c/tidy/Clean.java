@@ -2147,8 +2147,7 @@ public class Clean
                     node = node.next;
 
                     // continue to strip p's
-                    while (node.is(TagId.P) && noMargins(node))
-                    {
+                    while (node != null && node.is(TagId.P) && noMargins(node)) {
                         next = node.next;
                         node.removeNode();
                         pre.insertNodeAtEnd(lexer.newLineNode());
@@ -2157,8 +2156,7 @@ public class Clean
                         node = next;
                     }
 
-                    if (node == null)
-                    {
+                    if (node == null) {
                         break;
                     }
                 }
