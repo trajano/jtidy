@@ -76,9 +76,8 @@ public class ConfigurationTest extends TestCase
 
     /**
      * Test for -help-config.
-     * @throws Exception any exception thrown during test
      */
-    public void testPrintConfig() throws Exception
+    public void testPrintConfig()
     {
         Tidy tidy = new Tidy();
         Configuration configuration = tidy.getConfiguration();
@@ -92,9 +91,8 @@ public class ConfigurationTest extends TestCase
 
     /**
      * Test for -show-config.
-     * @throws Exception any exception thrown during test
      */
-    public void testPrintActualConfig() throws Exception
+    public void testPrintActualConfig()
     {
         Tidy tidy = new Tidy();
         tidy.getConfiguration().tt.defineTag(Dict.TAGTYPE_INLINE, "something");
@@ -110,9 +108,8 @@ public class ConfigurationTest extends TestCase
 
     /**
      * Test for configuration getters and setters.
-     * @throws Exception any exception thrown during test
      */
-    public void testGetSet() throws Exception
+    public void testGetSet()
     {
         Tidy tidy = new Tidy();
 
