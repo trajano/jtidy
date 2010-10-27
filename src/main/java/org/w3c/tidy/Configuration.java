@@ -57,6 +57,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.Map;
@@ -371,7 +372,7 @@ public class Configuration implements Serializable
      */
     public static boolean isKnownOption(String name)
     {
-        return name != null && Options.getOption(name) != null;
+        return name != null && Option.valueOf(name) != null;
     }
 
     /**
@@ -385,7 +386,7 @@ public class Configuration implements Serializable
         	if (key.startsWith("//")) {
             	continue;
             }
-        	Option flag = Options.getOption(key);
+        	Option flag = Option.valueOf(key);
             if (flag == null)
             {
                 report.unknownOption(key);
@@ -475,26 +476,35 @@ public class Configuration implements Serializable
 
             errout.write("=========================== =========  ========================================\n");
 
-            for (Option configItem : Options.getOptions())
-            {
+            final Option[] op = Option.values();
+            Arrays.sort(op, Option.getComparator());
+			for (Option configItem : op) {
+				final ParseProperty parser = configItem.getParser();
+                if (parser == null) {
+                	continue;
+                }
+                
                 errout.write(configItem.getName());
                 errout.write(pad, 0, 28 - configItem.getName().length());
 
-                errout.write(configItem.getParser().getType());
-                errout.write(pad, 0, 11 - configItem.getParser().getType().length());
-
-                if (showActualConfiguration)
-                {
-                    Object actualValue = options.get(configItem);
-                    errout.write(configItem.getParser().getFriendlyName(configItem.getName(), actualValue, this));
+                String type = parser.getType();
+                if (type == null) { // only for ParseFromValues
+                	type = "Enum";
                 }
-                else
-                {
-                    errout.write(configItem.getParser().getOptionValues());
-                }
+				errout.write(type);
+                errout.write(pad, 0, 11 - type.length());
 
+                if (showActualConfiguration) {
+                    final Object actualValue = options.get(configItem);
+                    errout.write(parser.getFriendlyName(configItem.getName(), actualValue, this));
+                } else {
+                    String values = parser.getOptionValues();
+                    if (values == null) { // only for ParseFromValues
+                    	values = configItem.getPickList().getDescription();
+                    }
+					errout.write(values);
+                }
                 errout.write("\n");
-
             }
             errout.flush();
         }
