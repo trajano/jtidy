@@ -57,7 +57,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.Map;
@@ -372,7 +371,7 @@ public class Configuration implements Serializable
      */
     public static boolean isKnownOption(String name)
     {
-        return name != null && Option.valueOf(name) != null;
+        return name != null && Options.getOption(name) != null;
     }
 
     /**
@@ -386,7 +385,7 @@ public class Configuration implements Serializable
         	if (key.startsWith("//")) {
             	continue;
             }
-        	Option flag = Option.valueOf(key);
+        	Option flag = Options.getOption(key);
             if (flag == null)
             {
                 report.unknownOption(key);
@@ -476,9 +475,7 @@ public class Configuration implements Serializable
 
             errout.write("=========================== =========  ========================================\n");
 
-            final Option[] op = Option.values();
-            Arrays.sort(op, Option.getComparator());
-			for (Option configItem : op) {
+			for (Option configItem : Options.getOptions()) {
 				final ParseProperty parser = configItem.getParser();
                 if (parser == null) {
                 	continue;

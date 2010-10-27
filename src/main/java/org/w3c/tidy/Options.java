@@ -1,5 +1,9 @@
 package org.w3c.tidy;
 
+import java.util.Collection;
+import java.util.Map;
+import java.util.TreeMap;
+
 public class Options {
 	static final String[] EMPTY = new String[0];
 	
@@ -207,4 +211,20 @@ public class Options {
 	static final OptionType IN = OptionType.Integer;
 	static final OptionType BL = OptionType.Boolean;
 	static final OptionType ST = OptionType.String;
+
+	private static final Map<String, Option> OPTIONS = new TreeMap<String, Option>();
+	
+	static void buildOptionsMap() {
+		for (Option o : Option.values()) {
+			OPTIONS.put(o.getName(), o);
+		}
+	}
+	
+	static Option getOption(final String name) {
+		return OPTIONS.get(name);
+	}
+	
+	static Collection<Option> getOptions() {
+		return OPTIONS.values();
+	}
 }
