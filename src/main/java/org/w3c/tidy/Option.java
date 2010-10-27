@@ -3,6 +3,8 @@ package org.w3c.tidy;
 import static org.w3c.tidy.Options.*;
 import static org.w3c.tidy.ParsePropertyImpl.*;
 
+import java.util.Comparator;
+
 import org.w3c.tidy.Options.AccessibilityLevels;
 import org.w3c.tidy.Options.AttrSortStrategy;
 import org.w3c.tidy.Options.Bool;
@@ -204,9 +206,11 @@ enum Option {
 	/** Keep complete compatibility with Tidy, even for Tidy bugs that were fixed in JTidy */
 	TidyCompat				(MS, "tidy-compat",                 BL, false,                 BOOL,                Bool.class);
 	
-	static {
-		buildOptionsMap();
-	}
+	private static final Comparator<Option> COMP = new Comparator<Option>() {
+		public int compare(final Option x, final Option y) {
+			return x.name.compareTo(y.name);
+		}
+	};
 	
 	private Option(final ConfigCategory category, final String name, final OptionType type,
 			final Object dflt, final ParseProperty parser, final Class<? extends OptionEnum> enumClass) {
@@ -247,5 +251,9 @@ enum Option {
 	
 	public OptionValues getPickList() {
 		return pickList;
+	}
+	
+	public static Comparator<Option> getComparator() {
+		return COMP;
 	}
 }
