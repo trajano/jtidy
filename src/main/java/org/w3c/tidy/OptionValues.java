@@ -35,4 +35,17 @@ public class OptionValues {
 			throw new IllegalArgumentException();
 		}
 	}
+	
+	public String getDescription() {
+		final StringBuilder sb = new StringBuilder();
+		for (OptionEnum o : values) {
+			sb.append(o.getName());
+			for (String s : o.getSynonyms()) {
+				sb.append('/').append(s);
+			}
+			sb.append(", ");
+		}
+		sb.setLength(sb.length() - 2);
+		return sb.toString();
+	}
 }
