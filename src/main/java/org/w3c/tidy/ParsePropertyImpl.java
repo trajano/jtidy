@@ -147,7 +147,7 @@ public final class ParsePropertyImpl
 		}
 
 		public String getFriendlyName(final String option, final Object value, final Configuration configuration) {
-			return ((OptionEnum) value).getName();
+			return value == null ? "" : ((OptionEnum) value).getName();
 		}
 
 		public String getOptionValues() {
