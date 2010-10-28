@@ -13,6 +13,11 @@ import org.w3c.tidy.Options.LineEnding;
 import org.w3c.tidy.Options.OptionType;
 import org.w3c.tidy.Options.TriState;
 
+/**
+ * Enum for defining configuration options (from option_defs in config.c)
+ * 
+ * @author aditsu
+ */
 enum Option {
 	/** Unknown option! */
 	Unknown                 (MS, "unknown!",                    IN, 0,                     null,                null),
@@ -229,22 +234,35 @@ enum Option {
 		return category;
 	}
 	
+	/**
+	 * Returns the option name (used in the command line or config file)
+	 */
 	public String getName() {
 		return name;
 	}
 	
+	// TODO is this needed anywhere? (review the C code)
 	public OptionType getType() {
 		return type;
 	}
 	
+	/**
+	 * Returns the default value for this option
+	 */
 	public Object getDflt() {
 		return dflt;
 	}
 	
+	/**
+	 * Returns the parser to use for this option's value
+	 */
 	public ParseProperty getParser() {
 		return parser;
 	}
 	
+	/**
+	 * Returns an OptionValues object describing the acceptable values for this option (if enumerated)
+	 */
 	public OptionValues getPickList() {
 		return pickList;
 	}

@@ -7,8 +7,18 @@ import java.util.TreeMap;
 public class Options {
 	static final String[] EMPTY = new String[0];
 	
+	/**
+	 * Interface for an enumerated option value, to be implemented in java enums 
+	 */
 	static interface OptionEnum {
+		/**
+		 * Returns the standard name for this value
+		 */
 		String getName();
+		
+		/**
+		 * Returns an array of alternative names for this value
+		 */
 		String[] getSynonyms();
 	}
 	
@@ -220,10 +230,18 @@ public class Options {
 		}
 	}
 	
+	/**
+	 * Returns the option that has a given name, or null if not found
+	 * @see Option#getName()
+	 */
 	static Option getOption(final String name) {
 		return OPTIONS.get(name);
 	}
 	
+	/**
+	 * Returns a collection of options, sorted by the option name
+	 * @see Option#getName()
+	 */
 	static Collection<Option> getOptions() {
 		return OPTIONS.values();
 	}

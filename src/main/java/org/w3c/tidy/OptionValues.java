@@ -5,10 +5,15 @@ import java.util.Map;
 
 import org.w3c.tidy.Options.OptionEnum;
 
+/**
+ * Wrapper for handling the set of acceptable values for an enumerated option
+ * 
+ * @author aditsu
+ */
 public class OptionValues {
 	private final OptionEnum[] values;
 	private final Map<String, OptionEnum> valueMap = new HashMap<String, OptionEnum>();
-	private final Class<? extends OptionEnum> cl; 
+	private final Class<? extends OptionEnum> cl;
 	
 	public OptionValues(final Class<? extends OptionEnum> cl) {
 		values = cl.getEnumConstants();
@@ -26,6 +31,9 @@ public class OptionValues {
 		return values[x];
 	}
 	
+	/**
+	 * Returns the option value matching the given string, or null if not found
+	 */
 	public OptionEnum get(final String value) {
 		return valueMap.get(value);
 	}
@@ -36,6 +44,9 @@ public class OptionValues {
 		}
 	}
 	
+	/**
+	 * Returns a String describing the possible option values (including names and synonyms)
+	 */
 	public String getDescription() {
 		final StringBuilder sb = new StringBuilder();
 		for (OptionEnum o : values) {
