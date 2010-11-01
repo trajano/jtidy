@@ -153,7 +153,7 @@ public class ReportTest extends TestCase
             TidyMessage.Level.INFO,
             "nested_emphasis",
             new Object[]{"test"});
-        assertEquals("line 12 column 34 - nested emphasis test", message);
+        assertEquals("line 12 column 34 - Info: nested emphasis test", message);
     }
 
     /**
@@ -168,7 +168,7 @@ public class ReportTest extends TestCase
             TidyMessage.Level.INFO,
             "coerce_to_endtag",
             new Object[]{"test"});
-        assertEquals("line 12 column 34 - <test> is probably intended as </test>", message);
+        assertEquals("line 12 column 34 - Info: <test> is probably intended as </test>", message);
     }
 
     /**
@@ -313,7 +313,7 @@ public class ReportTest extends TestCase
             TidyMessage.Level.WARNING,
             "replacing_element",
             new Object[]{"<test>", "<bee>"});
-        assertEquals("line 12 column 34 - Warning: replacing element <test> by <bee>", message);
+        assertEquals("line 12 column 34 - Warning: replacing <test> by <bee>", message);
     }
 
     /**
@@ -473,7 +473,7 @@ public class ReportTest extends TestCase
             TidyMessage.Level.WARNING,
             "unexpected_end_of_file",
             new Object[]{"<test>"});
-        assertEquals("line 12 column 34 - Warning: end of file while parsing attributes <test>", message);
+        assertEquals("line 12 column 34 - Warning: <test> end of file while parsing attributes", message);
     }
 
     /**
@@ -774,8 +774,8 @@ public class ReportTest extends TestCase
             lexer,
             null,
             "doctype_given",
-            new Object[]{"test", "bee"});
-        assertEquals("test: Doctype given is \"bee\"", message);
+            new Object[]{"bee"});
+        assertEquals("Doctype given is \"bee\"", message);
     }
 
     /**
@@ -789,8 +789,8 @@ public class ReportTest extends TestCase
             lexer,
             null,
             "report_version",
-            new Object[]{"test", "bee"});
-        assertEquals("test: Document content looks like bee", message);
+            new Object[]{"bee"});
+        assertEquals("Document content looks like bee", message);
     }
 
     /**
@@ -805,7 +805,7 @@ public class ReportTest extends TestCase
             null,
             "num_warnings",
             new Object[]{new Integer(0), new Integer(33)});
-        assertEquals("no warnings, 33 errors were found!", message);
+        assertEquals("0 warnings, 33 errors were found!", message);
     }
 
 }
