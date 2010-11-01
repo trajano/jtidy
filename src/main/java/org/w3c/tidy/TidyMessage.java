@@ -102,7 +102,7 @@ public final class TidyMessage
         this.errorCode = errorCode;
         this.line = line;
         this.column = column;
-        this.level = level;
+        this.level = level != null ? level : TidyMessage.Level.INFO;
         this.message = message;
     }
 
