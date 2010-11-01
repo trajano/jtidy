@@ -892,7 +892,7 @@ public final class Report
                     encodingChoiche = 2;
                 }
 
-                messageLexer(lexer, null, VENDOR_SPECIFIC_CHARS, encodingChoiche);
+                messageLexer(lexer, Level.SUMMARY, VENDOR_SPECIFIC_CHARS, encodingChoiche);
             }
 
             if ((lexer.badChars & BC_INVALID_SGML_CHARS) != 0 || (lexer.badChars & BC_INVALID_NCR) != 0)
@@ -908,58 +908,58 @@ public final class Report
                     encodingChoiche = 2;
                 }
 
-                messageLexer(lexer, null, INVALID_SGML_CHARS, encodingChoiche);
+                messageLexer(lexer, Level.SUMMARY, INVALID_SGML_CHARS, encodingChoiche);
             }
 
             if ((lexer.badChars & BC_INVALID_UTF8) != 0)
             {
-                messageLexer(INVALID_UTF8.code(), lexer, null, "invalid_utf8_summary");
+                messageLexer(INVALID_UTF8.code(), lexer, Level.SUMMARY, "invalid_utf8_summary");
             }
 
             if ((lexer.badChars & BC_INVALID_UTF16) != 0)
             {
-                messageLexer(INVALID_UTF16.code(), lexer, null, "invalid_utf16_summary");
+                messageLexer(INVALID_UTF16.code(), lexer, Level.SUMMARY, "invalid_utf16_summary");
             }
 
             if ((lexer.badChars & BC_INVALID_URI) != 0)
             {
-                messageLexer(INVALID_URI.code(), lexer, null, "invaliduri_summary");
+                messageLexer(INVALID_URI.code(), lexer, Level.SUMMARY, "invaliduri_summary");
             }
         }
 
         if (lexer.badForm != 0)
         {
-            messageLexer(lexer, null, BADFORM_SUMMARY);
+            messageLexer(lexer, Level.SUMMARY, BADFORM_SUMMARY);
         }
 
         if (lexer.badAccess != 0)
         {
             if ((lexer.badAccess & MISSING_SUMMARY) != 0)
             {
-                messageLexer(MISSING_SUMMARY, lexer, null, "badaccess_missing_summary");
+                messageLexer(MISSING_SUMMARY, lexer, Level.WARNING, "badaccess_missing_summary");
             }
 
             if ((lexer.badAccess & MISSING_IMAGE_ALT) != 0)
             {
-                messageLexer(MISSING_IMAGE_ALT, lexer, null, "badaccess_missing_image_alt");
+                messageLexer(MISSING_IMAGE_ALT, lexer, Level.WARNING, "badaccess_missing_image_alt");
             }
 
             if ((lexer.badAccess & MISSING_IMAGE_MAP) != 0)
             {
-                messageLexer(MISSING_IMAGE_MAP, lexer, null, "badaccess_missing_image_map");
+                messageLexer(MISSING_IMAGE_MAP, lexer, Level.WARNING, "badaccess_missing_image_map");
             }
 
             if ((lexer.badAccess & MISSING_LINK_ALT) != 0)
             {
-                messageLexer(MISSING_LINK_ALT, lexer, null, "badaccess_missing_link_alt");
+                messageLexer(MISSING_LINK_ALT, lexer, Level.WARNING, "badaccess_missing_link_alt");
             }
 
             if (((lexer.badAccess & USING_FRAMES) != 0) && ((lexer.badAccess & USING_NOFRAMES) == 0))
             {
-                messageLexer(USING_FRAMES, lexer, null, "badaccess_frames");
+                messageLexer(USING_FRAMES, lexer, Level.WARNING, "badaccess_frames");
             }
 
-            messageLexer(lexer, null, lexer.configuration.isTidyCompat() ? BADACCESS_SUMMARY_BAD
+            messageLexer(lexer, Level.SUMMARY, lexer.configuration.isTidyCompat() ? BADACCESS_SUMMARY_BAD
             		: BADACCESS_SUMMARY, ACCESS_URL);
         }
 
@@ -967,27 +967,27 @@ public final class Report
         {
             if ((lexer.badLayout & USING_LAYER) != 0)
             {
-                messageLexer(USING_LAYER, lexer, null, "badlayout_using_layer");
+                messageLexer(USING_LAYER, lexer, Level.SUMMARY, "badlayout_using_layer");
             }
 
             if ((lexer.badLayout & USING_SPACER) != 0)
             {
-                messageLexer(USING_SPACER, lexer, null, "badlayout_using_spacer");
+                messageLexer(USING_SPACER, lexer, Level.SUMMARY, "badlayout_using_spacer");
             }
 
             if ((lexer.badLayout & USING_FONT) != 0)
             {
-                messageLexer(USING_FONT, lexer, null, "badlayout_using_font");
+                messageLexer(USING_FONT, lexer, Level.SUMMARY, "badlayout_using_font");
             }
 
             if ((lexer.badLayout & USING_NOBR) != 0)
             {
-                messageLexer(USING_NOBR, lexer, null, "badlayout_using_nobr");
+                messageLexer(USING_NOBR, lexer, Level.SUMMARY, "badlayout_using_nobr");
             }
 
             if ((lexer.badLayout & USING_BODY) != 0)
             {
-                messageLexer(USING_BODY, lexer, null, "badlayout_using_body");
+                messageLexer(USING_BODY, lexer, Level.SUMMARY, "badlayout_using_body");
             }
         }
     }
@@ -1018,7 +1018,7 @@ public final class Report
      */
     public void needsAuthorIntervention(PrintWriter errout)
     {
-        printMessage(errout, null, "needs_author_intervention");
+        printMessage(errout, Level.INFO, "needs_author_intervention");
     }
 
     /**
@@ -1037,7 +1037,7 @@ public final class Report
      */
     public void reportNumberOfSlides(PrintWriter errout, int count)
     {
-        printMessage(errout, null, "slides_found", new Integer(count));
+        printMessage(errout, Level.SUMMARY, "slides_found", new Integer(count));
     }
 
     /**
@@ -1090,13 +1090,13 @@ public final class Report
         {
             printMessage(
                 errout,
-                null,
+                Level.SUMMARY,
                 "num_warnings",
                 lexer.warnings, lexer.errors);
         }
         else
         {
-            printMessage(errout, null, "no_warnings");
+            printMessage(errout, Level.SUMMARY, "no_warnings");
         }
     }
 

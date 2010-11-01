@@ -692,7 +692,7 @@ public class TidyTestCase extends TestCase
                     this.code = Integer.parseInt(new String(ch, start, length));
                     break;
                 case 2 :
-//FIXME                    this.level = Integer.parseInt(new String(ch, start, length));
+                    this.level =  Level.values()[Integer.parseInt(new String(ch, start, length))];
                     break;
                 case 3 :
                     this.line = Integer.parseInt(new String(ch, start, length));

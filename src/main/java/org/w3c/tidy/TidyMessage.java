@@ -102,7 +102,7 @@ public final class TidyMessage
         this.errorCode = errorCode;
         this.line = line;
         this.column = column;
-        this.level = level != null ? level : TidyMessage.Level.INFO;
+        this.level = level;
         this.message = message;
     }
 
@@ -157,20 +157,23 @@ public final class TidyMessage
      * @version $Revision$ ($Author$)
      */
     public enum Level {
-    	/** Information about markup usage */
+        /** Summary (number of warnings, errors) */
+        SUMMARY("Summary"),
+
+        /** Information about markup usage */
         INFO("Info"),
         
         /** Warning message */
         WARNING("Warning"),
         
+        /** Error message - output suppressed */
+        ERROR("Error"),
+
         /** Configuration error */
         CONFIG("Config"),
         
         /** Accessibility message */
         ACCESS("Access"),
-        
-        /** Error message - output suppressed */
-        ERROR("Error"),
         
         /** I/O or file system error */
         BAD_DOCUMENT("Document"),
