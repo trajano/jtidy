@@ -663,7 +663,7 @@ public class PPrint
 
             // naked '&' chars can be left alone or quoted as &amp;
             // The latter is required for XML where naked '&' are illegal.
-            if (c == '&' && this.configuration.isQuoteAmpersand()) {
+            if (c == '&' && this.configuration.isQuoteAmpersand() && !configuration.isPreserveEntities()) {
                 addString("&amp;");
                 return;
             }
