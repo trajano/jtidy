@@ -708,7 +708,7 @@ public class PPrint
             // But we leave the ASCII range punctuation untouched
 
             // Break after any punctuation or spaces characters
-            if ((c >= 0x2000) && !TidyUtils.toBoolean(mode & PREFORMATTED))
+            if ((c >= 0x2000) && !TidyUtils.toBoolean(mode & PREFORMATTED) && configuration.isPunctWrap())
             {
                 if (((c >= 0x2000) && (c <= 0x2006))
                     || ((c >= 0x2008) && (c <= 0x2010))

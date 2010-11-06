@@ -1268,4 +1268,12 @@ public class Configuration implements Serializable
 	public void setSortAttributes(final AttrSortStrategy sortAttributes) {
 		set(Option.SortAttributes, sortAttributes);
 	}
+	
+	public boolean isPunctWrap() {
+		return getBool(Option.PunctWrap);
+	}
+	
+	public void setPunctWrap(final boolean punctWrap) {
+		set(Option.PunctWrap, punctWrap);
+	}
 }
