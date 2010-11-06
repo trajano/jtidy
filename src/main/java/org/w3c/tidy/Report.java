@@ -514,11 +514,7 @@ public final class Report
                 break;
             case INVALID_NCR:
                 lexer.badChars |= BC_INVALID_NCR;
-                messageLexer(
-                    lexer,
-                    Level.WARNING,
-                    code,
-                    replaceMode, buf);
+                messageLexer(lexer, Level.WARNING, code, replaceMode, c);
                 break;
             }
         }
