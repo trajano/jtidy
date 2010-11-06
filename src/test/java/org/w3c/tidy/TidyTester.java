@@ -111,9 +111,11 @@ public class TidyTester extends TestCase {
     					break;
     				}
     			}
+    			l1 += '\n' + br1.readLine();
+    			l2 += '\n' + br2.readLine();
     			br1.close();
     			br2.close();
-    			fail(what + " differ at byte " + x + ":\nExpect: " + l2 + "\nActual: " + l1);
+    			fail(what + " differ at byte " + x + ":\nExpected:\n" + l2 + "\nActual:\n" + l1);
     		}
     		if (b1 == -1) {
     			break;
