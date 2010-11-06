@@ -292,7 +292,7 @@ public final class Report
     	boolean go = updateCount(lexer, level);
     	if (go) {
 	    	String position = line > 0 && col > 0 ? getPosition(lexer, line, col) : "";
-	        String prefix = level == null ? "" : (level + ": ");
+	        String prefix = level == Level.SUMMARY ? "" : (level + ": ");
 	        String messageString = MessageFormat.format(res.getString(messageKey), args);
 	        if (listener != null) {
 	            TidyMessage msg = new TidyMessage(errorCode, line, col, level, messageString);
@@ -342,7 +342,7 @@ public final class Report
     
     private void messageLexer(final int errorCode, final Lexer lexer, final Level level, final String messageKey,
     		final Object... params) {
-    	final boolean b = lexer != null && level != null;
+    	final boolean b = lexer != null && level != Level.SUMMARY;
     	messagePos(errorCode, lexer, level, b ? lexer.lines : 0, b ? lexer.columns : 0, messageKey, params);
     }
     
@@ -936,27 +936,27 @@ public final class Report
         {
             if ((lexer.badAccess & MISSING_SUMMARY) != 0)
             {
-                messageLexer(MISSING_SUMMARY, lexer, Level.WARNING, "badaccess_missing_summary");
+                messageLexer(MISSING_SUMMARY, lexer, Level.SUMMARY, "badaccess_missing_summary");
             }
 
             if ((lexer.badAccess & MISSING_IMAGE_ALT) != 0)
             {
-                messageLexer(MISSING_IMAGE_ALT, lexer, Level.WARNING, "badaccess_missing_image_alt");
+                messageLexer(MISSING_IMAGE_ALT, lexer, Level.SUMMARY, "badaccess_missing_image_alt");
             }
 
             if ((lexer.badAccess & MISSING_IMAGE_MAP) != 0)
             {
-                messageLexer(MISSING_IMAGE_MAP, lexer, Level.WARNING, "badaccess_missing_image_map");
+                messageLexer(MISSING_IMAGE_MAP, lexer, Level.SUMMARY, "badaccess_missing_image_map");
             }
 
             if ((lexer.badAccess & MISSING_LINK_ALT) != 0)
             {
-                messageLexer(MISSING_LINK_ALT, lexer, Level.WARNING, "badaccess_missing_link_alt");
+                messageLexer(MISSING_LINK_ALT, lexer, Level.SUMMARY, "badaccess_missing_link_alt");
             }
 
             if (((lexer.badAccess & USING_FRAMES) != 0) && ((lexer.badAccess & USING_NOFRAMES) == 0))
             {
-                messageLexer(USING_FRAMES, lexer, Level.WARNING, "badaccess_frames");
+                messageLexer(USING_FRAMES, lexer, Level.SUMMARY, "badaccess_frames");
             }
 
             messageLexer(lexer, Level.SUMMARY, lexer.configuration.isTidyCompat() ? BADACCESS_SUMMARY_BAD
@@ -1018,7 +1018,7 @@ public final class Report
      */
     public void needsAuthorIntervention(PrintWriter errout)
     {
-        printMessage(errout, Level.INFO, "needs_author_intervention");
+        printMessage(errout, Level.SUMMARY, "needs_author_intervention");
     }
 
     /**
