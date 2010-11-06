@@ -590,8 +590,9 @@ public class Tidy implements Serializable
             o.flush();
         }
 
-        if (!configuration.isQuiet())
-        {
+        // Tidy only shows the error summary when there are errors and/or warnings,
+        // but that can miss e.g. badlayout messages
+        if ((!configuration.isTidyCompat() || parseErrors + parseWarnings > 0) && !configuration.isQuiet()) {
             this.report.errorSummary(lexer);
         }
         
