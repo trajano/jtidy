@@ -627,30 +627,16 @@ public class PPrint
         String entity;
         boolean breakable = false; // #431953 - RJ
 
-        if (c == ' ' && !TidyUtils.toBoolean(mode & (PREFORMATTED | COMMENT | ATTRIBVALUE | CDATA)))
-        {
+        if (c == ' ' && !TidyUtils.toBoolean(mode & (PREFORMATTED | COMMENT | ATTRIBVALUE | CDATA))) {
             // coerce a space character to a non-breaking space
-            if (TidyUtils.toBoolean(mode & NOWRAP))
-            {
+            if (TidyUtils.toBoolean(mode & NOWRAP)) {
                 // by default XML doesn't define &nbsp;
-                if (this.configuration.isNumEntities() || this.configuration.isXmlTags())
-                {
-                    addC('&', linelen++);
-                    addC('#', linelen++);
-                    addC('1', linelen++);
-                    addC('6', linelen++);
-                    addC('0', linelen++);
-                    addC(';', linelen++);
+                if (this.configuration.isNumEntities() || this.configuration.isXmlTags()) {
+                    addString("&#160;");
                 }
-                else
-                {
+                else {
                     // otherwise use named entity
-                    addC('&', linelen++);
-                    addC('n', linelen++);
-                    addC('b', linelen++);
-                    addC('s', linelen++);
-                    addC('p', linelen++);
-                    addC(';', linelen++);
+                    addString("&nbsp;");
                 }
                 return;
             }
@@ -658,96 +644,54 @@ public class PPrint
         }
 
         // comment characters are passed raw
-        if (TidyUtils.toBoolean(mode & (COMMENT | CDATA)))
-        {
-            addC(c, linelen++);
+        if (TidyUtils.toBoolean(mode & (COMMENT | CDATA))) {
+            addChar(c);
             return;
         }
 
         // except in CDATA map < to &lt; etc.
-        if (!TidyUtils.toBoolean(mode & CDATA))
-        {
-            if (c == '<')
-            {
-                addC('&', linelen++);
-                addC('l', linelen++);
-                addC('t', linelen++);
-                addC(';', linelen++);
+        if (!TidyUtils.toBoolean(mode & CDATA)) {
+            if (c == '<') {
+                addString("&lt;");
                 return;
             }
 
-            if (c == '>')
-            {
-                addC('&', linelen++);
-                addC('g', linelen++);
-                addC('t', linelen++);
-                addC(';', linelen++);
+            if (c == '>') {
+                addString("&gt;");
                 return;
             }
 
             // naked '&' chars can be left alone or quoted as &amp;
             // The latter is required for XML where naked '&' are illegal.
-            if (c == '&' && this.configuration.isQuoteAmpersand())
-            {
-                addC('&', linelen++);
-                addC('a', linelen++);
-                addC('m', linelen++);
-                addC('p', linelen++);
-                addC(';', linelen++);
+            if (c == '&' && this.configuration.isQuoteAmpersand()) {
+                addString("&amp;");
                 return;
             }
 
-            if (c == '"' && this.configuration.isQuoteMarks())
-            {
-                addC('&', linelen++);
-                addC('q', linelen++);
-                addC('u', linelen++);
-                addC('o', linelen++);
-                addC('t', linelen++);
-                addC(';', linelen++);
+            if (c == '"' && this.configuration.isQuoteMarks()) {
+                addString("&quot;");
                 return;
             }
 
-            if (c == '\'' && this.configuration.isQuoteMarks())
-            {
-                addC('&', linelen++);
-                addC('#', linelen++);
-                addC('3', linelen++);
-                addC('9', linelen++);
-                addC(';', linelen++);
+            if (c == '\'' && this.configuration.isQuoteMarks()) {
+                addString("&#39;");
                 return;
             }
 
-            if (c == 160 && !this.configuration.isRawOut())
-            {
-                if (this.configuration.isMakeBare())
-                {
-                    addC(' ', linelen++);
+            if (c == 160 && !this.configuration.isRawOut()) {
+                if (this.configuration.isMakeBare()) {
+                    addChar(' ');
                 }
-                else if (this.configuration.isQuoteNbsp())
-                {
-                    addC('&', linelen++);
-
-                    if (this.configuration.isNumEntities() || this.configuration.isXmlTags())
-                    {
-                        addC('#', linelen++);
-                        addC('1', linelen++);
-                        addC('6', linelen++);
-                        addC('0', linelen++);
+                else if (this.configuration.isQuoteNbsp()) {
+                    if (this.configuration.isNumEntities() || this.configuration.isXmlTags()) {
+                        addString("&#160;");
                     }
-                    else
-                    {
-                        addC('n', linelen++);
-                        addC('b', linelen++);
-                        addC('s', linelen++);
-                        addC('p', linelen++);
+                    else {
+                        addString("&nbsp;");
                     }
-
-                    addC(';', linelen++);
                 }
-                else
-                {
-                    addC(c, linelen++);
+                else {
+                    addChar(c);
                 }
 
                 return;
@@ -788,7 +732,7 @@ public class PPrint
                     || ((c >= 0xFF3B) && (c <= 0xFF3D))
                     || ((c >= 0xFF61) && (c <= 0xFF65)))
                 {
-                    wraphere = linelen + 1;
+                    wraphere = linelen + 2; // 2, because AddChar is not till later
                     breakable = true;
                 }
                 else
@@ -802,7 +746,7 @@ public class PPrint
                         case 0xFF3F :
                         case 0xFF5B :
                         case 0xFF5D :
-                            wraphere = linelen + 1;
+                            wraphere = linelen + 2;
                             breakable = true;
                     }
                 }
