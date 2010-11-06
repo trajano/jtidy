@@ -62,6 +62,7 @@ import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 
+import org.w3c.tidy.Options.AttrSortStrategy;
 import org.w3c.tidy.Options.DoctypeModes;
 import org.w3c.tidy.Options.DupAttrModes;
 import org.w3c.tidy.Options.LineEnding;
@@ -1258,5 +1259,13 @@ public class Configuration implements Serializable
 
 	protected boolean isTidyCompat() {
 		return getBool(Option.TidyCompat);
+	}
+
+	public AttrSortStrategy getSortAttributes() {
+		return (AttrSortStrategy) getOptionEnum(Option.SortAttributes);
+	}
+	
+	public void setSortAttributes(final AttrSortStrategy sortAttributes) {
+		set(Option.SortAttributes, sortAttributes);
 	}
 }

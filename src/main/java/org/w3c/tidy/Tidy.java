@@ -64,11 +64,16 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.w3c.tidy.Node.NodeType;
+import org.w3c.tidy.Options.AttrSortStrategy;
 import org.w3c.tidy.Options.DoctypeModes;
 import org.w3c.tidy.Options.DupAttrModes;
 import org.w3c.tidy.Options.TriState;
@@ -571,6 +576,11 @@ public class Tidy implements Serializable
         		Clean.wbrToSpace(lexer, lexer.root);
         	}
         	
+        	final AttrSortStrategy sortAttrStrat = configuration.getSortAttributes();
+			if (sortAttrStrat != AttrSortStrategy.None) {
+                sortAttributes(lexer.root, sortAttrStrat);
+        	}
+			
             pprint = new PPrint(configuration);
 
             if (showBodyOnly(lexer)) {
@@ -602,8 +612,46 @@ public class Tidy implements Serializable
 
         return document;
     }
+    
+    private AttVal sortAttVal(final AttVal list, final AttrSortStrategy strat) {
+    	// quick hack for now
+    	final List<AttVal> l = new ArrayList<AttVal>();
+    	AttVal x = list;
+    	while (x != null) {
+    		l.add(x);
+    		x = x.next;
+    	}
+    	if (strat != AttrSortStrategy.Alpha) {
+    		throw new IllegalArgumentException("Unexpected sort strategy: " + strat);
+    	}
+    	if (l.size() < 2) {
+    		return list;
+    	}
+    	Collections.sort(l, new Comparator<AttVal>() {
+			public int compare(final AttVal a1, final AttVal a2) {
+				return a1.attribute.compareTo(a2.attribute);
+			}
+		});
+    	final int n = l.size();
+    	l.add(null);
+    	for (int i = 0; i < n; ++i) {
+			l.get(i).next = l.get(i + 1);
+		}
+		return l.get(0);
+	}
+    
+    private void sortAttributes(final Node node, final AttrSortStrategy strat) {
+    	Node x = node;
+    	while (x != null) {
+	        x.attributes = sortAttVal(x.attributes, strat);
+	        if (x.content != null) {
+	            sortAttributes(x.content, strat);
+	        }
+	        x = x.next;
+    	}
+    }
 
-    /**
+	/**
      * Internal routine that actually does the parsing. The caller can pass either an InputStream or file name. If both
      * are passed, the file name is preferred.
      * @param in input stream (used only if <code>file</code> is null)
