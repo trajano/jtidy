@@ -690,136 +690,132 @@ public final class Report
             return;
         }
 
-        if (lexer.configuration.isShowWarnings())
-        {
-            switch (code)
-            {
-                case MISSING_ENDTAG_FOR :
-                    messageNode(lexer, Level.WARNING, rpt, code, element.element);
-                    break;
+        switch (code) {
+            case MISSING_ENDTAG_FOR :
+                messageNode(lexer, Level.WARNING, rpt, code, element.element);
+                break;
 
-                case MISSING_ENDTAG_BEFORE :
-                	messageNode(lexer, Level.WARNING, rpt, code, element.element, nodedesc);
-                    break;
+            case MISSING_ENDTAG_BEFORE :
+            	messageNode(lexer, Level.WARNING, rpt, code, element.element, nodedesc);
+                break;
 
-                case DISCARDING_UNEXPECTED :
-                    if (lexer.badForm == 0)
-                    {
-                        // the case for when this is an error not a warning, is handled later
-                        messageLexer(
-                            lexer,
-                            Level.WARNING,
-                            code,
-                            getTagName(node));
-                    }
-                    break;
-
-                case NESTED_EMPHASIS :
-                    messageLexer(lexer, Level.INFO, code, getTagName(node));
-                    break;
-
-                case COERCE_TO_ENDTAG :
-                    messageNode(lexer, Level.WARNING, rpt, code, element.element);
-                    break;
-
-                case NON_MATCHING_ENDTAG :
+            case DISCARDING_UNEXPECTED :
+                if (lexer.badForm == 0)
+                {
+                    // the case for when this is an error not a warning, is handled later
                     messageLexer(
                         lexer,
                         Level.WARNING,
                         code,
-                        getTagName(node), element.element);
-                    break;
+                        getTagName(node));
+                }
+                break;
 
-                case TAG_NOT_ALLOWED_IN :
-                	messageNode(lexer, Level.WARNING, node, code, nodedesc, element.element);
-                    if (lexer.configuration.isShowWarnings()) {
-                    	messageNode(lexer, Level.INFO, element, PREVIOUS_LOCATION, element.element);
-                    }
-                    break;
+            case NESTED_EMPHASIS :
+                messageLexer(lexer, Level.INFO, code, getTagName(node));
+                break;
 
-                case DOCTYPE_AFTER_TAGS :
-                    messageLexer(lexer, Level.WARNING, code);
-                    break;
+            case COERCE_TO_ENDTAG :
+                messageNode(lexer, Level.WARNING, rpt, code, element.element);
+                break;
 
-                case MISSING_STARTTAG :
-                case UNEXPECTED_ENDTAG :
-                case TOO_MANY_ELEMENTS :
-                case INSERTING_TAG :
-                	messageNode(lexer, Level.WARNING, node, code, node.element);
-                    break;
+            case NON_MATCHING_ENDTAG :
+                messageLexer(
+                    lexer,
+                    Level.WARNING,
+                    code,
+                    getTagName(node), element.element);
+                break;
 
-                case USING_BR_INPLACE_OF :
-                case CANT_BE_NESTED :
-                case PROPRIETARY_ELEMENT :
-                	messageNode(lexer, Level.WARNING, node, code, nodedesc);
-                    break;
+            case TAG_NOT_ALLOWED_IN :
+            	messageNode(lexer, Level.WARNING, node, code, nodedesc, element.element);
+                if (lexer.configuration.isShowWarnings()) {
+                	messageNode(lexer, Level.INFO, element, PREVIOUS_LOCATION, element.element);
+                }
+                break;
 
-                case OBSOLETE_ELEMENT :
-                    messageLexer(lexer, Level.WARNING, code, 
-							    getTagName(element),
-							    getTagName(node));
-                    break;
+            case DOCTYPE_AFTER_TAGS :
+                messageLexer(lexer, Level.WARNING, code);
+                break;
 
-                case UNESCAPED_ELEMENT :
-                    messageLexer(lexer, Level.WARNING, code, getTagName(element));
-                    break;
+            case MISSING_STARTTAG :
+            case UNEXPECTED_ENDTAG :
+            case TOO_MANY_ELEMENTS :
+            case INSERTING_TAG :
+            	messageNode(lexer, Level.WARNING, node, code, node.element);
+                break;
 
-                case TRIM_EMPTY_ELEMENT :
-                	messageNode(lexer, Level.WARNING, element, code, getTagName(element));
-                    break;
+            case USING_BR_INPLACE_OF :
+            case CANT_BE_NESTED :
+            case PROPRIETARY_ELEMENT :
+            	messageNode(lexer, Level.WARNING, node, code, nodedesc);
+                break;
 
-                case ILLEGAL_NESTING :
-                    messageLexer(lexer, Level.WARNING, code, getTagName(element));
-                    break;
+            case OBSOLETE_ELEMENT :
+                messageLexer(lexer, Level.WARNING, code, 
+						    getTagName(element),
+						    getTagName(node));
+                break;
 
-                case NOFRAMES_CONTENT :
-                    messageLexer(lexer, Level.WARNING, code, getTagName(node));
-                    break;
+            case UNESCAPED_ELEMENT :
+                messageLexer(lexer, Level.WARNING, code, getTagName(element));
+                break;
 
-                case MISSING_TITLE_ELEMENT :
-                case INCONSISTENT_VERSION :
-                case MALFORMED_DOCTYPE :
-                case CONTENT_AFTER_BODY :
-                case MALFORMED_COMMENT :
-                case BAD_COMMENT_CHARS :
-                case BAD_XML_COMMENT :
-                case BAD_CDATA_CONTENT :
-                case INCONSISTENT_NAMESPACE :
-                case DTYPE_NOT_UPPER_CASE :
-                	messageNode(lexer, Level.WARNING, rpt, code);
-                    break;
+            case TRIM_EMPTY_ELEMENT :
+            	messageNode(lexer, Level.WARNING, element, code, getTagName(element));
+                break;
 
-                case UNEXPECTED_END_OF_FILE :
-                    // on end of file adjust reported position to end of input
-                    lexer.lines = lexer.in.getCurline();
-                    lexer.columns = lexer.in.getCurcol();
-                    messageLexer(
-                        lexer,
-                        Level.WARNING,
-                        code,
-                        getTagName(element));
-                    break;
+            case ILLEGAL_NESTING :
+                messageLexer(lexer, Level.WARNING, code, getTagName(element));
+                break;
 
-                case NESTED_QUOTATION :
-                	messageNode(lexer, Level.WARNING, rpt, code);
-                    break;
+            case NOFRAMES_CONTENT :
+                messageLexer(lexer, Level.WARNING, code, getTagName(node));
+                break;
 
-                case ELEMENT_NOT_EMPTY :
-                    messageLexer(lexer, Level.WARNING, code, getTagName(element));
-                    break;
+            case MISSING_TITLE_ELEMENT :
+            case INCONSISTENT_VERSION :
+            case MALFORMED_DOCTYPE :
+            case CONTENT_AFTER_BODY :
+            case MALFORMED_COMMENT :
+            case BAD_COMMENT_CHARS :
+            case BAD_XML_COMMENT :
+            case BAD_CDATA_CONTENT :
+            case INCONSISTENT_NAMESPACE :
+            case DTYPE_NOT_UPPER_CASE :
+            	messageNode(lexer, Level.WARNING, rpt, code);
+                break;
 
-                case MISSING_DOCTYPE :
-                    messageLexer(lexer, Level.WARNING, code);
-                    break;
-                    
-                case REPLACING_ELEMENT:
-                case REPLACING_UNEX_ELEMENT:
-                    messageNode(lexer, Level.WARNING, rpt, code, getTagName(element), nodedesc);
-                    break;
+            case UNEXPECTED_END_OF_FILE :
+                // on end of file adjust reported position to end of input
+                lexer.lines = lexer.in.getCurline();
+                lexer.columns = lexer.in.getCurcol();
+                messageLexer(
+                    lexer,
+                    Level.WARNING,
+                    code,
+                    getTagName(element));
+                break;
 
-                default :
-                    break;
-            }
+            case NESTED_QUOTATION :
+            	messageNode(lexer, Level.WARNING, rpt, code);
+                break;
+
+            case ELEMENT_NOT_EMPTY :
+                messageLexer(lexer, Level.WARNING, code, getTagName(element));
+                break;
+
+            case MISSING_DOCTYPE :
+                messageLexer(lexer, Level.WARNING, code);
+                break;
+                
+            case REPLACING_ELEMENT:
+            case REPLACING_UNEX_ELEMENT:
+                messageNode(lexer, Level.WARNING, rpt, code, getTagName(element), nodedesc);
+                break;
+
+            default :
+                break;
         }
 
         if ((code == DISCARDING_UNEXPECTED) && lexer.badForm != 0)
