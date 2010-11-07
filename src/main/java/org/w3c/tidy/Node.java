@@ -1077,6 +1077,17 @@ public class Node {
             	return true;
             }
         }
+        
+        /* Declared empty tags seem to be slipping through
+         ** the cracks.  This is an experiment to figure out
+         ** a decent place to pick them up.
+         */
+        if (node.tag != null && node.isElement() && node.hasCM(Dict.CM_EMPTY) && node.is(TagId.UNKNOWN)
+        		&& (node.tag.versions & Versions.VERS_PROPRIETARY) != 0) {
+        	element.insertNodeAtEnd(node);
+        	return true;
+        }
+
         return false;
     }
 
