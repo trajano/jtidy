@@ -445,21 +445,21 @@ public final class ParsePropertyImpl
         {
             short tagType = Dict.TAGTYPE_INLINE;
 
-            if ("new-inline-tags".equals(option))
-            {
-                tagType = Dict.TAGTYPE_INLINE;
-            }
-            else if ("new-blocklevel-tags".equals(option))
-            {
+            switch (option) {
+            case InlineTags:
+            	tagType = Dict.TAGTYPE_INLINE;
+            	break;
+            case BlockTags:
                 tagType = Dict.TAGTYPE_BLOCK;
-            }
-            else if ("new-empty-tags".equals(option))
-            {
+                break;
+            case EmptyTags:
                 tagType = Dict.TAGTYPE_EMPTY;
-            }
-            else if ("new-pre-tags".equals(option))
-            {
+                break;
+            case PreTags:
                 tagType = Dict.TAGTYPE_PRE;
+                break;
+            default:
+            	throw new IllegalArgumentException("Unexpected option: " + option);
             }
 
             StringTokenizer t = new StringTokenizer(value, " \t\n\r,");
