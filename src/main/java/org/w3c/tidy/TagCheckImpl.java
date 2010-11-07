@@ -210,8 +210,8 @@ public final class TagCheckImpl
                 if (lang != null)
                 {
                     String str = lang.value;
-                    if ("javascript".equalsIgnoreCase(str) || "jscript".equalsIgnoreCase(str))
-                    {
+                    if (str.regionMatches(true, 0, "javascript", 0, 10) ||
+                    		str.regionMatches(true, 0, "jscript", 0, 7)) {
                         node.addAttribute("type", "text/javascript");
                     }
                     else if ("vbscript".equalsIgnoreCase(str))
