@@ -1942,6 +1942,11 @@ public final class ParserImpl
                 {
                     continue;
                 }
+                
+                if (node.tag == null) {
+                    lexer.report.warning(lexer, pre, node, ErrorCode.DISCARDING_UNEXPECTED);
+                    continue;
+                }
 
                 // strip unexpected tags
                 if (!lexer.preContent(node))
