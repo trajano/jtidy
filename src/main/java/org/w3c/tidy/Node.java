@@ -1055,21 +1055,28 @@ public class Node {
      * @param node will be inserted at the end of element
      * @return <code>true</code> if the node has been inserted
      */
-    public static boolean insertMisc(Node element, Node node)
-    {
+    public static boolean insertMisc(Node element, Node node) {
         if (node.type == NodeType.CommentTag
-            || node.type == NodeType.ProcInsTag
-            || node.type == NodeType.CDATATag
-            || node.type == NodeType.SectionTag
-            || node.type == NodeType.AspTag
-            || node.type == NodeType.JsteTag
-            || node.type == NodeType.PhpTag
-            || node.type == NodeType.XmlDecl)
-        {
+	            || node.type == NodeType.ProcInsTag
+	            || node.type == NodeType.CDATATag
+	            || node.type == NodeType.SectionTag
+	            || node.type == NodeType.AspTag
+	            || node.type == NodeType.JsteTag
+	            || node.type == NodeType.PhpTag) {
             element.insertNodeAtEnd(node);
             return true;
         }
-
+        
+        if (node.type == NodeType.XmlDecl) {
+        	Node root = element;
+            while (root != null && root.parent != null) {
+                root = root.parent;
+            }
+            if (root != null && !(root.content != null && root.content.type == NodeType.XmlDecl)) {
+            	root.insertNodeAtStart(node);
+            	return true;
+            }
+        }
         return false;
     }
 
