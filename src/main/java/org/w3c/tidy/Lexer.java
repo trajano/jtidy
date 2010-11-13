@@ -3814,11 +3814,25 @@ public class Lexer
         return null;
     }
 
-	public Node findXmlDecl() {
+	protected Node findXmlDecl() {
 		Node node = root.content;
 	    while (node != null && node.type != NodeType.XmlDecl) {
 	    	node = node.next;
 	    }
 	    return node;
 	}
+	
+	protected boolean textNodeEndWithSpace(final Node node) {
+        if (node.isText() && node.end > node.start) {
+            int i, c = '\0'; /* initialised to avoid warnings */
+            for (i = node.start; i < node.end; ++i) {
+                c = lexbuf[i] & 0xFF; // Convert to unsigned.
+            }
+
+            if (c == ' ' || c == '\n') {
+                return true;
+            }
+        }
+        return false;
+    }
 }

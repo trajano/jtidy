@@ -701,7 +701,7 @@ public final class Report
                 break;
 
             case NESTED_EMPHASIS :
-                messageLexer(lexer, Level.INFO, code, getTagName(node));
+                messageNode(lexer, Level.WARNING, rpt, code, nodedesc);
                 break;
 
             case MISSING_STARTTAG :

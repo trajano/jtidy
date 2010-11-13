@@ -1185,8 +1185,8 @@ public final class ParserImpl
                     && !node.is(TagId.SMALL)
                     && !node.is(TagId.Q))
                 {
-                    if (element.content != null && node.attributes == null)
-                    {
+                    if (element.content != null && node.attributes == null
+                    		&& element.last.isText() && !lexer.textNodeEndWithSpace(element.last)) {
                         lexer.report.warning(lexer, element, node, ErrorCode.COERCE_TO_ENDTAG);
                         node.type = NodeType.EndTag;
                         lexer.ungetToken();

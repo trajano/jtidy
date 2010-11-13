@@ -1263,20 +1263,6 @@ public class PPrint
         }
     }
     
-    private static boolean textNodeEndWithSpace(final Lexer lexer, final Node node) {
-        if (node.isText() && node.end > node.start) {
-            int i, c = '\0'; /* initialised to avoid warnings */
-            for (i = node.start; i < node.end; ++i) {
-                c = lexer.lexbuf[i] & 0xFF; // Convert to unsigned.
-            }
-
-            if (c == ' ' || c == '\n') {
-                return true;
-            }
-        }
-        return false;
-    }
-
     /*
     Line can be wrapped immediately after inline start tag provided
     if follows a text node ending in a space, or it follows a <br>,
@@ -1298,7 +1284,7 @@ public class PPrint
         Node prev = node.prev;
         if (prev != null) {
             if (prev.isText()) {
-            	return textNodeEndWithSpace(lexer, prev);
+            	return lexer.textNodeEndWithSpace(prev);
             } else if (prev.is(TagId.BR)) {
             	return true;
             }
