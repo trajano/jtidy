@@ -3813,4 +3813,12 @@ public class Lexer
         report.error(this, null, null, ErrorCode.MALFORMED_DOCTYPE);
         return null;
     }
+
+	public Node findXmlDecl() {
+		Node node = root.content;
+	    while (node != null && node.type != NodeType.XmlDecl) {
+	    	node = node.next;
+	    }
+	    return node;
+	}
 }

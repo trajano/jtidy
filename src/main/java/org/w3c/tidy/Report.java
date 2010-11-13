@@ -806,7 +806,8 @@ public final class Report
                 messageLexer(lexer, Level.WARNING, code, getTagName(element));
                 break;
 
-            case MISSING_DOCTYPE :
+            case MISSING_DOCTYPE:
+            case SPACE_PRECEDING_XMLDECL:
                 messageLexer(lexer, Level.WARNING, code);
                 break;
                 

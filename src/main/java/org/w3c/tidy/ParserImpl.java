@@ -3503,6 +3503,16 @@ public final class ParserImpl
 
         while ((node = lexer.getToken(Lexer.IGNORE_WHITESPACE)) != null)
         {
+        	if (node.type == NodeType.XmlDecl) {
+                if (lexer.findXmlDecl() != null && lexer.root.content != null) {
+                    lexer.report.warning(lexer, lexer.root, node, ErrorCode.DISCARDING_UNEXPECTED);
+                    continue;
+                }
+                if (node.line != 1 || node.column != 1) {
+                	lexer.report.warning(lexer, lexer.root, node, ErrorCode.SPACE_PRECEDING_XMLDECL);
+                }
+            }
+        	
             // deal with comments etc.
             if (Node.insertMisc(document, node))
             {
