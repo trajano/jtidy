@@ -578,7 +578,8 @@ public final class Report
                 lexer.badAccess |= MISSING_IMAGE_MAP;
                 break;
 
-            case BAD_ATTRIBUTE_VALUE :
+            case BAD_ATTRIBUTE_VALUE:
+            case BAD_ATTRIBUTE_VALUE_REPLACED:
             case INVALID_ATTRIBUTE:
                 messageNode(lexer, Level.WARNING, node, code, tagdesc, name, value);
                 break;
