@@ -746,8 +746,13 @@ public final class Report
                 messageNode(lexer, Level.WARNING, rpt, code, element.element);
                 break;
 
-            case NON_MATCHING_ENDTAG :
-                messageLexer(lexer, Level.WARNING, code, getTagName(node), element.element);
+            case NON_MATCHING_ENDTAG:
+            	if (lexer.configuration.isTidyCompat()) {
+            		messageNode(lexer, Level.WARNING, rpt, code, node.element, node.element);
+            	}
+            	else {
+            		messageLexer(lexer, Level.WARNING, code, nodedesc, element.element);
+            	}
                 break;
 
             case MISSING_DOCTYPE:
