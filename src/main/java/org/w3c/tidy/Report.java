@@ -700,8 +700,13 @@ public final class Report
                 messageLexer(lexer, Level.WARNING, code, getTagName(element), getTagName(node));
                 break;
 
-            case NESTED_EMPHASIS :
-                messageNode(lexer, Level.WARNING, rpt, code, nodedesc);
+            case NESTED_EMPHASIS:
+            	if (lexer.configuration.isTidyCompat()) {
+            		messageNode(lexer, Level.WARNING, rpt, code, nodedesc);
+            	}
+            	else {
+            		messageLexer(lexer, Level.WARNING, code, nodedesc);
+            	}
                 break;
 
             case MISSING_STARTTAG :
