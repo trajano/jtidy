@@ -2230,7 +2230,7 @@ public class PPrint
         {
             condFlushLine(fout, indent);
             printComment(lexer, fout, 0, node);
-            condFlushLine(fout, 0);
+//            condFlushLine(fout, 0);
         }
         else if (node.type == NodeType.RootNode)
         {
