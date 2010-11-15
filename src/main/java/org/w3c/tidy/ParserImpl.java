@@ -1914,10 +1914,12 @@ public final class ParserImpl
 
             lexer.inlineDup(null); // tell lexer to insert inlines if needed
 
-            while ((node = lexer.getToken(Lexer.PREFORMATTED)) != null)
-            {
-                if (node.tag == pre.tag && node.type == NodeType.EndTag)
-                {
+            while ((node = lexer.getToken(Lexer.PREFORMATTED)) != null) {
+            	if (node.type == NodeType.EndTag && (node.tag == pre.tag || pre.isDescendantOf(node.getId()))) {
+            		if (node.tag != pre.tag) {
+            			lexer.report.warning(lexer, pre, node, ErrorCode.MISSING_ENDTAG_BEFORE);
+            			lexer.ungetToken();
+            		}
                     Node.trimSpaces(lexer, pre);
                     pre.closed = true;
                     return;
