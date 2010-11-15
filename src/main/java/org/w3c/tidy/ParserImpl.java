@@ -1286,11 +1286,27 @@ public final class ParserImpl
                             continue;
                         }
                     }
-                    else if ((node.tag.model & Dict.CM_INLINE) != 0
-                        && !node.is(TagId.A)
-                        && !((node.tag.model & Dict.CM_OBJECT) != 0)
-                        && (element.tag.model & Dict.CM_INLINE) != 0)
-                    {
+                    else if (node.hasCM(Dict.CM_INLINE) && !node.is(TagId.A)
+                    		&& !node.hasCM(Dict.CM_OBJECT) && element.hasCM(Dict.CM_INLINE)) {
+                        /* retain an earlier inline element.
+                           This is implemented by setting the lexer into a mode
+                           where it gets tokens from the inline stack rather than
+                           from the input stream. Check if the scenerio fits. */
+                    	if (!element.is(TagId.A) && node.tag != element.tag
+                    			&& lexer.isPushed(node) && lexer.isPushed(element)) {
+                            /* we have something like
+                               <b>bold <i>bold and italic</b> italics</i> */
+                    		if (lexer.switchInline(element, node)) {
+                    			lexer.report.warning(lexer, element, node, ErrorCode.NON_MATCHING_ENDTAG);
+                    			lexer.ungetToken(); /* put this back */
+                    			lexer.inlineDup1(null, element); /* dupe the <i>, after </b> */
+                    			if ((mode & Lexer.PREFORMATTED) == 0) {
+                    				Node.trimSpaces(lexer, element);
+                    			}
+                    			return; /* close <i>, but will re-open it, after </b> */
+                    		}
+                    	}
+                    	
                         // allow any inline end tag to end current element
                         lexer.popInline(element);
 

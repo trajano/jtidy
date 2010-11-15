@@ -1595,6 +1595,7 @@ public class Lexer
         }
 
         // at start of block elements, unclosed inline
+        // elements are inserted into the token stream
         if (this.insert != -1 || this.inode != null)
         {
             return insertedToken();
@@ -3835,4 +3836,64 @@ public class Lexer
         }
         return false;
     }
+	
+	/*
+	   We have two CM_INLINE elements pushed ... the first is closing,
+	   but, like the browser, the second should be retained ...
+	   Like <b>bold <i>bold and italics</b> italics only</i>
+	   This function switches the tag positions on the stack,
+	   returning true if both were found in the expected order.
+	*/
+	protected boolean switchInline(final Node element, final Node node) {
+	    if (element != null && element.tag != null
+	    		&& node != null && node.tag != null
+	    		&& isPushed(element) && isPushed(node)
+	    		&& istack.size() - istackbase >= 2) {
+	        /* we have a chance of succeeding ... */
+	        for (int i = (istack.size() - istackbase - 1); i >= 0; --i) {
+	            if (istack.get(i).tag == element.tag) {
+	                /* found the element tag - phew */
+	                int istack1 = i;
+	                int istack2 = -1;
+	                --i; /* back one more, and continue */
+	                for ( ; i >= 0; --i) {
+	                    if (istack.get(i).tag == node.tag) {
+	                        /* found the element tag - phew */
+	                        istack2 = i;
+	                        break;
+	                    }
+	                }
+	                if (istack2 >= 0) {
+	                    /* perform the swap */
+	                    IStack tmp = istack.get(istack2);
+	                    istack.set(istack2, istack.get(istack1));
+	                    istack.set(istack1, tmp);
+	                    return true;
+	                }
+	            }
+	        }
+	    }
+	    return false;
+	}
+
+	/*
+	  We want to push a specific a specific element on the stack,
+	  but it may not be the last element, which InlineDup()
+	  would handle. Return true if found and inserted.
+	*/
+	protected boolean inlineDup1(final Node node, final Node element) {
+		int n;
+		if (element != null && element.tag != null
+				&& ((n = istack.size() - istackbase) > 0)) {
+			for (int i = n - 1; i >=0; --i ) {
+				if (istack.get(i).tag == element.tag) {
+					/* found our element tag - insert it */
+					insert = i;
+					inode = node;
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }
