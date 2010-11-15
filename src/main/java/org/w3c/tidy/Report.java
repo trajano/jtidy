@@ -373,7 +373,7 @@ public final class Report
      * @param p printWriter
      */
     public void showVersion(final PrintWriter p) {
-        printMessage(p, null, "version_summary", RELEASE_DATE_STRING);
+        printMessage(p, Level.SUMMARY, "version_summary", RELEASE_DATE_STRING);
     }
 
     /**
@@ -1035,7 +1035,7 @@ public final class Report
      */
     public void generalInfo(PrintWriter errout)
     {
-        printMessage(errout, null, "general_info");
+        printMessage(errout, Level.SUMMARY, "general_info");
     }
 
     /**
@@ -1095,7 +1095,7 @@ public final class Report
      */
     public void helpText(PrintWriter out)
     {
-        printMessage(out, null, "help_text", "Tidy", RELEASE_DATE_STRING);
+        printMessage(out, Level.SUMMARY, "help_text", "Tidy", RELEASE_DATE_STRING);
     }
 
     /**
