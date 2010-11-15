@@ -551,8 +551,8 @@ public final class Report
         }
         
         final String tagdesc = getTagName(node);
-        final String name = attribute == null ? null : attribute.attribute;
-        final String value = attribute == null ? null : attribute.value;
+        final String name = attribute == null || attribute.attribute == null ? "NULL" : attribute.attribute;
+        final String value = attribute == null || attribute.value == null ? "NULL" : attribute.value;
 
         switch (code)
         {
