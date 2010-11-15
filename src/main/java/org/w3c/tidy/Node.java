@@ -386,33 +386,20 @@ public class Node {
         }
     }
 
+	protected void insertAttributeAtEnd(final AttVal av) {
+		attributes = AttVal.addAttrToList(attributes, av);
+	}
+
     /**
      * Adds an attribute to the node.
      * @param name attribute name
      * @param value attribute value
      * @return 
      */
-    public AttVal addAttribute(String name, String value)
-    {
-        AttVal av = new AttVal(null, null, null, null, '"', name, value);
+    public AttVal addAttribute(final String name, final String value) {
+        final AttVal av = new AttVal(null, null, null, null, '"', name, value);
         av.dict = AttributeTable.getDefaultAttributeTable().findAttribute(av);
-
-        if (this.attributes == null)
-        {
-            this.attributes = av;
-        }
-        else
-        {
-            // append to end of attributes
-            AttVal here = this.attributes;
-
-            while (here.next != null)
-            {
-                here = here.next;
-            }
-
-            here.next = av;
-        }
+        insertAttributeAtEnd(av);
         return av;
     }
 

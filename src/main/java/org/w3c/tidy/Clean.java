@@ -1166,24 +1166,69 @@ public class Clean
         return false;
     }
 
-    /**
-     * Symptom: <code>&lt;div>&lt;div>...&lt;/div>&lt;/div></code> Action: merge the two divs. This is useful after
-     * nested &lt;dir>s used by Word for indenting have been converted to &lt;div>s.
-     * @param lexer Lexer
-     * @param node first div
-     * @return true if the divs have been merged
-     */
-    private boolean mergeDivs(final Lexer lexer, final Node node, final TriState state) {
-        if (state == TriState.No || !node.is(TagId.DIV)) {
+	/* Copy child attributes to node. Duplicate attributes are overwritten.
+	   Unique attributes (such as ID) disable the action.
+	   Attributes style and class are not dealt with. A call to MergeStyles
+	   will do that.
+	*/
+	private boolean copyAttrs(final Node node, final Node child) {
+		/* Detect attributes that cannot be merged or overwritten. */
+		if (child.getAttrById(AttrId.ID) != null && node.getAttrById(AttrId.ID) != null) {
+			return false;
+		}
+
+		/* Move child attributes to node. Attributes in node
+		 can be overwritten or merged. */
+		for (AttVal av2 = child.attributes; av2 != null; ) {
+			/* Dealt by MergeStyles. */
+			if (av2.is(AttrId.STYLE) || av2.is(AttrId.CLASS)) {
+				av2 = av2.next;
+				continue;
+			}
+			/* Avoid duplicates in node */
+			final AttrId id = av2.getId();
+			AttVal av1;
+			if (id != AttrId.UNKNOWN && (av1 = node.getAttrById(id)) != null) {
+				node.removeAttribute(av1);
+			}
+
+			/* Move attribute from child to node */
+			child.removeAttribute(av2);
+			av1 = av2;
+			av2 = av2.next;
+			av1.next = null;
+			node.insertAttributeAtEnd(av1);
+		}
+		return true;
+	}
+
+	/*
+	    Symptom <XX><XX>...</XX></XX>
+	    Action: merge the two XXs
+	
+	  For instance, this is useful after nested <dir>s used by Word
+	  for indenting have been converted to <div>s
+	
+	  If state is "no", no merging.
+	  If state is "yes", inner element is discarded. Only Style and Class
+	  attributes are merged using MergeStyles().
+	  If state is "auto", atttibutes are merged as described in CopyAttrs().
+	  Style and Class attributes are merged using MergeStyles().
+	*/
+    private boolean mergeNestedElements(final TagId id, final TriState state, final Node node) {
+        if (state == TriState.No || !node.is(id)) {
             return false;
         }
         
         final Node child = node.content;
 
-        if (child == null || child.next != null || !child.is(TagId.DIV)) {
+        if (child == null || child.next != null || !child.is(id)) {
             return false;
         }
 
+        if (state == TriState.Auto && !copyAttrs(node, child)) {
+        	return false;
+        }
         mergeStyles(node, child);
         stripOnlyChild(node);
         return true;
@@ -1504,6 +1549,7 @@ public class Clean
         Node[] o = new Node[1];
         boolean b = false;
         final TriState mergeDivs = lexer.configuration.getMergeDivs();
+        final TriState mergeSpans = lexer.configuration.getMergeSpans();
 
         for (next = node; node != null && node.isElement(); node = next)
         {
@@ -1532,10 +1578,11 @@ public class Clean
                 continue;
             }
 
-            b = mergeDivs(lexer, node, mergeDivs);
-            next = o[0];
-            if (b)
-            {
+            if (mergeNestedElements(TagId.DIV, mergeDivs, node)) {
+                continue;
+            }
+
+            if (mergeNestedElements(TagId.SPAN, mergeSpans, node)) {
                 continue;
             }
 

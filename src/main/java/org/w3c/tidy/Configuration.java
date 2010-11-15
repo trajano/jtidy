@@ -1253,6 +1253,14 @@ public class Configuration implements Serializable
 		return (TriState) getOptionEnum(Option.MergeDivs);
 	}
 
+	protected void setMergeSpans(final TriState mergeSpans) {
+		set(Option.MergeSpans, mergeSpans);
+	}
+
+	protected TriState getMergeSpans() {
+		return (TriState) getOptionEnum(Option.MergeSpans);
+	}
+
 	protected void setTidyCompat(final boolean tidyCompat) {
 		set(Option.TidyCompat, tidyCompat);
 	}
