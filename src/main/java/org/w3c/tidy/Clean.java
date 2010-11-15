@@ -1737,15 +1737,11 @@ public class Clean
      */
     public void bQ2Div(Node node)
     {
-        int indent;
-        String indentBuf;
-        AttVal attval;
-
         while (node != null)
         {
             if (node.is(TagId.BLOCKQUOTE) && node.implicit)
             {
-                indent = 1;
+                int indent = 1;
 
                 while (node.hasOneChild() && node.content.is(TagId.BLOCKQUOTE) && node.implicit)
                 {
@@ -1758,20 +1754,10 @@ public class Clean
                     bQ2Div(node.content);
                 }
 
-                indentBuf = "margin-left: " + (new Integer(2 * indent)).toString() + "em";
+                String indentBuf = "margin-left: " + 2 * indent + "em";
 
                 renameElem(node, TagId.DIV);
-
-                attval = node.getAttrByName("style");
-
-                if (attval != null && attval.value != null)
-                {
-                    attval.value = indentBuf + "; " + attval.value;
-                }
-                else
-                {
-                    node.addAttribute("style", indentBuf);
-                }
+                addStyleProperty(node, indentBuf);
             }
             else if (node.content != null)
             {
