@@ -12,7 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 import junit.framework.TestCase;
 
@@ -61,7 +63,11 @@ public class TidyTester extends TestCase {
 		}
     	final ByteArrayOutputStream os = new ByteArrayOutputStream();
     	final ByteArrayOutputStream es = new ByteArrayOutputStream();
-    	tidy.setErrout(new PrintWriter(es));
+    	try {
+			tidy.setErrout(new PrintWriter(new OutputStreamWriter(es, "UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			throw new RuntimeException(e);
+		}
     	tidy.setInputStreamName(fname);
     	tidy.parse(is, os);
     	int x = tidy.getParseErrors() > 0 ? 2 : tidy.getParseWarnings() > 0 ? 1 : 0;
@@ -74,16 +80,17 @@ public class TidyTester extends TestCase {
     		} catch (IOException e) {
     			os2 = new ByteArrayInputStream(new byte[0]);
     		}
-			diff("outputs", new ByteArrayInputStream(os.toByteArray()), os2);
+			diff("outputs", new ByteArrayInputStream(os.toByteArray()), os2, tidy.getOutputEncoding());
 			diff("messages", new ByteArrayInputStream(es.toByteArray()),
-					new BufferedInputStream(new FileInputStream(base + "output/msg_" + t + ".txt")));
+					new BufferedInputStream(new FileInputStream(base + "output/msg_" + t + ".txt")), "UTF-8");
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 		assertEquals(r, x);
     }
 
-    private static void diff(final String what, final InputStream s1, final InputStream s2) throws IOException {
+    private static void diff(final String what, final InputStream s1, final InputStream s2,
+    		final String encoding) throws IOException {
     	s1.mark(100000);
     	s2.mark(100000);
     	for (int x = 1; ; ++x) {
@@ -100,22 +107,34 @@ public class TidyTester extends TestCase {
     			}
     			s1.reset();
     			s2.reset();
-    			final BufferedReader br1 = new BufferedReader(new InputStreamReader(s1));
-    			final BufferedReader br2 = new BufferedReader(new InputStreamReader(s2));
+    			final BufferedReader br1 = new BufferedReader(new InputStreamReader(s1, encoding));
+    			final BufferedReader br2 = new BufferedReader(new InputStreamReader(s2, encoding));
     			String l1 = "";
     			String l2 = "";
+    			int l = 0;
     			while (true) {
+    				++l;
     				l1 = br1.readLine();
     				l2 = br2.readLine();
     				if (l1 == null && l2 != null || !l1.equals(l2)) {
     					break;
     				}
     			}
-    			l1 += '\n' + br1.readLine();
-    			l2 += '\n' + br2.readLine();
+    			final String out1 = l1 == null ? "[end of file]" : l1 + '\n' + br1.readLine();
+    			final String out2 = l2 == null ? "[end of file]" : l2 + '\n' + br2.readLine();
     			br1.close();
     			br2.close();
-    			fail(what + " differ at byte " + x + ":\nExpected:\n" + l2 + "\nActual:\n" + l1);
+    			int c = 0;
+    			if (l1 != null && l2 != null) {
+    				for (int i = 0; ; ++i) {
+						if (i >= l1.length() || i >= l2.length() || l1.charAt(i) != l2.charAt(i)) {
+							c = i + 1;
+							break;
+						}
+					}
+    			}
+    			fail(what + " differ at byte " + x + " (line " + l + " col " + c + "):\nExpected:\n" + out2
+    					+ "\nActual:\n" + out1);
     		}
     		if (b1 == -1) {
     			break;
