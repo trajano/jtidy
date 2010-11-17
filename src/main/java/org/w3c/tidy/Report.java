@@ -480,21 +480,11 @@ public final class Report
                 break;
             case VENDOR_SPECIFIC_CHARS:
                 lexer.badChars |= BC_VENDOR_SPECIFIC_CHARS;
-                messageLexer(
-                    code.code(),
-                    lexer,
-                    Level.WARNING,
-                    "invalid_char",
-                    replaceMode, buf);
+                messageLexer(code.code(), lexer, Level.WARNING, "invalid_char", replaceMode, c);
                 break;
             case INVALID_SGML_CHARS:
                 lexer.badChars |= BC_INVALID_SGML_CHARS;
-                messageLexer(
-                    code.code(),
-                    lexer,
-                    Level.WARNING,
-                    "invalid_char",
-                    replaceMode, buf);
+                messageLexer(code.code(), lexer, Level.WARNING, "invalid_char", replaceMode, c);
                 break;
             case INVALID_UTF8:
                 lexer.badChars |= BC_INVALID_UTF8;

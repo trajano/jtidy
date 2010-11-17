@@ -119,6 +119,8 @@ public class StreamInJavaImpl implements StreamIn
     private int tabsize;
 
     private int tabs;
+    
+    private Lexer lexer;
 
     /**
      * Instantiates a new StreamInJavaImpl.
@@ -259,6 +261,40 @@ public class StreamInJavaImpl implements StreamIn
             	return c;
             }
         }
+        
+        /* produced e.g. as a side-effect of smart quotes in Word */
+        /* but can't happen if using MACROMAN encoding */
+        if (127 < c && c < 160) {
+        	int c1 = 0;
+        	int replMode = Report.DISCARDED_CHAR;
+        	final String enc = lexer.configuration.getInCharEncodingName();
+        	final String repl = lexer.configuration.getReplacementCharEncoding();
+        	boolean isVendorChar = ("WIN1252".equals(enc) || "MACROMAN".equals(enc));
+        	boolean isWinChar = ("WIN1252".equals(enc) || "WIN1252".equals(repl));
+        	boolean isMacChar = ("MACROMAN".equals(enc) || "MACROMAN".equals(repl));
+        	
+        	/* set error position just before offending character */
+        	lexer.lines = curline;
+        	lexer.columns = curcol;
+        	
+        	if (isWinChar) {
+        		c1 = EncodingUtils.decodeWin1252(c);
+        	}
+        	else if (isMacChar) {
+        		c1 = EncodingUtils.decodeMacRoman(c);
+        	}
+        	if (c1 != 0) {
+        		replMode = Report.REPLACED_CHAR;
+        	}
+        	
+        	if (c1 == 0 && isVendorChar) {
+        		lexer.report.encodingError(lexer, ErrorCode.VENDOR_SPECIFIC_CHARS, c, replMode);
+        	}
+        	else if (!isVendorChar) {
+        		lexer.report.encodingError(lexer, ErrorCode.INVALID_SGML_CHARS, c, replMode);
+        	}
+        	c = c1;
+        }
 
         this.curcol++;
         return c;
@@ -333,9 +369,8 @@ public class StreamInJavaImpl implements StreamIn
     /**
      * @see org.w3c.tidy.StreamIn#setLexer(org.w3c.tidy.Lexer)
      */
-    public void setLexer(Lexer lexer)
-    {
-        // unused in the java implementation
+    public void setLexer(final Lexer lexer) {
+    	this.lexer = lexer;
     }
 
 }
