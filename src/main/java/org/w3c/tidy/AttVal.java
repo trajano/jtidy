@@ -443,7 +443,7 @@ public class AttVal extends Object implements Cloneable
     }
     
     public boolean hasValue() {
-    	return value != null;
+    	return value != null && value.length() > 0;
     }
     
     public boolean valueIs(final String val) {

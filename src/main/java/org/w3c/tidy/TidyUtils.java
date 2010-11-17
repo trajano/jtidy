@@ -658,7 +658,6 @@ public final class TidyUtils
     public static String getString(final byte[] bytes, final int offset, final int length) {
         try {
             return new String(bytes, offset, Math.min(length, bytes.length - offset), "UTF8");
-            // FIXME use null for empty in tidy compatibility mode, required for test 431964 
         } catch (UnsupportedEncodingException e) {
             throw new Error("UTF-8 to string conversion failed: " + e.getMessage());
         }
