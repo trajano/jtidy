@@ -303,16 +303,6 @@ public class Configuration implements Serializable
     private int definedTags;
 
     /**
-     * Input character encoding (defaults to "ISO8859_1").
-     */
-    private String inCharEncoding = "ISO8859_1";
-
-    /**
-     * Output character encoding (defaults to "ASCII").
-     */
-    private String outCharEncoding = "ASCII";
-
-    /**
      * Avoid mapping values > 127 to entities.
      */
     private boolean rawOut;
@@ -397,6 +387,37 @@ public class Configuration implements Serializable
             Object value = flag.getParser().parse(stringValue, flag, this);
             options.put(flag, value);
         }
+    }
+
+    /* ensure that char encodings are self consistent */
+    protected boolean adjustCharEncoding(final String encoding) {
+    	final String enc = EncodingNameMapper.toJava(encoding);
+        String outenc = null;
+        String inenc = null;
+        
+        if ("MacRoman".equals(enc) || "Cp1252".equals(enc) || "Cp858".equals(enc)
+        		|| "ISO8859_15".equals(enc)) {
+            inenc = enc;
+            outenc = "ASCII";
+        }
+        else if ("ASCII".equals(enc)) {
+            inenc = "ISO8859_1";
+            outenc = "ASCII";
+        }
+        for (String s : ENCODING_NAMES) {
+        	if (s.equals(enc)) {
+        		inenc = outenc = enc;
+        		break;
+        	}
+        }
+
+        if (inenc != null) {
+        	set(Option.CharEncoding, enc);
+        	set(Option.InCharEncoding, inenc);
+        	set(Option.OutCharEncoding, outenc);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -518,21 +539,18 @@ public class Configuration implements Serializable
      * Getter for <code>inCharEncodingName</code>.
      * @return Returns the inCharEncodingName.
      */
-    protected String getInCharEncodingName()
-    {
-        return this.inCharEncoding;
+    protected String getInCharEncodingName() {
+        return getString(Option.InCharEncoding);
     }
 
     /**
      * Setter for <code>inCharEncodingName</code>.
      * @param encoding The inCharEncodingName to set.
      */
-    protected void setInCharEncodingName(String encoding)
-    {
-        String javaEncoding = EncodingNameMapper.toJava(encoding);
-        if (javaEncoding != null)
-        {
-            this.inCharEncoding = javaEncoding;
+    protected void setInCharEncodingName(final String encoding) {
+        final String javaEncoding = EncodingNameMapper.toJava(encoding);
+        if (javaEncoding != null) {
+        	set(Option.InCharEncoding, javaEncoding);
         }
     }
 
@@ -540,21 +558,18 @@ public class Configuration implements Serializable
      * Getter for <code>outCharEncodingName</code>.
      * @return Returns the outCharEncodingName.
      */
-    protected String getOutCharEncodingName()
-    {
-        return this.outCharEncoding;
+    protected String getOutCharEncodingName() {
+        return getString(Option.OutCharEncoding);
     }
 
     /**
      * Setter for <code>outCharEncodingName</code>.
      * @param encoding The outCharEncodingName to set.
      */
-    protected void setOutCharEncodingName(String encoding)
-    {
-        String javaEncoding = EncodingNameMapper.toJava(encoding);
-        if (javaEncoding != null)
-        {
-            this.outCharEncoding = javaEncoding;
+    protected void setOutCharEncodingName(final String encoding) {
+        final String javaEncoding = EncodingNameMapper.toJava(encoding);
+        if (javaEncoding != null) {
+        	set(Option.OutCharEncoding, javaEncoding);
         }
     }
 

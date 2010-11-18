@@ -342,10 +342,8 @@ public final class ParsePropertyImpl
             {
                 configuration.setOutCharEncodingName(value);
             }
-            else if ("char-encoding".equalsIgnoreCase(name))
-            {
-                configuration.setInCharEncodingName(value);
-                configuration.setOutCharEncodingName(value);
+            else if ("char-encoding".equalsIgnoreCase(name)) {
+            	configuration.adjustCharEncoding(value);
             }
 
             return null;
