@@ -1284,4 +1284,12 @@ public class Configuration implements Serializable
 	public void setPunctWrap(final boolean punctWrap) {
 		set(Option.PunctWrap, punctWrap);
 	}
+
+	public boolean isDecorateInferredUL() {
+		return getBool(Option.DecorateInferredUL);
+	}
+	
+	public void setDecorateInferredUL(final boolean decorateInferredUL) {
+		set(Option.DecorateInferredUL, decorateInferredUL);
+	}
 }

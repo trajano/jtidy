@@ -881,7 +881,7 @@ public final class ParserImpl
                     {
                         lexer.ungetToken();
                         node = lexer.inferredTag(TagId.UL);
-                        node.addClass("noindent");
+                        lexer.addClassNoIndent(node);
                         lexer.excludeBlocks = true;
                     }
                     else if ((node.tag.model & Dict.CM_DEFLIST) != 0)
@@ -2297,7 +2297,7 @@ public final class ParserImpl
                         {
                             lexer.ungetToken();
                             node = lexer.inferredTag(TagId.UL);
-                            node.addClass("noindent");
+                            lexer.addClassNoIndent(node);
                             lexer.excludeBlocks = true;
                         }
                         else if ((node.tag.model & Dict.CM_DEFLIST) != 0)
@@ -2382,7 +2382,7 @@ public final class ParserImpl
                             }
 
                             node = lexer.inferredTag(TagId.UL);
-                            node.addClass("noindent");
+                            lexer.addClassNoIndent(node);
                         }
                         else if ((node.tag.model & Dict.CM_DEFLIST) != 0)
                         {

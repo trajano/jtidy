@@ -383,6 +383,11 @@ public class Lexer
     private List<Node> nodeList;
     
     protected String givenDoctype;
+    
+    /**
+     * sequential number for generated css classes.
+     */
+    private int classNum;
 
     /**
      * Instantiates a new Lexer.
@@ -3896,4 +3901,30 @@ public class Lexer
 		}
 		return false;
 	}
+	
+	protected void addClassNoIndent(final Node node) {
+		final String sprop = "padding-left: 2ex; margin-left: 0ex; margin-top: 0ex; margin-bottom: 0ex";
+		if (!configuration.isDecorateInferredUL()) {
+			return;
+		}
+		if (configuration.isMakeClean()) {
+			Clean.addStyleAsClass(this, node, sprop);
+		}
+		else {
+			Clean.addStyleProperty(node, sprop);
+		}
+	}
+	
+	/**
+     * Generates a new css class name.
+     * @param lexer Lexer
+     * @return generated css class
+     */
+    protected String gensymClass() {
+        String pfx = configuration.getCssPrefix();
+        if (pfx == null) {
+        	pfx = "c";
+        }
+        return pfx + ++classNum;
+    }
 }

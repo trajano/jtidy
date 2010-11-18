@@ -93,11 +93,6 @@ public class Clean
     private static final String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
 
     /**
-     * sequential number for generated css classes.
-     */
-    private int classNum;
-
-    /**
      * Tag table.
      */
     private TagTable tt;
@@ -288,26 +283,13 @@ public class Clean
     }
 
     /**
-     * Generates a new css class name.
-     * @param lexer Lexer
-     * @return generated css class
-     */
-    private String gensymClass(final Lexer lexer) {
-        String pfx = lexer.configuration.getCssPrefix();
-        if (pfx == null) {
-        	pfx = "c";
-        }
-        return pfx + ++classNum;
-    }
-
-    /**
      * Finds a css style.
      * @param lexer Lexer
      * @param tag tag name
      * @param properties css properties
      * @return style string
      */
-    private String findStyle(Lexer lexer, String tag, String properties)
+    private static String findStyle(Lexer lexer, String tag, String properties)
     {
         Style style;
 
@@ -319,9 +301,14 @@ public class Clean
             }
         }
 
-        style = new Style(tag, gensymClass(lexer), properties, lexer.styles);
+        style = new Style(tag, lexer.gensymClass(), properties, lexer.styles);
         lexer.styles = style;
         return style.tagClass;
+    }
+    
+    protected static void addStyleAsClass(final Lexer lexer, final Node node, final String stylevalue) {
+    	final String classname = findStyle(lexer, node.element, stylevalue);
+    	node.addClass(classname);
     }
 
     /**
