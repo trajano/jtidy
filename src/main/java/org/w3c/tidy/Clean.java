@@ -1491,8 +1491,8 @@ public class Clean
             }
 
             // if FONT is only child of parent element then leave alone
-            if (node.parent.content == node && node.next == null)
-            {
+            // Do so only if blockStyle may be succesful.
+            if (node.parent.content == node && node.next == null && canApplyBlockStyle(node.parent)) {
                 return false;
             }
 
