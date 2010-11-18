@@ -3747,7 +3747,7 @@ public class Lexer
                     	AttrCheckImpl.URL.check(this, node, si);
                     }
                     if (node.element == null || !TidyUtils.isValidXMLID(node.element)) {
-                        report.error(this, null, null, ErrorCode.MALFORMED_DOCTYPE);
+                        report.warning(this, null, null, ErrorCode.MALFORMED_DOCTYPE);
                         return null;
                     }
 //    #ifdef TIDY_STORE_ORIGINAL_TEXT
@@ -3816,7 +3816,7 @@ public class Lexer
         }
 
         /* document type declaration not finished */
-        report.error(this, null, null, ErrorCode.MALFORMED_DOCTYPE);
+        report.warning(this, null, null, ErrorCode.MALFORMED_DOCTYPE);
         return null;
     }
 
