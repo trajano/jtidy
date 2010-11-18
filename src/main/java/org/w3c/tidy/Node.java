@@ -857,16 +857,18 @@ public class Node {
      * @param element document
      * @param doctype doctype node to insert at the beginning of element
      */
-    public static void insertDocType(Lexer lexer, Node element, Node doctype)
-    {
-        lexer.report.warning(lexer, element, doctype, ErrorCode.DOCTYPE_AFTER_TAGS);
-
-        while (!element.is(TagId.HTML))
-        {
-            element = element.parent;
-        }
-
-        insertNodeBeforeElement(element, doctype);
+    public static void insertDocType(final Lexer lexer, Node element, final Node doctype) {
+    	Node existing = lexer.root.findDocType();
+    	if (existing != null) {
+    		lexer.report.warning(lexer, element, doctype, ErrorCode.DISCARDING_UNEXPECTED);
+    	}
+    	else {
+    		lexer.report.warning(lexer, element, doctype, ErrorCode.DOCTYPE_AFTER_TAGS);
+    		while (!element.is(TagId.HTML)) {
+    			element = element.parent;
+    		}
+    		insertNodeBeforeElement(element, doctype);
+    	}
     }
 
     /**
