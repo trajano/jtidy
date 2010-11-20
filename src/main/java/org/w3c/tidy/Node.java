@@ -320,40 +320,28 @@ public class Node {
                     // this doesn't handle CSS comments and leading/trailing white-space very well see
                     // http://www.w3.org/TR/css-style-attr
 
-                    int end = second.value.length() - 1;
+                    int end = first.value.length() - 1;
 
-                    if (second.value.charAt(end) == ';')
+                    if (first.value.charAt(end) == ';')
                     {
                         // attribute ends with declaration seperator
-                        second.value = second.value + " " + first.value;
+                    	first.value = first.value + " " + second.value;
                     }
-                    else if (second.value.charAt(end) == '}')
+                    else if (first.value.charAt(end) == '}')
                     {
                         // attribute ends with rule set
-                        second.value = second.value + " { " + first.value + " }";
+                    	first.value = first.value + " { " + second.value + " }";
                     }
                     else
                     {
                         // attribute ends with property value
-                        second.value = second.value + "; " + first.value;
+                    	first.value = first.value + "; " + second.value;
                     }
 
-                    temp = first.next;
-
-                    if (temp.next == null)
-                    {
-                        second = null;
-                    }
-                    else
-                    {
-                        second = second.next;
-                    }
-
-                    lexer.report.attrError(lexer, this, first, ErrorCode.JOINING_ATTRIBUTE);
-
-                    removeAttribute(first);
-                    first = temp;
-
+                    temp = second.next;
+                    lexer.report.attrError(lexer, this, second, ErrorCode.JOINING_ATTRIBUTE);
+                    removeAttribute(second);
+                    second = temp;
                 }
                 else if (lexer.configuration.getDuplicateAttrs() == DupAttrModes.KeepLast)
                 {
