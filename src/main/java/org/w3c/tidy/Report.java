@@ -551,7 +551,8 @@ public final class Report
                 break;
                 
             case INSERTING_ATTRIBUTE:
-            case MISSING_ATTR_VALUE :
+            case MISSING_ATTR_VALUE:
+            case JOINING_ATTRIBUTE:
             	messageNode(lexer, Level.WARNING, node, code, tagdesc, name);
                 break;
 
@@ -640,14 +641,6 @@ public final class Report
 
             case ENTITY_IN_ID :
                 messageLexer(lexer, Level.WARNING, code);
-                break;
-
-            case JOINING_ATTRIBUTE :
-                messageLexer(
-                    lexer,
-                    Level.WARNING,
-                    code,
-                    getTagName(node), attribute.attribute);
                 break;
 
             case UNEXPECTED_EQUALSIGN :

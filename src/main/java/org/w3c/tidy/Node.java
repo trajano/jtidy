@@ -313,29 +313,25 @@ public class Node {
                     removeAttribute(first);
                     first = temp;
                 }
-                else if ("style".equalsIgnoreCase(second.attribute) && lexer.configuration.isJoinStyles())
-                {
+                else if (first.is(AttrId.STYLE) && lexer.configuration.isJoinStyles()) {
                     // concatenate styles
 
                     // this doesn't handle CSS comments and leading/trailing white-space very well see
                     // http://www.w3.org/TR/css-style-attr
 
-                    int end = first.value.length() - 1;
+                    final int end = first.value.length();
 
-                    if (first.value.charAt(end) == ';')
-                    {
+                    if (end > 0 && first.value.charAt(end - 1) == ';') {
                         // attribute ends with declaration seperator
                     	first.value = first.value + " " + second.value;
                     }
-                    else if (first.value.charAt(end) == '}')
-                    {
+                    else if (end > 0 && first.value.charAt(end - 1) == '}') {
                         // attribute ends with rule set
                     	first.value = first.value + " { " + second.value + " }";
                     }
-                    else
-                    {
+                    else {
                         // attribute ends with property value
-                    	first.value = first.value + "; " + second.value;
+                    	first.value = first.value + (end > 0 ? "; " : "") + second.value;
                     }
 
                     temp = second.next;

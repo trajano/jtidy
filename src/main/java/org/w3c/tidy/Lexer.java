@@ -770,8 +770,11 @@ public class Lexer
         }
 
         final Entity ent = EntityTable.getDefaultEntityTable().entityInfo(str, isXml);
-        final boolean found = ent != null;
+        boolean found = ent != null;
         int ch = found ? ent.getCode() : 0;
+        if (found && ch == 0 && !configuration.isTidyCompat()) {
+       		found = false;
+        }
         final int entver = found ? ent.getVersions() : isXml ? VERS_XML : VERS_PROPRIETARY;
 
         // deal with unrecognized or invalid entities
@@ -3288,6 +3291,14 @@ public class Lexer
             }
 
             value = parseValue(attribute, false, isempty, delim);
+            if (value != null) {
+            	final int x = value.indexOf(0);
+            	if (x >= 0 && configuration.isTidyCompat()) {
+	            	// workaround to emulate broken Tidy behavior in compatibility mode
+            		// invalid entity becomes character 0 that terminates the C string, see test 1062345
+	            	value = value.substring(0, x);
+            	}
+            }
 
             if (attribute != null && isValidAttrName(attribute))
             {
