@@ -3043,8 +3043,10 @@ public class Lexer
 
                 addCharToLexer(c);
                 parseEntity((short) 0);
+                if (lexbuf[lexsize - 1] == '\n' && munge) {
+                    changeChar((byte)' ');
+                }
                 continue;
-
             }
 
             // kludge for JavaScript attribute values with line continuations in string literals
