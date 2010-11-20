@@ -2843,9 +2843,8 @@ public final class ParserImpl
                     if (node.type != NodeType.EndTag)
                     {
                         lexer.ungetToken();
+                        return;
                     }
-
-                    return;
                 }
 
                 if (node.type == NodeType.EndTag)
