@@ -1202,59 +1202,48 @@ public class Node {
         }
     }
 
+    protected String toString(final String indent) {
+    	final StringBuilder sb = new StringBuilder();
+    	sb.append(type);
+    	if (element != null) {
+    		sb.append(':').append(element);
+    	}
+        if (type == NodeType.TextNode || type == NodeType.CommentTag || type == NodeType.ProcInsTag) {
+            if (textarray != null && start <= end) {
+                sb.append(" \"");
+                sb.append(TidyUtils.getString(textarray, start, end - start));
+                sb.append('"');
+            }
+            else {
+            	sb.append(" null");
+            }
+        }
+        for (AttVal av = attributes; av != null; av = av.next) {
+        	sb.append(' ').append(av.attribute).append('=');
+        	if (av.value == null) {
+        		sb.append("null");
+        	}
+        	else {
+        		sb.append('"').append(av.value).append('"');
+        	}
+        }
+        if (content != null) {
+        	sb.append("\n ").append(indent);
+        	sb.append(content.toString(indent + ' '));
+        }
+        if (next != null) {
+        	sb.append('\n').append(indent);
+        	sb.append(next.toString(indent));
+        }
+        return sb.toString();
+    }
+
     /**
      * @see java.lang.Object#toString()
      */
     @Override
-	public String toString()
-    {
-        String s = "";
-        Node n = this;
-
-        while (n != null)
-        {
-            s += "[Node type=";
-            s += n.type;
-            s += ",element=";
-            if (n.element != null)
-            {
-                s += n.element;
-            }
-            else
-            {
-                s += "null";
-            }
-            if (n.type == NodeType.TextNode || n.type == NodeType.CommentTag || n.type == NodeType.ProcInsTag)
-            {
-                s += ",text=";
-                if (n.textarray != null && n.start <= n.end)
-                {
-                    s += "\"";
-                    s += TidyUtils.getString(n.textarray, n.start, n.end - n.start);
-                    s += "\"";
-                }
-                else
-                {
-                    s += "null";
-                }
-            }
-            s += ",content=";
-            if (n.content != null)
-            {
-                s += n.content.toString();
-            }
-            else
-            {
-                s += "null";
-            }
-            s += "]";
-            if (n.next != null)
-            {
-                s += ",";
-            }
-            n = n.next;
-        }
-        return s;
+	public String toString() {
+    	return toString("");
     }
 
     /**
