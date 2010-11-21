@@ -1267,6 +1267,11 @@ public class Clean
             {
                 return false;
             }
+            
+            /* check list has no peers */
+            if (list.next != null) {
+            	return false;
+            }
 
             pnode[0] = list; // Set node to resume iteration
 
