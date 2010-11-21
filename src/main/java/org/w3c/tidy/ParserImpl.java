@@ -803,18 +803,6 @@ public final class ParserImpl
                         continue;
                     }
 
-                    if (lexer.configuration.isEncloseBodyText() && !iswhitenode)
-                    {
-                        Node para;
-
-                        lexer.ungetToken();
-                        para = lexer.inferredTag(TagId.P);
-                        body.insertNodeAtEnd(para);
-                        parseTag(lexer, para, mode);
-                        mode = Lexer.MIXED_CONTENT;
-                        continue;
-                    }
-
                     // HTML2 and HTML4 strict doesn't allow text here
                     lexer.constrainVersion(~(VERS_HTML40_STRICT | VERS_HTML20));
 
@@ -2158,24 +2146,6 @@ public final class ParserImpl
                 // mixed content model permits text
                 if (node.type == NodeType.TextNode)
                 {
-                    boolean iswhitenode = false;
-
-                    if (node.type == NodeType.TextNode
-                        && node.end <= node.start + 1
-                        && lexer.lexbuf[node.start] == (byte) ' ')
-                    {
-                        iswhitenode = true;
-                    }
-
-                    if (lexer.configuration.isEncloseBlockText() && !iswhitenode)
-                    {
-                        lexer.ungetToken();
-                        node = lexer.inferredTag(TagId.P);
-                        element.insertNodeAtEnd(node);
-                        parseTag(lexer, node, Lexer.MIXED_CONTENT);
-                        continue;
-                    }
-
                     if (checkstack)
                     {
                         checkstack = false;
@@ -2423,17 +2393,6 @@ public final class ParserImpl
                 {
                     if (TidyUtils.toBoolean(node.tag.model & Dict.CM_INLINE))
                     {
-                        // DSR - 27Apr02 ensure we wrap anchors and other inline content
-                        // fgiust: commented out due to [1403105]: java.lang.StackOverflowError in Tidy.parseDOM()
-                        // if (lexer.configuration.encloseBlockText)
-                        // {
-                        // lexer.ungetToken();
-                        // node = lexer.inferredTag(TagId.P);
-                        // element.insertNodeAtEnd(node);
-                        // parseTag(lexer, node, Lexer.MIXED_CONTENT);
-                        // continue;
-                        // }
-
                         if (checkstack && !node.implicit)
                         {
                             checkstack = false;
@@ -3505,6 +3464,70 @@ public final class ParserImpl
         }
     }
 
+    private static boolean nodeCMIsOnlyInline(final Node node) {
+        return node.hasCM(Dict.CM_INLINE) && !node.hasCM(Dict.CM_BLOCK);
+    }
+    
+    private static void encloseBodyText(final Lexer lexer) {
+        Node body = lexer.root.findBody();
+        if (body == null) { 
+            return;
+        }
+        Node node = body.content;
+
+        while (node != null) {
+            if ((node.isText() && !node.isBlank(lexer)) ||
+            		(node.isElement() && nodeCMIsOnlyInline(node))) {
+                Node p = lexer.inferredTag(TagId.P);
+                Node.insertNodeBeforeElement(node, p);
+                while (node != null && (!node.isElement() || nodeCMIsOnlyInline(node))) {
+                    Node next = node.next;
+                    node.removeNode();
+                    p.insertNodeAtEnd(node);
+                    node = next;
+                }
+                Node.trimSpaces(lexer, p);
+                continue;
+            }
+            node = node.next;
+        }
+    }
+
+    /* <form>, <blockquote> and <noscript> do not allow #PCDATA in
+       HTML 4.01 Strict (%block; model instead of %flow;).
+      When requested, text nodes in these elements are wrapped in <p>. */
+    private static void encloseBlockText(final Lexer lexer, Node node) {
+        while (node != null) {
+            Node next = node.next;
+
+            if (node.content != null) {
+                encloseBlockText(lexer, node.content);
+            }
+
+            if (!(node.is(TagId.FORM) || node.is(TagId.NOSCRIPT) ||
+                  node.is(TagId.BLOCKQUOTE)) || node.content == null) {
+                node = next;
+                continue;
+            }
+            Node block = node.content;
+
+            if ((block.isText() && !block.isBlank(lexer)) ||
+            		(block.isElement() && nodeCMIsOnlyInline(block))) {
+            	Node p = lexer.inferredTag(TagId.P);
+                Node.insertNodeBeforeElement(block, p);
+                while (block != null && (!block.isElement() || nodeCMIsOnlyInline(block))) {
+                    Node tempNext = block.next;
+                    block.removeNode();
+                    p.insertNodeAtEnd(block);
+                    block = tempNext;
+                }
+                Node.trimSpaces(lexer, p);
+                continue;
+            }
+            node = next;
+        }
+    }
+
     /**
      * HTML is the top level element.
      */
@@ -3592,7 +3615,13 @@ public final class ParserImpl
         attributeChecks(lexer, lexer.root);
         dropEmptyElements(lexer, lexer.root);
         cleanSpaces(lexer, lexer.root);
-
+        
+        if (lexer.configuration.isEncloseBodyText()) {
+            encloseBodyText(lexer);
+        }
+        if (lexer.configuration.isEncloseBlockText()) {
+            encloseBlockText(lexer, lexer.root);
+        }
         return document;
     }
 
