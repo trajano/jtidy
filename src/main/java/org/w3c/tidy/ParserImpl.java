@@ -1688,6 +1688,11 @@ public final class ParserImpl
                         lexer.report.warning(lexer, list, node, ErrorCode.MISSING_ENDTAG_BEFORE);
                         return;
                     }
+                    /* In exiled mode, return so table processing can continue. */
+                    else if (lexer.exiled && (node.hasCM(Dict.CM_TABLE | Dict.CM_ROWGRP | Dict.CM_ROW)
+                    		|| node.is(TagId.TABLE))) {
+                    	return;
+                    }
 
                     /* http://tidy.sf.net/issue/836462
                     If "list" is an unordered list, insert the next tag within 
@@ -2369,6 +2374,10 @@ public final class ParserImpl
                         }
                         else if ((node.tag.model & Dict.CM_TABLE) != 0 || (node.tag.model & Dict.CM_ROW) != 0)
                         {
+                        	/* In exiled mode, return so table processing can continue. */
+                        	if (lexer.exiled) {
+                                return;
+                        	}
                             node = lexer.inferredTag(TagId.TABLE);
                         }
                         else if ((element.tag.model & Dict.CM_OBJECT) != 0)
