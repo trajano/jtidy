@@ -2945,6 +2945,8 @@ public final class ParserImpl
                         Node.moveBeforeTable(row, node);
                         lexer.report.warning(lexer, row, node, ErrorCode.TAG_NOT_ALLOWED_IN);
                         lexer.exiled = true;
+                        excludeState = lexer.excludeBlocks;
+                        lexer.excludeBlocks = false;
 
                         if (node.type != NodeType.TextNode)
                         {
@@ -2952,6 +2954,7 @@ public final class ParserImpl
                         }
 
                         lexer.exiled = false;
+                        lexer.excludeBlocks = excludeState;
                         continue;
                     }
                     else if ((node.tag.model & Dict.CM_HEAD) != 0)
