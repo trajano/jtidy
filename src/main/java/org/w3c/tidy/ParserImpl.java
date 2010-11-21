@@ -1171,7 +1171,10 @@ public final class ParserImpl
                     && !node.is(TagId.FONT)
                     && !node.is(TagId.BIG)
                     && !node.is(TagId.SMALL)
-                    && !node.is(TagId.Q))
+                	&& !node.is(TagId.SUB)
+                    && !node.is(TagId.SUP)
+                    && !node.is(TagId.Q)
+                    && !node.is(TagId.SPAN))
                 {
                     if (element.content != null && node.attributes == null
                     		&& element.last.isText() && !lexer.textNodeEndWithSpace(element.last)) {
