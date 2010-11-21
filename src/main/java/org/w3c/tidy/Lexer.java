@@ -2114,8 +2114,7 @@ public class Lexer
                         continue;
                     }
 
-                    end_comment : while (true)
-                    {
+                    while (true) {
                         c = this.in.readChar();
 
                         if (c == '>')
@@ -2170,17 +2169,17 @@ public class Lexer
                             this.lexbuf[this.lexsize - 2] = (byte) '=';
                         }
 
-                        addCharToLexer(c);
-
                         // if '-' then look for '>' to end the comment
-                        if (c != '-')
-                        {
-                            break end_comment;
+                        if (c == '-') {
+                        	addCharToLexer(c);
                         }
-
+                        else {
+                        	// otherwise continue to look for -->
+                            this.lexbuf[this.lexsize - 1] = (byte) '=';
+                            addCharToLexer(c);
+                        	break;
+                        }
                     }
-                    // otherwise continue to look for -->
-                    this.lexbuf[this.lexsize - 2] = (byte) '=';
                     continue;
 
                 case LEX_DOCTYPE :
