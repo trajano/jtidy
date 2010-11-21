@@ -632,11 +632,7 @@ public final class Report
                 break;
 
             case ANCHOR_NOT_UNIQUE :
-                messageLexer(
-                    lexer,
-                    Level.WARNING,
-                    code,
-                    getTagName(node), attribute.value);
+                messageNode(lexer, Level.WARNING, node, code, tagdesc, value);
                 break;
 
             case ENTITY_IN_ID :
