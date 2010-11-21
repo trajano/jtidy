@@ -1296,14 +1296,10 @@ public class Clean
                     node = list;
                     list = node.prev;
 
-                    list.next = node.next;
-
-                    if (list.next != null)
-                    {
-                        list.next.prev = list;
-                    }
-
                     child = list.last; /* <li> */
+
+                    list.next = node.next;
+                    fixNodeLinks(list);
 
                     node.parent = child;
                     node.next = null;
