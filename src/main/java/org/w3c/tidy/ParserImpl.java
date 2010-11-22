@@ -1246,6 +1246,14 @@ public final class ParserImpl
                     continue;
                 }
 
+                /* <p> allowed within <address> in HTML 4.01 Transitional */
+                if (node.is(TagId.P) && node.type == NodeType.StartTag && element.is(TagId.ADDRESS)) {
+                	lexer.constrainVersion(~VERS_HTML40_STRICT);
+                	element.insertNodeAtEnd(node);
+                	parseTag(lexer, node, mode);
+                    continue;
+                }
+
                 // ignore unknown and PARAM tags
                 if (node.tag == null || node.is(TagId.PARAM))
                 {
