@@ -66,6 +66,11 @@ import org.w3c.dom.Attr;
  */
 public class AttVal extends Object implements Cloneable
 {
+	/**
+     * Special empty string object to mark strings that (wrongly) end up empty in Tidy (the C library);
+     * normally Tidy uses null for empty strings and checks values based on that
+     */
+    protected static final String EMPTY = new String();
 
     /**
      * next AttVal.
@@ -443,7 +448,7 @@ public class AttVal extends Object implements Cloneable
     }
     
     public boolean hasValue() {
-    	return value != null && value.length() > 0;
+    	return value != null && value.length() > 0 || value == EMPTY;
     }
     
     public boolean valueIs(final String val) {

@@ -3296,6 +3296,10 @@ public class Lexer
 	            	// workaround to emulate broken Tidy behavior in compatibility mode
             		// invalid entity becomes character 0 that terminates the C string, see test 1062345
 	            	value = value.substring(0, x);
+	            	if (value.length() == 0) {
+	            		// use this special object to mark that the attribute is still considered to have a value
+	            		value = AttVal.EMPTY;
+	            	}
             	}
             }
 

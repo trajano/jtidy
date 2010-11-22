@@ -828,13 +828,17 @@ public class Clean
         String[] sizes = {"60%", "70%", "80%", null, "120%", "150%", "200%"};
         String buf;
 
-        if (size.length() > 0 && '0' <= size.charAt(0) && size.charAt(0) <= '6')
+        if (size.length() == 0) {
+        	return null;
+        }
+
+        if ('0' <= size.charAt(0) && size.charAt(0) <= '6')
         {
             int n = size.charAt(0) - '0';
             return sizes[n];
         }
 
-        if (size.length() > 0 && size.charAt(0) == '-')
+        if (size.charAt(0) == '-')
         {
             if (size.length() > 1 && '0' <= size.charAt(1) && size.charAt(1) <= '6')
             {
