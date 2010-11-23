@@ -2145,8 +2145,7 @@ public class Clean
             if (node.is(TagId.HTML))
             {
                 // check that it's a Word 2000 document
-                if ((node.getAttrByName("xmlns:o") == null))
-                {
+                if (node.getAttrByName("xmlns:o") == null && !lexer.configuration.isMakeBare()) {
                     return;
                 }
                 lexer.configuration.tt.freeAttrs(node);
@@ -2357,8 +2356,7 @@ public class Clean
                     continue;
                 }
 
-                if (!"generator".equals(attval.value))
-                {
+                if (!attval.valueIs("generator")) {
                     continue;
                 }
 
