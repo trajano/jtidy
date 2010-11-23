@@ -148,40 +148,11 @@ public final class TagCheckImpl
      */
     public static class CheckHTML implements TagCheck
     {
-
-        /**
-         * xhtml namepace String.
-         */
-        private static final String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
-
         /**
          * @see org.w3c.tidy.TagCheck#check(org.w3c.tidy.Lexer, org.w3c.tidy.Node)
          */
-        public void check(Lexer lexer, Node node)
-        {
-
-            AttVal attval;
-            AttVal xmlns;
-
-            xmlns = node.getAttrByName("xmlns");
-
-            if (xmlns != null && XHTML_NAMESPACE.equals(xmlns.value))
-            {
-                lexer.isvoyager = true;
-                if (!lexer.configuration.isHtmlOut()) // Unless user has specified plain HTML output,
-                {
-                    lexer.configuration.setXHTML(true); // output format will be XHTML.
-                }
-                // adjust other config options, just as in Configuration
-                lexer.configuration.setXmlOut(true);
-                lexer.configuration.setUpperCaseTags(false);
-                lexer.configuration.setUpperCaseAttrs(false);
-            }
-
-            for (attval = node.attributes; attval != null; attval = attval.next)
-            {
-                attval.checkAttribute(lexer, node);
-            }
+        public void check(Lexer lexer, Node node) {
+        	node.checkAttributes(lexer);
         }
 
     }

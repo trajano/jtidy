@@ -530,16 +530,6 @@ public final class Report
      */
     public void attrError(Lexer lexer, Node node, AttVal attribute, ErrorCode code)
     {
-        if (lexer.errors > lexer.configuration.getShowErrors()) // keep quiet after <showErrors> errors
-        {
-            return;
-        }
-
-        if (!lexer.configuration.isShowWarnings()) // warnings
-        {
-            return;
-        }
-        
         final String tagdesc = getTagName(node);
         final String name = attribute == null || attribute.attribute == null ? "NULL" : attribute.attribute;
         final String value = attribute == null || attribute.value == null ? "NULL" : attribute.value;
@@ -1052,18 +1042,13 @@ public final class Report
      * @param errout PrintWriter
      * @param lexer Lexer
      */
-    public void reportNumWarnings(PrintWriter errout, Lexer lexer)
-    {
-        if (lexer.warnings > 0 || lexer.errors > 0)
-        {
-            printMessage(
-                errout,
-                Level.SUMMARY,
-                "num_warnings",
-                lexer.warnings, lexer.errors);
+    public void reportNumWarnings(PrintWriter errout, Lexer lexer) {
+        if (lexer.warnings > 0 || lexer.errors > 0) {
+        	final int incomplete = lexer.errors > lexer.configuration.getShowErrors()
+        			|| !lexer.configuration.isShowWarnings() ? 1 : 0;
+            printMessage(errout, Level.SUMMARY, "num_warnings", lexer.warnings, lexer.errors, incomplete);
         }
-        else
-        {
+        else {
             printMessage(errout, Level.SUMMARY, "no_warnings");
         }
     }

@@ -2226,9 +2226,8 @@ public class Clean
             }
 
             // discard empty paragraphs
-            if (node.content == null && node.is(TagId.P))
-            {
-                node = Node.discardElement(node);
+            if (node.content == null && node.is(TagId.P)) {
+                node = Node.trimEmptyElement(lexer, node);
                 continue;
             }
 

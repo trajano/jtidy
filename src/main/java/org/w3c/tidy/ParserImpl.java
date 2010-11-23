@@ -66,6 +66,10 @@ import org.w3c.tidy.Node.NodeType;
  */
 public final class ParserImpl
 {
+	/**
+     * xhtml namespace String.
+     */
+    private static final String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
 
     /**
      * parser for html.
@@ -3600,6 +3604,23 @@ public final class ParserImpl
             {
                 lexer.report.warning(lexer, document, node, ErrorCode.DISCARDING_UNEXPECTED); // TODO?
                 continue;
+            }
+            
+            if (node.type == NodeType.StartTag && node.is(TagId.HTML)) {
+            	final AttVal xmlns = node.getAttrById(AttrId.XMLNS);
+
+                if (xmlns != null && xmlns.valueIs(XHTML_NAMESPACE)) {
+                	final boolean htmlOut = lexer.configuration.isHtmlOut();
+                	// Unless plain HTML is specified, output will be XHTML.
+                	lexer.isvoyager = true;
+                	lexer.configuration.setXHTML(!htmlOut);
+                	lexer.configuration.setXmlOut(!htmlOut);
+                    // adjust other config options, just as in Configuration
+                	if (!htmlOut) {
+                		lexer.configuration.setUpperCaseTags(false);
+                		lexer.configuration.setUpperCaseAttrs(false);
+                	}
+                }
             }
 
             if (node.type != NodeType.StartTag || !node.is(TagId.HTML))
