@@ -202,7 +202,7 @@ public class Lexer
     /**
      * for accessibility errors.
      */
-    protected short badAccess;
+    protected int badAccess;
 
     /**
      * for bad style errors.

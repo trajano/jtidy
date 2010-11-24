@@ -455,6 +455,10 @@ public class AttVal extends Object implements Cloneable
     	return hasValue() && value.equalsIgnoreCase(val);
     }
     
+    public boolean contains(final String val) {
+    	return hasValue() && value.contains(val);
+    }
+    
     public boolean valueIsAmong(final String list[]) {
     	return TidyUtils.isInValuesIgnoreCase(list, value);
     }

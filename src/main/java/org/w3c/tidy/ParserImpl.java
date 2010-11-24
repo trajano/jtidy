@@ -3642,6 +3642,10 @@ public final class ParserImpl
             break;
         }
         
+        if (lexer.configuration.getAccessibilityCheckLevel() > 0) {
+        	Accessibility.check(lexer);
+        }
+        
         if (lexer.root.findHTML() == null) {
             /* a later check should complain if <body> is empty */
             html = lexer.inferredTag(TagId.HTML);

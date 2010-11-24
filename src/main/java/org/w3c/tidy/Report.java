@@ -81,6 +81,11 @@ public final class Report
      */
     public static final String ACCESS_URL = "http://www.w3.org/WAI/GL";
 
+    /* points to the Adaptive Technology Resource Centre at the
+    ** University of Toronto
+    */
+    public static final String ATRC_ACCESS_URL = "http://www.aprompt.ca/Tidy/accessibilitychecks.html";
+
     /**
      * Release date String.
      */
@@ -102,32 +107,36 @@ public final class Report
     /**
      * accessibility flaw: missing image map.
      */
-    public static final short MISSING_IMAGE_ALT = 1;
+    public static final int MISSING_IMAGE_ALT = 1;
 
     /**
      * accessibility flaw: missing link alt.
      */
-    public static final short MISSING_LINK_ALT = 2;
+    public static final int MISSING_LINK_ALT = 2;
 
     /**
      * accessibility flaw: missing summary.
      */
-    public static final short MISSING_SUMMARY = 4;
+    public static final int MISSING_SUMMARY = 4;
 
     /**
      * accessibility flaw: missing image map.
      */
-    public static final short MISSING_IMAGE_MAP = 8;
+    public static final int MISSING_IMAGE_MAP = 8;
 
     /**
      * accessibility flaw: using frames.
      */
-    public static final short USING_FRAMES = 16;
+    public static final int USING_FRAMES = 16;
 
     /**
      * accessibility flaw: using noframes.
      */
-    public static final short USING_NOFRAMES = 32;
+    public static final int USING_NOFRAMES = 32;
+    
+    public static final int INVALID_LINK_NOFRAMES = 64;
+    
+    public static final int WAI = 1 << 31;
 
     /**
      * presentation flaw: using spacer.
@@ -312,11 +321,13 @@ public final class Report
      * @param params optional parameters added with MessageFormat
      * @see TidyMessage
      */
-    private void messageLexer(final Lexer lexer, final Level level, final ErrorCode errorCode, final Object... params) {
+    private void messageLexer(final Lexer lexer, final Level level, final IErrorCode errorCode,
+    		final Object... params) {
     	messageLexer(errorCode.code(), lexer, level, errorCode.name().toLowerCase(), params);
     }
     
-    private void messageNode(final Lexer lexer, final Level level, final Node node, final ErrorCode errorCode, final Object... params) {
+    private void messageNode(final Lexer lexer, final Level level, final Node node, final IErrorCode errorCode,
+    		final Object... params) {
     	if (node == null) {
     		messageLexer(lexer, level, errorCode, params);
     	} else {
@@ -918,7 +929,8 @@ public final class Report
             }
 
             messageLexer(lexer, Level.SUMMARY, lexer.configuration.isTidyCompat() ? BADACCESS_SUMMARY_BAD
-            		: BADACCESS_SUMMARY, ACCESS_URL);
+            		: BADACCESS_SUMMARY, ACCESS_URL, lexer.configuration.getAccessibilityCheckLevel(),
+            		ATRC_ACCESS_URL);
         }
 
         if (lexer.badLayout != 0)
@@ -1079,4 +1091,21 @@ public final class Report
     {
         this.listener = listener;
     }
+
+	public void accessWarning(final Lexer lexer, final Node node, final AccessErrorCode code) {
+		lexer.badAccess |= WAI;
+		messageNode(lexer, Level.ACCESS, node, code);
+	}
+
+	public void accessError(final Lexer lexer, final Node node, final AccessErrorCode code) {
+		accessWarning(lexer, node, code);
+	}
+
+	public void displayHTMLTableAlgorithm(final Lexer lexer) {
+		printMessage(lexer.errout, Level.SUMMARY, "html_table_algorithm");
+	}
+
+	public void accessibilityHelloMessage(final Lexer lexer) {
+		printMessage(lexer.errout, Level.SUMMARY, "accessibility_hello");
+	}
 }

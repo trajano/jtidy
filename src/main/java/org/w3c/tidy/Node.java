@@ -1464,4 +1464,30 @@ public class Node {
         }
         return true;
     }
+    
+    protected boolean isHeader() {
+    	final TagId tid = getId();
+		return tid == TagId.H1 || tid == TagId.H2 || tid == TagId.H3 || tid == TagId.H4 || tid == TagId.H5
+				|| tid == TagId.H6;
+    }
+    
+    protected int getHeaderLevel() {
+        switch (getId()) {
+        case H1:
+            return 1;
+        case H2:
+            return 2;
+        case H3:
+            return 3;
+        case H4:
+            return 4;
+        case H5:
+            return 5;
+        case H6:
+            return 6;
+        default:
+            /* fall through */
+        }
+        return 0;
+    }
 }

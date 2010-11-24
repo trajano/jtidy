@@ -1,6 +1,6 @@
 package org.w3c.tidy;
 
-public enum ErrorCode {
+public enum ErrorCode implements IErrorCode {
 	/**
      * invalid entity: missing semicolon.
      */
