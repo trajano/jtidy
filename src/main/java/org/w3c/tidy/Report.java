@@ -703,7 +703,7 @@ public final class Report
                 break;
 
             case UNESCAPED_ELEMENT :
-                messageLexer(lexer, Level.WARNING, code, getTagName(element));
+                messageLexer(lexer, Level.WARNING, code, nodedesc);
                 break;
 
             case NOFRAMES_CONTENT :
