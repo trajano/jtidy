@@ -1975,13 +1975,33 @@ public final class ParserImpl
                 }
 
                 // strip unexpected tags
-                if (!lexer.preContent(node))
-                {
-                    Node newnode;
-
-                    lexer.report.warning(lexer, pre, node, ErrorCode.UNESCAPED_ELEMENT);
-                    newnode = Node.escapeTag(lexer, node);
-                    pre.insertNodeAtEnd(newnode);
+                if (!lexer.preContent(node)) {
+                	if (node.type == NodeType.EndTag) {
+                		if (lexer.exiled && (node.hasCM(Dict.CM_TABLE) || node.is(TagId.TABLE))) {
+                			lexer.ungetToken();
+                			Node.trimSpaces(lexer, pre);
+                			return;
+                		}
+                		lexer.report.warning(lexer, pre, node, ErrorCode.DISCARDING_UNEXPECTED);
+                		continue;
+                	}
+                	else if (node.hasCM(Dict.CM_TABLE | Dict.CM_ROW) || node.is(TagId.TABLE)) {
+                		if (!lexer.exiled) {
+                			/* No missing close warning if exiled. */
+                			lexer.report.warning(lexer, pre, node, ErrorCode.MISSING_ENDTAG_BEFORE);
+                		}
+                		lexer.ungetToken();
+                		return;
+                	}
+                	
+                	pre.insertNodeAfterElement(node);
+                	lexer.report.warning(lexer, pre, node, ErrorCode.MISSING_ENDTAG_BEFORE);
+                	parseTag(lexer, node, Lexer.IGNORE_WHITESPACE);
+                	
+                	final Node newnode = lexer.inferredTag(TagId.PRE);
+                	lexer.report.warning(lexer, pre, newnode, ErrorCode.INSERTING_TAG);
+                	pre = newnode;
+                	node.insertNodeAfterElement(pre);
                     continue;
                 }
 
