@@ -485,43 +485,35 @@ public class Node {
      * Insert a node into markup tree.
      * @param node to insert
      */
-    public void insertNodeAtStart(Node node)
-    {
-        node.parent = this;
+    public void insertNodeAtStart(final Node node) {
+    	node.setParent(this);
 
-        if (this.content == null)
-        {
-            this.last = node;
+        if (content == null) {
+            last = node;
         }
-        else
-        {
-            this.content.prev = node; // AQ added 13 Apr 2000
+        else {
+            content.prev = node; // AQ added 13 Apr 2000
         }
-
-        node.next = this.content;
+        node.setNext(content);
         node.prev = null;
-        this.content = node;
+        content = node;
     }
 
     /**
      * Insert node into markup tree.
      * @param node Node to insert
      */
-    public void insertNodeAtEnd(Node node)
-    {
-        node.parent = this;
-        node.prev = this.last;
-
-        if (this.last != null)
-        {
-            this.last.next = node;
+    public void insertNodeAtEnd(final Node node) {
+        node.setParent(this);
+        node.prev = last;
+        
+        if (last != null) {
+            last.setNext(node);
         }
-        else
-        {
-            this.content = node;
+        else {
+            content = node;
         }
-
-        this.last = node;
+        last = node;
     }
 
     /**
@@ -529,62 +521,48 @@ public class Node {
      * @param element child node. Will be inserted as a child of element
      * @param node parent node
      */
-    public static void insertNodeAsParent(Node element, Node node)
-    {
+    public static void insertNodeAsParent(final Node element, final Node node) {
         node.content = element;
         node.last = element;
-        node.parent = element.parent;
-        element.parent = node;
+        node.setParent(element.parent);
+        element.setParent(node);
 
-        if (node.parent.content == element)
-        {
+        if (node.parent.content == element) {
             node.parent.content = node;
         }
-
-        if (node.parent.last == element)
-        {
+        if (node.parent.last == element) {
             node.parent.last = node;
         }
-
         node.prev = element.prev;
         element.prev = null;
 
-        if (node.prev != null)
-        {
-            node.prev.next = node;
+        if (node.prev != null) {
+            node.prev.setNext(node);
         }
-
-        node.next = element.next;
+        node.setNext(element.next);
         element.next = null;
 
-        if (node.next != null)
-        {
+        if (node.next != null) {
             node.next.prev = node;
         }
     }
 
     /**
      * Insert node into markup tree before element.
-     * @param element child node. Will be insertedbefore element
+     * @param element child node. Will be inserted before element
      * @param node following node
      */
-    public static void insertNodeBeforeElement(Node element, Node node)
-    {
-        Node parent;
-
-        parent = element.parent;
-        node.parent = parent;
-        node.next = element;
+    public static void insertNodeBeforeElement(Node element, Node node) {
+        Node parent = element.parent;
+        node.setParent(parent);
+        node.setNext(element);
         node.prev = element.prev;
         element.prev = node;
 
-        if (node.prev != null)
-        {
-            node.prev.next = node;
+        if (node.prev != null) {
+            node.prev.setNext(node);
         }
-
-        if (parent != null && parent.content == element)
-        {
+        if (parent != null && parent.content == element) {
             parent.content = node;
         }
     }
@@ -593,29 +571,21 @@ public class Node {
      * Insert node into markup tree after element.
      * @param node new node to insert
      */
-    public void insertNodeAfterElement(Node node)
-    {
-        Node parent;
-
-        parent = this.parent;
-        node.parent = parent;
+    public void insertNodeAfterElement(final Node node) {
+        node.setParent(parent);
 
         // AQ - 13Jan2000 fix for parent == null
-        if (parent != null && parent.last == this)
-        {
+        if (parent != null && parent.last == this) {
             parent.last = node;
         }
-        else
-        {
-            node.next = this.next;
+        else {
+            node.setNext(next);
             // AQ - 13Jan2000 fix for node.next == null
-            if (node.next != null)
-            {
+            if (node.next != null) {
                 node.next.prev = node;
             }
         }
-
-        this.next = node;
+        setNext(node);
         node.prev = this;
     }
 
@@ -918,30 +888,21 @@ public class Node {
      * @param row Row node
      * @param node Node which should be moved before the table
      */
-    public static void moveBeforeTable(Node row, Node node)
-    {
-        Node table;
-
+    public static void moveBeforeTable(Node row, Node node) {
         /* first find the table element */
-        for (table = row.parent; table != null; table = table.parent)
-        {
-            if (table.is(TagId.TABLE))
-            {
-                if (table.parent.content == table)
-                {
+        for (Node table = row.parent; table != null; table = table.parent) {
+            if (table.is(TagId.TABLE)) {
+                if (table.parent.content == table) {
                     table.parent.content = node;
                 }
-
                 node.prev = table.prev;
-                node.next = table;
+                node.setNext(table);
                 table.prev = node;
-                node.parent = table.parent;
+                node.setParent(table.parent);
 
-                if (node.prev != null)
-                {
-                    node.prev.next = node;
+                if (node.prev != null) {
+                    node.prev.setNext(node);
                 }
-
                 break;
             }
         }
@@ -992,34 +953,24 @@ public class Node {
     /**
      * Extract this node and its children from a markup tree.
      */
-    public void removeNode()
-    {
-        if (this.prev != null)
-        {
-            this.prev.next = this.next;
+    public void removeNode() {
+        if (prev != null) {
+            prev.setNext(next);
         }
-
-        if (this.next != null)
-        {
-            this.next.prev = this.prev;
+        if (next != null) {
+            next.prev = prev;
         }
-
-        if (this.parent != null)
-        {
-            if (this.parent.content == this)
-            {
-                this.parent.content = this.next;
+        if (parent != null) {
+            if (parent.content == this) {
+                parent.content = next;
             }
-
-            if (this.parent.last == this)
-            {
-                this.parent.last = this.prev;
+            if (parent.last == this) {
+                parent.last = prev;
             }
         }
-
-        this.parent = null;
-        this.prev = null;
-        this.next = null;
+        parent = null;
+        prev = null;
+        next = null;
     }
 
     /**
@@ -1489,5 +1440,19 @@ public class Node {
             /* fall through */
         }
         return 0;
+    }
+    
+    protected void setParent(final Node node) {
+    	if (node == this) {
+    		throw new IllegalArgumentException("Attempt to insert a node into itself");
+    	}
+    	parent = node;
+    }
+    
+    protected void setNext(final Node node) {
+    	if (node == this) {
+    		throw new IllegalArgumentException("Attempt to insert a node as its own sibling");
+    	}
+    	next = node;
     }
 }
