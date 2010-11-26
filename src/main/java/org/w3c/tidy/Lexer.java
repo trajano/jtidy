@@ -2047,10 +2047,8 @@ public class Lexer
                     // this doesn't apply to empty elements
                     // nor to preformatted content that needs escaping
 
-                    if ((mode != PREFORMATTED || preContent(this.token))
-                        && (this.token.expectsContent() || this.token.is(TagId.BR)))
-                    {
-
+                    if ((mode != PREFORMATTED || preContent(token))
+                    		&& token.expectsContent() || token.is(TagId.BR) || token.is(TagId.HR)) {
                         c = this.in.readChar();
 
                         if (c == '\r')

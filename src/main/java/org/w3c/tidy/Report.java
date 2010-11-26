@@ -760,8 +760,8 @@ public final class Report
                 messageLexer(lexer, Level.WARNING, code, getTagName(element));
                 break;
 
-            case ELEMENT_NOT_EMPTY :
-                messageLexer(lexer, Level.WARNING, code, getTagName(element));
+            case ELEMENT_NOT_EMPTY:
+                messageNode(lexer, Level.WARNING, element, code, getTagName(element));
                 break;
 
             case MISSING_ENDTAG_FOR :
