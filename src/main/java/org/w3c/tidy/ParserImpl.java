@@ -1514,11 +1514,10 @@ public final class ParserImpl
                                 lexer.report.warning(lexer, element, node, ErrorCode.MISSING_ENDTAG_BEFORE);
                             }
 
-                            if (element.is(TagId.A))
-                            {
+                            if (lexer.configuration.isTidyCompat() ? lexer.isPushedLast(element, node)
+                            		: element.is(TagId.A)) {
                                 lexer.popInline(element);
                             }
-
                             lexer.ungetToken();
 
                             if (!((mode & Lexer.PREFORMATTED) != 0))

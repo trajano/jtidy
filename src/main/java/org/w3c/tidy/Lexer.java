@@ -310,6 +310,8 @@ public class Lexer
      * current node.
      */
     protected Node token;
+    
+    protected Node itoken;
 
     /**
      * Lexer character buffer parse tree nodes span onto this buffer which contains the concatenated text contents of
@@ -1584,30 +1586,37 @@ public class Lexer
      * </ul>
      * @return next Node
      */
-    public Node getToken(short mode)
-    {
+    public Node getToken(short mode) {
+        if (pushed || itoken != null) {
+        	/* Deal with previously returned duplicate inline token */
+            if (itoken != null) {
+                /* itoken rejected */
+                if (pushed) {
+                    pushed = false;
+                    return itoken;
+                }
+                /* itoken has been accepted */
+                itoken = null;
+            }
+            // duplicate inlines in preference to pushed text nodes when appropriate
+            pushed = false;
+            if (token.type != NodeType.TextNode || (insert == -1 && inode == null)) {
+                return token;
+            }
+            return itoken = insertedToken();
+        }
+
+        // at start of block elements, unclosed inline
+        // elements are inserted into the token stream
+        if (this.insert != -1 || inode != null) {
+            return token = insertedToken();
+        }
+        
         int c = 0;
         int badcomment = 0;
         // pass by reference
         boolean[] isempty = new boolean[1];
         AttVal attributes = null;
-
-        if (this.pushed)
-        {
-            // duplicate inlines in preference to pushed text nodes when appropriate
-            if (this.token.type != NodeType.TextNode || (this.insert == -1 && this.inode == null))
-            {
-                this.pushed = false;
-                return this.token;
-            }
-        }
-
-        // at start of block elements, unclosed inline
-        // elements are inserted into the token stream
-        if (this.insert != -1 || this.inode != null)
-        {
-            return insertedToken();
-        }
 
         this.lines = this.in.getCurline();
         this.columns = this.in.getCurcol();
@@ -3450,6 +3459,16 @@ public class Lexer
         }
 
         return false;
+    }
+
+    /**
+     * Tests whether the last element on the stack has the same type as "node".
+     */
+    protected boolean isPushedLast(final Node element, final Node node) {
+    	if (element != null && !element.isPushable()) {
+    		return false;
+    	}
+    	return !istack.isEmpty() && istack.peek().tag == node.tag;
     }
 
     /**

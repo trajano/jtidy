@@ -1455,4 +1455,8 @@ public class Node {
     	}
     	next = node;
     }
+    
+    protected boolean isPushable() {
+    	return tag != null && hasCM(Dict.CM_INLINE) && !hasCM(Dict.CM_OBJECT);
+    }
 }
