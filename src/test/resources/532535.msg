@@ -9,31 +9,25 @@
     <text><![CDATA[<o:p> is not approved by W3C]]></text>
   </message>
   <message>
-    <code>28</code>
-    <level>2</level>
-    <line>1</line>
-    <column>1</column>
-    <text><![CDATA[html doctype doesn't match content]]></text>
-  </message>
-  <message>
     <code>110</code>
-    <level>0</level>
-    <line>1</line>
-    <column>1</column>
-    <text><![CDATA[InputStream: Doctype given is "-//W3C//DTD HTML 4.01 Transitional//EN"]]></text>
+    <level>1</level>
+    <line>0</line>
+    <column>0</column>
+    <text><![CDATA[Doctype given is "-//W3C//DTD HTML 4.01 Transitional//EN"]]></text>
   </message>
   <message>
     <code>111</code>
-    <level>0</level>
-    <line>1</line>
-    <column>1</column>
-    <text><![CDATA[InputStream: Document content looks like HTML proprietary]]></text>
+    <level>1</level>
+    <line>0</line>
+    <column>0</column>
+    <text><![CDATA[Document content looks like HTML Proprietary]]></text>
   </message>
   <message>
     <code>-1</code>
     <level>0</level>
     <line>0</line>
     <column>0</column>
-    <text><![CDATA[2 warnings, no errors were found!]]></text>
+    <text><![CDATA[1 warning, 0 errors were found!
+]]></text>
   </message>
 </messages>
