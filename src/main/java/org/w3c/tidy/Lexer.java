@@ -1325,6 +1325,26 @@ public class Lexer
         if (configuration.isXmlOut()) {
             return true;
         }
+
+        // fgiust: missing in Tidy c, custom doctype only works in xhtml mode (when setXhtmlDocType is called)
+        // see test 538727
+        if (dtmode == DoctypeModes.User && this.configuration.getDocTypeStr() != null
+            && this.configuration.getDocTypeStr().length() > 0) {
+            final String pub = "PUBLIC";
+            doctype = newDocTypeNode(root);
+            doctype.element = "html";
+            
+            String docTypeStringFixed = this.configuration.getDocTypeStr();
+            // check if the fpi is quoted or not
+            if (docTypeStringFixed.charAt(0) == '"')
+            {
+                docTypeStringFixed = docTypeStringFixed.substring(1, docTypeStringFixed.length() -1);
+            }
+            
+            doctype.repairAttrValue(pub, docTypeStringFixed);
+        }
+        //
+
         if (doctype != null) {
             hadSI = doctype.getAttrByName("SYSTEM") != null;
         }
