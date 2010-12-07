@@ -2,14 +2,15 @@
 <html>
 <head>
 <title>[ #443678 ] Unclosed &lt;script&gt; in &lt;head&gt; messes Tidy</title>
-<script type="text/javascript" src="bar.js">
+
+<script src="bar.js" type="text/javascript">
 function baz()
 {
-  document.write( '<foo><\/foo>' );
+  document.write( '<foo></foo>' );
   document.write( "<bar>\"Some Text\"<\/bar>" );
 }
 </script>
-<script type="text/javascript" src="foo.js">
+<script src="foo.js" type="text/javascript">
 </script>
 </head>
 <body text="#FF0000">

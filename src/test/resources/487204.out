@@ -5,7 +5,7 @@
 <title>[ #487204 ] Duplicate DIV style attribute generated</title>
 </head>
 <body>
-<div style='margin-left: 2em; margin-top:0in'>
+<div style='margin-left: 2em; margin-top: 0in'>
 <ol style='margin-top:0in'>
 <li>One</li>
 <li>Two</li>

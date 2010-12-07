@@ -5,6 +5,6 @@
 <title>[ #470688 ] doesn't cleanup badly nested tags right</title>
 </head>
 <body>
-<p><i>RIGHT TRIANGLES</i></p>
+<p><u>RIGHT TRIANGLES</u></p>
 </body>
 </html>

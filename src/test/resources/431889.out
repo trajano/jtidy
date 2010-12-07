@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//ACME//DTD HTML 3.14159//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
 <!--
                           bug-2000-12-27-b.html
 
@@ -22,13 +22,14 @@ Correction:
   config.c (ParseString)
   lexer.c (FixDocType)
 -->
+<!DOCTYPE html PUBLIC "-//ACME//DTD HTML 3.14159//EN">
 <html>
 <head>
 <title>Bug-2000-12-27-B [ #431889 ] Config file options w/"param"
 don't work</title>
 </head>
 <body>
-<p><img alt="&quot;Alternate&quot;" src="a">This image has no ALT
+<p><img src="a" alt="Alternate">This image has no ALT
 attribute.</p>
 </body>
 </html>
