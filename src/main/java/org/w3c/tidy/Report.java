@@ -756,8 +756,8 @@ public final class Report
 
     /**
      * Prints a message to errout after calling getMessage(). Used when lexer is not yet defined.
-     * @param errout PrintWriter
-     * @param message key for the ResourceBundle
+     * @param errout {@link PrintWriter}
+     * @param message key for the {@link ResourceBundle}
      * @param params optional parameters added with MessageFormat
      * @param level message level. One of <code>TidyMessage.LEVEL_ERROR</code>,
      * <code>TidyMessage.LEVEL_WARNING</code>,<code>TidyMessage.LEVEL_INFO</code>

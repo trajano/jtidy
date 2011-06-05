@@ -74,7 +74,7 @@ public class DOMNodeImpl implements org.w3c.dom.Node
     protected Node adaptee;
 
     /**
-     * Intantiates a new DOM node.
+     * Instantiates a new DOM node.
      * @param adaptee wrapped Tidy node
      */
     protected DOMNodeImpl(final Node adaptee)

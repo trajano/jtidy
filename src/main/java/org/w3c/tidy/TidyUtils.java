@@ -186,7 +186,7 @@ public final class TidyUtils
     }
 
     /**
-     * Same as wsubstrn, but without a specified length.
+     * Same as {@link #wsubstrn(String, int, String)}, but without a specified length.
      * @param s1 full String
      * @param s2 String to search for
      * @return <code>true</code> if s2 is found in s2 (case insensitive search)
