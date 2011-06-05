@@ -15,18 +15,18 @@ public class TestMessageListener implements TidyMessageListener
     /**
      * filename.
      */
-    private String filename;
+    private final String filename;
 
     /**
      * Contains all the received TidyMessages.
      */
-    private List<TidyMessage> received = new ArrayList<TidyMessage>();
+    private final List<TidyMessage> received = new ArrayList<TidyMessage>();
 
     /**
      * Instantiate a new messag listener for the given test file.
      * @param filename actual test case name
      */
-    public TestMessageListener(String filename)
+    public TestMessageListener(final String filename)
     {
         this.filename = filename;
     }
@@ -34,7 +34,7 @@ public class TestMessageListener implements TidyMessageListener
     /**
      * @see org.w3c.tidy.TidyMessageListener#messageReceived(org.w3c.tidy.TidyMessage)
      */
-    public void messageReceived(TidyMessage message)
+    public void messageReceived(final TidyMessage message)
     {
         received.add(message);
     }
@@ -45,7 +45,7 @@ public class TestMessageListener implements TidyMessageListener
      */
     public String messagesToXml()
     {
-        StringBuffer buffer = new StringBuffer();
+        final StringBuffer buffer = new StringBuffer();
 
         buffer.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
         buffer.append("<!-- expected messages for test ");
@@ -53,10 +53,10 @@ public class TestMessageListener implements TidyMessageListener
         buffer.append("-->\n");
 
         buffer.append("<messages>\n");
-        Iterator<TidyMessage> iterator = received.iterator();
+        final Iterator<TidyMessage> iterator = received.iterator();
         while (iterator.hasNext())
         {
-            TidyMessage msg = iterator.next();
+            final TidyMessage msg = iterator.next();
             buffer.append("  <message>\n");
 
             buffer.append("    <code>");

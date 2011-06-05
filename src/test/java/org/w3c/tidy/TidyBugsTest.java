@@ -73,7 +73,7 @@ public class TidyBugsTest extends TidyTestCase
      * Instantiate a new Test case.
      * @param name test name
      */
-    public TidyBugsTest(String name)
+    public TidyBugsTest(final String name)
     {
         super(name);
     }
@@ -85,7 +85,7 @@ public class TidyBugsTest extends TidyTestCase
      */
     public void test431895() throws Exception
     {
-        URL inputURL = getClass().getClassLoader().getResource("431895.html");
+        final URL inputURL = getClass().getClassLoader().getResource("431895.html");
         // set up error log
         this.errorLog = new StringWriter();
         this.tidy.setErrout(new PrintWriter(this.errorLog));

@@ -391,22 +391,22 @@ public class Lexer
     /**
      * node list.
      */
-    private List<Node> nodeList;
+    private final List<Node> nodeList;
 
     /**
-     * Instantiates a new Lexer.
+     * Instantiates a new {@link Lexer}.
      * @param in StreamIn
-     * @param configuration configuation instance
+     * @param configuration {@link Configuration} instance
      * @param report report instance, for reporting errors
      */
-    public Lexer(StreamIn in, Configuration configuration, Report report)
+    public Lexer(final StreamIn in, final Configuration configuration, final Report report)
     {
         this.report = report;
         this.in = in;
         this.lines = 1;
         this.columns = 1;
         this.state = LEX_CONTENT;
-        this.versions = (Dict.VERS_ALL | Dict.VERS_PROPRIETARY);
+        this.versions = Dict.VERS_ALL | Dict.VERS_PROPRIETARY;
         this.doctype = Dict.VERS_UNKNOWN;
         this.insert = -1;
         this.istack = new Stack<IStack>();
@@ -420,7 +420,7 @@ public class Lexer
      */
     public Node newNode()
     {
-        Node node = new Node();
+        final Node node = new Node();
         this.nodeList.add(node);
         return node;
     }
@@ -435,9 +435,9 @@ public class Lexer
      * @param end end position
      * @return Node
      */
-    public Node newNode(short type, byte[] textarray, int start, int end)
+    public Node newNode(final short type, final byte[] textarray, final int start, final int end)
     {
-        Node node = new Node(type, textarray, start, end);
+        final Node node = new Node(type, textarray, start, end);
         this.nodeList.add(node);
         return node;
     }
@@ -453,9 +453,9 @@ public class Lexer
      * @param element tag name
      * @return Node
      */
-    public Node newNode(short type, byte[] textarray, int start, int end, String element)
+    public Node newNode(final short type, final byte[] textarray, final int start, final int end, final String element)
     {
-        Node node = new Node(type, textarray, start, end, element, this.configuration.tt);
+        final Node node = new Node(type, textarray, start, end, element, this.configuration.tt);
         this.nodeList.add(node);
         return node;
     }
@@ -465,9 +465,9 @@ public class Lexer
      * @param node Node
      * @return cloned Node
      */
-    public Node cloneNode(Node node)
+    public Node cloneNode(final Node node)
     {
-        Node cnode = node.cloneNode(false);
+        final Node cnode = node.cloneNode(false);
         this.nodeList.add(cnode);
         for (AttVal att = cnode.attributes; att != null; att = att.next)
         {
@@ -488,9 +488,9 @@ public class Lexer
      * @param attrs original AttVal
      * @return cloned AttVal
      */
-    public AttVal cloneAttributes(AttVal attrs)
+    public AttVal cloneAttributes(final AttVal attrs)
     {
-        AttVal cattrs = (AttVal) attrs.clone();
+        final AttVal cattrs = (AttVal) attrs.clone();
         for (AttVal att = cattrs; att != null; att = att.next)
         {
             if (att.asp != null)
@@ -510,12 +510,12 @@ public class Lexer
      * @param oldtextarray previous text array
      * @param newtextarray new text array
      */
-    protected void updateNodeTextArrays(byte[] oldtextarray, byte[] newtextarray)
+    protected void updateNodeTextArrays(final byte[] oldtextarray, final byte[] newtextarray)
     {
         Node node;
         for (int i = 0; i < this.nodeList.size(); i++)
         {
-            node = (Node) (this.nodeList.get(i));
+            node = this.nodeList.get(i);
             if (node.textarray == oldtextarray)
             {
                 node.textarray = newtextarray;
@@ -529,7 +529,7 @@ public class Lexer
      */
     public Node newLineNode()
     {
-        Node node = newNode();
+        final Node node = newNode();
 
         node.textarray = this.lexbuf;
         node.start = this.lexsize;
@@ -551,7 +551,7 @@ public class Lexer
      * Adds a byte to lexer buffer.
      * @param c byte to add
      */
-    public void addByte(int c)
+    public void addByte(final int c)
     {
         if (this.lexsize + 1 >= this.lexlength)
         {
@@ -567,7 +567,7 @@ public class Lexer
                 }
             }
 
-            byte[] temp = this.lexbuf;
+            final byte[] temp = this.lexbuf;
             this.lexbuf = new byte[this.lexlength];
             if (temp != null)
             {
@@ -584,7 +584,7 @@ public class Lexer
      * Substitute the last char in buffer.
      * @param c new char
      */
-    public void changeChar(byte c)
+    public void changeChar(final byte c)
     {
         if (this.lexsize > 0)
         {
@@ -596,27 +596,27 @@ public class Lexer
      * Store char c as UTF-8 encoded byte stream.
      * @param c char to store
      */
-    public void addCharToLexer(int c)
+    public void addCharToLexer(final int c)
     {
         // Allow only valid XML characters. See: http://www.w3.org/TR/2004/REC-xml-20040204/#NT-Char
         // Fix by Pablo Mayrgundter 17-08-2004
 
         if ((this.configuration.xmlOut || this.configuration.xHTML) // only for xml output
-            && !((c >= 0x20 && c <= 0xD7FF) // Check the common-case first.
+            && !(c >= 0x20 && c <= 0xD7FF
                 || c == 0x9
                 || c == 0xA
                 || c == 0xD // Then white-space.
-                || (c >= 0xE000 && c <= 0xFFFD) // Then high-range unicode.
-            || (c >= 0x10000 && c <= 0x10FFFF)))
+                || c >= 0xE000 && c <= 0xFFFD
+            || c >= 0x10000 && c <= 0x10FFFF))
         {
             return;
         }
 
         int i = 0;
-        int[] count = new int[]{0};
-        byte[] buf = new byte[10]; // unsigned char
+        final int[] count = new int[]{0};
+        final byte[] buf = new byte[10]; // unsigned char
 
-        boolean err = EncodingUtils.encodeCharToUTF8Bytes(c, buf, null, count);
+        final boolean err = EncodingUtils.encodeCharToUTF8Bytes(c, buf, null, count);
         if (err)
         {
             // replacement char 0xFFFD encoded as UTF-8
@@ -637,7 +637,7 @@ public class Lexer
      * Adds a string to lexer buffer.
      * @param str String to add
      */
-    public void addStringToLexer(String str)
+    public void addStringToLexer(final String str)
     {
         for (int i = 0; i < str.length(); i++)
         {
@@ -649,7 +649,7 @@ public class Lexer
      * Parse an html entity.
      * @param mode mode
      */
-    public void parseEntity(short mode)
+    public void parseEntity(final short mode)
     {
         // No longer attempts to insert missing ';' for unknown
         // entities unless one was present already, since this
@@ -746,7 +746,7 @@ public class Lexer
         // deal with unrecognized or invalid entities
         // #433012 - fix by Randy Waki 17 Feb 01
         // report invalid NCR's - Terry Teague 01 Sep 01
-        if (ch <= 0 || (ch >= 256 && c != ';'))
+        if (ch <= 0 || ch >= 256 && c != ';')
         {
             // set error position just before offending character
             this.lines = this.in.getCurline();
@@ -770,7 +770,7 @@ public class Lexer
 
                     // "or" DISCARDED_CHAR with the other errors if discarding char; otherwise default is replacing
 
-                    int replaceMode = c1 != 0 ? Report.REPLACED_CHAR : Report.DISCARDED_CHAR;
+                    final int replaceMode = c1 != 0 ? Report.REPLACED_CHAR : Report.DISCARDED_CHAR;
 
                     if (c != ';') /* issue warning if not terminated by ';' */
                     {
@@ -881,9 +881,9 @@ public class Lexer
      * calls addCharToLexer for any char in the string.
      * @param str input String
      */
-    public void addStringLiteral(String str)
+    public void addStringLiteral(final String str)
     {
-        int len = str.length();
+        final int len = str.length();
         for (int i = 0; i < len; i++)
         {
             addCharToLexer(str.charAt(i));
@@ -895,9 +895,9 @@ public class Lexer
      * @param str input String
      * @param len length of the substring to be added
      */
-    void addStringLiteralLen(String str, int len)
+    void addStringLiteralLen(final String str, int len)
     {
-        int strlen = str.length();
+        final int strlen = str.length();
         if (strlen < len)
         {
             len = strlen;
@@ -978,15 +978,15 @@ public class Lexer
      * @param root root node
      * @return <code>true</code> if the tag has been added
      */
-    public boolean addGenerator(Node root)
+    public boolean addGenerator(final Node root)
     {
         AttVal attval;
         Node node;
-        Node head = root.findHEAD(this.configuration.tt);
+        final Node head = root.findHEAD(this.configuration.tt);
 
         if (head != null)
         {
-            String meta = "HTML Tidy for Java (vers. " + Report.RELEASE_DATE_STRING + "), see jtidy.sourceforge.net";
+            final String meta = "HTML Tidy for Java (vers. " + Report.RELEASE_DATE_STRING + "), see jtidy.sourceforge.net";
 
             for (node = head.content; node != null; node = node.next)
             {
@@ -1025,10 +1025,10 @@ public class Lexer
      * @param doctype doctype node
      * @return true if doctype keywords are all uppercase
      */
-    public boolean checkDocTypeKeyWords(Node doctype)
+    public boolean checkDocTypeKeyWords(final Node doctype)
     {
-        int len = doctype.end - doctype.start;
-        String s = TidyUtils.getString(this.lexbuf, doctype.start, len);
+        final int len = doctype.end - doctype.start;
+        final String s = TidyUtils.getString(this.lexbuf, doctype.start, len);
 
         return !(TidyUtils.findBadSubString("SYSTEM", s, s.length())
             || TidyUtils.findBadSubString("PUBLIC", s, s.length())
@@ -1042,7 +1042,7 @@ public class Lexer
      * @param doctype doctype node
      * @return version code
      */
-    public short findGivenVersion(Node doctype)
+    public short findGivenVersion(final Node doctype)
     {
         String p, s;
         int i, j;
@@ -1143,7 +1143,7 @@ public class Lexer
      * @param root root Node
      * @param profile current profile
      */
-    public void fixHTMLNameSpace(Node root, String profile)
+    public void fixHTMLNameSpace(final Node root, final String profile)
     {
         Node node;
         AttVal attr;
@@ -1189,15 +1189,15 @@ public class Lexer
      * @param root root node
      * @return new doctype node
      */
-    Node newXhtmlDocTypeNode(Node root)
+    Node newXhtmlDocTypeNode(final Node root)
     {
-        Node html = root.findHTML(this.configuration.tt);
+        final Node html = root.findHTML(this.configuration.tt);
         if (html == null)
         {
             return null;
         }
 
-        Node newdoctype = newNode();
+        final Node newdoctype = newNode();
         newdoctype.setType(Node.DOCTYPE_TAG);
         newdoctype.next = html;
         newdoctype.parent = root;
@@ -1225,11 +1225,11 @@ public class Lexer
      * @param root root node
      * @return <code>true</code> if a doctype has been added
      */
-    public boolean setXHTMLDocType(Node root)
+    public boolean setXHTMLDocType(final Node root)
     {
         String fpi = " ";
         String sysid = "";
-        String namespace = XHTML_NAMESPACE;
+        final String namespace = XHTML_NAMESPACE;
         String dtdsub = null;
         Node doctype;
         int dtdlen = 0;
@@ -1312,13 +1312,13 @@ public class Lexer
             if (configuration.xHTML || configuration.xmlOut)
             {
 
-                int len = doctype.end - doctype.start + 1;
-                String start = TidyUtils.getString(this.lexbuf, doctype.start, len);
+                final int len = doctype.end - doctype.start + 1;
+                final String start = TidyUtils.getString(this.lexbuf, doctype.start, len);
 
-                int dtdbeg = start.indexOf('[');
+                final int dtdbeg = start.indexOf('[');
                 if (dtdbeg >= 0)
                 {
-                    int dtdend = start.substring(dtdbeg).indexOf(']');
+                    final int dtdend = start.substring(dtdbeg).indexOf(']');
                     if (dtdend >= 0)
                     {
                         dtdlen = dtdend + 1;
@@ -1375,7 +1375,7 @@ public class Lexer
 
         this.txtend = this.lexsize;
 
-        int length = this.txtend - this.txtstart;
+        final int length = this.txtend - this.txtstart;
         doctype.textarray = new byte[length];
 
         System.arraycopy(this.lexbuf, this.txtstart, doctype.textarray, 0, length);
@@ -1464,7 +1464,7 @@ public class Lexer
      * @param root root node
      * @return <code>false</code> if current version has not been identified
      */
-    public boolean fixDocType(Node root)
+    public boolean fixDocType(final Node root)
     {
         Node doctype;
         int guessed = Dict.VERS_HTML40_STRICT, i;
@@ -1656,7 +1656,7 @@ public class Lexer
 
         this.txtend = this.lexsize;
 
-        int length = this.txtend - this.txtstart;
+        final int length = this.txtend - this.txtstart;
         doctype.textarray = new byte[length];
 
         System.arraycopy(this.lexbuf, this.txtstart, doctype.textarray, 0, length);
@@ -1672,7 +1672,7 @@ public class Lexer
      * @param root root node
      * @return always true
      */
-    public boolean fixXmlDecl(Node root)
+    public boolean fixXmlDecl(final Node root)
     {
         Node xml;
         AttVal version;
@@ -1715,7 +1715,7 @@ public class Lexer
      * @param name tag name
      * @return generated node
      */
-    public Node inferredTag(String name)
+    public Node inferredTag(final String name)
     {
         Node node;
 
@@ -1734,7 +1734,7 @@ public class Lexer
      * @param container container node
      * @return cdata node
      */
-    public Node getCDATA(Node container)
+    public Node getCDATA(final Node container)
     {
         int start = 0;
         int nested = 0;
@@ -1742,7 +1742,7 @@ public class Lexer
         int c;
         boolean isEmpty = true;
         boolean matches = false;
-        boolean hasSrc = container.getAttrByName("src") != null;
+        final boolean hasSrc = container.getAttrByName("src") != null;
 
         this.lines = this.in.getCurline();
         this.columns = this.in.getCurcol();
@@ -1839,7 +1839,7 @@ public class Lexer
                     }
                     in.ungetChar('/');
                     in.ungetChar('<');
-                    lexsize -= (lexsize - start) + 2;
+                    lexsize -= lexsize - start + 2;
                     break;
                 } else if (lexbuf[start - 2] != '\\') {
                     /* if the end tag is not already escaped using backslash */
@@ -1903,14 +1903,14 @@ public class Lexer
         int c = 0;
         int badcomment = 0;
         // pass by reference
-        boolean[] isempty = new boolean[1];
+        final boolean[] isempty = new boolean[1];
         boolean inDTDSubset = false;
         AttVal attributes = null;
 
         if (this.pushed)
         {
             // duplicate inlines in preference to pushed text nodes when appropriate
-            if (this.token.type != Node.TEXT_NODE || (this.insert == -1 && this.inode == null))
+            if (this.token.type != Node.TEXT_NODE || this.insert == -1 && this.inode == null)
             {
                 this.pushed = false;
                 return this.token;
@@ -1938,7 +1938,7 @@ public class Lexer
             {
                 addCharToLexer(' ');
             }
-            if (this.insertspace && (!TidyUtils.toBoolean(mode & IGNORE_WHITESPACE)))
+            if (this.insertspace && !TidyUtils.toBoolean(mode & IGNORE_WHITESPACE))
             {
                 this.waswhite = true;
                 this.insertspace = false;
@@ -1967,7 +1967,7 @@ public class Lexer
                     // Discard white space if appropriate.
                     // Its cheaper to do this here rather than in parser methods for elements that
                     // don't have mixed content.
-                    if (TidyUtils.isWhite((char) c) && (mode == IGNORE_WHITESPACE) && this.lexsize == this.txtstart + 1)
+                    if (TidyUtils.isWhite((char) c) && mode == IGNORE_WHITESPACE && this.lexsize == this.txtstart + 1)
                     {
                         --this.lexsize;
                         this.waswhite = false;
@@ -2403,8 +2403,8 @@ public class Lexer
                         if (TidyUtils.toBoolean(this.token.tag.versions & Dict.VERS_PROPRIETARY))
                         {
                             // #427810 - fix by Gary Deschaines 24 May 00
-                            if (this.configuration.makeClean && (this.token.tag != this.configuration.tt.tagNobr && //
-                                this.token.tag != this.configuration.tt.tagWbr))
+                            if (this.configuration.makeClean && this.token.tag != this.configuration.tt.tagNobr && //
+                                this.token.tag != this.configuration.tt.tagWbr)
                             {
                                 report.warning(this, null, this.token, Report.PROPRIETARY_ELEMENT);
                             }
@@ -2565,7 +2565,7 @@ public class Lexer
 
                     if (this.lexsize - this.txtstart == 3)
                     {
-                        if ((TidyUtils.getString(this.lexbuf, this.txtstart, 3)).equals("php"))
+                        if (TidyUtils.getString(this.lexbuf, this.txtstart, 3).equals("php"))
                         {
                             this.state = LEX_PHP;
                             continue;
@@ -2574,7 +2574,7 @@ public class Lexer
 
                     if (this.lexsize - this.txtstart == 4)
                     {
-                        if ((TidyUtils.getString(this.lexbuf, this.txtstart, 3)).equals("xml")
+                        if (TidyUtils.getString(this.lexbuf, this.txtstart, 3).equals("xml")
                             && TidyUtils.isWhite((char) this.lexbuf[this.txtstart + 3]))
                         {
                             this.state = LEX_XMLDECL;
@@ -2699,10 +2699,10 @@ public class Lexer
                     if (c != '?')
                     {
                         String name;
-                        Node[] asp = new Node[1];
-                        Node[] php = new Node[1];
-                        AttVal av = new AttVal();
-                        int[] pdelim = new int[1];
+                        final Node[] asp = new Node[1];
+                        final Node[] php = new Node[1];
+                        final AttVal av = new AttVal();
+                        final int[] pdelim = new int[1];
                         isempty[0] = false;
 
                         this.in.ungetChar(c);
@@ -2739,8 +2739,8 @@ public class Lexer
                     // seen " <![" so look for "]> "
                     if (c == '[')
                     {
-                        if (this.lexsize == (this.txtstart + 6)
-                            && (TidyUtils.getString(this.lexbuf, this.txtstart, 6)).equals("CDATA["))
+                        if (this.lexsize == this.txtstart + 6
+                            && TidyUtils.getString(this.lexbuf, this.txtstart, 6).equals("CDATA["))
                         {
                             this.state = LEX_CDATA;
                             this.lexsize -= 6;
@@ -2945,7 +2945,7 @@ public class Lexer
      * @param php php Node, passed as array so it can be modified
      * @return parsed attribute
      */
-    public String parseAttribute(boolean[] isempty, Node[] asp, Node[] php)
+    public String parseAttribute(final boolean[] isempty, final Node[] asp, final Node[] php)
     {
         int start = 0;
         String attr;
@@ -3073,8 +3073,8 @@ public class Lexer
         }
 
         // #427672 - handle attribute names with multibyte chars - fix by Randy Waki - 10 Aug 00
-        int len = this.lexsize - start;
-        attr = (len > 0 ? TidyUtils.getString(this.lexbuf, start, len) : null);
+        final int len = this.lexsize - start;
+        attr = len > 0 ? TidyUtils.getString(this.lexbuf, start, len) : null;
         this.lexsize = start;
 
         return attr;
@@ -3196,7 +3196,7 @@ public class Lexer
      * @param pdelim delimiter, passed as an array reference to allow modification
      * @return parsed value
      */
-    public String parseValue(String name, boolean foldCase, boolean[] isempty, int[] pdelim)
+    public String parseValue(final String name, final boolean foldCase, final boolean[] isempty, final int[] pdelim)
     {
         // values start with "=" or " = " etc.
         // doesn't consume the ">" at end of start tag
@@ -3276,7 +3276,7 @@ public class Lexer
             pdelim[0] = parseServerInstruction();
             len = this.lexsize - start;
             this.lexsize = start;
-            return (len > 0 ? TidyUtils.getString(this.lexbuf, start, len) : null);
+            return len > 0 ? TidyUtils.getString(this.lexbuf, start, len) : null;
         }
         else
         {
@@ -3311,7 +3311,7 @@ public class Lexer
 
                 if (c == '"' || c == '\'')
                 {
-                	int q = c;
+                	final int q = c;
                     report.attrError(this, this.token, null, Report.UNEXPECTED_QUOTEMARK);
                     
                     /* handle <input onclick=s("btn1")> and <a title=foo""">...</a> */
@@ -3519,7 +3519,7 @@ public class Lexer
      * @param attr String to check, must be non-null
      * @return <code>true</code> if attr is a valid name.
      */
-    public static boolean isValidAttrName(String attr)
+    public static boolean isValidAttrName(final String attr)
     {
         char c;
         int i;
@@ -3557,7 +3557,7 @@ public class Lexer
      * @param buf css selector name
      * @return <code>true</code> if the given string is a valid css1 selector name
      */
-    public static boolean isCSS1Selector(String buf)
+    public static boolean isCSS1Selector(final String buf)
     {
         if (buf == null)
         {
@@ -3582,19 +3582,19 @@ public class Lexer
                 // Digit not 1st, unless escaped (Max length "\112F")
                 if (esclen > 0)
                 {
-                    valid = (++esclen < 6);
+                    valid = ++esclen < 6;
                 }
                 if (valid)
                 {
-                    valid = (pos > 0 || esclen > 0);
+                    valid = pos > 0 || esclen > 0;
                 }
             }
             else
             {
-                valid = (esclen > 0 // Escaped? Anything goes.
-                    || (pos > 0 && c == '-') // Dash cannot be 1st char
+                valid = esclen > 0 // Escaped? Anything goes.
+                    || pos > 0 && c == '-'
                     || Character.isLetter(c) // a-z, A-Z anywhere
-                || (c >= 161 && c <= 255)); // Unicode 161-255 anywhere
+                || c >= 161 && c <= 255; // Unicode 161-255 anywhere
                 esclen = 0;
             }
         }
@@ -3606,13 +3606,13 @@ public class Lexer
      * @param isempty is tag empty?
      * @return parsed attribute/value list
      */
-    public AttVal parseAttrs(boolean[] isempty)
+    public AttVal parseAttrs(final boolean[] isempty)
     {
         AttVal av, list;
         String attribute, value;
-        int[] delim = new int[1];
-        Node[] asp = new Node[1];
-        Node[] php = new Node[1];
+        final int[] delim = new int[1];
+        final Node[] asp = new Node[1];
+        final Node[] php = new Node[1];
 
         list = null;
 
@@ -3679,7 +3679,7 @@ public class Lexer
      * <code>&lt;p>&lt;em> text &lt;/em>&lt;/p>&lt;p>&lt;em>&lt;em> more text &lt;/em>&lt;/em></code>
      * @param node Node to be pushed
      */
-    public void pushInline(Node node)
+    public void pushInline(final Node node)
     {
         IStack is;
 
@@ -3723,7 +3723,7 @@ public class Lexer
      * Pop a copy of an inline node from the stack.
      * @param node Node to be popped
      */
-    public void popInline(Node node)
+    public void popInline(final Node node)
     {
         IStack is;
 
@@ -3751,7 +3751,7 @@ public class Lexer
 
                 while (this.istack.size() > 0)
                 {
-                    is = (IStack) this.istack.pop();
+                    is = this.istack.pop();
                     if (is.tag == this.configuration.tt.tagA)
                     {
                         break;
@@ -3768,7 +3768,7 @@ public class Lexer
 
         if (this.istack.size() > 0)
         {
-            is = (IStack) this.istack.pop();
+            is = this.istack.pop();
             if (this.insert >= this.istack.size())
             {
                 this.insert = -1;
@@ -3781,14 +3781,14 @@ public class Lexer
      * @param node Node
      * @return <code>true</code> is the node is found in the stack
      */
-    public boolean isPushed(Node node)
+    public boolean isPushed(final Node node)
     {
         int i;
         IStack is;
 
         for (i = this.istack.size() - 1; i >= 0; --i)
         {
-            is = (IStack) this.istack.elementAt(i);
+            is = this.istack.elementAt(i);
             if (is.tag == node.tag)
             {
                 return true;
@@ -3807,7 +3807,7 @@ public class Lexer
      * @param node original node
      * @return stack size
      */
-    public int inlineDup(Node node)
+    public int inlineDup(final Node node)
     {
         int n;
 
@@ -3849,7 +3849,7 @@ public class Lexer
 
         // GLP: Bugfix 126261. Remove when this change is fixed in istack.c in the original Tidy
         node.implicit = true;
-        is = (IStack) this.istack.elementAt(this.insert);
+        is = this.istack.elementAt(this.insert);
         node.element = is.element;
         node.tag = is.tag;
         if (is.attributes != null)
@@ -3878,7 +3878,7 @@ public class Lexer
      * @param element node
      * @return <code>true</code> if he element can be removed
      */
-    public boolean canPrune(Node element)
+    public boolean canPrune(final Node element)
     {
         if (element.type == Node.TEXT_NODE)
         {
@@ -3954,10 +3954,10 @@ public class Lexer
      * duplicate name attribute as an id and check if id and name match.
      * @param node Node to check for name/it attributes
      */
-    public void fixId(Node node)
+    public void fixId(final Node node)
     {
-        AttVal name = node.getAttrByName("name");
-        AttVal id = node.getAttrByName("id");
+        final AttVal name = node.getAttrByName("name");
+        final AttVal id = node.getAttrByName("id");
 
         if (name != null)
         {
@@ -3989,9 +3989,9 @@ public class Lexer
      * HTML this is handled here rather than in the tag/attr dicts.
      * @param vers html version code
      */
-    void constrainVersion(int vers)
+    void constrainVersion(final int vers)
     {
-        this.versions &= (vers | Dict.VERS_PROPRIETARY);
+        this.versions &= vers | Dict.VERS_PROPRIETARY;
     }
 
     /**
@@ -3999,7 +3999,7 @@ public class Lexer
      * @param node content
      * @return <code>true</code> if node is acceptable in pre elements
      */
-    protected boolean preContent(Node node)
+    protected boolean preContent(final Node node)
     {
         // p is coerced to br's
         if (node.tag == this.configuration.tt.tagP)
@@ -4049,7 +4049,7 @@ public class Lexer
          * @param profile VOYAGER_STRICT | VOYAGER_LOOSE | VOYAGER_FRAMESET
          * @param code unique code for this version info
          */
-        public W3CVersionInfo(String name, String voyagerName, String profile, short code)
+        public W3CVersionInfo(final String name, final String voyagerName, final String profile, final short code)
         {
             this.name = name;
             this.voyagerName = voyagerName;

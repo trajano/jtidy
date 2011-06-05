@@ -65,29 +65,29 @@ public final class TidyMessage
     /**
      * Line in the source file (can be 0 if the message is not related to a particular line, such as a summary message).
      */
-    private int line;
+    private final int line;
 
     /**
      * Column in the source file (can be 0 if the message is not related to a particular column, such as a summary
      * message).
      */
-    private int column;
+    private final int column;
 
     /**
      * Level for this message. Can be TidyMessage.Level.SUMMARY | TidyMessage.Level.INFO | TidyMessage.Level.WARNING |
      * TidyMessage.Level.ERROR.
      */
-    private Level level;
+    private final Level level;
 
     /**
      * Formatted text for this message.
      */
-    private String message;
+    private final String message;
 
     /**
      * Tidy internal error code.
      */
-    private int errorCode;
+    private final int errorCode;
 
     /**
      * Instantiates a new message.
@@ -97,7 +97,7 @@ public final class TidyMessage
      * @param level severity
      * @param message message text
      */
-    public TidyMessage(int errorCode, int line, int column, Level level, String message)
+    public TidyMessage(final int errorCode, final int line, final int column, final Level level, final String message)
     {
         this.errorCode = errorCode;
         this.line = line;
@@ -182,13 +182,13 @@ public final class TidyMessage
         /**
          * short value for this level.
          */
-        private short code;
+        private final short code;
 
         /**
          * Instantiates a new message with the given code.
          * @param code int value for this level
          */
-        private Level(int code)
+        private Level(final int code)
         {
             this.code = (short) code;
         }
@@ -207,7 +207,7 @@ public final class TidyMessage
          * @param code int value for the level
          * @return Level instance
          */
-        public static Level fromCode(int code)
+        public static Level fromCode(final int code)
         {
             switch (code)
             {
@@ -228,7 +228,7 @@ public final class TidyMessage
         /**
          * @see java.lang.Comparable#compareTo(Object)
          */
-        public int compareTo(Level object)
+        public int compareTo(final Level object)
         {
             return this.code - object.code;
         }
@@ -237,7 +237,7 @@ public final class TidyMessage
          * @see java.lang.Object#equals(Object)
          */
         @Override
-		public boolean equals(Object object)
+		public boolean equals(final Object object)
         {
             if (!(object instanceof Level))
             {

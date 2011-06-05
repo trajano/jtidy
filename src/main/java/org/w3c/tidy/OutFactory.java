@@ -80,13 +80,13 @@ public final class OutFactory
      * @param stream output stream
      * @return out instance
      */
-    public static Out getOut(Configuration config, OutputStream stream)
+    public static Out getOut(final Configuration config, final OutputStream stream)
     {
         try
         {
             return new OutJavaImpl(config, config.getOutCharEncodingName(), stream);
         }
-        catch (UnsupportedEncodingException e)
+        catch (final UnsupportedEncodingException e)
         {
             throw new RuntimeException("Unsupported encoding: " + e.getMessage());
         }
@@ -98,7 +98,7 @@ public final class OutFactory
      * @param writer Writer
      * @return out instance
      */
-    public static Out getOut(Configuration config, Writer writer)
+    public static Out getOut(final Configuration config, final Writer writer)
     {
         return new OutJavaImpl(config, writer);
     }

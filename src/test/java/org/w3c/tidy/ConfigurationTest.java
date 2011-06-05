@@ -79,11 +79,11 @@ public class ConfigurationTest extends TestCase
      */
     public void testPrintConfig() throws Exception
     {
-        Tidy tidy = new Tidy();
-        Configuration configuration = tidy.getConfiguration();
-        StringWriter writer = new StringWriter();
+        final Tidy tidy = new Tidy();
+        final Configuration configuration = tidy.getConfiguration();
+        final StringWriter writer = new StringWriter();
         configuration.printConfigOptions(writer, false);
-        String result = writer.toString();
+        final String result = writer.toString();
         // just test that no exception occurred and that something was printed
         assertTrue(result.length() > 200);
         log.debug(result);
@@ -95,13 +95,13 @@ public class ConfigurationTest extends TestCase
      */
     public void testPrintActualConfig() throws Exception
     {
-        Tidy tidy = new Tidy();
+        final Tidy tidy = new Tidy();
         tidy.getConfiguration().tt.defineTag(Dict.TAGTYPE_INLINE, "something");
         tidy.getConfiguration().tt.defineTag(Dict.TAGTYPE_INLINE, "second");
-        Configuration configuration = tidy.getConfiguration();
-        StringWriter writer = new StringWriter();
+        final Configuration configuration = tidy.getConfiguration();
+        final StringWriter writer = new StringWriter();
         configuration.printConfigOptions(writer, true);
-        String result = writer.toString();
+        final String result = writer.toString();
         // just test that no exception occurred and that something was printed
         assertTrue(result.length() > 200);
         log.debug(result);
@@ -113,7 +113,7 @@ public class ConfigurationTest extends TestCase
      */
     public void testGetSet() throws Exception
     {
-        Tidy tidy = new Tidy();
+        final Tidy tidy = new Tidy();
 
         tidy.setAltText("alt");
         assertEquals("alt", tidy.getAltText());

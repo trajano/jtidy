@@ -68,12 +68,12 @@ public class DOMNodeListByTagNameImpl implements org.w3c.dom.NodeList
     /**
      * First node.
      */
-    private Node first;
+    private final Node first;
 
     /**
      * Tag name.
      */
-    private String tagName;
+    private final String tagName;
 
     /**
      * Current index.
@@ -95,7 +95,7 @@ public class DOMNodeListByTagNameImpl implements org.w3c.dom.NodeList
      * @param first first node.
      * @param tagName tag name
      */
-    protected DOMNodeListByTagNameImpl(Node first, String tagName)
+    protected DOMNodeListByTagNameImpl(final Node first, final String tagName)
     {
         this.first = first;
         this.tagName = tagName;
@@ -104,7 +104,7 @@ public class DOMNodeListByTagNameImpl implements org.w3c.dom.NodeList
     /**
      * @see org.w3c.dom.NodeList#item
      */
-    public org.w3c.dom.Node item(int index)
+    public org.w3c.dom.Node item(final int index)
     {
         currIndex = 0;
         maxIndex = index;

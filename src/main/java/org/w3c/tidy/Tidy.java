@@ -115,9 +115,9 @@ public class Tidy implements Serializable
      */
     private PrintWriter errout;
 
-    private PrintWriter stderr;
+    private final PrintWriter stderr;
 
-    private Configuration configuration;
+    private final Configuration configuration;
 
     private String inputStreamName = "InputStream";
 
@@ -125,7 +125,7 @@ public class Tidy implements Serializable
 
     private int parseWarnings;
 
-    private Report report;
+    private final Report report;
 
     /**
      * Instantiates a new Tidy instance. It's reccomended that a new instance is used at each parsing.
@@ -135,7 +135,7 @@ public class Tidy implements Serializable
         this.report = new Report();
         configuration = new Configuration(this.report);
 
-        TagTable tt = new TagTable();
+        final TagTable tt = new TagTable();
         tt.setConfiguration(configuration);
         configuration.tt = tt;
 
@@ -180,7 +180,7 @@ public class Tidy implements Serializable
      * InputStreamName - the name of the input stream (printed in the header information).
      * @param name input stream name
      */
-    public void setInputStreamName(String name)
+    public void setInputStreamName(final String name)
     {
         if (name != null)
         {
@@ -202,7 +202,7 @@ public class Tidy implements Serializable
         return errout;
     }
 
-    public void setErrout(PrintWriter out)
+    public void setErrout(final PrintWriter out)
     {
         this.errout = out;
     }
@@ -211,7 +211,7 @@ public class Tidy implements Serializable
      * Sets the configuration from a configuration file.
      * @param filename configuration file name/path.
      */
-    public void setConfigurationFromFile(String filename)
+    public void setConfigurationFromFile(final String filename)
     {
         configuration.parseFile(filename);
     }
@@ -220,7 +220,7 @@ public class Tidy implements Serializable
      * Sets the configuration from a properties object.
      * @param props Properties object
      */
-    public void setConfigurationFromProps(Properties props)
+    public void setConfigurationFromProps(final Properties props)
     {
         configuration.addProps(props);
     }
@@ -231,8 +231,8 @@ public class Tidy implements Serializable
      */
     public static org.w3c.dom.Document createEmptyDocument()
     {
-        Node document = new Node(Node.ROOT_NODE, new byte[0], 0, 0);
-        Node node = new Node(Node.START_TAG, new byte[0], 0, 0, "html", new TagTable());
+        final Node document = new Node(Node.ROOT_NODE, new byte[0], 0, 0);
+        final Node node = new Node(Node.START_TAG, new byte[0], 0, 0, "html", new TagTable());
         if (document != null && node != null)
         {
             document.insertNodeAtStart(node);
@@ -249,10 +249,10 @@ public class Tidy implements Serializable
      * @param out optional destination for pretty-printed document
      * @return parsed org.w3c.tidy.Node
      */
-    public Node parse(InputStream in, OutputStream out)
+    public Node parse(final InputStream in, final OutputStream out)
     {
 
-        StreamIn streamIn = StreamInFactory.getStreamIn(configuration, in);
+        final StreamIn streamIn = StreamInFactory.getStreamIn(configuration, in);
 
         Out o = null;
         if (out != null)
@@ -270,10 +270,10 @@ public class Tidy implements Serializable
      * @param out optional destination for pretty-printed document
      * @return parsed org.w3c.tidy.Node
      */
-    public Node parse(Reader in, OutputStream out)
+    public Node parse(final Reader in, final OutputStream out)
     {
 
-        StreamIn streamIn = StreamInFactory.getStreamIn(configuration, in);
+        final StreamIn streamIn = StreamInFactory.getStreamIn(configuration, in);
 
         Out o = null;
         if (out != null)
@@ -291,9 +291,9 @@ public class Tidy implements Serializable
      * @param out optional destination for pretty-printed document
      * @return parsed org.w3c.tidy.Node
      */
-    public Node parse(Reader in, Writer out)
+    public Node parse(final Reader in, final Writer out)
     {
-        StreamIn streamIn = StreamInFactory.getStreamIn(configuration, in);
+        final StreamIn streamIn = StreamInFactory.getStreamIn(configuration, in);
 
         Out o = null;
         if (out != null)
@@ -311,9 +311,9 @@ public class Tidy implements Serializable
      * @param out optional destination for pretty-printed document
      * @return parsed org.w3c.tidy.Node
      */
-    public Node parse(InputStream in, Writer out)
+    public Node parse(final InputStream in, final Writer out)
     {
-        StreamIn streamIn = StreamInFactory.getStreamIn(configuration, in);
+        final StreamIn streamIn = StreamInFactory.getStreamIn(configuration, in);
 
         Out o = null;
         if (out != null)
@@ -330,9 +330,9 @@ public class Tidy implements Serializable
      * @param out optional output stream
      * @return parsed org.w3c.dom.Document
      */
-    public org.w3c.dom.Document parseDOM(InputStream in, OutputStream out)
+    public org.w3c.dom.Document parseDOM(final InputStream in, final OutputStream out)
     {
-        Node document = parse(in, out);
+        final Node document = parse(in, out);
         if (document != null)
         {
             return (org.w3c.dom.Document) document.getAdapter();
@@ -340,8 +340,8 @@ public class Tidy implements Serializable
         return null;
     }
 
-    public org.w3c.dom.Document parseDOM(Reader in, Writer out) {
-        Node document = parse(in, out);
+    public org.w3c.dom.Document parseDOM(final Reader in, final Writer out) {
+        final Node document = parse(in, out);
         if (document != null) {
             return (org.w3c.dom.Document) document.getAdapter();
         }
@@ -354,7 +354,7 @@ public class Tidy implements Serializable
      * @param doc org.w3c.dom.Document
      * @param out output stream
      */
-    public void pprint(org.w3c.dom.Document doc, OutputStream out)
+    public void pprint(final org.w3c.dom.Document doc, final OutputStream out)
     {
         if (!(doc instanceof DOMDocumentImpl))
         {
@@ -370,7 +370,7 @@ public class Tidy implements Serializable
      * @param node org.w3c.dom.Node. Must be an instance of org.w3c.tidy.DOMNodeImpl.
      * @param out output stream
      */
-    public void pprint(org.w3c.dom.Node node, OutputStream out)
+    public void pprint(final org.w3c.dom.Node node, final OutputStream out)
     {
         if (!(node instanceof DOMNodeImpl))
         {
@@ -387,7 +387,7 @@ public class Tidy implements Serializable
      * @param o tidy Out
      * @return parsed org.w3c.tidy.Node
      */
-    private Node parse(StreamIn streamIn, Out o)
+    private Node parse(final StreamIn streamIn, final Out o)
     {
         Lexer lexer;
         Node document = null;
@@ -441,7 +441,7 @@ public class Tidy implements Serializable
                 return null;
             }
 
-            Clean cleaner = new Clean(configuration.tt);
+            final Clean cleaner = new Clean(configuration.tt);
 
             // simplifies <b><b> ... </b> ... </b> etc.
             cleaner.nestedEmphasis(document);
@@ -621,7 +621,7 @@ public class Tidy implements Serializable
      * @throws FileNotFoundException if <code>file</code> is not null but it can't be found
      * @throws IOException for errors in reading input stream or file
      */
-    private Node parse(InputStream in, String file, OutputStream out) throws FileNotFoundException, IOException
+    private Node parse(InputStream in, final String file, OutputStream out) throws FileNotFoundException, IOException
     {
 
         StreamIn streamIn;
@@ -643,7 +643,7 @@ public class Tidy implements Serializable
 
         streamIn = StreamInFactory.getStreamIn(configuration, in);
 
-        if (configuration.writeback && (file != null))
+        if (configuration.writeback && file != null)
         {
             out = new FileOutputStream(file);
             outputStreamOpen = true;
@@ -654,7 +654,7 @@ public class Tidy implements Serializable
             o = OutFactory.getOut(this.configuration, out); // normal output stream
         }
 
-        Node node = parse(streamIn, o);
+        final Node node = parse(streamIn, o);
 
         // Try to close the InputStream but only if if we created it.
         if (inputStreamOpen)
@@ -663,7 +663,7 @@ public class Tidy implements Serializable
             {
                 in.close();
             }
-            catch (IOException e)
+            catch (final IOException e)
             {
                 // ignore
             }
@@ -676,7 +676,7 @@ public class Tidy implements Serializable
             {
                 out.close();
             }
-            catch (IOException e)
+            catch (final IOException e)
             {
                 // ignore
             }
@@ -691,16 +691,16 @@ public class Tidy implements Serializable
      * @param node org.w3c.tidy.Node
      * @param out output stream
      */
-    private void pprint(Node node, OutputStream out)
+    private void pprint(final Node node, final OutputStream out)
     {
         PPrint pprint;
 
         if (out != null)
         {
 
-            Out o = OutFactory.getOut(this.configuration, out);
+            final Out o = OutFactory.getOut(this.configuration, out);
 
-            Lexer lexer = new Lexer(null, this.configuration, this.report);
+            final Lexer lexer = new Lexer(null, this.configuration, this.report);
 
             pprint = new PPrint(configuration);
 
@@ -723,10 +723,10 @@ public class Tidy implements Serializable
      * Command line interface to parser and pretty printer.
      * @param argv command line parameters
      */
-    public static void main(String[] argv)
+    public static void main(final String[] argv)
     {
-        Tidy tidy = new Tidy();
-        int returnCode = tidy.mainExec(argv);
+        final Tidy tidy = new Tidy();
+        final int returnCode = tidy.mainExec(argv);
         System.exit(returnCode);
     }
 
@@ -736,14 +736,14 @@ public class Tidy implements Serializable
      * @param argv command line parameters
      * @return return code
      */
-    protected int mainExec(String[] argv)
+    protected int mainExec(final String[] argv)
     {
         String file;
         int argCount = argv.length;
         int argIndex = 0;
 
         // read command line
-        Properties properties = new Properties();
+        final Properties properties = new Properties();
 
         while (argCount > 0)
         {
@@ -789,7 +789,7 @@ public class Tidy implements Serializable
                 }
 
                 // handle "special" aliases
-                String alias = CMDLINE_ALIAS.get(argName);
+                final String alias = CMDLINE_ALIAS.get(argName);
                 if (alias != null)
                 {
                     argName = alias;
@@ -893,7 +893,7 @@ public class Tidy implements Serializable
                         this.setErrout(new PrintWriter(new FileWriter(configuration.errfile), true));
                         errorfile = configuration.errfile;
                     }
-                    catch (IOException e)
+                    catch (final IOException e)
                     {
                         // can't be opened so fall back to stderr
                         errorfile = "stderr";
@@ -915,11 +915,11 @@ public class Tidy implements Serializable
             {
                 parse(null, file, System.out);
             }
-            catch (FileNotFoundException fnfe)
+            catch (final FileNotFoundException fnfe)
             {
                 this.report.unknownFile(this.errout, file);
             }
-            catch (IOException ioe)
+            catch (final IOException ioe)
             {
                 this.report.unknownFile(this.errout, file);
             }
@@ -962,7 +962,7 @@ public class Tidy implements Serializable
      * Attach a TidyMessageListener which will be notified for messages and errors.
      * @param listener TidyMessageListener implementation
      */
-    public void setMessageListener(TidyMessageListener listener)
+    public void setMessageListener(final TidyMessageListener listener)
     {
         this.report.addMessageListener(listener);
     }
@@ -972,7 +972,7 @@ public class Tidy implements Serializable
      * @param spaces number of spaces used for indentation
      * @see Configuration#spaces
      */
-    public void setSpaces(int spaces)
+    public void setSpaces(final int spaces)
     {
         configuration.spaces = spaces;
     }
@@ -992,7 +992,7 @@ public class Tidy implements Serializable
      * @param wraplen default wrap margin
      * @see Configuration#wraplen
      */
-    public void setWraplen(int wraplen)
+    public void setWraplen(final int wraplen)
     {
         configuration.wraplen = wraplen;
     }
@@ -1012,7 +1012,7 @@ public class Tidy implements Serializable
      * @param tabsize tab size in chars
      * @see Configuration#tabsize
      */
-    public void setTabsize(int tabsize)
+    public void setTabsize(final int tabsize)
     {
         configuration.tabsize = tabsize;
     }
@@ -1032,7 +1032,7 @@ public class Tidy implements Serializable
      * @param errfile file name to write errors to
      * @see Configuration#errfile
      */
-    public void setErrfile(String errfile)
+    public void setErrfile(final String errfile)
     {
         configuration.errfile = errfile;
     }
@@ -1052,7 +1052,7 @@ public class Tidy implements Serializable
      * @param writeback <code>true</code>= output tidied markup
      * @see Configuration#writeback
      */
-    public void setWriteback(boolean writeback)
+    public void setWriteback(final boolean writeback)
     {
         configuration.writeback = writeback;
     }
@@ -1072,7 +1072,7 @@ public class Tidy implements Serializable
      * @param onlyErrors if <code>true</code> normal output is suppressed.
      * @see Configuration#onlyErrors
      */
-    public void setOnlyErrors(boolean onlyErrors)
+    public void setOnlyErrors(final boolean onlyErrors)
     {
         configuration.onlyErrors = onlyErrors;
     }
@@ -1092,7 +1092,7 @@ public class Tidy implements Serializable
      * @param showWarnings if <code>false</code> warnings are not shown
      * @see Configuration#showWarnings
      */
-    public void setShowWarnings(boolean showWarnings)
+    public void setShowWarnings(final boolean showWarnings)
     {
         configuration.showWarnings = showWarnings;
     }
@@ -1112,7 +1112,7 @@ public class Tidy implements Serializable
      * @param quiet <code>true</code>= don't output summary, warnings or errors
      * @see Configuration#quiet
      */
-    public void setQuiet(boolean quiet)
+    public void setQuiet(final boolean quiet)
     {
         configuration.quiet = quiet;
     }
@@ -1132,7 +1132,7 @@ public class Tidy implements Serializable
      * @param indentContent indent content of appropriate tags
      * @see Configuration#indentContent
      */
-    public void setIndentContent(boolean indentContent)
+    public void setIndentContent(final boolean indentContent)
     {
         configuration.indentContent = indentContent;
     }
@@ -1152,7 +1152,7 @@ public class Tidy implements Serializable
      * @param smartIndent <code>true</code> if text/block level content should effect indentation
      * @see Configuration#smartIndent
      */
-    public void setSmartIndent(boolean smartIndent)
+    public void setSmartIndent(final boolean smartIndent)
     {
         configuration.smartIndent = smartIndent;
     }
@@ -1172,7 +1172,7 @@ public class Tidy implements Serializable
      * @param hideEndTags <code>true</code>= suppress optional end tags
      * @see Configuration#hideEndTags
      */
-    public void setHideEndTags(boolean hideEndTags)
+    public void setHideEndTags(final boolean hideEndTags)
     {
         configuration.hideEndTags = hideEndTags;
     }
@@ -1192,7 +1192,7 @@ public class Tidy implements Serializable
      * @param xmlTags <code>true</code> if tidy should treat input as XML
      * @see Configuration#xmlTags
      */
-    public void setXmlTags(boolean xmlTags)
+    public void setXmlTags(final boolean xmlTags)
     {
         configuration.xmlTags = xmlTags;
     }
@@ -1212,7 +1212,7 @@ public class Tidy implements Serializable
      * @param xmlOut <code>true</code> if tidy should create output as xml
      * @see Configuration#xmlOut
      */
-    public void setXmlOut(boolean xmlOut)
+    public void setXmlOut(final boolean xmlOut)
     {
         configuration.xmlOut = xmlOut;
     }
@@ -1232,7 +1232,7 @@ public class Tidy implements Serializable
      * @param xhtml <code>true</code> if tidy should output XHTML
      * @see Configuration#xHTML
      */
-    public void setXHTML(boolean xhtml)
+    public void setXHTML(final boolean xhtml)
     {
         configuration.xHTML = xhtml;
     }
@@ -1252,7 +1252,7 @@ public class Tidy implements Serializable
      * @param upperCaseTags <code>true</code> if tidy should output tags in upper case (default is lowercase)
      * @see Configuration#upperCaseTags
      */
-    public void setUpperCaseTags(boolean upperCaseTags)
+    public void setUpperCaseTags(final boolean upperCaseTags)
     {
         configuration.upperCaseTags = upperCaseTags;
     }
@@ -1272,7 +1272,7 @@ public class Tidy implements Serializable
      * @param upperCaseAttrs <code>true</code> if tidy should output attributes in upper case (default is lowercase)
      * @see Configuration#upperCaseAttrs
      */
-    public void setUpperCaseAttrs(boolean upperCaseAttrs)
+    public void setUpperCaseAttrs(final boolean upperCaseAttrs)
     {
         configuration.upperCaseAttrs = upperCaseAttrs;
     }
@@ -1292,7 +1292,7 @@ public class Tidy implements Serializable
      * @param makeClean true to remove presentational clutter
      * @see Configuration#makeClean
      */
-    public void setMakeClean(boolean makeClean)
+    public void setMakeClean(final boolean makeClean)
     {
         configuration.makeClean = makeClean;
     }
@@ -1312,7 +1312,7 @@ public class Tidy implements Serializable
      * @param makeBare true to remove Microsoft cruft
      * @see Configuration#makeBare
      */
-    public void setMakeBare(boolean makeBare)
+    public void setMakeBare(final boolean makeBare)
     {
         configuration.makeBare = makeBare;
     }
@@ -1332,7 +1332,7 @@ public class Tidy implements Serializable
      * @param breakBeforeBR <code>true</code> if tidy should output a newline before &lt;br&gt;
      * @see Configuration#breakBeforeBR
      */
-    public void setBreakBeforeBR(boolean breakBeforeBR)
+    public void setBreakBeforeBR(final boolean breakBeforeBR)
     {
         configuration.breakBeforeBR = breakBeforeBR;
     }
@@ -1352,7 +1352,7 @@ public class Tidy implements Serializable
      * @param burstSlides <code>true</code> if tidy should create slides on each h2 element
      * @see Configuration#burstSlides
      */
-    public void setBurstSlides(boolean burstSlides)
+    public void setBurstSlides(final boolean burstSlides)
     {
         configuration.burstSlides = burstSlides;
     }
@@ -1373,7 +1373,7 @@ public class Tidy implements Serializable
      * @param numEntities <code>true</code> if tidy should output entities in the numeric form.
      * @see Configuration#numEntities
      */
-    public void setNumEntities(boolean numEntities)
+    public void setNumEntities(final boolean numEntities)
     {
         configuration.numEntities = numEntities;
     }
@@ -1394,7 +1394,7 @@ public class Tidy implements Serializable
      * @param quoteMarks <code>true</code> if tidy should output " marks as &amp;quot;
      * @see Configuration#quoteMarks
      */
-    public void setQuoteMarks(boolean quoteMarks)
+    public void setQuoteMarks(final boolean quoteMarks)
     {
         configuration.quoteMarks = quoteMarks;
     }
@@ -1414,7 +1414,7 @@ public class Tidy implements Serializable
      * @param quoteNbsp <code>true</code> if tidy should output non-breaking space as entity
      * @see Configuration#quoteNbsp
      */
-    public void setQuoteNbsp(boolean quoteNbsp)
+    public void setQuoteNbsp(final boolean quoteNbsp)
     {
         configuration.quoteNbsp = quoteNbsp;
     }
@@ -1434,7 +1434,7 @@ public class Tidy implements Serializable
      * @param quoteAmpersand <code>true</code> if tidy should output naked ampersand as &amp;
      * @see Configuration#quoteAmpersand
      */
-    public void setQuoteAmpersand(boolean quoteAmpersand)
+    public void setQuoteAmpersand(final boolean quoteAmpersand)
     {
         configuration.quoteAmpersand = quoteAmpersand;
     }
@@ -1454,7 +1454,7 @@ public class Tidy implements Serializable
      * @param wrapAttVals <code>true</code> if tidy should wrap within attribute values
      * @see Configuration#wrapAttVals
      */
-    public void setWrapAttVals(boolean wrapAttVals)
+    public void setWrapAttVals(final boolean wrapAttVals)
     {
         configuration.wrapAttVals = wrapAttVals;
     }
@@ -1474,7 +1474,7 @@ public class Tidy implements Serializable
      * @param wrapScriptlets <code>true</code> if tidy should wrap within JavaScript string literals
      * @see Configuration#wrapScriptlets
      */
-    public void setWrapScriptlets(boolean wrapScriptlets)
+    public void setWrapScriptlets(final boolean wrapScriptlets)
     {
         configuration.wrapScriptlets = wrapScriptlets;
     }
@@ -1494,7 +1494,7 @@ public class Tidy implements Serializable
      * @param wrapSection <code>true</code> if tidy should wrap within &lt;![ ... ]&gt; section tags
      * @see Configuration#wrapSection
      */
-    public void setWrapSection(boolean wrapSection)
+    public void setWrapSection(final boolean wrapSection)
     {
         configuration.wrapSection = wrapSection;
     }
@@ -1514,7 +1514,7 @@ public class Tidy implements Serializable
      * @param altText default text for alt attribute
      * @see Configuration#altText
      */
-    public void setAltText(String altText)
+    public void setAltText(final String altText)
     {
         configuration.altText = altText;
     }
@@ -1534,7 +1534,7 @@ public class Tidy implements Serializable
      * @param xmlPi <code>true</code> if tidy should add &lt;?xml?&gt; for XML docs
      * @see Configuration#xmlPi
      */
-    public void setXmlPi(boolean xmlPi)
+    public void setXmlPi(final boolean xmlPi)
     {
         configuration.xmlPi = xmlPi;
     }
@@ -1554,7 +1554,7 @@ public class Tidy implements Serializable
      * @param dropFontTags <code>true</code> if tidy should discard presentation tags
      * @see Configuration#dropFontTags
      */
-    public void setDropFontTags(boolean dropFontTags)
+    public void setDropFontTags(final boolean dropFontTags)
     {
         configuration.dropFontTags = dropFontTags;
     }
@@ -1574,7 +1574,7 @@ public class Tidy implements Serializable
      * @param dropProprietaryAttributes <code>true</code> if tidy should discard proprietary attributes
      * @see Configuration#dropProprietaryAttributes
      */
-    public void setDropProprietaryAttributes(boolean dropProprietaryAttributes)
+    public void setDropProprietaryAttributes(final boolean dropProprietaryAttributes)
     {
         configuration.dropProprietaryAttributes = dropProprietaryAttributes;
     }
@@ -1594,7 +1594,7 @@ public class Tidy implements Serializable
      * @param dropEmptyParas <code>true</code> if tidy should discard empty p elements
      * @see Configuration#dropEmptyParas
      */
-    public void setDropEmptyParas(boolean dropEmptyParas)
+    public void setDropEmptyParas(final boolean dropEmptyParas)
     {
         configuration.dropEmptyParas = dropEmptyParas;
     }
@@ -1614,7 +1614,7 @@ public class Tidy implements Serializable
      * @param fixComments <code>true</code> if tidy should fix comments with adjacent hyphens
      * @see Configuration#fixComments
      */
-    public void setFixComments(boolean fixComments)
+    public void setFixComments(final boolean fixComments)
     {
         configuration.fixComments = fixComments;
     }
@@ -1634,7 +1634,7 @@ public class Tidy implements Serializable
      * @param wrapAsp <code>true</code> if tidy should wrap within ASP pseudo elements
      * @see Configuration#wrapAsp
      */
-    public void setWrapAsp(boolean wrapAsp)
+    public void setWrapAsp(final boolean wrapAsp)
     {
         configuration.wrapAsp = wrapAsp;
     }
@@ -1654,7 +1654,7 @@ public class Tidy implements Serializable
      * @param wrapJste <code>true</code> if tidy should wrap within JSTE pseudo elements
      * @see Configuration#wrapJste
      */
-    public void setWrapJste(boolean wrapJste)
+    public void setWrapJste(final boolean wrapJste)
     {
         configuration.wrapJste = wrapJste;
     }
@@ -1674,7 +1674,7 @@ public class Tidy implements Serializable
      * @param wrapPhp <code>true</code> if tidy should wrap within PHP pseudo elements
      * @see Configuration#wrapPhp
      */
-    public void setWrapPhp(boolean wrapPhp)
+    public void setWrapPhp(final boolean wrapPhp)
     {
         configuration.wrapPhp = wrapPhp;
     }
@@ -1694,7 +1694,7 @@ public class Tidy implements Serializable
      * @param fixBackslash <code>true</code> if tidy should fix URLs by replacing \ with /
      * @see Configuration#fixBackslash
      */
-    public void setFixBackslash(boolean fixBackslash)
+    public void setFixBackslash(final boolean fixBackslash)
     {
         configuration.fixBackslash = fixBackslash;
     }
@@ -1714,7 +1714,7 @@ public class Tidy implements Serializable
      * @param indentAttributes <code>true</code> if tidy should output a newline+indent before each attribute
      * @see Configuration#indentAttributes
      */
-    public void setIndentAttributes(boolean indentAttributes)
+    public void setIndentAttributes(final boolean indentAttributes)
     {
         configuration.indentAttributes = indentAttributes;
     }
@@ -1737,7 +1737,7 @@ public class Tidy implements Serializable
      * @see Configuration#docTypeStr
      * @see Configuration#docTypeMode
      */
-    public void setDocType(String doctype)
+    public void setDocType(final String doctype)
     {
         if (doctype != null)
         {
@@ -1781,7 +1781,7 @@ public class Tidy implements Serializable
      * @param logicalEmphasis <code>true</code> if tidy should replace i by em and b by strong
      * @see Configuration#logicalEmphasis
      */
-    public void setLogicalEmphasis(boolean logicalEmphasis)
+    public void setLogicalEmphasis(final boolean logicalEmphasis)
     {
         configuration.logicalEmphasis = logicalEmphasis;
     }
@@ -1803,7 +1803,7 @@ public class Tidy implements Serializable
      * @param xmlPIs <code>true</code> if tidy should expect a ?> at the end of processing instructions
      * @see Configuration#xmlPIs
      */
-    public void setXmlPIs(boolean xmlPIs)
+    public void setXmlPIs(final boolean xmlPIs)
     {
         configuration.xmlPIs = xmlPIs;
     }
@@ -1825,7 +1825,7 @@ public class Tidy implements Serializable
      * @param encloseText <code>true</code> if tidy should wrap text at body in &lt;p&gt;'s.
      * @see Configuration#encloseBodyText
      */
-    public void setEncloseText(boolean encloseText)
+    public void setEncloseText(final boolean encloseText)
     {
         configuration.encloseBodyText = encloseText;
     }
@@ -1845,7 +1845,7 @@ public class Tidy implements Serializable
      * @param encloseBlockText <code>true</code> if tidy should wrap text text in blocks in &lt;p&gt;'s.
      * @see Configuration#encloseBlockText
      */
-    public void setEncloseBlockText(boolean encloseBlockText)
+    public void setEncloseBlockText(final boolean encloseBlockText)
     {
         configuration.encloseBlockText = encloseBlockText;
     }
@@ -1865,7 +1865,7 @@ public class Tidy implements Serializable
      * @param word2000 <code>true</code> if tidy should clean word2000 documents
      * @see Configuration#word2000
      */
-    public void setWord2000(boolean word2000)
+    public void setWord2000(final boolean word2000)
     {
         configuration.word2000 = word2000;
     }
@@ -1885,7 +1885,7 @@ public class Tidy implements Serializable
      * @param tidyMark <code>true</code> if tidy should add meta element indicating tidied doc
      * @see Configuration#tidyMark
      */
-    public void setTidyMark(boolean tidyMark)
+    public void setTidyMark(final boolean tidyMark)
     {
         configuration.tidyMark = tidyMark;
     }
@@ -1905,7 +1905,7 @@ public class Tidy implements Serializable
      * @param xmlSpace <code>true</code> if tidy should add xml:space attr as needed
      * @see Configuration#xmlSpace
      */
-    public void setXmlSpace(boolean xmlSpace)
+    public void setXmlSpace(final boolean xmlSpace)
     {
         configuration.xmlSpace = xmlSpace;
     }
@@ -1925,7 +1925,7 @@ public class Tidy implements Serializable
      * @param emacs <code>true</code> if tidy should format error output for GNU Emacs
      * @see Configuration#emacs
      */
-    public void setEmacs(boolean emacs)
+    public void setEmacs(final boolean emacs)
     {
         configuration.emacs = emacs;
     }
@@ -1945,7 +1945,7 @@ public class Tidy implements Serializable
      * @param literalAttribs <code>true</code> if attributes may use newlines
      * @see Configuration#literalAttribs
      */
-    public void setLiteralAttribs(boolean literalAttribs)
+    public void setLiteralAttribs(final boolean literalAttribs)
     {
         configuration.literalAttribs = literalAttribs;
     }
@@ -1965,7 +1965,7 @@ public class Tidy implements Serializable
      * @param bodyOnly true = print only the document body
      * @see Configuration#bodyOnly
      */
-    public void setPrintBodyOnly(boolean bodyOnly)
+    public void setPrintBodyOnly(final boolean bodyOnly)
     {
         configuration.bodyOnly = bodyOnly;
     }
@@ -1984,7 +1984,7 @@ public class Tidy implements Serializable
      * @param fixUri true = fix uri references
      * @see Configuration#fixUri
      */
-    public void setFixUri(boolean fixUri)
+    public void setFixUri(final boolean fixUri)
     {
         configuration.fixUri = fixUri;
     }
@@ -2003,7 +2003,7 @@ public class Tidy implements Serializable
      * @param lowerLiterals true = folds known attribute values to lower case
      * @see Configuration#lowerLiterals
      */
-    public void setLowerLiterals(boolean lowerLiterals)
+    public void setLowerLiterals(final boolean lowerLiterals)
     {
         configuration.lowerLiterals = lowerLiterals;
     }
@@ -2022,7 +2022,7 @@ public class Tidy implements Serializable
      * @param hideComments true = hides all comments in output
      * @see Configuration#hideComments
      */
-    public void setHideComments(boolean hideComments)
+    public void setHideComments(final boolean hideComments)
     {
         configuration.hideComments = hideComments;
     }
@@ -2041,7 +2041,7 @@ public class Tidy implements Serializable
      * @param indentCdata true = indent CDATA sections
      * @see Configuration#indentCdata
      */
-    public void setIndentCdata(boolean indentCdata)
+    public void setIndentCdata(final boolean indentCdata)
     {
         configuration.indentCdata = indentCdata;
     }
@@ -2060,7 +2060,7 @@ public class Tidy implements Serializable
      * @param forceOutput true = output document even if errors were found
      * @see Configuration#forceOutput
      */
-    public void setForceOutput(boolean forceOutput)
+    public void setForceOutput(final boolean forceOutput)
     {
         configuration.forceOutput = forceOutput;
     }
@@ -2079,7 +2079,7 @@ public class Tidy implements Serializable
      * @param showErrors number of errors to put out
      * @see Configuration#showErrors
      */
-    public void setShowErrors(int showErrors)
+    public void setShowErrors(final int showErrors)
     {
         configuration.showErrors = showErrors;
     }
@@ -2098,7 +2098,7 @@ public class Tidy implements Serializable
      * @param asciiChars true = convert quotes and dashes to nearest ASCII char
      * @see Configuration#asciiChars
      */
-    public void setAsciiChars(boolean asciiChars)
+    public void setAsciiChars(final boolean asciiChars)
     {
         configuration.asciiChars = asciiChars;
     }
@@ -2117,7 +2117,7 @@ public class Tidy implements Serializable
      * @param joinClasses true = join multiple class attributes
      * @see Configuration#joinClasses
      */
-    public void setJoinClasses(boolean joinClasses)
+    public void setJoinClasses(final boolean joinClasses)
     {
         configuration.joinClasses = joinClasses;
     }
@@ -2136,7 +2136,7 @@ public class Tidy implements Serializable
      * @param joinStyles true = join multiple style attributes
      * @see Configuration#joinStyles
      */
-    public void setJoinStyles(boolean joinStyles)
+    public void setJoinStyles(final boolean joinStyles)
     {
         configuration.joinStyles = joinStyles;
     }
@@ -2155,7 +2155,7 @@ public class Tidy implements Serializable
      * @param trim-empty-elements true = trim empty elements
      * @see Configuration#trimEmpty
      */
-    public void setTrimEmptyElements(boolean trimEmpty)
+    public void setTrimEmptyElements(final boolean trimEmpty)
     {
         configuration.trimEmpty = trimEmpty;
     }
@@ -2174,7 +2174,7 @@ public class Tidy implements Serializable
      * @param replaceColor true = replace hex color attribute values with names
      * @see Configuration#replaceColor
      */
-    public void setReplaceColor(boolean replaceColor)
+    public void setReplaceColor(final boolean replaceColor)
     {
         configuration.replaceColor = replaceColor;
     }
@@ -2193,7 +2193,7 @@ public class Tidy implements Serializable
      * @param escapeCdata true = replace CDATA sections with escaped text
      * @see Configuration#escapeCdata
      */
-    public void setEscapeCdata(boolean escapeCdata)
+    public void setEscapeCdata(final boolean escapeCdata)
     {
         configuration.escapeCdata = escapeCdata;
     }
@@ -2212,7 +2212,7 @@ public class Tidy implements Serializable
      * @param repeatedAttributes <code>Configuration.KEEP_FIRST | Configuration.KEEP_LAST</code>
      * @see Configuration#duplicateAttrs
      */
-    public void setRepeatedAttributes(int repeatedAttributes)
+    public void setRepeatedAttributes(final int repeatedAttributes)
     {
         configuration.duplicateAttrs = repeatedAttributes;
     }
@@ -2232,7 +2232,7 @@ public class Tidy implements Serializable
      * @todo <strong>this is NOT supported at this time. </strong>
      * @see Configuration#keepFileTimes
      */
-    public void setKeepFileTimes(boolean keepFileTimes)
+    public void setKeepFileTimes(final boolean keepFileTimes)
     {
         configuration.keepFileTimes = keepFileTimes;
     }
@@ -2254,7 +2254,7 @@ public class Tidy implements Serializable
      * @param rawOut avoid mapping values > 127 to entities
      * @see Configuration#rawOut
      */
-    public void setRawOut(boolean rawOut)
+    public void setRawOut(final boolean rawOut)
     {
         configuration.rawOut = rawOut;
     }
@@ -2273,7 +2273,7 @@ public class Tidy implements Serializable
      * <code>input-encoding</code> the character encoding used for input.
      * @param encoding a valid java encoding name
      */
-    public void setInputEncoding(String encoding)
+    public void setInputEncoding(final String encoding)
     {
         configuration.setInCharEncodingName(encoding);
     }
@@ -2291,7 +2291,7 @@ public class Tidy implements Serializable
      * <code>output-encoding</code> the character encoding used for output.
      * @param encoding a valid java encoding name
      */
-    public void setOutputEncoding(String encoding)
+    public void setOutputEncoding(final String encoding)
     {
         configuration.setOutCharEncodingName(encoding);
     }

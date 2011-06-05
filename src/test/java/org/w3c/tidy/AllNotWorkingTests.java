@@ -79,7 +79,7 @@ public final class AllNotWorkingTests
      */
     public static Test suite()
     {
-        TestSuite suite = new TestSuite("All the NOT working test cases for JTidy");
+        final TestSuite suite = new TestSuite("All the NOT working test cases for JTidy");
 
         suite.addTest(new JTidyBugsTest("test508245"));
         suite.addTest(new JTidyBugsTest("test531962"));

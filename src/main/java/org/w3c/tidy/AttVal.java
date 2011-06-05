@@ -122,7 +122,7 @@ public class AttVal extends Object implements Cloneable
      * @param attribute attribute name
      * @param value attribute value
      */
-    public AttVal(AttVal next, Attribute dict, int delim, String attribute, String value)
+    public AttVal(final AttVal next, final Attribute dict, final int delim, final String attribute, final String value)
     {
         this.next = next;
         this.dict = dict;
@@ -141,7 +141,7 @@ public class AttVal extends Object implements Cloneable
      * @param attribute attribute name
      * @param value attribute value
      */
-    public AttVal(AttVal next, Attribute dict, Node asp, Node php, int delim, String attribute, String value)
+    public AttVal(final AttVal next, final Attribute dict, final Node asp, final Node php, final int delim, final String attribute, final String value)
     {
         this.next = next;
         this.dict = dict;
@@ -163,7 +163,7 @@ public class AttVal extends Object implements Cloneable
         {
             av = (AttVal) super.clone();
         }
-        catch (CloneNotSupportedException e)
+        catch (final CloneNotSupportedException e)
         {
             // should never happen
         }
@@ -190,7 +190,7 @@ public class AttVal extends Object implements Cloneable
      */
     public boolean isBoolAttribute()
     {
-        Attribute attr = this.dict;
+        final Attribute attr = this.dict;
         if (attr != null)
         {
             if (attr.getAttrchk() == AttrCheckImpl.BOOL)
@@ -208,14 +208,14 @@ public class AttVal extends Object implements Cloneable
      * @param lexer Lexer
      * @param node Node which contains this attribute
      */
-    void checkLowerCaseAttrValue(Lexer lexer, Node node)
+    void checkLowerCaseAttrValue(final Lexer lexer, final Node node)
     {
         if (this.value == null)
         {
             return;
         }
 
-        String lowercase = this.value.toLowerCase();
+        final String lowercase = this.value.toLowerCase();
 
         if (!this.value.equals(lowercase))
         {
@@ -237,11 +237,11 @@ public class AttVal extends Object implements Cloneable
      * @param node node which contains this attribute
      * @return Attribute
      */
-    public Attribute checkAttribute(Lexer lexer, Node node)
+    public Attribute checkAttribute(final Lexer lexer, final Node node)
     {
-        TagTable tt = lexer.configuration.tt;
+        final TagTable tt = lexer.configuration.tt;
 
-        Attribute attr = this.dict;
+        final Attribute attr = this.dict;
 
         // ignore unknown attributes for proprietary elements
         if (attr != null)
@@ -274,7 +274,7 @@ public class AttVal extends Object implements Cloneable
         else if (!lexer.configuration.xmlTags
             && !(node.tag == null)
             && this.asp == null
-            && !(node.tag != null && (TidyUtils.toBoolean(node.tag.versions & Dict.VERS_PROPRIETARY))))
+            && !(node.tag != null && TidyUtils.toBoolean(node.tag.versions & Dict.VERS_PROPRIETARY)))
         {
             lexer.report.attrError(lexer, node, this, Report.UNKNOWN_ATTRIBUTE);
         }
@@ -308,7 +308,7 @@ public class AttVal extends Object implements Cloneable
      * Setter for <code>asp</code>.
      * @param asp The asp to set.
      */
-    public void setAsp(Node asp)
+    public void setAsp(final Node asp)
     {
         this.asp = asp;
     }
@@ -326,7 +326,7 @@ public class AttVal extends Object implements Cloneable
      * Setter for <code>attribute</code>.
      * @param attribute The attribute to set.
      */
-    public void setAttribute(String attribute)
+    public void setAttribute(final String attribute)
     {
         this.attribute = attribute;
     }
@@ -344,7 +344,7 @@ public class AttVal extends Object implements Cloneable
      * Setter for <code>delim</code>.
      * @param delim The delim to set.
      */
-    public void setDelim(int delim)
+    public void setDelim(final int delim)
     {
         this.delim = delim;
     }
@@ -362,7 +362,7 @@ public class AttVal extends Object implements Cloneable
      * Setter for <code>dict</code>.
      * @param dict The dict to set.
      */
-    public void setDict(Attribute dict)
+    public void setDict(final Attribute dict)
     {
         this.dict = dict;
     }
@@ -380,7 +380,7 @@ public class AttVal extends Object implements Cloneable
      * Setter for <code>next</code>.
      * @param next The next to set.
      */
-    public void setNext(AttVal next)
+    public void setNext(final AttVal next)
     {
         this.next = next;
     }
@@ -398,7 +398,7 @@ public class AttVal extends Object implements Cloneable
      * Setter for <code>php</code>.
      * @param php The php to set.
      */
-    public void setPhp(Node php)
+    public void setPhp(final Node php)
     {
         this.php = php;
     }
@@ -416,7 +416,7 @@ public class AttVal extends Object implements Cloneable
      * Setter for <code>value</code>.
      * @param value The value to set.
      */
-    public void setValue(String value)
+    public void setValue(final String value)
     {
         this.value = value;
     }

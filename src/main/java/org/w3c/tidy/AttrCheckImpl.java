@@ -250,7 +250,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
             char c;
             StringBuffer dest;
@@ -265,7 +265,7 @@ public final class AttrCheckImpl
             }
 
             String p = attval.value;
-            boolean isJavascript = attval.value.startsWith("javascript:");
+            final boolean isJavascript = attval.value.startsWith("javascript:");
 
             for (i = 0; i < p.length(); ++i)
             {
@@ -276,7 +276,7 @@ public final class AttrCheckImpl
                     backslashFound = true;
                 }
                 // find non-ascii chars
-                else if ((c > 0x7e) || (c <= 0x20) || (c == '<') || (c == '>'))
+                else if (c > 0x7e || c <= 0x20 || c == '<' || c == '>')
                 {
                     escapeFound = true;
                 }
@@ -297,7 +297,7 @@ public final class AttrCheckImpl
                 for (i = 0; i < p.length(); ++i)
                 {
                     c = p.charAt(i);
-                    if ((c > 0x7e) || (c <= 0x20) || (c == '<') || (c == '>'))
+                    if (c > 0x7e || c <= 0x20 || c == '<' || c == '>')
                     {
                         dest.append('%');
                         dest.append(Integer.toHexString(c).toUpperCase());
@@ -347,7 +347,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
             // not implemented
         }
@@ -368,10 +368,10 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
             // IMG, OBJECT, APPLET and EMBED use align for vertical position
-            if (node.tag != null && ((node.tag.model & Dict.CM_IMG) != 0))
+            if (node.tag != null && (node.tag.model & Dict.CM_IMG) != 0)
             {
                 VALIGN.check(lexer, node, attval);
                 return;
@@ -421,7 +421,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
             String value;
 
@@ -443,7 +443,7 @@ public final class AttrCheckImpl
 
             if (TidyUtils.isInValuesIgnoreCase(VALID_VALUES_IMG, value))
             {
-                if (!(node.tag != null && ((node.tag.model & Dict.CM_IMG) != 0)))
+                if (!(node.tag != null && (node.tag.model & Dict.CM_IMG) != 0))
                 {
                     lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
                 }
@@ -470,7 +470,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
             if (attval.value == null)
             {
@@ -491,7 +491,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
 
             if (attval.value == null)
@@ -507,22 +507,22 @@ public final class AttrCheckImpl
                 return;
             }
 
-            String p = attval.value;
+            final String p = attval.value;
 
-            if (p.length() == 0 || (!Character.isDigit(p.charAt(0)) && !('%' == p.charAt(0))))
+            if (p.length() == 0 || !Character.isDigit(p.charAt(0)) && !('%' == p.charAt(0)))
             {
                 lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
             }
             else
             {
 
-                TagTable tt = lexer.configuration.tt;
+                final TagTable tt = lexer.configuration.tt;
 
                 for (int j = 1; j < p.length(); j++)
                 {
                     // elements th and td must not use percentages
-                    if ((!Character.isDigit(p.charAt(j)) && (node.tag == tt.tagTd || node.tag == tt.tagTh))
-                        || (!Character.isDigit(p.charAt(j)) && p.charAt(j) != '%'))
+                    if (!Character.isDigit(p.charAt(j)) && (node.tag == tt.tagTd || node.tag == tt.tagTh)
+                        || !Character.isDigit(p.charAt(j)) && p.charAt(j) != '%')
                     {
                         lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
                         break;
@@ -546,7 +546,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
 
             // No target attribute in strict HTML versions
@@ -558,7 +558,7 @@ public final class AttrCheckImpl
                 return;
             }
 
-            String value = attval.value;
+            final String value = attval.value;
 
             // target names must begin with A-Za-z ...
             if (Character.isLetter(value.charAt(0)))
@@ -589,7 +589,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
             if (attval.value == null)
             {
@@ -620,7 +620,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
             if (attval.value == null)
             {
@@ -653,7 +653,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
             if (attval.value == null)
             {
@@ -685,7 +685,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
 
             if (attval.value == null)
@@ -712,7 +712,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
 
             if (attval.value == null)
@@ -728,7 +728,7 @@ public final class AttrCheckImpl
                 return;
             }
 
-            String value = attval.value;
+            final String value = attval.value;
 
             int j = 0;
 
@@ -740,7 +740,7 @@ public final class AttrCheckImpl
 
             for (; j < value.length(); j++)
             {
-                char p = value.charAt(j);
+                final char p = value.charAt(j);
                 if (!Character.isDigit(p))
                 {
                     lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
@@ -759,7 +759,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
             Node old;
 
@@ -769,7 +769,7 @@ public final class AttrCheckImpl
                 return;
             }
 
-            String p = attval.value;
+            final String p = attval.value;
             char s = p.charAt(0);
 
             if (p.length() == 0 || !Character.isLetter(p.charAt(0)))
@@ -805,7 +805,7 @@ public final class AttrCheckImpl
                 }
             }
 
-            if (((old = lexer.configuration.tt.getNodeByAnchor(attval.value)) != null) && old != node)
+            if ((old = lexer.configuration.tt.getNodeByAnchor(attval.value)) != null && old != node)
             {
                 lexer.report.attrError(lexer, node, attval, Report.ANCHOR_NOT_UNIQUE);
             }
@@ -826,7 +826,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
             Node old;
 
@@ -839,7 +839,7 @@ public final class AttrCheckImpl
             {
                 lexer.constrainVersion(~Dict.VERS_XHTML11);
 
-                if (((old = lexer.configuration.tt.getNodeByAnchor(attval.value)) != null) && old != node)
+                if ((old = lexer.configuration.tt.getNodeByAnchor(attval.value)) != null && old != node)
                 {
                     lexer.report.attrError(lexer, node, attval, Report.ANCHOR_NOT_UNIQUE);
                 }
@@ -886,9 +886,9 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
-            boolean hexUppercase = true;
+            final boolean hexUppercase = true;
             boolean invalid = false;
             boolean found = false;
 
@@ -898,13 +898,13 @@ public final class AttrCheckImpl
                 return;
             }
 
-            String given = attval.value;
+            final String given = attval.value;
 
-            Iterator<Map.Entry<String, String>> colorIter = COLORS.entrySet().iterator();
+            final Iterator<Map.Entry<String, String>> colorIter = COLORS.entrySet().iterator();
 
             while (colorIter.hasNext())
             {
-                Map.Entry<String,String> color = colorIter.next();
+                final Map.Entry<String,String> color = colorIter.next();
 
                 if (given.charAt(0) == '#')
                 {
@@ -954,7 +954,7 @@ public final class AttrCheckImpl
                     for (int i = 1; i < 7; ++i)
                     {
                         if (!TidyUtils.isDigit(given.charAt(i))
-                            && ("abcdef".indexOf(Character.toLowerCase(given.charAt(i))) == -1))
+                            && "abcdef".indexOf(Character.toLowerCase(given.charAt(i))) == -1)
                         {
                             lexer.report.attrError(lexer, node, attval, Report.BAD_ATTRIBUTE_VALUE);
                             invalid = true;
@@ -996,7 +996,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
             if (attval.value == null)
             {
@@ -1027,7 +1027,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
 
             if (attval.value == null)
@@ -1059,7 +1059,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
 
             if (attval.value == null)
@@ -1086,7 +1086,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval)
+        public void check(final Lexer lexer, final Node node, final AttVal attval)
         {
 
             if ("lang".equals(attval.attribute))

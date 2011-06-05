@@ -87,7 +87,7 @@ public class ValidUTF8Sequence
      * @param numBytes number of bytes in the sequence
      * @param validBytes valid bytes array
      */
-    public ValidUTF8Sequence(int lowChar, int highChar, int numBytes, char[] validBytes)
+    public ValidUTF8Sequence(final int lowChar, final int highChar, final int numBytes, final char[] validBytes)
     {
         this.lowChar = lowChar;
         this.highChar = highChar;

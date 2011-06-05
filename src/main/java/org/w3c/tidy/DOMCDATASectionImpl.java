@@ -67,7 +67,7 @@ public class DOMCDATASectionImpl extends DOMTextImpl implements org.w3c.dom.CDAT
      * Instantiates a new DOMCDATASectionImpl which wraps the given Node.
      * @param adaptee wrapped node.
      */
-    protected DOMCDATASectionImpl(Node adaptee)
+    protected DOMCDATASectionImpl(final Node adaptee)
     {
         super(adaptee);
     }

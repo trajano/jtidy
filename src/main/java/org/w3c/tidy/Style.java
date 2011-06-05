@@ -90,7 +90,7 @@ public class Style
      * @param properties Style properties
      * @param next Next linked style element. Can be null.
      */
-    public Style(String tag, String tagClass, String properties, Style next)
+    public Style(final String tag, final String tagClass, final String properties, final Style next)
     {
         this.tag = tag;
         this.tagClass = tagClass;

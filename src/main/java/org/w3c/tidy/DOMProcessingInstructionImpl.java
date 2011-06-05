@@ -70,7 +70,7 @@ public class DOMProcessingInstructionImpl extends DOMNodeImpl implements org.w3c
      * Instantiates a new DOM processing instruction.
      * @param adaptee wrapped Tidy node
      */
-    protected DOMProcessingInstructionImpl(Node adaptee)
+    protected DOMProcessingInstructionImpl(final Node adaptee)
     {
         super(adaptee);
     }
@@ -104,7 +104,7 @@ public class DOMProcessingInstructionImpl extends DOMNodeImpl implements org.w3c
     /**
      * @see org.w3c.dom.ProcessingInstruction#setData(java.lang.String)
      */
-    public void setData(String data) throws DOMException
+    public void setData(final String data) throws DOMException
     {
         throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR, "Node is read only");
     }

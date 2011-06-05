@@ -69,7 +69,7 @@ public class TidyCrashingBugsTest extends TidyTestCase
      * Instantiate a new Test case.
      * @param name test name
      */
-    public TidyCrashingBugsTest(String name)
+    public TidyCrashingBugsTest(final String name)
     {
         super(name);
     }
@@ -191,12 +191,12 @@ public class TidyCrashingBugsTest extends TidyTestCase
         executeTidyTest("431716.html");
 
         // delete generates slides (this should be done in tear down be I'm pretty confident tidy will not crash here)
-        NumberFormat numberFormat = NumberFormat.getInstance();
+        final NumberFormat numberFormat = NumberFormat.getInstance();
         numberFormat.setMinimumIntegerDigits(3);
         for (int j = 1; j <= 26; j++)
         {
-            String slide = "slide" + numberFormat.format(j) + ".html";
-            (new File(slide)).delete();
+            final String slide = "slide" + numberFormat.format(j) + ".html";
+            new File(slide).delete();
         }
     }
 
@@ -414,7 +414,7 @@ public class TidyCrashingBugsTest extends TidyTestCase
      */
     public void test1020806() throws Exception
     {
-        org.w3c.dom.Document doc = parseDomTest("1020806.html");
+        final org.w3c.dom.Document doc = parseDomTest("1020806.html");
         tidy.pprint(doc, System.out);
     }
 
@@ -424,7 +424,7 @@ public class TidyCrashingBugsTest extends TidyTestCase
      */
     public void test1020806b() throws Exception
     {
-        org.w3c.dom.Document doc = parseDomTest("1020806b.html");
+        final org.w3c.dom.Document doc = parseDomTest("1020806b.html");
         tidy.pprint(doc, System.out);
     }
 

@@ -255,7 +255,7 @@ public class Node
      * @param start start position
      * @param end end position
      */
-    public Node(short type, byte[] textarray, int start, int end)
+    public Node(final short type, final byte[] textarray, final int start, final int end)
     {
         this.parent = null;
         this.prev = null;
@@ -286,7 +286,7 @@ public class Node
      * @param element tag name
      * @param tt tag table instance
      */
-    public Node(short type, byte[] textarray, int start, int end, String element, TagTable tt)
+    public Node(final short type, final byte[] textarray, final int start, final int end, final String element, final TagTable tt)
     {
         this.parent = null;
         this.prev = null;
@@ -315,7 +315,7 @@ public class Node
      * @param name attribute name.
      * @return AttVal instance or null if no attribute with the iven name is found
      */
-    public AttVal getAttrByName(String name)
+    public AttVal getAttrByName(final String name)
     {
         AttVal attr;
 
@@ -334,7 +334,7 @@ public class Node
      * Default method for checking an element's attributes.
      * @param lexer Lexer
      */
-    public void checkAttributes(Lexer lexer)
+    public void checkAttributes(final Lexer lexer)
     {
         AttVal attval;
 
@@ -349,7 +349,7 @@ public class Node
      * configuration.
      * @param lexer Lexer
      */
-    public void repairDuplicateAttributes(Lexer lexer)
+    public void repairDuplicateAttributes(final Lexer lexer)
     {
         AttVal attval;
 
@@ -396,7 +396,7 @@ public class Node
                             // this doesn't handle CSS comments and leading/trailing white-space very well see
                             // http://www.w3.org/TR/css-style-attr
 
-                            int end = current.value.length() - 1;
+                            final int end = current.value.length() - 1;
 
                             if (current.value.charAt(end) == ';')
                             {
@@ -478,9 +478,9 @@ public class Node
      * @param name attribute name
      * @param value attribute value
      */
-    public void addAttribute(String name, String value)
+    public void addAttribute(final String name, final String value)
     {
-        AttVal av = new AttVal(null, null, null, null, '"', name, value);
+        final AttVal av = new AttVal(null, null, null, null, '"', name, value);
         av.dict = AttributeTable.getDefaultAttributeTable().findAttribute(av);
 
         if (this.attributes == null)
@@ -505,7 +505,7 @@ public class Node
      * Remove an attribute from node and then free it.
      * @param attr attribute to remove
      */
-    public void removeAttribute(AttVal attr)
+    public void removeAttribute(final AttVal attr)
     {
         AttVal av;
         AttVal prev = null;
@@ -582,7 +582,7 @@ public class Node
      * @param element discarded node
      * @return next node
      */
-    public static Node discardElement(Node element)
+    public static Node discardElement(final Node element)
     {
         Node next = null;
 
@@ -599,7 +599,7 @@ public class Node
      * Insert a node into markup tree.
      * @param node to insert
      */
-    public void insertNodeAtStart(Node node)
+    public void insertNodeAtStart(final Node node)
     {
         node.parent = this;
 
@@ -621,7 +621,7 @@ public class Node
      * Insert node into markup tree.
      * @param node Node to insert
      */
-    public void insertNodeAtEnd(Node node)
+    public void insertNodeAtEnd(final Node node)
     {
         node.parent = this;
         node.prev = this.last;
@@ -643,7 +643,7 @@ public class Node
      * @param element child node. Will be inserted as a child of element
      * @param node parent node
      */
-    public static void insertNodeAsParent(Node element, Node node)
+    public static void insertNodeAsParent(final Node element, final Node node)
     {
         node.content = element;
         node.last = element;
@@ -682,7 +682,7 @@ public class Node
      * @param element child node. Will be insertedbefore element
      * @param node following node
      */
-    public static void insertNodeBeforeElement(Node element, Node node)
+    public static void insertNodeBeforeElement(final Node element, final Node node)
     {
         Node parent;
 
@@ -707,7 +707,7 @@ public class Node
      * Insert node into markup tree after element.
      * @param node new node to insert
      */
-    public void insertNodeAfterElement(Node node)
+    public void insertNodeAfterElement(final Node node)
     {
         Node parent;
 
@@ -738,13 +738,13 @@ public class Node
      * @param lexer Lexer
      * @param element empty node to be removed
      */
-    public static void trimEmptyElement(Lexer lexer, Node element)
+    public static void trimEmptyElement(final Lexer lexer, final Node element)
     {
         // don't trim if user explicitely set trim-empty-elements to false
         // empty element can be needed in css sites
         if (lexer.configuration.trimEmpty)
         {
-            TagTable tt = lexer.configuration.tt;
+            final TagTable tt = lexer.configuration.tt;
 
             if (lexer.canPrune(element))
             {
@@ -758,7 +758,7 @@ public class Node
             else if (element.tag == tt.tagP && element.content == null)
             {
                 // replace <p></p> by <br><br> to preserve formatting
-                Node node = lexer.inferredTag("br");
+                final Node node = lexer.inferredTag("br");
                 Node.coerceNode(lexer, element, tt.tagBr);
                 element.insertNodeAfterElement(node);
             }
@@ -772,10 +772,10 @@ public class Node
      * @param element node
      * @param last last child of element
      */
-    public static void trimTrailingSpace(Lexer lexer, Node element, Node last)
+    public static void trimTrailingSpace(final Lexer lexer, final Node element, final Node last)
     {
         byte c;
-        TagTable tt = lexer.configuration.tt;
+        final TagTable tt = lexer.configuration.tt;
 
         if (last != null && last.type == Node.TEXT_NODE)
         {
@@ -821,9 +821,9 @@ public class Node
      * @param element node to be escaped
      * @return escaped node
      */
-    protected static Node escapeTag(Lexer lexer, Node element)
+    protected static Node escapeTag(final Lexer lexer, final Node element)
     {
-        Node node = lexer.newNode();
+        final Node node = lexer.newNode();
         node.start = lexer.lexsize;
         node.textarray = element.textarray; // @todo check it
         lexer.addByte('<');
@@ -873,7 +873,7 @@ public class Node
      * @param lexer Lexer
      * @return <code>true</code> if the node content empty or blank
      */
-    public boolean isBlank(Lexer lexer)
+    public boolean isBlank(final Lexer lexer)
     {
         if (this.type == TEXT_NODE)
         {
@@ -897,11 +897,11 @@ public class Node
      * @param element parent node
      * @param text text node
      */
-    public static void trimInitialSpace(Lexer lexer, Node element, Node text)
+    public static void trimInitialSpace(final Lexer lexer, final Node element, final Node text)
     {
         Node prev, node;
 
-        if (text.type == TEXT_NODE && lexer.lexbuf[text.start] == (byte) ' ' && (text.start < text.end))
+        if (text.type == TEXT_NODE && lexer.lexbuf[text.start] == (byte) ' ' && text.start < text.end)
         {
             if (TidyUtils.toBoolean(element.tag.model & Dict.CM_INLINE)
                 && !TidyUtils.toBoolean(element.tag.model & Dict.CM_FIELD))
@@ -954,10 +954,10 @@ public class Node
      * @param lexer Lexer
      * @param element Node
      */
-    public static void trimSpaces(Lexer lexer, Node element)
+    public static void trimSpaces(final Lexer lexer, final Node element)
     {
         Node text = element.content;
-        TagTable tt = lexer.configuration.tt;
+        final TagTable tt = lexer.configuration.tt;
 
         if (text != null && text.type == Node.TEXT_NODE && element.tag != tt.tagPre)
         {
@@ -977,7 +977,7 @@ public class Node
      * @param tag descendant tag
      * @return <code>true</code> if node is contained in tag
      */
-    public boolean isDescendantOf(Dict tag)
+    public boolean isDescendantOf(final Dict tag)
     {
         Node parent;
 
@@ -998,9 +998,9 @@ public class Node
      * @param element document
      * @param doctype doctype node to insert at the beginning of element
      */
-    public static void insertDocType(Lexer lexer, Node element, Node doctype)
+    public static void insertDocType(final Lexer lexer, Node element, final Node doctype)
     {
-        TagTable tt = lexer.configuration.tt;
+        final TagTable tt = lexer.configuration.tt;
 
         lexer.report.warning(lexer, element, doctype, Report.DOCTYPE_AFTER_TAGS);
 
@@ -1017,7 +1017,7 @@ public class Node
      * @param tt tag table
      * @return body node
      */
-    public Node findBody(TagTable tt)
+    public Node findBody(final TagTable tt)
     {
         Node node;
 
@@ -1068,7 +1068,7 @@ public class Node
      */
     public boolean isElement()
     {
-        return (this.type == START_TAG || this.type == START_END_TAG ? true : false);
+        return this.type == START_TAG || this.type == START_END_TAG ? true : false;
     }
 
     /**
@@ -1078,7 +1078,7 @@ public class Node
      * @param node Node which should be moved before the table
      * @param tt tag table
      */
-    public static void moveBeforeTable(Node row, Node node, TagTable tt)
+    public static void moveBeforeTable(final Node row, final Node node, final TagTable tt)
     {
         Node table;
 
@@ -1113,7 +1113,7 @@ public class Node
      * @param lexer Lexer
      * @param row row node
      */
-    public static void fixEmptyRow(Lexer lexer, Node row)
+    public static void fixEmptyRow(final Lexer lexer, final Node row)
     {
         Node cell;
 
@@ -1131,9 +1131,9 @@ public class Node
      * @param node Node
      * @param tag tag dictionary reference
      */
-    public static void coerceNode(Lexer lexer, Node node, Dict tag)
+    public static void coerceNode(final Lexer lexer, final Node node, final Dict tag)
     {
-        Node tmp = lexer.inferredTag(tag.name);
+        final Node tmp = lexer.inferredTag(tag.name);
         lexer.report.warning(lexer, node, tmp, Report.OBSOLETE_ELEMENT);
         node.was = node.tag;
         node.tag = tag;
@@ -1181,7 +1181,7 @@ public class Node
      * @param node will be inserted at the end of element
      * @return <code>true</code> if the node has been inserted
      */
-    public static boolean insertMisc(Node element, Node node)
+    public static boolean insertMisc(final Node element, final Node node)
     {
         if (node.type == COMMENT_TAG
             || node.type == PROC_INS_TAG
@@ -1220,7 +1220,7 @@ public class Node
      */
     public boolean hasOneChild()
     {
-        return (this.content != null && this.content.next == null);
+        return this.content != null && this.content.next == null;
     }
 
     /**
@@ -1228,7 +1228,7 @@ public class Node
      * @param tt tag table
      * @return html node
      */
-    public Node findHTML(TagTable tt)
+    public Node findHTML(final TagTable tt)
     {
         Node node;
 
@@ -1245,7 +1245,7 @@ public class Node
      * @param tt tag table
      * @return head node
      */
-    public Node findHEAD(TagTable tt)
+    public Node findHEAD(final TagTable tt)
     {
         Node node;
 
@@ -1262,7 +1262,7 @@ public class Node
         return node;
     }
     
-    public Node findTITLE(TagTable tt) {
+    public Node findTITLE(final TagTable tt) {
         Node node = findHEAD(tt);
         if (node != null) {
             for (node = node.content; node != null && node.tag != tt.tagTitle; node = node.next) {
@@ -1323,9 +1323,9 @@ public class Node
      * Add a css class to the node. If a class attribute already exists adds the value to the existing attribute.
      * @param classname css class name
      */
-    public void addClass(String classname)
+    public void addClass(final String classname)
     {
-        AttVal classattr = this.getAttrByName("class");
+        final AttVal classattr = this.getAttrByName("class");
 
         // if there already is a class attribute then append class name after a space
         if (classattr != null)
@@ -1438,9 +1438,9 @@ public class Node
      * @param deep if true deep clone the node (also clones all the contained nodes)
      * @return cloned node
      */
-    protected Node cloneNode(boolean deep)
+    protected Node cloneNode(final boolean deep)
     {
-    	Node node = new Node(type, textarray, start, end);
+    	final Node node = new Node(type, textarray, start, end);
         node.parent = parent;
         node.closed = closed;
         node.implicit = implicit;
@@ -1466,7 +1466,7 @@ public class Node
      * Setter for node type.
      * @param newType a valid node type constant
      */
-    protected void setType(short newType)
+    protected void setType(final short newType)
     {
         this.type = newType;
     }

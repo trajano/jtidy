@@ -76,7 +76,7 @@ public class StreamInJavaImpl implements StreamIn
     /**
      * character buffer.
      */
-    private int[] charbuf = new int[CHARBUF_SIZE];
+    private final int[] charbuf = new int[CHARBUF_SIZE];
 
     /**
      * actual position in buffer.
@@ -86,7 +86,7 @@ public class StreamInJavaImpl implements StreamIn
     /**
      * Java input stream reader.
      */
-    private Reader reader;
+    private final Reader reader;
 
     /**
      * has end of stream been reached?
@@ -116,7 +116,7 @@ public class StreamInJavaImpl implements StreamIn
     /**
      * tab size in chars.
      */
-    private int tabsize;
+    private final int tabsize;
 
     private int tabs;
 
@@ -127,7 +127,7 @@ public class StreamInJavaImpl implements StreamIn
      * @param tabsize
      * @throws UnsupportedEncodingException
      */
-    protected StreamInJavaImpl(InputStream stream, String encoding, int tabsize) throws UnsupportedEncodingException
+    protected StreamInJavaImpl(final InputStream stream, final String encoding, final int tabsize) throws UnsupportedEncodingException
     {
         reader = new InputStreamReader(stream, encoding);
         this.pushed = false;
@@ -143,7 +143,7 @@ public class StreamInJavaImpl implements StreamIn
      * @param encoding
      * @param tabsize
      */
-    protected StreamInJavaImpl(Reader reader, int tabsize)
+    protected StreamInJavaImpl(final Reader reader, final int tabsize)
     {
         this.reader = reader;
         this.pushed = false;
@@ -168,7 +168,7 @@ public class StreamInJavaImpl implements StreamIn
             }
 
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             // @todo how to handle?
             endOfStream = true;
@@ -187,8 +187,8 @@ public class StreamInJavaImpl implements StreamIn
 
         if (this.pushed)
         {
-            c = this.charbuf[--(this.bufpos)];
-            if ((this.bufpos) == 0)
+            c = this.charbuf[--this.bufpos];
+            if (this.bufpos == 0)
             {
                 this.pushed = false;
             }
@@ -245,7 +245,7 @@ public class StreamInJavaImpl implements StreamIn
 
         if (c == '\t') {
             this.tabs = tabsize > 0 ?
-            		this.tabsize - ((this.curcol - 1) % this.tabsize) - 1
+            		this.tabsize - (this.curcol - 1) % this.tabsize - 1
             		: 0;
             this.curcol++;
             c = ' ';
@@ -260,7 +260,7 @@ public class StreamInJavaImpl implements StreamIn
     /**
      * @see org.w3c.tidy.StreamIn#ungetChar(int)
      */
-    public void ungetChar(int c)
+    public void ungetChar(final int c)
     {
         this.pushed = true;
         if (this.bufpos >= CHARBUF_SIZE)
@@ -269,7 +269,7 @@ public class StreamInJavaImpl implements StreamIn
             System.arraycopy(this.charbuf, 0, this.charbuf, 1, CHARBUF_SIZE - 1);
             this.bufpos--;
         }
-        this.charbuf[(this.bufpos)++] = c;
+        this.charbuf[this.bufpos++] = c;
 
         if (c == '\n')
         {
@@ -308,7 +308,7 @@ public class StreamInJavaImpl implements StreamIn
     /**
      * @see org.w3c.tidy.StreamIn#setLexer(org.w3c.tidy.Lexer)
      */
-    public void setLexer(Lexer lexer)
+    public void setLexer(final Lexer lexer)
     {
         // unused in the java implementation
     }

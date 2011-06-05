@@ -647,7 +647,7 @@ public final class TagTable
     /**
      * hashTable containing tags.
      */
-    private Map<String,Dict> tagHashtable = new Hashtable<String,Dict>();
+    private final Map<String,Dict> tagHashtable = new Hashtable<String,Dict>();
 
     /**
      * Instantiates a new tag table with known tags.
@@ -728,7 +728,7 @@ public final class TagTable
      * Setter for the current configuration instance.
      * @param configuration configuration instance
      */
-    public void setConfiguration(Configuration configuration)
+    public void setConfiguration(final Configuration configuration)
     {
         this.configuration = configuration;
     }
@@ -738,7 +738,7 @@ public final class TagTable
      * @param name tag name
      * @return tag definition (Dict)
      */
-    public Dict lookup(String name)
+    public Dict lookup(final String name)
     {
         return (Dict) tagHashtable.get(name);
     }
@@ -748,9 +748,9 @@ public final class TagTable
      * @param dict tag definition
      * @return installed Dict instance
      */
-    public Dict install(Dict dict)
+    public Dict install(final Dict dict)
     {
-        Dict d = (Dict) tagHashtable.get(dict.name);
+        final Dict d = (Dict) tagHashtable.get(dict.name);
         if (d != null)
         {
             d.versions = dict.versions;
@@ -770,7 +770,7 @@ public final class TagTable
      * @param node Node to find. If the element is found the tag property of node will be set.
      * @return true if the tag is found, false otherwise
      */
-    public boolean findTag(Node node)
+    public boolean findTag(final Node node)
     {
         Dict np;
 
@@ -798,7 +798,7 @@ public final class TagTable
      * @param node Node
      * @return parser for the node
      */
-    public Parser findParser(Node node)
+    public Parser findParser(final Node node)
     {
         Dict np;
 
@@ -819,7 +819,7 @@ public final class TagTable
      * @param node Node
      * @return <code>true</code> if tag can serve as an anchor
      */
-    boolean isAnchorElement(Node node)
+    boolean isAnchorElement(final Node node)
     {
         return node.tag == this.tagA
             || node.tag == this.tagApplet
@@ -835,7 +835,7 @@ public final class TagTable
      * @param tagType tag type. Can be TAGTYPE_BLOCK | TAGTYPE_EMPTY | TAGTYPE_PRE | TAGTYPE_INLINE
      * @param name tag name
      */
-    public void defineTag(short tagType, String name)
+    public void defineTag(final short tagType, final String name)
     {
         Parser tagParser;
         short model;
@@ -873,14 +873,14 @@ public final class TagTable
      * @param tagType one of Dict.TAGTYPE_EMPTY | Dict.TAGTYPE_INLINE | Dict.TAGTYPE_BLOCK | Dict.TAGTYPE_PRE
      * @return List containing all the user-defined tag names
      */
-    List<String> findAllDefinedTag(short tagType)
+    List<String> findAllDefinedTag(final short tagType)
     {
-        List<String> tagNames = new ArrayList<String>();
+        final List<String> tagNames = new ArrayList<String>();
 
-        Iterator<Dict> iterator = tagHashtable.values().iterator();
+        final Iterator<Dict> iterator = tagHashtable.values().iterator();
         while (iterator.hasNext())
         {
-            Dict curDictEntry = iterator.next();
+            final Dict curDictEntry = iterator.next();
 
             if (curDictEntry != null)
             {
@@ -888,10 +888,10 @@ public final class TagTable
                 {
                     // defined tags can be empty + inline
                     case Dict.TAGTYPE_EMPTY :
-                        if ((curDictEntry.versions == Dict.VERS_PROPRIETARY)
-                            && ((curDictEntry.model & Dict.CM_EMPTY) == Dict.CM_EMPTY)
+                        if (curDictEntry.versions == Dict.VERS_PROPRIETARY
+                            && (curDictEntry.model & Dict.CM_EMPTY) == Dict.CM_EMPTY
                             && // (curDictEntry.parser == ParseBlock) &&
-                            (curDictEntry != tagWbr))
+                            curDictEntry != tagWbr)
                         {
                             tagNames.add(curDictEntry.name);
                         }
@@ -899,12 +899,12 @@ public final class TagTable
 
                     // defined tags can be empty + inline
                     case Dict.TAGTYPE_INLINE :
-                        if ((curDictEntry.versions == Dict.VERS_PROPRIETARY)
-                            && ((curDictEntry.model & Dict.CM_INLINE) == Dict.CM_INLINE)
+                        if (curDictEntry.versions == Dict.VERS_PROPRIETARY
+                            && (curDictEntry.model & Dict.CM_INLINE) == Dict.CM_INLINE
                             && // (curDictEntry.parser == ParseInline) &&
-                            (curDictEntry != tagBlink)
-                            && (curDictEntry != tagNobr)
-                            && (curDictEntry != tagWbr))
+                            curDictEntry != tagBlink
+                            && curDictEntry != tagNobr
+                            && curDictEntry != tagWbr)
                         {
                             tagNames.add(curDictEntry.name);
                         }
@@ -912,18 +912,18 @@ public final class TagTable
 
                     // defined tags can be empty + block
                     case Dict.TAGTYPE_BLOCK :
-                        if ((curDictEntry.versions == Dict.VERS_PROPRIETARY)
-                            && ((curDictEntry.model & Dict.CM_BLOCK) == Dict.CM_BLOCK)
-                            && (curDictEntry.getParser() == ParserImpl.BLOCK))
+                        if (curDictEntry.versions == Dict.VERS_PROPRIETARY
+                            && (curDictEntry.model & Dict.CM_BLOCK) == Dict.CM_BLOCK
+                            && curDictEntry.getParser() == ParserImpl.BLOCK)
                         {
                             tagNames.add(curDictEntry.name);
                         }
                         break;
 
                     case Dict.TAGTYPE_PRE :
-                        if ((curDictEntry.versions == Dict.VERS_PROPRIETARY)
-                            && ((curDictEntry.model & Dict.CM_BLOCK) == Dict.CM_BLOCK)
-                            && (curDictEntry.getParser() == ParserImpl.PRE))
+                        if (curDictEntry.versions == Dict.VERS_PROPRIETARY
+                            && (curDictEntry.model & Dict.CM_BLOCK) == Dict.CM_BLOCK
+                            && curDictEntry.getParser() == ParserImpl.PRE)
                         {
                             tagNames.add(curDictEntry.name);
                         }
@@ -939,11 +939,11 @@ public final class TagTable
      * Free node's attributes.
      * @param node Node
      */
-    public void freeAttrs(Node node)
+    public void freeAttrs(final Node node)
     {
         while (node.attributes != null)
         {
-            AttVal av = node.attributes;
+            final AttVal av = node.attributes;
             if ("id".equalsIgnoreCase(av.attribute) || "name".equalsIgnoreCase(av.attribute) && isAnchorElement(node))
             {
                 removeAnchorByNode(node);
@@ -957,7 +957,7 @@ public final class TagTable
      * Removes anchor for specific node.
      * @param node Node
      */
-    void removeAnchorByNode(Node node)
+    void removeAnchorByNode(final Node node)
     {
         Anchor delme = null;
         Anchor found = null;
@@ -998,7 +998,7 @@ public final class TagTable
      */
     Anchor newAnchor()
     {
-        Anchor a = new Anchor();
+        final Anchor a = new Anchor();
         return a;
     }
 
@@ -1008,9 +1008,9 @@ public final class TagTable
      * @param node destination for this anchor
      * @return Anchor
      */
-    Anchor addAnchor(String name, Node node)
+    Anchor addAnchor(final String name, final Node node)
     {
-        Anchor a = newAnchor();
+        final Anchor a = newAnchor();
 
         a.name = name;
         a.node = node;
@@ -1038,7 +1038,7 @@ public final class TagTable
      * @param name anchor name
      * @return node associated with anchor
      */
-    Node getNodeByAnchor(String name)
+    Node getNodeByAnchor(final String name)
     {
         Anchor found;
 

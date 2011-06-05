@@ -67,7 +67,7 @@ public class DOMCommentImpl extends DOMCharacterDataImpl implements org.w3c.dom.
      * Instantiates a new DOMCommentImpl which wraps the given Node.
      * @param adaptee wrapped node.
      */
-    protected DOMCommentImpl(Node adaptee)
+    protected DOMCommentImpl(final Node adaptee)
     {
         super(adaptee);
     }

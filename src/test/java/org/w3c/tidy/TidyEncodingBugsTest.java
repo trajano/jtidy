@@ -68,7 +68,7 @@ public class TidyEncodingBugsTest extends TidyTestCase
      * Instantiate a new Test case.
      * @param name test name
      */
-    public TidyEncodingBugsTest(String name)
+    public TidyEncodingBugsTest(final String name)
     {
         super(name);
     }

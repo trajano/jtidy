@@ -72,7 +72,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
      * Instantiates a new DOM element.
      * @param adaptee Tidy Node.
      */
-    protected DOMElementImpl(Node adaptee)
+    protected DOMElementImpl(final Node adaptee)
     {
         super(adaptee);
     }
@@ -97,7 +97,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
     /**
      * @see org.w3c.dom.Element#getAttribute(java.lang.String)
      */
-    public String getAttribute(String name)
+    public String getAttribute(final String name)
     {
         if (this.adaptee == null)
         {
@@ -124,7 +124,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
     /**
      * @see org.w3c.dom.Element#setAttribute(java.lang.String, java.lang.String)
      */
-    public void setAttribute(String name, String value) throws DOMException
+    public void setAttribute(final String name, final String value) throws DOMException
     {
         if (this.adaptee == null)
         {
@@ -163,7 +163,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
     /**
      * @see org.w3c.dom.Element#removeAttribute(java.lang.String)
      */
-    public void removeAttribute(String name) throws DOMException
+    public void removeAttribute(final String name) throws DOMException
     {
         if (this.adaptee == null)
         {
@@ -197,7 +197,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
     /**
      * @see org.w3c.dom.Element#getAttributeNode(java.lang.String)
      */
-    public org.w3c.dom.Attr getAttributeNode(String name)
+    public org.w3c.dom.Attr getAttributeNode(final String name)
     {
         if (this.adaptee == null)
         {
@@ -224,7 +224,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
     /**
      * @see org.w3c.dom.Element#setAttributeNode(org.w3c.dom.Attr)
      */
-    public org.w3c.dom.Attr setAttributeNode(org.w3c.dom.Attr newAttr) throws DOMException
+    public org.w3c.dom.Attr setAttributeNode(final org.w3c.dom.Attr newAttr) throws DOMException
     {
         if (newAttr == null)
         {
@@ -235,8 +235,8 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
             throw new DOMException(DOMException.WRONG_DOCUMENT_ERR, "newAttr not instanceof DOMAttrImpl");
         }
 
-        DOMAttrImpl newatt = (DOMAttrImpl) newAttr;
-        String name = newatt.avAdaptee.attribute;
+        final DOMAttrImpl newatt = (DOMAttrImpl) newAttr;
+        final String name = newatt.avAdaptee.attribute;
         org.w3c.dom.Attr result = null;
 
         AttVal att = this.adaptee.attributes;
@@ -271,7 +271,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
     /**
      * @see org.w3c.dom.Element#removeAttributeNode(org.w3c.dom.Attr)
      */
-    public org.w3c.dom.Attr removeAttributeNode(org.w3c.dom.Attr oldAttr) throws DOMException
+    public org.w3c.dom.Attr removeAttributeNode(final org.w3c.dom.Attr oldAttr) throws DOMException
     {
         if (oldAttr == null)
         {
@@ -312,7 +312,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
     /**
      * @see org.w3c.dom.Element#getElementsByTagName(java.lang.String)
      */
-    public org.w3c.dom.NodeList getElementsByTagName(String name)
+    public org.w3c.dom.NodeList getElementsByTagName(final String name)
     {
         return new DOMNodeListByTagNameImpl(this.adaptee, name);
     }
@@ -331,7 +331,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
      * @todo DOM level 2 getAttributeNS() Not supported. Throws NOT_SUPPORTED_ERR.
      * @see org.w3c.dom.Element#getAttributeNS(java.lang.String, java.lang.String)
      */
-    public String getAttributeNS(String namespaceURI, String localName)
+    public String getAttributeNS(final String namespaceURI, final String localName)
     {
         // DOMException - NOT_SUPPORTED_ERR: May be raised if the implementation does not support the feature "XML" and
         // the language exposed through the Document does not support XML Namespaces (such as HTML 4.01).
@@ -342,7 +342,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
      * @todo DOM level 2 setAttributeNS() Not supported. Throws NOT_SUPPORTED_ERR.
      * @see org.w3c.dom.Element#setAttributeNS(java.lang.String, java.lang.String, java.lang.String)
      */
-    public void setAttributeNS(String namespaceURI, String qualifiedName, String value) throws org.w3c.dom.DOMException
+    public void setAttributeNS(final String namespaceURI, final String qualifiedName, final String value) throws org.w3c.dom.DOMException
     {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "DOM method not supported");
     }
@@ -351,7 +351,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
      * @todo DOM level 2 removeAttributeNS() Not supported. Throws NOT_SUPPORTED_ERR.
      * @see org.w3c.dom.Element#removeAttributeNS(java.lang.String, java.lang.String)
      */
-    public void removeAttributeNS(String namespaceURI, String localName) throws org.w3c.dom.DOMException
+    public void removeAttributeNS(final String namespaceURI, final String localName) throws org.w3c.dom.DOMException
     {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "DOM method not supported");
     }
@@ -360,7 +360,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
      * @todo DOM level 2 getAttributeNodeNS() Not supported. Throws NOT_SUPPORTED_ERR.
      * @see org.w3c.dom.Element#getAttributeNodeNS(java.lang.String, java.lang.String)
      */
-    public org.w3c.dom.Attr getAttributeNodeNS(String namespaceURI, String localName)
+    public org.w3c.dom.Attr getAttributeNodeNS(final String namespaceURI, final String localName)
     {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "DOM method not supported");
     }
@@ -369,7 +369,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
      * @todo DOM level 2 setAttributeNodeNS() Not supported. Throws NOT_SUPPORTED_ERR.
      * @see org.w3c.dom.Element#setAttributeNodeNS(org.w3c.dom.Attr)
      */
-    public org.w3c.dom.Attr setAttributeNodeNS(org.w3c.dom.Attr newAttr) throws org.w3c.dom.DOMException
+    public org.w3c.dom.Attr setAttributeNodeNS(final org.w3c.dom.Attr newAttr) throws org.w3c.dom.DOMException
     {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "DOM method not supported");
     }
@@ -378,7 +378,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
      * @todo DOM level 2 getElementsByTagNameNS() Not supported. Throws NOT_SUPPORTED_ERR.
      * @see org.w3c.dom.Element#getElementsByTagNameNS(java.lang.String, java.lang.String)
      */
-    public org.w3c.dom.NodeList getElementsByTagNameNS(String namespaceURI, String localName)
+    public org.w3c.dom.NodeList getElementsByTagNameNS(final String namespaceURI, final String localName)
     {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "DOM method not supported");
     }
@@ -387,7 +387,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
      * @todo DOM level 2 hasAttribute() Not supported. Returns false.
      * @see org.w3c.dom.Element#hasAttribute(java.lang.String)
      */
-    public boolean hasAttribute(String name)
+    public boolean hasAttribute(final String name)
     {
         return false;
     }
@@ -396,7 +396,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
      * @todo DOM level 2 hasAttribute() Not supported. Returns false.
      * @see org.w3c.dom.Element#hasAttributeNS(java.lang.String, java.lang.String)
      */
-    public boolean hasAttributeNS(String namespaceURI, String localName)
+    public boolean hasAttributeNS(final String namespaceURI, final String localName)
     {
         return false;
     }
@@ -414,7 +414,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
      * @todo DOM level 3 setIdAttribute() Not supported. Throws NOT_SUPPORTED_ERR.
      * @see org.w3c.dom.Element#setIdAttribute(java.lang.String, boolean)
      */
-    public void setIdAttribute(String name, boolean isId) throws DOMException
+    public void setIdAttribute(final String name, final boolean isId) throws DOMException
     {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "DOM method not supported");
     }
@@ -423,7 +423,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
      * @todo DOM level 3 setIdAttributeNode() Not supported. Throws NOT_SUPPORTED_ERR.
      * @see org.w3c.dom.Element#setIdAttributeNode(org.w3c.dom.Attr, boolean)
      */
-    public void setIdAttributeNode(Attr idAttr, boolean isId) throws DOMException
+    public void setIdAttributeNode(final Attr idAttr, final boolean isId) throws DOMException
     {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "DOM method not supported");
     }
@@ -432,7 +432,7 @@ public class DOMElementImpl extends DOMNodeImpl implements org.w3c.dom.Element
      * @todo DOM level 3 setIdAttributeNS() Not supported. Throws NOT_SUPPORTED_ERR.
      * @see org.w3c.dom.Element#setIdAttributeNS(java.lang.String, java.lang.String, boolean)
      */
-    public void setIdAttributeNS(String namespaceURI, String localName, boolean isId) throws DOMException
+    public void setIdAttributeNS(final String namespaceURI, final String localName, final boolean isId) throws DOMException
     {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "DOM method not supported");
     }

@@ -155,7 +155,7 @@ public final class TagCheckImpl
         /**
          * @see org.w3c.tidy.TagCheck#check(org.w3c.tidy.Lexer, org.w3c.tidy.Node)
          */
-        public void check(Lexer lexer, Node node)
+        public void check(final Lexer lexer, final Node node)
         {
 
             AttVal attval;
@@ -193,7 +193,7 @@ public final class TagCheckImpl
         /**
          * @see org.w3c.tidy.TagCheck#check(org.w3c.tidy.Lexer, org.w3c.tidy.Node)
          */
-        public void check(Lexer lexer, Node node)
+        public void check(final Lexer lexer, final Node node)
         {
             AttVal lang, type;
 
@@ -204,13 +204,13 @@ public final class TagCheckImpl
 
             if (type == null)
             {
-                AttVal missingType = new AttVal(null, null, '"', "type", "");
+                final AttVal missingType = new AttVal(null, null, '"', "type", "");
                 lexer.report.attrError(lexer, node, missingType, Report.MISSING_ATTRIBUTE);
 
                 // check for javascript
                 if (lang != null)
                 {
-                    String str = lang.value;
+                    final String str = lang.value;
                     if ("javascript".equalsIgnoreCase(str) || "jscript".equalsIgnoreCase(str))
                     {
                         node.addAttribute("type", "text/javascript");
@@ -239,7 +239,7 @@ public final class TagCheckImpl
         /**
          * @see org.w3c.tidy.TagCheck#check(org.w3c.tidy.Lexer, org.w3c.tidy.Node)
          */
-        public void check(Lexer lexer, Node node)
+        public void check(final Lexer lexer, final Node node)
         {
             AttVal attval;
             Attribute attribute;
@@ -298,7 +298,7 @@ public final class TagCheckImpl
         /**
          * @see org.w3c.tidy.TagCheck#check(org.w3c.tidy.Lexer, org.w3c.tidy.Node)
          */
-        public void check(Lexer lexer, Node node)
+        public void check(final Lexer lexer, final Node node)
         {
             AttVal attval;
             String value = null;
@@ -342,9 +342,9 @@ public final class TagCheckImpl
         /**
          * @see org.w3c.tidy.TagCheck#check(org.w3c.tidy.Lexer, org.w3c.tidy.Node)
          */
-        public void check(Lexer lexer, Node node)
+        public void check(final Lexer lexer, final Node node)
         {
-            AttVal av = node.getAttrByName("src");
+            final AttVal av = node.getAttrByName("src");
 
             node.checkAttributes(lexer);
 
@@ -364,7 +364,7 @@ public final class TagCheckImpl
         /**
          * @see org.w3c.tidy.TagCheck#check(org.w3c.tidy.Lexer, org.w3c.tidy.Node)
          */
-        public void check(Lexer lexer, Node node)
+        public void check(final Lexer lexer, final Node node)
         {
             AttVal attval;
             Attribute attribute;
@@ -407,7 +407,7 @@ public final class TagCheckImpl
             if (!hasAlt)
             {
                 lexer.badAccess |= Report.MISSING_IMAGE_ALT;
-                AttVal missingAlt = new AttVal(null, null, '"', "alt", "");
+                final AttVal missingAlt = new AttVal(null, null, '"', "alt", "");
                 lexer.report.attrError(lexer, node, missingAlt, Report.MISSING_ATTRIBUTE);
                 if (lexer.configuration.altText != null)
                 {
@@ -417,13 +417,13 @@ public final class TagCheckImpl
 
             if (!hasSrc && !hasDataFld)
             {
-                AttVal missingSrc = new AttVal(null, null, '"', "src", "");
+                final AttVal missingSrc = new AttVal(null, null, '"', "src", "");
                 lexer.report.attrError(lexer, node, missingSrc, Report.MISSING_ATTRIBUTE);
             }
 
             if (hasIsMap && !hasUseMap)
             {
-                AttVal missingIsMap = new AttVal(null, null, '"', "ismap", "");
+                final AttVal missingIsMap = new AttVal(null, null, '"', "ismap", "");
                 lexer.report.attrError(lexer, node, missingIsMap, Report.MISSING_IMAGEMAP);
             }
         }
@@ -439,7 +439,7 @@ public final class TagCheckImpl
         /**
          * @see org.w3c.tidy.TagCheck#check(org.w3c.tidy.Lexer, org.w3c.tidy.Node)
          */
-        public void check(Lexer lexer, Node node)
+        public void check(final Lexer lexer, final Node node)
         {
             AttVal attval;
             Attribute attribute;
@@ -463,12 +463,12 @@ public final class TagCheckImpl
             if (!hasAlt)
             {
                 lexer.badAccess |= Report.MISSING_LINK_ALT;
-                AttVal missingAlt = new AttVal(null, null, '"', "alt", "");
+                final AttVal missingAlt = new AttVal(null, null, '"', "alt", "");
                 lexer.report.attrError(lexer, node, missingAlt, Report.MISSING_ATTRIBUTE);
             }
             if (!hasHref)
             {
-                AttVal missingHref = new AttVal(null, null, '"', "href", "");
+                final AttVal missingHref = new AttVal(null, null, '"', "href", "");
                 lexer.report.attrError(lexer, node, missingHref, Report.MISSING_ATTRIBUTE);
             }
         }
@@ -484,7 +484,7 @@ public final class TagCheckImpl
         /**
          * @see org.w3c.tidy.TagCheck#check(org.w3c.tidy.Lexer, org.w3c.tidy.Node)
          */
-        public void check(Lexer lexer, Node node)
+        public void check(final Lexer lexer, final Node node)
         {
             node.checkAttributes(lexer);
 
@@ -501,7 +501,7 @@ public final class TagCheckImpl
         /**
          * @see org.w3c.tidy.TagCheck#check(org.w3c.tidy.Lexer, org.w3c.tidy.Node)
          */
-        public void check(Lexer lexer, Node node)
+        public void check(final Lexer lexer, final Node node)
         {
             node.checkAttributes(lexer);
 
@@ -518,15 +518,15 @@ public final class TagCheckImpl
         /**
          * @see org.w3c.tidy.TagCheck#check(org.w3c.tidy.Lexer, org.w3c.tidy.Node)
          */
-        public void check(Lexer lexer, Node node)
+        public void check(final Lexer lexer, final Node node)
         {
-            AttVal type = node.getAttrByName("type");
+            final AttVal type = node.getAttrByName("type");
 
             node.checkAttributes(lexer);
 
             if (type == null)
             {
-                AttVal missingType = new AttVal(null, null, '"', "type", "");
+                final AttVal missingType = new AttVal(null, null, '"', "type", "");
                 lexer.report.attrError(lexer, node, missingType, Report.MISSING_ATTRIBUTE);
 
                 node.addAttribute("type", "text/css");
@@ -543,15 +543,15 @@ public final class TagCheckImpl
         /**
          * @see org.w3c.tidy.TagCheck#check(org.w3c.tidy.Lexer, org.w3c.tidy.Node)
          */
-        public void check(Lexer lexer, Node node)
+        public void check(final Lexer lexer, final Node node)
         {
-            AttVal action = node.getAttrByName("action");
+            final AttVal action = node.getAttrByName("action");
 
             node.checkAttributes(lexer);
 
             if (action == null)
             {
-                AttVal missingAttribute = new AttVal(null, null, '"', "action", "");
+                final AttVal missingAttribute = new AttVal(null, null, '"', "action", "");
                 lexer.report.attrError(lexer, node, missingAttribute, Report.MISSING_ATTRIBUTE);
             }
         }
@@ -566,15 +566,15 @@ public final class TagCheckImpl
         /**
          * @see org.w3c.tidy.TagCheck#check(org.w3c.tidy.Lexer, org.w3c.tidy.Node)
          */
-        public void check(Lexer lexer, Node node)
+        public void check(final Lexer lexer, final Node node)
         {
-            AttVal content = node.getAttrByName("content");
+            final AttVal content = node.getAttrByName("content");
 
             node.checkAttributes(lexer);
 
             if (content == null)
             {
-                AttVal missingAttribute = new AttVal(null, null, '"', "content", "");
+                final AttVal missingAttribute = new AttVal(null, null, '"', "content", "");
                 lexer.report.attrError(lexer, node, missingAttribute, Report.MISSING_ATTRIBUTE);
             }
 
@@ -591,7 +591,7 @@ public final class TagCheckImpl
         /**
          * @see org.w3c.tidy.TagCheck#check(org.w3c.tidy.Lexer, org.w3c.tidy.Node)
          */
-        public void check(Lexer lexer, Node node)
+        public void check(final Lexer lexer, final Node node)
         {
             node.checkAttributes(lexer);
 
@@ -613,19 +613,19 @@ public final class TagCheckImpl
         /**
          * @see org.w3c.tidy.TagCheck#check(org.w3c.tidy.Lexer, org.w3c.tidy.Node)
          */
-        public void check(Lexer lexer, Node node)
+        public void check(final Lexer lexer, final Node node)
         {
-            AttVal rel = node.getAttrByName("rel");
+            final AttVal rel = node.getAttrByName("rel");
 
             node.checkAttributes(lexer);
 
             if (rel != null && rel.value != null && rel.value.equals("stylesheet"))
             {
-                AttVal type = node.getAttrByName("type");
+                final AttVal type = node.getAttrByName("type");
 
                 if (type == null)
                 {
-                    AttVal missingType = new AttVal(null, null, '"', "type", "");
+                    final AttVal missingType = new AttVal(null, null, '"', "type", "");
                     lexer.report.attrError(lexer, node, missingType, Report.MISSING_ATTRIBUTE);
 
                     node.addAttribute("type", "text/css");

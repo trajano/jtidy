@@ -689,7 +689,7 @@ public class Configuration implements Serializable
     /**
      * bytes for the newline marker.
      */
-    protected char[] newline = (System.getProperty("line.separator")).toCharArray();
+    protected char[] newline = System.getProperty("line.separator").toCharArray();
 
     /**
      * Input character encoding (defaults to "ISO8859_1").
@@ -709,13 +709,13 @@ public class Configuration implements Serializable
     /**
      * configuration properties.
      */
-    private transient Properties properties = new Properties();
+    private transient final Properties properties = new Properties();
 
     /**
      * Instantiates a new Configuration. This method should be called by Tidy only.
      * @param report Report instance
      */
-    protected Configuration(Report report)
+    protected Configuration(final Report report)
     {
         this.report = report;
     }
@@ -724,7 +724,7 @@ public class Configuration implements Serializable
      * adds a config option to the map.
      * @param flag configuration options added
      */
-    private static void addConfigOption(Flag flag)
+    private static void addConfigOption(final Flag flag)
     {
         OPTIONS.put(flag.getName(), flag);
     }
@@ -733,13 +733,13 @@ public class Configuration implements Serializable
      * adds configuration Properties.
      * @param p Properties
      */
-    public void addProps(Properties p)
+    public void addProps(final Properties p)
     {
-        Enumeration<?> propEnum = p.propertyNames();
+        final Enumeration<?> propEnum = p.propertyNames();
         while (propEnum.hasMoreElements())
         {
-            String key = (String) propEnum.nextElement();
-            String value = p.getProperty(key);
+            final String key = (String) propEnum.nextElement();
+            final String value = p.getProperty(key);
             properties.put(key, value);
         }
         parseProps();
@@ -749,13 +749,13 @@ public class Configuration implements Serializable
      * Parses a property file.
      * @param filename file name
      */
-    public void parseFile(String filename)
+    public void parseFile(final String filename)
     {
         try
         {
             properties.load(new FileInputStream(filename));
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             System.err.println(filename + " " + e.toString());
             return;
@@ -768,7 +768,7 @@ public class Configuration implements Serializable
      * @param name configuration parameter name
      * @return <code>true</code> if the given String is a valid config option
      */
-    public static boolean isKnownOption(String name)
+    public static boolean isKnownOption(final String name)
     {
         return name != null && OPTIONS.containsKey(name);
     }
@@ -778,27 +778,27 @@ public class Configuration implements Serializable
      */
     private void parseProps()
     {
-        Iterator<Object> iterator = properties.keySet().iterator();
+        final Iterator<Object> iterator = properties.keySet().iterator();
 
         while (iterator.hasNext())
         {
-            String key = (String) iterator.next();
-            Flag flag = (Flag) OPTIONS.get(key);
+            final String key = (String) iterator.next();
+            final Flag flag = (Flag) OPTIONS.get(key);
             if (flag == null)
             {
                 report.unknownOption(key);
                 continue;
             }
 
-            String stringValue = properties.getProperty(key);
-            Object value = flag.getParser().parse(stringValue, key, this);
+            final String stringValue = properties.getProperty(key);
+            final Object value = flag.getParser().parse(stringValue, key, this);
             if (flag.getLocation() != null)
             {
                 try
                 {
                     flag.getLocation().set(this, value);
                 }
-                catch (IllegalArgumentException e)
+                catch (final IllegalArgumentException e)
                 {
                     throw new RuntimeException("IllegalArgumentException during config initialization for field "
                         + key
@@ -807,7 +807,7 @@ public class Configuration implements Serializable
                         + "]: "
                         + e.getMessage());
                 }
-                catch (IllegalAccessException e)
+                catch (final IllegalAccessException e)
                 {
                     throw new RuntimeException("IllegalArgumentException during config initialization for field "
                         + key
@@ -890,9 +890,9 @@ public class Configuration implements Serializable
      * @param errout where to write
      * @param showActualConfiguration print actual configuration values
      */
-    public void printConfigOptions(Writer errout, boolean showActualConfiguration)
+    public void printConfigOptions(final Writer errout, final boolean showActualConfiguration)
     {
-        String pad = "                                                                               ";
+        final String pad = "                                                                               ";
         try
         {
             errout.write("\nConfiguration File Settings:\n\n");
@@ -911,10 +911,10 @@ public class Configuration implements Serializable
             Flag configItem;
 
             // sort configuration options
-            List<Flag> values = new ArrayList<Flag>(OPTIONS.values());
+            final List<Flag> values = new ArrayList<Flag>(OPTIONS.values());
             Collections.sort(values);
 
-            Iterator<Flag> iterator = values.iterator();
+            final Iterator<Flag> iterator = values.iterator();
 
             while (iterator.hasNext())
             {
@@ -928,7 +928,7 @@ public class Configuration implements Serializable
 
                 if (showActualConfiguration)
                 {
-                    Field field = configItem.getLocation();
+                    final Field field = configItem.getLocation();
                     Object actualValue = null;
 
                     if (field != null)
@@ -937,12 +937,12 @@ public class Configuration implements Serializable
                         {
                             actualValue = field.get(this);
                         }
-                        catch (IllegalArgumentException e1)
+                        catch (final IllegalArgumentException e1)
                         {
                             // should never happen
                             throw new RuntimeException("IllegalArgument when reading field " + field.getName());
                         }
-                        catch (IllegalAccessException e1)
+                        catch (final IllegalAccessException e1)
                         {
                             // should never happen
                             throw new RuntimeException("IllegalAccess when reading field " + field.getName());
@@ -961,7 +961,7 @@ public class Configuration implements Serializable
             }
             errout.flush();
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             throw new RuntimeException(e.getMessage());
         }
@@ -977,12 +977,12 @@ public class Configuration implements Serializable
         /**
          * option name.
          */
-        private String name;
+        private final String name;
 
         /**
          * field name.
          */
-        private String fieldName;
+        private final String fieldName;
 
         /**
          * Field where the evaluated value is saved.
@@ -992,7 +992,7 @@ public class Configuration implements Serializable
         /**
          * Parser for the configuration property.
          */
-        private ParseProperty parser;
+        private final ParseProperty parser;
 
         /**
          * Instantiates a new Flag.
@@ -1000,7 +1000,7 @@ public class Configuration implements Serializable
          * @param fieldName field name (can be null)
          * @param parser parser for property
          */
-        Flag(String name, String fieldName, ParseProperty parser)
+        Flag(final String name, final String fieldName, final ParseProperty parser)
         {
 
             this.fieldName = fieldName;
@@ -1021,12 +1021,12 @@ public class Configuration implements Serializable
                 {
                     this.location = Configuration.class.getDeclaredField(fieldName);
                 }
-                catch (NoSuchFieldException e)
+                catch (final NoSuchFieldException e)
                 {
                     throw new RuntimeException("NoSuchField exception during config initialization for field "
                         + fieldName);
                 }
-                catch (SecurityException e)
+                catch (final SecurityException e)
                 {
                     throw new RuntimeException("Security exception during config initialization for field "
                         + fieldName
@@ -1059,7 +1059,7 @@ public class Configuration implements Serializable
         /**
          * @see java.lang.Object#equals(java.lang.Object)
          */
-        public boolean equals(Object obj)
+        public boolean equals(final Object obj)
         {
             return this.name.equals(((Flag) obj).name);
         }
@@ -1076,7 +1076,7 @@ public class Configuration implements Serializable
         /**
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
-        public int compareTo(Flag o)
+        public int compareTo(final Flag o)
         {
             return this.name.compareTo(o.name);
         }
@@ -1096,9 +1096,9 @@ public class Configuration implements Serializable
      * Setter for <code>inCharEncodingName</code>.
      * @param encoding The inCharEncodingName to set.
      */
-    protected void setInCharEncodingName(String encoding)
+    protected void setInCharEncodingName(final String encoding)
     {
-        String javaEncoding = EncodingNameMapper.toJava(encoding);
+        final String javaEncoding = EncodingNameMapper.toJava(encoding);
         if (javaEncoding != null)
         {
             this.inCharEncoding = javaEncoding;
@@ -1118,9 +1118,9 @@ public class Configuration implements Serializable
      * Setter for <code>outCharEncodingName</code>.
      * @param encoding The outCharEncodingName to set.
      */
-    protected void setOutCharEncodingName(String encoding)
+    protected void setOutCharEncodingName(final String encoding)
     {
-        String javaEncoding = EncodingNameMapper.toJava(encoding);
+        final String javaEncoding = EncodingNameMapper.toJava(encoding);
         if (javaEncoding != null)
         {
             this.outCharEncoding = javaEncoding;
@@ -1131,7 +1131,7 @@ public class Configuration implements Serializable
      * Setter for <code>inOutCharEncodingName</code>.
      * @param encoding The CharEncodingName to set.
      */
-    protected void setInOutEncodingName(String encoding)
+    protected void setInOutEncodingName(final String encoding)
     {
         setInCharEncodingName(encoding);
         setOutCharEncodingName(encoding);
@@ -1142,7 +1142,7 @@ public class Configuration implements Serializable
      * @param encoding The outCharEncoding to set.
      * @deprecated use setOutCharEncodingName(String)
      */
-    protected void setOutCharEncoding(int encoding)
+    protected void setOutCharEncoding(final int encoding)
     {
         setOutCharEncodingName(convertCharEncoding(encoding));
     }
@@ -1152,7 +1152,7 @@ public class Configuration implements Serializable
      * @param encoding The inCharEncoding to set.
      * @deprecated use setInCharEncodingName(String)
      */
-    protected void setInCharEncoding(int encoding)
+    protected void setInCharEncoding(final int encoding)
     {
         setInCharEncodingName(convertCharEncoding(encoding));
     }
@@ -1162,7 +1162,7 @@ public class Configuration implements Serializable
      * @param code encoding code
      * @return encoding name
      */
-    protected String convertCharEncoding(int code)
+    protected String convertCharEncoding(final int code)
     {
         if (code != 0 && code < ENCODING_NAMES.length)
         {

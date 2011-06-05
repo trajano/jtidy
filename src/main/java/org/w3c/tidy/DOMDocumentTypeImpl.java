@@ -68,7 +68,7 @@ public class DOMDocumentTypeImpl extends DOMNodeImpl implements org.w3c.dom.Docu
      * Instantiates a new DOM document type.
      * @param adaptee Tidy Node
      */
-    protected DOMDocumentTypeImpl(Node adaptee)
+    protected DOMDocumentTypeImpl(final Node adaptee)
     {
         super(adaptee);
     }

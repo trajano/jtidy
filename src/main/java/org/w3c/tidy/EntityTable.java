@@ -333,7 +333,7 @@ public final class EntityTable
     /**
      * Entity map.
      */
-    private Map<String, Entity> entityHashtable = new Hashtable<String, Entity>();
+    private final Map<String, Entity> entityHashtable = new Hashtable<String, Entity>();
 
     /**
      * use getDefaultEntityTable to get an entity table instance.
@@ -348,7 +348,7 @@ public final class EntityTable
      * @param ent entity
      * @return installed Entity
      */
-    private Entity install(Entity ent)
+    private Entity install(final Entity ent)
     {
         return (Entity) this.entityHashtable.put(ent.getName(), ent);
     }
@@ -358,7 +358,7 @@ public final class EntityTable
      * @param name entity name
      * @return entity
      */
-    public Entity lookup(String name)
+    public Entity lookup(final String name)
     {
         return (Entity) this.entityHashtable.get(name);
     }
@@ -368,7 +368,7 @@ public final class EntityTable
      * @param name entity name
      * @return entity code or 0 for unknown entity names
      */
-    public int entityCode(String name)
+    public int entityCode(final String name)
     {
         // entity starting with "&" returns zero on error.
         int c;
@@ -395,7 +395,7 @@ public final class EntityTable
                     c = Integer.parseInt(name.substring(2));
                 }
             }
-            catch (NumberFormatException e)
+            catch (final NumberFormatException e)
             {
                 // ignore
             }
@@ -404,7 +404,7 @@ public final class EntityTable
         }
 
         // Named entity: name ="&" followed by a name
-        Entity ent = lookup(name.substring(1));
+        final Entity ent = lookup(name.substring(1));
         if (ent != null)
         {
             return ent.getCode();
@@ -418,11 +418,11 @@ public final class EntityTable
      * @param code entity code
      * @return entity name or null for unknown entity codes
      */
-    public String entityName(short code)
+    public String entityName(final short code)
     {
         String name = null;
         Entity ent;
-        Iterator<Entity> en = this.entityHashtable.values().iterator();
+        final Iterator<Entity> en = this.entityHashtable.values().iterator();
         while (en.hasNext())
         {
             ent = (Entity) en.next();

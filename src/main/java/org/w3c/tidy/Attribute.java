@@ -66,7 +66,7 @@ public class Attribute
     /**
      * attribute name.
      */
-    private String name;
+    private final String name;
 
     /**
      * don't wrap attribute.
@@ -81,12 +81,12 @@ public class Attribute
     /**
      * html versions for this attribute.
      */
-    private short versions;
+    private final short versions;
 
     /**
      * checker for the attribute.
      */
-    private AttrCheck attrchk;
+    private final AttrCheck attrchk;
 
     /**
      * Instantiates a new Attribute.
@@ -94,7 +94,7 @@ public class Attribute
      * @param htmlVersions versions in which this attribute is supported
      * @param check AttrCheck instance
      */
-    public Attribute(String attributeName, short htmlVersions, AttrCheck check)
+    public Attribute(final String attributeName, final short htmlVersions, final AttrCheck check)
     {
         this.name = attributeName;
         this.versions = htmlVersions;
@@ -105,7 +105,7 @@ public class Attribute
      * Is this a literal (unmodifiable) attribute?
      * @param isLiteral boolean <code>true</code> for a literal attribute
      */
-    public void setLiteral(boolean isLiteral)
+    public void setLiteral(final boolean isLiteral)
     {
         this.literal = isLiteral;
     }
@@ -114,7 +114,7 @@ public class Attribute
      * Don't wrap this attribute?
      * @param isNowrap boolean <code>true</code>= don't wrap
      */
-    public void setNowrap(boolean isNowrap)
+    public void setNowrap(final boolean isNowrap)
     {
         this.nowrap = isNowrap;
     }
