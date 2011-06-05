@@ -1238,7 +1238,7 @@ public class Lexer
 
         fixHTMLNameSpace(root, namespace); // #427839 - fix by Evan Lenz 05 Sep 00
 
-        if (this.configuration.docTypeMode == Configuration.DOCTYPE_OMIT)
+        if (this.configuration.docTypeMode == DocTypeMode.DOCTYPE_OMIT)
         {
             if (doctype != null)
             {
@@ -1247,7 +1247,7 @@ public class Lexer
             return true;
         }
 
-        if (this.configuration.docTypeMode == Configuration.DOCTYPE_AUTO)
+        if (this.configuration.docTypeMode == DocTypeMode.DOCTYPE_AUTO)
         {
             // see what flavor of XHTML this document matches
             if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML40_STRICT))
@@ -1284,18 +1284,18 @@ public class Lexer
                 }
             }
         }
-        else if (this.configuration.docTypeMode == Configuration.DOCTYPE_STRICT)
+        else if (this.configuration.docTypeMode == DocTypeMode.DOCTYPE_STRICT)
         {
             fpi = "-//W3C//DTD XHTML 1.0 Strict//EN";
             sysid = VOYAGER_STRICT;
         }
-        else if (this.configuration.docTypeMode == Configuration.DOCTYPE_LOOSE)
+        else if (this.configuration.docTypeMode == DocTypeMode.DOCTYPE_LOOSE)
         {
             fpi = "-//W3C//DTD XHTML 1.0 Transitional//EN";
             sysid = VOYAGER_LOOSE;
         }
 
-        if (this.configuration.docTypeMode == Configuration.DOCTYPE_USER && this.configuration.docTypeStr != null)
+        if (this.configuration.docTypeMode == DocTypeMode.DOCTYPE_USER && this.configuration.docTypeStr != null)
         {
             fpi = this.configuration.docTypeStr;
             sysid = "";
@@ -1476,7 +1476,7 @@ public class Lexer
 
         doctype = root.findDocType();
 
-        if (this.configuration.docTypeMode == Configuration.DOCTYPE_OMIT)
+        if (DocTypeMode.DOCTYPE_OMIT.equals(this.configuration.docTypeMode))
         {
             if (doctype != null)
             {
@@ -1490,19 +1490,19 @@ public class Lexer
             return true;
         }
 
-        if (this.configuration.docTypeMode == Configuration.DOCTYPE_STRICT)
+        if (DocTypeMode.DOCTYPE_STRICT.equals(this.configuration.docTypeMode))
         {
             Node.discardElement(doctype);
             doctype = null;
             guessed = Dict.VERS_HTML40_STRICT;
         }
-        else if (this.configuration.docTypeMode == Configuration.DOCTYPE_LOOSE)
+        else if (DocTypeMode.DOCTYPE_LOOSE.equals(this.configuration.docTypeMode))
         {
             Node.discardElement(doctype);
             doctype = null;
             guessed = Dict.VERS_HTML40_LOOSE;
         }
-        else if (this.configuration.docTypeMode == Configuration.DOCTYPE_AUTO)
+        else if (DocTypeMode.DOCTYPE_AUTO.equals(this.configuration.docTypeMode))
         {
             if (doctype != null)
             {
@@ -1618,7 +1618,7 @@ public class Lexer
         // use the appropriate public identifier
         addStringLiteral("html PUBLIC ");
 
-        if (this.configuration.docTypeMode == Configuration.DOCTYPE_USER
+        if (DocTypeMode.DOCTYPE_USER.equals(this.configuration.docTypeMode)
             && this.configuration.docTypeStr != null
             && this.configuration.docTypeStr.length() > 0)
         {

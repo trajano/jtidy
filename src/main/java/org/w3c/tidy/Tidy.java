@@ -1754,26 +1754,13 @@ public class Tidy implements Serializable
      */
     public String getDocType()
     {
-        String result = null;
-        switch (configuration.docTypeMode)
+        if (DocTypeMode.DOCTYPE_USER.equals(configuration.docTypeMode))
         {
-            case Configuration.DOCTYPE_OMIT :
-                result = "omit";
-                break;
-            case Configuration.DOCTYPE_AUTO :
-                result = "auto";
-                break;
-            case Configuration.DOCTYPE_STRICT :
-                result = "strict";
-                break;
-            case Configuration.DOCTYPE_LOOSE :
-                result = "loose";
-                break;
-            case Configuration.DOCTYPE_USER :
-                result = configuration.docTypeStr;
-                break;
+        	return configuration.docTypeStr;
         }
-        return result;
+        else {
+        	return configuration.docTypeMode.getDocType();
+        }
     }
 
     /**

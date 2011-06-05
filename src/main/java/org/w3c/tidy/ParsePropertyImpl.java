@@ -525,7 +525,7 @@ public final class ParsePropertyImpl
 
             if (value.startsWith("\""))
             {
-                configuration.docTypeMode = Configuration.DOCTYPE_USER;
+                configuration.docTypeMode = DocTypeMode.DOCTYPE_USER;
                 return value;
             }
 
@@ -539,19 +539,19 @@ public final class ParsePropertyImpl
             // #443663 - fix by Terry Teague 23 Jul 01
             if ("auto".equalsIgnoreCase(word))
             {
-                configuration.docTypeMode = Configuration.DOCTYPE_AUTO;
+                configuration.docTypeMode = DocTypeMode.DOCTYPE_AUTO;
             }
             else if ("omit".equalsIgnoreCase(word))
             {
-                configuration.docTypeMode = Configuration.DOCTYPE_OMIT;
+                configuration.docTypeMode = DocTypeMode.DOCTYPE_OMIT;
             }
             else if ("strict".equalsIgnoreCase(word))
             {
-                configuration.docTypeMode = Configuration.DOCTYPE_STRICT;
+                configuration.docTypeMode = DocTypeMode.DOCTYPE_STRICT;
             }
             else if ("loose".equalsIgnoreCase(word) || "transitional".equalsIgnoreCase(word))
             {
-                configuration.docTypeMode = Configuration.DOCTYPE_LOOSE;
+                configuration.docTypeMode = DocTypeMode.DOCTYPE_LOOSE;
             }
             else
             {
@@ -581,37 +581,7 @@ public final class ParsePropertyImpl
          */
         public String getFriendlyName(final String option, final Object value, final Configuration configuration)
         {
-
-            String stringValue;
-
-            switch (configuration.docTypeMode)
-            {
-                case Configuration.DOCTYPE_AUTO :
-                    stringValue = "auto";
-                    break;
-
-                case Configuration.DOCTYPE_OMIT :
-                    stringValue = "omit";
-                    break;
-
-                case Configuration.DOCTYPE_STRICT :
-                    stringValue = "strict";
-                    break;
-
-                case Configuration.DOCTYPE_LOOSE :
-                    stringValue = "transitional";
-                    break;
-
-                case Configuration.DOCTYPE_USER :
-                    stringValue = configuration.docTypeStr;
-                    break;
-
-                default :
-                    stringValue = "unknown";
-                    break;
-            }
-
-            return stringValue;
+        	return (configuration.docTypeMode.getFriendlyName());
         }
     }
 

@@ -180,32 +180,6 @@ public class Configuration implements Serializable
         "SJIS"};
 
     /**
-     * treatment of doctype: omit.
-     * @todo should be an enumeration DocTypeMode
-     */
-    public static final int DOCTYPE_OMIT = 0;
-
-    /**
-     * treatment of doctype: auto.
-     */
-    public static final int DOCTYPE_AUTO = 1;
-
-    /**
-     * treatment of doctype: strict.
-     */
-    public static final int DOCTYPE_STRICT = 2;
-
-    /**
-     * treatment of doctype: loose.
-     */
-    public static final int DOCTYPE_LOOSE = 3;
-
-    /**
-     * treatment of doctype: user.
-     */
-    public static final int DOCTYPE_USER = 4;
-
-    /**
      * Keep last duplicate attribute.
      * @todo should be an enumeration DupAttrMode
      */
@@ -338,7 +312,7 @@ public class Configuration implements Serializable
     /**
      * see doctype property.
      */
-    protected int docTypeMode = DOCTYPE_AUTO;
+    protected DocTypeMode docTypeMode = DocTypeMode.DOCTYPE_AUTO;
 
     /**
      * Keep first or last duplicate attribute.
@@ -354,7 +328,8 @@ public class Configuration implements Serializable
      * style sheet for slides.
      * @deprecated does nothing
      */
-    protected String slidestyle;
+    @Deprecated
+	protected String slidestyle;
 
     /**
      * RJ language property.
@@ -783,7 +758,7 @@ public class Configuration implements Serializable
         while (iterator.hasNext())
         {
             final String key = (String) iterator.next();
-            final Flag flag = (Flag) OPTIONS.get(key);
+            final Flag flag = OPTIONS.get(key);
             if (flag == null)
             {
                 report.unknownOption(key);
@@ -918,7 +893,7 @@ public class Configuration implements Serializable
 
             while (iterator.hasNext())
             {
-                configItem = (Flag) iterator.next();
+                configItem = iterator.next();
 
                 errout.write(configItem.getName());
                 errout.write(pad, 0, 28 - configItem.getName().length());
@@ -1059,7 +1034,8 @@ public class Configuration implements Serializable
         /**
          * @see java.lang.Object#equals(java.lang.Object)
          */
-        public boolean equals(final Object obj)
+        @Override
+		public boolean equals(final Object obj)
         {
             return this.name.equals(((Flag) obj).name);
         }
@@ -1067,7 +1043,8 @@ public class Configuration implements Serializable
         /**
          * @see java.lang.Object#hashCode()
          */
-        public int hashCode()
+        @Override
+		public int hashCode()
         {
             // returning the hashCode of String, to be consistent with equals and compareTo
             return this.name.hashCode();
@@ -1142,7 +1119,8 @@ public class Configuration implements Serializable
      * @param encoding The outCharEncoding to set.
      * @deprecated use setOutCharEncodingName(String)
      */
-    protected void setOutCharEncoding(final int encoding)
+    @Deprecated
+	protected void setOutCharEncoding(final int encoding)
     {
         setOutCharEncodingName(convertCharEncoding(encoding));
     }
@@ -1152,7 +1130,8 @@ public class Configuration implements Serializable
      * @param encoding The inCharEncoding to set.
      * @deprecated use setInCharEncodingName(String)
      */
-    protected void setInCharEncoding(final int encoding)
+    @Deprecated
+	protected void setInCharEncoding(final int encoding)
     {
         setInCharEncodingName(convertCharEncoding(encoding));
     }
