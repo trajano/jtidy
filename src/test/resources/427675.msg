@@ -18,22 +18,30 @@
   <message>
     <code>6</code>
     <level>2</level>
-    <line>11</line>
-    <column>2</column>
+    <line>10</line>
+    <column>1</column>
     <text><![CDATA[missing </noframes>]]></text>
   </message>
   <message>
     <code>111</code>
-    <level>0</level>
-    <line>1</line>
-    <column>1</column>
-    <text><![CDATA[InputStream: Document content looks like HTML 4.01 Frameset]]></text>
+    <level>1</level>
+    <line>0</line>
+    <column>0</column>
+    <text><![CDATA[Document content looks like HTML 4.01 Frameset]]></text>
+  </message>
+  <message>
+    <code>-1</code>
+    <level>1</level>
+    <line>0</line>
+    <column>0</column>
+    <text><![CDATA[No system identifier in emitted doctype]]></text>
   </message>
   <message>
     <code>-1</code>
     <level>0</level>
     <line>0</line>
     <column>0</column>
-    <text><![CDATA[3 warnings, no errors were found!]]></text>
+    <text><![CDATA[3 warnings, 0 errors were found!
+]]></text>
   </message>
 </messages>

@@ -67,7 +67,7 @@ public class DOMCDATASectionImpl extends DOMTextImpl implements org.w3c.dom.CDAT
      * Instantiates a new DOMCDATASectionImpl which wraps the given Node.
      * @param adaptee wrapped node.
      */
-    protected DOMCDATASectionImpl(final Node adaptee)
+    protected DOMCDATASectionImpl(Node adaptee)
     {
         super(adaptee);
     }
@@ -76,7 +76,7 @@ public class DOMCDATASectionImpl extends DOMTextImpl implements org.w3c.dom.CDAT
      * @see org.w3c.dom.Node#getNodeName
      */
     @Override
-	public String getNodeName()
+    public String getNodeName()
     {
         return "#cdata-section";
     }
@@ -85,7 +85,7 @@ public class DOMCDATASectionImpl extends DOMTextImpl implements org.w3c.dom.CDAT
      * @see org.w3c.dom.Node#getNodeType
      */
     @Override
-	public short getNodeType()
+    public short getNodeType()
     {
         return org.w3c.dom.Node.CDATA_SECTION_NODE;
     }

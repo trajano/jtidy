@@ -68,7 +68,7 @@ public class TidyUtilsTest extends TestCase
      * instantiates a new test.
      * @param name test name
      */
-    public TidyUtilsTest(final String name)
+    public TidyUtilsTest(String name)
     {
         super(name);
     }
@@ -78,8 +78,8 @@ public class TidyUtilsTest extends TestCase
      */
     public void testIsInValuesIgnoreCaseSuccessfull()
     {
-        final String[] validValues = new String[]{"first", "Second", "THIRD"};
-        final String stringToCheck = "second";
+        String[] validValues = new String[]{"first", "Second", "THIRD"};
+        String stringToCheck = "second";
         assertTrue(TidyUtils.isInValuesIgnoreCase(validValues, stringToCheck));
     }
 
@@ -88,8 +88,8 @@ public class TidyUtilsTest extends TestCase
      */
     public void testIsInValuesIgnoreCaseFail()
     {
-        final String[] validValues = new String[]{"first", "Second", "THIRD"};
-        final String stringToCheck = "secon";
+        String[] validValues = new String[]{"first", "Second", "THIRD"};
+        String stringToCheck = "secon";
         assertFalse(TidyUtils.isInValuesIgnoreCase(validValues, stringToCheck));
     }
 

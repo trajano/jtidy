@@ -68,7 +68,7 @@ public class EncodingNameMapperTest extends TestCase
      * instantiates a new test.
      * @param name test name
      */
-    public EncodingNameMapperTest(final String name)
+    public EncodingNameMapperTest(String name)
     {
         super(name);
     }

@@ -70,7 +70,7 @@ public class DOMCharacterDataImpl extends DOMNodeImpl implements org.w3c.dom.Cha
      * Instantiates a new DOMCharacterDataImpl which wraps the given Node.
      * @param adaptee wrapped node.
      */
-    protected DOMCharacterDataImpl(final Node adaptee)
+    protected DOMCharacterDataImpl(Node adaptee)
     {
         super(adaptee);
     }
@@ -99,7 +99,7 @@ public class DOMCharacterDataImpl extends DOMNodeImpl implements org.w3c.dom.Cha
     /**
      * @see org.w3c.dom.CharacterData#substringData
      */
-    public String substringData(final int offset, final int count) throws DOMException
+    public String substringData(int offset, int count) throws DOMException
     {
         int len;
         String value = null;
@@ -127,25 +127,25 @@ public class DOMCharacterDataImpl extends DOMNodeImpl implements org.w3c.dom.Cha
     /**
      * @see org.w3c.dom.CharacterData#setData
      */
-    public void setData(final String data) throws DOMException {
+    public void setData(String data) throws DOMException {
         setNodeValue(data);
     }
 
     /**
      * @see org.w3c.dom.CharacterData#appendData
      */
-    public void appendData(final String arg) throws DOMException {
+    public void appendData(String arg) throws DOMException {
         setNodeValue(getNodeValue() + arg);
     }
 
     /**
      * @see org.w3c.dom.CharacterData#insertData
      */
-    public void insertData(final int offset, final String arg) throws DOMException {
+    public void insertData(int offset, String arg) throws DOMException {
         if (offset < adaptee.start || adaptee.start + offset >= adaptee.end) {
             throw new DOMException(DOMException.INDEX_SIZE_ERR, "Invalid offset");
         }
-        final StringBuilder sb = new StringBuilder(getNodeValue());
+        StringBuilder sb = new StringBuilder(getNodeValue());
         sb.insert(offset, arg);
         setData(sb.toString());
     }
@@ -153,14 +153,14 @@ public class DOMCharacterDataImpl extends DOMNodeImpl implements org.w3c.dom.Cha
     /**
      * @see org.w3c.dom.CharacterData#deleteData
      */
-    public void deleteData(final int offset, final int count) throws DOMException {
+    public void deleteData(int offset, int count) throws DOMException {
         if (count < 0) {
             throw new DOMException(DOMException.INDEX_SIZE_ERR, "Invalid length");
         }
         if (offset < adaptee.start || adaptee.start + offset >= adaptee.end) {
             throw new DOMException(DOMException.INDEX_SIZE_ERR, "Invalid offset");
         }
-        final StringBuilder sb = new StringBuilder(getNodeValue());
+        StringBuilder sb = new StringBuilder(getNodeValue());
         int end = offset + count;
         if (end > adaptee.end) {
             end = adaptee.end;
@@ -171,7 +171,7 @@ public class DOMCharacterDataImpl extends DOMNodeImpl implements org.w3c.dom.Cha
     /**
      * @see org.w3c.dom.CharacterData#replaceData
      */
-    public void replaceData(final int offset, final int count, final String arg) throws DOMException {
+    public void replaceData(int offset, int count, String arg) throws DOMException {
         deleteData(offset, count);
         insertData(offset, arg);
     }

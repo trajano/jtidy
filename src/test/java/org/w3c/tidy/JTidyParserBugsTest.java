@@ -65,7 +65,7 @@ public class JTidyParserBugsTest extends TidyTestCase
      * Instantiate a new Test case.
      * @param name test name
      */
-    public JTidyParserBugsTest(final String name)
+    public JTidyParserBugsTest(String name)
     {
         super(name);
     }

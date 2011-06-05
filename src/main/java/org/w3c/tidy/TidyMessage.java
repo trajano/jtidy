@@ -65,29 +65,29 @@ public final class TidyMessage
     /**
      * Line in the source file (can be 0 if the message is not related to a particular line, such as a summary message).
      */
-    private final int line;
+    private int line;
 
     /**
      * Column in the source file (can be 0 if the message is not related to a particular column, such as a summary
      * message).
      */
-    private final int column;
+    private int column;
 
     /**
      * Level for this message. Can be TidyMessage.Level.SUMMARY | TidyMessage.Level.INFO | TidyMessage.Level.WARNING |
      * TidyMessage.Level.ERROR.
      */
-    private final Level level;
+    private Level level;
 
     /**
      * Formatted text for this message.
      */
-    private final String message;
+    private String message;
 
     /**
      * Tidy internal error code.
      */
-    private final int errorCode;
+    private int errorCode;
 
     /**
      * Instantiates a new message.
@@ -97,7 +97,7 @@ public final class TidyMessage
      * @param level severity
      * @param message message text
      */
-    public TidyMessage(final int errorCode, final int line, final int column, final Level level, final String message)
+    public TidyMessage(int errorCode, int line, int column, Level level, String message)
     {
         this.errorCode = errorCode;
         this.line = line;
@@ -156,128 +156,47 @@ public final class TidyMessage
      * @author fgiust
      * @version $Revision$ ($Author$)
      */
-    public static final class Level implements Comparable<Level>
-    {
+    public enum Level {
+        /** Summary (number of warnings, errors) */
+        SUMMARY("Summary"),
 
-        /**
-         * level = summary (0).
-         */
-        public static final Level SUMMARY = new Level(0);
+        /** Information about markup usage */
+        INFO("Info"),
+        
+        /** Warning message */
+        WARNING("Warning"),
+        
+        /** Error message - output suppressed */
+        ERROR("Error"),
 
-        /**
-         * level = info (1).
-         */
-        public static final Level INFO = new Level(1);
-
-        /**
-         * level = warning (2).
-         */
-        public static final Level WARNING = new Level(2);
-
-        /**
-         * level = error (3).
-         */
-        public static final Level ERROR = new Level(3);
-
-        /**
-         * short value for this level.
-         */
-        private final short code;
-
-        /**
-         * Instantiates a new message with the given code.
-         * @param code int value for this level
-         */
-        private Level(final int code)
-        {
-            this.code = (short) code;
+        /** Configuration error */
+        CONFIG("Config"),
+        
+        /** Accessibility message */
+        ACCESS("Access"),
+        
+        /** I/O or file system error */
+        BAD_DOCUMENT("Document"),
+        
+        /** Crash! */
+        FATAL("panic");
+        
+        private final String text;
+        
+        private Level(final String text) {
+            this.text = text;
         }
 
-        /**
-         * Returns the int value for this level.
-         * @return int value for this level
-         */
-        public short getCode()
-        {
-            return this.code;
-        }
-
-        /**
-         * Returns the Level instance corresponding to the given int value.
-         * @param code int value for the level
-         * @return Level instance
-         */
-        public static Level fromCode(final int code)
-        {
-            switch (code)
-            {
-                case 0 :
-                    return SUMMARY;
-                case 1 :
-                    return INFO;
-                case 2 :
-                    return WARNING;
-                case 3 :
-                    return ERROR;
-
-                default :
-                    return null;
-            }
-        }
-
-        /**
-         * @see java.lang.Comparable#compareTo(Object)
-         */
-        public int compareTo(final Level object)
-        {
-            return this.code - object.code;
-        }
-
-        /**
-         * @see java.lang.Object#equals(Object)
-         */
-        @Override
-		public boolean equals(final Object object)
-        {
-            if (!(object instanceof Level))
-            {
-                return false;
-            }
-            return this.code == ((Level) object).code;
+        public int getCode() {
+            return ordinal();
         }
 
         /**
          * @see java.lang.Object#toString()
          */
         @Override
-		public String toString()
-        {
-            switch (code)
-            {
-                case 0 :
-                    return "SUMMARY";
-                case 1 :
-                    return "INFO";
-                case 2 :
-                    return "WARNING";
-                case 3 :
-                    return "ERROR";
-
-                default :
-                    // should not happen
-                    return "?";
-            }
-        }
-
-        /**
-         * @see java.lang.Object#hashCode()
-         */
-        @Override
-		public int hashCode()
-        {
-            // new instances should not be created
-            return super.hashCode();
+		public String toString() {
+        	return text;
         }
     }
-
 }

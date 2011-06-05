@@ -53,6 +53,8 @@
  */
 package org.w3c.tidy;
 
+import java.util.Map;
+
 /**
  * Tag dictionary node. If the document uses just HTML 2.0 tags and attributes described it as HTML 2.0 Similarly for
  * HTML 3.2 and the 3 flavors of HTML 4.0. If there are proprietary tags and attributes then describe it as HTML
@@ -74,212 +76,112 @@ public class Dict
     /**
      * Content model: empty.
      */
-    public static final int CM_EMPTY = 1 << 0;
+    public static final int CM_EMPTY = (1 << 0);
 
     /**
      * Content model: html.
      */
-    public static final int CM_HTML = 1 << 1;
+    public static final int CM_HTML = (1 << 1);
 
     /**
      * Content model: head.
      */
-    public static final int CM_HEAD = 1 << 2;
+    public static final int CM_HEAD = (1 << 2);
 
     /**
      * Content model: block.
      */
-    public static final int CM_BLOCK = 1 << 3;
+    public static final int CM_BLOCK = (1 << 3);
 
     /**
      * Content model: inline.
      */
-    public static final int CM_INLINE = 1 << 4;
+    public static final int CM_INLINE = (1 << 4);
 
     /**
      * Content model: list.
      */
-    public static final int CM_LIST = 1 << 5;
+    public static final int CM_LIST = (1 << 5);
 
     /**
      * Content model: definition list.
      */
-    public static final int CM_DEFLIST = 1 << 6;
+    public static final int CM_DEFLIST = (1 << 6);
 
     /**
      * Content model: table.
      */
-    public static final int CM_TABLE = 1 << 7;
+    public static final int CM_TABLE = (1 << 7);
 
     /**
      * Content model: rowgroup.
      */
-    public static final int CM_ROWGRP = 1 << 8;
+    public static final int CM_ROWGRP = (1 << 8);
 
     /**
      * Content model: row.
      */
-    public static final int CM_ROW = 1 << 9;
+    public static final int CM_ROW = (1 << 9);
 
     /**
      * Content model: field.
      */
-    public static final int CM_FIELD = 1 << 10;
+    public static final int CM_FIELD = (1 << 10);
 
     /**
      * Content model: object.
      */
-    public static final int CM_OBJECT = 1 << 11;
+    public static final int CM_OBJECT = (1 << 11);
 
     /**
      * Content model: param.
      */
-    public static final int CM_PARAM = 1 << 12;
+    public static final int CM_PARAM = (1 << 12);
 
     /**
      * Content model: frames.
      */
-    public static final int CM_FRAMES = 1 << 13;
+    public static final int CM_FRAMES = (1 << 13);
 
     /**
      * Content model: heading.
      */
-    public static final int CM_HEADING = 1 << 14;
+    public static final int CM_HEADING = (1 << 14);
 
     /**
      * Content model: opt.
      */
-    public static final int CM_OPT = 1 << 15;
+    public static final int CM_OPT = (1 << 15);
 
     /**
      * Content model: img.
      */
-    public static final int CM_IMG = 1 << 16;
+    public static final int CM_IMG = (1 << 16);
 
     /**
      * Content model: mixed.
      */
-    public static final int CM_MIXED = 1 << 17;
+    public static final int CM_MIXED = (1 << 17);
 
     /**
      * Content model: no indent.
      */
-    public static final int CM_NO_INDENT = 1 << 18;
+    public static final int CM_NO_INDENT = (1 << 18);
 
     /**
      * Content model: obsolete.
      */
-    public static final int CM_OBSOLETE = 1 << 19;
+    public static final int CM_OBSOLETE = (1 << 19);
 
     /**
      * Content model: new.
      */
-    public static final int CM_NEW = 1 << 20;
+    public static final int CM_NEW = (1 << 20);
 
     /**
      * Content model: omitst.
      */
-    public static final int CM_OMITST = 1 << 21;
-
-    /**
-     * Version: unknown.
-     */
-    public static final short VERS_UNKNOWN = 0;
-
-    /**
-     * Version: html 2.0.
-     */
-    public static final short VERS_HTML20 = 1;
-
-    /**
-     * Version: html 3.2.
-     */
-    public static final short VERS_HTML32 = 2;
-
-    /**
-     * Version: html 4.0 strict.
-     */
-    public static final short VERS_HTML40_STRICT = 4;
-
-    /**
-     * Version: html 4.0 transitional.
-     */
-    public static final short VERS_HTML40_LOOSE = 8;
-
-    /**
-     * Version: html 4.0 frameset.
-     */
-    public static final short VERS_FRAMESET = 16;
-
-    /**
-     * Version: xml.
-     */
-    public static final short VERS_XML = 32;
-
-    /**
-     * Version: netscape.
-     */
-    public static final short VERS_NETSCAPE = 64;
-
-    /**
-     * Version: microsoft.
-     */
-    public static final short VERS_MICROSOFT = 128;
-
-    /**
-     * Version: sun.
-     */
-    public static final short VERS_SUN = 256;
-
-    /**
-     * Version: malformed.
-     */
-    public static final short VERS_MALFORMED = 512;
-
-    /**
-     * Version: xhtml 1.1.
-     */
-    public static final short VERS_XHTML11 = 1024;
-
-    /**
-     * Version: xhtml basic.
-     */
-    public static final short VERS_BASIC = 2048;
-
-    /**
-     * all tags and attributes are ok in proprietary version of HTML.
-     */
-    public static final short VERS_PROPRIETARY = VERS_NETSCAPE | VERS_MICROSOFT | VERS_SUN;
-
-    /**
-     * tags/attrs in HTML4 but not in earlier version.
-     */
-    public static final short VERS_HTML40 = VERS_HTML40_STRICT | VERS_HTML40_LOOSE | VERS_FRAMESET;
-
-    /**
-     * tags/attrs which are in all versions of HTML except strict.
-     */
-    public static final short VERS_LOOSE = VERS_HTML32 | VERS_HTML40_LOOSE | VERS_FRAMESET;
-
-    /**
-     * tags/attrs in HTML 4 loose and frameset.
-     */
-    public static final short VERS_IFRAME = VERS_HTML40_LOOSE | VERS_FRAMESET;
-
-    /**
-     * tags/attrs in all versions from HTML 3.2 onwards.
-     */
-    public static final short VERS_FROM32 = VERS_HTML40_STRICT | VERS_LOOSE;
-
-    /**
-     * versions with on... attributes.
-     */
-    public static final short VERS_EVENTS = VERS_HTML40 | VERS_XHTML11;
-
-    /**
-     * tags/attrs in any version.
-     */
-    public static final short VERS_ALL = VERS_HTML20 | VERS_HTML32 | VERS_HTML40 | VERS_XHTML11 | VERS_BASIC;
+    public static final int CM_OMITST = (1 << 21);
 
     /**
      * types of tags that the user can define: empty tag.
@@ -301,6 +203,8 @@ public class Dict
      */
     public static final short TAGTYPE_PRE = 8;
 
+    protected TagId id;
+    
     /**
      * Tag name.
      */
@@ -309,8 +213,10 @@ public class Dict
     /**
      * Version in which this tag is defined.
      */
-    protected short versions;
+    protected int versions;
 
+    protected Map<AttrId, Integer> attrvers;
+    
     /**
      * model (CM_* constants).
      */
@@ -328,16 +234,21 @@ public class Dict
 
     /**
      * Instantiates a new Tag definition.
+     * @param id tag id
      * @param name tag name
      * @param versions version in which this tag is defined
-     * @param model model (CM_* constants)
+     * @param attrvers attribute version map
+     * @param model content model (CM_* constants)
      * @param parser parser for this tag
      * @param chkattrs validator for this tag (can be null)
      */
-    public Dict(final String name, final short versions, final int model, final Parser parser, final TagCheck chkattrs)
+    public Dict(final TagId id, final String name, final int versions, final Map<AttrId, Integer> attrvers,
+    		final int model, final Parser parser, final TagCheck chkattrs)
     {
+    	this.id = id;
         this.name = name;
         this.versions = versions;
+        this.attrvers = attrvers;
         this.model = model;
         this.parser = parser;
         this.chkattrs = chkattrs;
@@ -383,7 +294,7 @@ public class Dict
      * Setter for <code>chkattrs</code>.
      * @param chkattrs The chkattrs to set.
      */
-    public void setChkattrs(final TagCheck chkattrs)
+    public void setChkattrs(TagCheck chkattrs)
     {
         this.chkattrs = chkattrs;
     }
@@ -391,7 +302,7 @@ public class Dict
      * Getter for <code>versions</code>.
      * @return Returns the versions.
      */
-    public short getVersions()
+    public int getVersions()
     {
         return this.versions;
     }
@@ -399,7 +310,7 @@ public class Dict
      * Setter for <code>parser</code>.
      * @param parser The parser to set.
      */
-    public void setParser(final Parser parser)
+    public void setParser(Parser parser)
     {
         this.parser = parser;
     }

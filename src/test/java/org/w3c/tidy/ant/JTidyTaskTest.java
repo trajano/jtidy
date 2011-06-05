@@ -97,7 +97,7 @@ public class JTidyTaskTest extends TestCase
     {
         super.setUp();
         task = new JTidyTask();
-        final Project p = new Project();
+        Project p = new Project();
         task.setProject(p);
         task.init();
         tempDir = System.getProperty("java.io.tmpdir");
@@ -114,7 +114,7 @@ public class JTidyTaskTest extends TestCase
             task.execute();
             fail("Invalid parameters not detected");
         }
-        catch (final BuildException e)
+        catch (BuildException e)
         {
             // ok
         }
@@ -132,7 +132,7 @@ public class JTidyTaskTest extends TestCase
             task.validateParameters();
             fail("Invalid parameters not detected");
         }
-        catch (final BuildException e)
+        catch (BuildException e)
         {
             // ok
         }
@@ -149,7 +149,7 @@ public class JTidyTaskTest extends TestCase
             task.validateParameters();
             fail("Invalid parameters not detected");
         }
-        catch (final BuildException e)
+        catch (BuildException e)
         {
             // ok
         }
@@ -167,7 +167,7 @@ public class JTidyTaskTest extends TestCase
             task.validateParameters();
             fail("Invalid parameters not detected");
         }
-        catch (final BuildException e)
+        catch (BuildException e)
         {
             // ok
         }
@@ -185,7 +185,7 @@ public class JTidyTaskTest extends TestCase
             task.validateParameters();
             fail("Invalid parameters not detected");
         }
-        catch (final BuildException e)
+        catch (BuildException e)
         {
             // ok
         }
@@ -205,7 +205,7 @@ public class JTidyTaskTest extends TestCase
             task.execute();
             fail("Missing source file not detected");
         }
-        catch (final BuildException e)
+        catch (BuildException e)
         {
             // ok
         }
@@ -224,7 +224,7 @@ public class JTidyTaskTest extends TestCase
             task.validateParameters();
             fail("Invalid parameters not detected");
         }
-        catch (final BuildException e)
+        catch (BuildException e)
         {
             // ok
         }
@@ -235,7 +235,7 @@ public class JTidyTaskTest extends TestCase
      */
     public void testFileset()
     {
-        final FileSet fileset = new FileSet();
+        FileSet fileset = new FileSet();
         fileset.setDir(new File(testDir, "ant"));
 
         task.addFileset(fileset);
@@ -255,7 +255,7 @@ public class JTidyTaskTest extends TestCase
      */
     public void testFilesetWithDirStructure()
     {
-        final FileSet fileset = new FileSet();
+        FileSet fileset = new FileSet();
         fileset.setDir(new File(testDir));
         fileset.setIncludes("ant/*.html");
 
@@ -277,7 +277,7 @@ public class JTidyTaskTest extends TestCase
      */
     public void testFilesetWithDirStructureFlatten()
     {
-        final FileSet fileset = new FileSet();
+        FileSet fileset = new FileSet();
         fileset.setDir(new File(testDir));
         fileset.setIncludes("ant/*.html");
 
@@ -299,14 +299,14 @@ public class JTidyTaskTest extends TestCase
      */
     public void testWithParameters()
     {
-        final FileSet fileset = new FileSet();
+        FileSet fileset = new FileSet();
         fileset.setDir(new File(testDir));
         fileset.setIncludes("ant/*1.html");
 
         task.addFileset(fileset);
         task.setDestdir(new File(tempDir));
         task.setFlatten(true);
-        final Parameter parameter = new Parameter();
+        Parameter parameter = new Parameter();
         parameter.setName("tidy-mark");
         parameter.setValue("false");
         task.addConfiguredParameter(parameter);
@@ -316,14 +316,14 @@ public class JTidyTaskTest extends TestCase
 
         try
         {
-            final Reader reader = new FileReader(new File(tempDir, "file1.html"));
-            final String output = FileUtils.readFully(reader);
+            Reader reader = new FileReader(new File(tempDir, "file1.html"));
+            String output = FileUtils.readFully(reader);
             reader.close();
 
             // output file should not contain "generator"
             assertTrue("Configured parameter doesn't have effect on output.", output.indexOf("generator") == -1);
         }
-        catch (final IOException e)
+        catch (IOException e)
         {
             fail("Unable to read generated file.");
         }
@@ -336,7 +336,7 @@ public class JTidyTaskTest extends TestCase
      */
     public void testWithProperties()
     {
-        final FileSet fileset = new FileSet();
+        FileSet fileset = new FileSet();
         fileset.setDir(new File(testDir));
         fileset.setIncludes("ant/*1.html");
 
@@ -351,14 +351,14 @@ public class JTidyTaskTest extends TestCase
 
         try
         {
-            final Reader reader = new FileReader(new File(tempDir, "file1.html"));
-            final String output = FileUtils.readFully(reader);
+            Reader reader = new FileReader(new File(tempDir, "file1.html"));
+            String output = FileUtils.readFully(reader);
             reader.close();
 
             // output file should not contain "generator"
             assertTrue("Configured parameter doesn't have effect on output.", output.indexOf("generator") == -1);
         }
-        catch (final IOException e)
+        catch (IOException e)
         {
             fail("Unable to read generated file.");
         }
@@ -394,7 +394,7 @@ public class JTidyTaskTest extends TestCase
             task.execute();
             fail("Expected BuildException not thrown.");
         }
-        catch (final BuildException e)
+        catch (BuildException e)
         {
             // ok if buildexception IS thrown
         }
@@ -444,7 +444,7 @@ public class JTidyTaskTest extends TestCase
                 .processFile(new File(testDir, "non/existing/file.html"), new File(tempDir, "non/existing/output.html"));
             fail("Expected BuildException not thrown");
         }
-        catch (final BuildException e)
+        catch (BuildException e)
         {
             // ok, this is expected
         }
@@ -460,7 +460,7 @@ public class JTidyTaskTest extends TestCase
             task.processFile(new File(testDir, "ant/file1.html"), new File(tempDir, "///::non/existing/output.html"));
             fail("Expected BuildException not thrown");
         }
-        catch (final BuildException e)
+        catch (BuildException e)
         {
             // ok, this is expected
         }
@@ -480,7 +480,7 @@ public class JTidyTaskTest extends TestCase
             task.execute();
             fail("Expected BuildException not thrown");
         }
-        catch (final BuildException e)
+        catch (BuildException e)
         {
             // ok, this is expected
         }
@@ -500,7 +500,7 @@ public class JTidyTaskTest extends TestCase
             task.execute();
             fail("Expected BuildException not thrown");
         }
-        catch (final BuildException e)
+        catch (BuildException e)
         {
             // ok, this is expected
         }

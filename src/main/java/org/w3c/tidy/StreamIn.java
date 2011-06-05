@@ -74,6 +74,8 @@ public interface StreamIn
      * @return Returns the curcol.
      */
     int getCurcol();
+    
+    void moveCurcol(int x);
 
     /**
      * Getter for <code>curline</code>.

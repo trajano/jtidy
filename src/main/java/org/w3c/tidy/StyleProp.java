@@ -84,7 +84,7 @@ public class StyleProp
      * @param value Style value
      * @param next Next linked style property. Can be null.
      */
-    public StyleProp(final String name, final String value, final StyleProp next)
+    public StyleProp(String name, String value, StyleProp next)
     {
         this.name = name;
         this.value = value;

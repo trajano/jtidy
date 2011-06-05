@@ -57,16 +57,17 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.EnumMap;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.w3c.tidy.Options.AttrSortStrategy;
+import org.w3c.tidy.Options.DoctypeModes;
+import org.w3c.tidy.Options.DupAttrModes;
+import org.w3c.tidy.Options.LineEnding;
+import org.w3c.tidy.Options.OptionEnum;
+import org.w3c.tidy.Options.TriState;
 
 /**
  * Read configuration file and manage configuration properties. Configuration files associate a property name with a
@@ -83,85 +84,73 @@ public class Configuration implements Serializable
      * character encoding = RAW.
      * @deprecated use <code>Tidy.setRawOut(true)</code> for raw output
      */
-    @Deprecated
-	public static final int RAW = 0;
+    public static final int RAW = 0;
 
     /**
      * character encoding = ASCII.
      * @deprecated
      */
-    @Deprecated
-	public static final int ASCII = 1;
+    public static final int ASCII = 1;
 
     /**
      * character encoding = LATIN1.
      * @deprecated
      */
-    @Deprecated
-	public static final int LATIN1 = 2;
+    public static final int LATIN1 = 2;
 
     /**
      * character encoding = UTF8.
      * @deprecated
      */
-    @Deprecated
-	public static final int UTF8 = 3;
+    public static final int UTF8 = 3;
 
     /**
      * character encoding = ISO2022.
      * @deprecated
      */
-    @Deprecated
-	public static final int ISO2022 = 4;
+    public static final int ISO2022 = 4;
 
     /**
      * character encoding = MACROMAN.
      * @deprecated
      */
-    @Deprecated
-	public static final int MACROMAN = 5;
+    public static final int MACROMAN = 5;
 
     /**
      * character encoding = UTF16LE.
      * @deprecated
      */
-    @Deprecated
-	public static final int UTF16LE = 6;
+    public static final int UTF16LE = 6;
 
     /**
      * character encoding = UTF16BE.
      * @deprecated
      */
-    @Deprecated
-	public static final int UTF16BE = 7;
+    public static final int UTF16BE = 7;
 
     /**
      * character encoding = UTF16.
      * @deprecated
      */
-    @Deprecated
-	public static final int UTF16 = 8;
+    public static final int UTF16 = 8;
 
     /**
      * character encoding = WIN1252.
      * @deprecated
      */
-    @Deprecated
-	public static final int WIN1252 = 9;
+    public static final int WIN1252 = 9;
 
     /**
      * character encoding = BIG5.
      * @deprecated
      */
-    @Deprecated
-	public static final int BIG5 = 10;
+    public static final int BIG5 = 10;
 
     /**
      * character encoding = SHIFTJIS.
      * @deprecated
      */
-    @Deprecated
-	public static final int SHIFTJIS = 11;
+    public static final int SHIFTJIS = 11;
 
     /**
      * Convert from deprecated tidy encoding constant to standard java encoding name.
@@ -179,472 +168,124 @@ public class Configuration implements Serializable
         "Big5",
         "SJIS"};
 
-    /**
-     * Keep last duplicate attribute.
-     * @todo should be an enumeration DupAttrMode
-     */
-    public static final int KEEP_LAST = 0;
-
-    /**
-     * Keep first duplicate attribute.
-     */
-    public static final int KEEP_FIRST = 1;
-
-    /**
-     * Map containing all the valid configuration options and the related parser. Tag entry contains String(option
-     * name)-Flag instance.
-     */
-    private static final Map<String, Flag> OPTIONS = new HashMap<String, Flag>();
+    private final Map<Option, Object> options = new EnumMap<Option, Object>(Option.class);
 
     /**
      * serial version UID for this class.
      */
     private static final long serialVersionUID = -4955155037138560842L;
 
-    static
-    {
-        addConfigOption(new Flag("indent-spaces", "spaces", ParsePropertyImpl.INT));
-        addConfigOption(new Flag("wrap", "wraplen", ParsePropertyImpl.INT));
-        addConfigOption(new Flag("show-errors", "showErrors", ParsePropertyImpl.INT));
-        addConfigOption(new Flag("tab-size", "tabsize", ParsePropertyImpl.INT));
-
-        addConfigOption(new Flag("wrap-attributes", "wrapAttVals", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("wrap-script-literals", "wrapScriptlets", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("wrap-sections", "wrapSection", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("wrap-asp", "wrapAsp", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("wrap-jste", "wrapJste", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("wrap-php", "wrapPhp", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("literal-attributes", "literalAttribs", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("show-body-only", "bodyOnly", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("fix-uri", "fixUri", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("lower-literals", "lowerLiterals", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("hide-comments", "hideComments", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("indent-cdata", "indentCdata", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("force-output", "forceOutput", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("ascii-chars", "asciiChars", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("join-classes", "joinClasses", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("join-styles", "joinStyles", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("escape-cdata", "escapeCdata", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("replace-color", "replaceColor", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("quiet", "quiet", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("tidy-mark", "tidyMark", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("indent-attributes", "indentAttributes", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("hide-endtags", "hideEndTags", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("input-xml", "xmlTags", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("output-xml", "xmlOut", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("output-html", "htmlOut", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("output-xhtml", "xHTML", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("add-xml-pi", "xmlPi", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("add-xml-decl", "xmlPi", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("assume-xml-procins", "xmlPIs", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("uppercase-tags", "upperCaseTags", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("uppercase-attributes", "upperCaseAttrs", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("bare", "makeBare", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("clean", "makeClean", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("logical-emphasis", "logicalEmphasis", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("word-2000", "word2000", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("drop-empty-paras", "dropEmptyParas", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("drop-font-tags", "dropFontTags", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("drop-proprietary-attributes", "dropProprietaryAttributes", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("enclose-text", "encloseBodyText", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("enclose-block-text", "encloseBlockText", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("add-xml-space", "xmlSpace", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("fix-bad-comments", "fixComments", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("split", "burstSlides", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("break-before-br", "breakBeforeBR", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("numeric-entities", "numEntities", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("quote-marks", "quoteMarks", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("quote-nbsp", "quoteNbsp", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("quote-ampersand", "quoteAmpersand", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("write-back", "writeback", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("keep-time", "keepFileTimes", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("show-warnings", "showWarnings", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("ncr", "ncr", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("fix-backslash", "fixBackslash", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("gnu-emacs", "emacs", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("only-errors", "onlyErrors", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("output-raw", "rawOut", ParsePropertyImpl.BOOL));
-        addConfigOption(new Flag("trim-empty-elements", "trimEmpty", ParsePropertyImpl.BOOL));
-
-        addConfigOption(new Flag("markup", "onlyErrors", ParsePropertyImpl.INVBOOL));
-
-        addConfigOption(new Flag("char-encoding", null, ParsePropertyImpl.CHAR_ENCODING));
-        addConfigOption(new Flag("input-encoding", null, ParsePropertyImpl.CHAR_ENCODING));
-        addConfigOption(new Flag("output-encoding", null, ParsePropertyImpl.CHAR_ENCODING));
-
-        addConfigOption(new Flag("error-file", "errfile", ParsePropertyImpl.NAME));
-        addConfigOption(new Flag("slide-style", "slidestyle", ParsePropertyImpl.NAME));
-        addConfigOption(new Flag("language", "language", ParsePropertyImpl.NAME));
-
-        addConfigOption(new Flag("new-inline-tags", null, ParsePropertyImpl.TAGNAMES));
-        addConfigOption(new Flag("new-blocklevel-tags", null, ParsePropertyImpl.TAGNAMES));
-        addConfigOption(new Flag("new-empty-tags", null, ParsePropertyImpl.TAGNAMES));
-        addConfigOption(new Flag("new-pre-tags", null, ParsePropertyImpl.TAGNAMES));
-
-        addConfigOption(new Flag("doctype", "docTypeStr", ParsePropertyImpl.DOCTYPE));
-
-        addConfigOption(new Flag("repeated-attributes", "duplicateAttrs", ParsePropertyImpl.REPEATED_ATTRIBUTES));
-
-        addConfigOption(new Flag("alt-text", "altText", ParsePropertyImpl.STRING));
-
-        addConfigOption(new Flag("indent", "indentContent", ParsePropertyImpl.INDENT));
-
-        addConfigOption(new Flag("css-prefix", "cssPrefix", ParsePropertyImpl.CSS1SELECTOR));
-
-        addConfigOption(new Flag("newline", null, ParsePropertyImpl.NEWLINE));
-    }
-
-    /**
-     * default indentation.
-     */
-    protected int spaces = 2;
-
-    /**
-     * default wrap margin (68).
-     */
-    protected int wraplen = 68;
-
-    /**
-     * default tab size (8).
-     */
-    protected int tabsize = 8;
-
-    /**
-     * see doctype property.
-     */
-    protected DocTypeMode docTypeMode = DocTypeMode.DOCTYPE_AUTO;
-
-    /**
-     * Keep first or last duplicate attribute.
-     */
-    protected int duplicateAttrs = KEEP_LAST;
-
-    /**
-     * default text for alt attribute.
-     */
-    protected String altText;
-
-    /**
-     * style sheet for slides.
-     * @deprecated does nothing
-     */
-    @Deprecated
-	protected String slidestyle;
-
-    /**
-     * RJ language property.
-     */
-    protected String language; // #431953
-
-    /**
-     * user specified doctype.
-     */
-    protected String docTypeStr;
-
-    /**
-     * file name to write errors to.
-     */
-    protected String errfile;
-
-    /**
-     * if true then output tidied markup.
-     */
-    protected boolean writeback;
-
-    /**
-     * if true normal output is suppressed.
-     */
-    protected boolean onlyErrors;
-
-    /**
-     * however errors are always shown.
-     */
-    protected boolean showWarnings = true;
-
-    /**
-     * no 'Parsing X', guessed DTD or summary.
-     */
-    protected boolean quiet;
-
-    /**
-     * indent content of appropriate tags.
-     */
-    protected boolean indentContent;
-
-    /**
-     * does text/block level content effect indentation.
-     */
-    protected boolean smartIndent;
-
-    /**
-     * suppress optional end tags.
-     */
-    protected boolean hideEndTags;
-
-    /**
-     * treat input as XML.
-     */
-    protected boolean xmlTags;
-
-    /**
-     * create output as XML.
-     */
-    protected boolean xmlOut;
-
-    /**
-     * output extensible HTML.
-     */
-    protected boolean xHTML;
-
-    /**
-     * output plain-old HTML, even for XHTML input. Yes means set explicitly.
-     */
-    protected boolean htmlOut;
-
-    /**
-     * add <code>&lt;?xml?&gt;</code> for XML docs.
-     */
-    protected boolean xmlPi;
-
-    /**
-     * output tags in upper not lower case.
-     */
-    protected boolean upperCaseTags;
-
-    /**
-     * output attributes in upper not lower case.
-     */
-    protected boolean upperCaseAttrs;
-
-    /**
-     * remove presentational clutter.
-     */
-    protected boolean makeClean;
-
-    /**
-     * Make bare HTML: remove Microsoft cruft.
-     */
-    protected boolean makeBare;
-
-    /**
-     * replace i by em and b by strong.
-     */
-    protected boolean logicalEmphasis;
-
-    /**
-     * discard presentation tags.
-     */
-    protected boolean dropFontTags;
-
-    /**
-     * discard proprietary attributes.
-     */
-    protected boolean dropProprietaryAttributes;
-
-    /**
-     * discard empty p elements.
-     */
-    protected boolean dropEmptyParas = true;
-
-    /**
-     * fix comments with adjacent hyphens.
-     */
-    protected boolean fixComments = true;
+//    static
+//    {
+//    	// missing: unknown
+//        addConfigOption(new Flag("indent-spaces", "spaces", ParsePropertyImpl.INT));
+//        addConfigOption(new Flag("wrap", "wraplen", ParsePropertyImpl.INT));
+//        addConfigOption(new Flag("tab-size", "tabsize", ParsePropertyImpl.INT));
+//        addConfigOption(new Flag("char-encoding", null, ParsePropertyImpl.CHAR_ENCODING));
+//        addConfigOption(new Flag("input-encoding", null, ParsePropertyImpl.CHAR_ENCODING));
+//        addConfigOption(new Flag("output-encoding", null, ParsePropertyImpl.CHAR_ENCODING));
+//        addConfigOption(new Flag("newline", null, ParsePropertyImpl.NEWLINE));
+//        // missing: doctype-mode
+//        addConfigOption(new Flag("doctype", "docTypeStr", ParsePropertyImpl.DOCTYPE));
+//        addConfigOption(new Flag("repeated-attributes", "duplicateAttrs", ParsePropertyImpl.REPEATED_ATTRIBUTES));
+//        addConfigOption(new Flag("alt-text", "altText", ParsePropertyImpl.STRING));
+//        
+//        // obsolete
+//        addConfigOption(new Flag("slide-style", "slidestyle", ParsePropertyImpl.NAME));
+//        
+//        addConfigOption(new Flag("error-file", "errfile", ParsePropertyImpl.NAME));
+//        // missing: output-file
+//        addConfigOption(new Flag("write-back", "writeback", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("markup", "onlyErrors", ParsePropertyImpl.INVBOOL));
+//        addConfigOption(new Flag("show-warnings", "showWarnings", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("quiet", "quiet", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("indent", "indentContent", ParsePropertyImpl.INDENT));
+//        addConfigOption(new Flag("hide-endtags", "hideEndTags", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("input-xml", "xmlTags", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("output-xml", "xmlOut", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("output-xhtml", "xHTML", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("output-html", "htmlOut", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("add-xml-decl", "xmlPi", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("uppercase-tags", "upperCaseTags", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("uppercase-attributes", "upperCaseAttrs", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("bare", "makeBare", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("clean", "makeClean", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("logical-emphasis", "logicalEmphasis", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("drop-proprietary-attributes", "dropProprietaryAttributes", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("drop-font-tags", "dropFontTags", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("drop-empty-paras", "dropEmptyParas", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("fix-bad-comments", "fixComments", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("break-before-br", "breakBeforeBR", ParsePropertyImpl.BOOL));
+//        
+//        // obsolete
+//        addConfigOption(new Flag("split", "burstSlides", ParsePropertyImpl.BOOL));
+//        
+//        addConfigOption(new Flag("numeric-entities", "numEntities", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("quote-marks", "quoteMarks", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("quote-nbsp", "quoteNbsp", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("quote-ampersand", "quoteAmpersand", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("wrap-attributes", "wrapAttVals", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("wrap-script-literals", "wrapScriptlets", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("wrap-sections", "wrapSection", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("wrap-asp", "wrapAsp", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("wrap-jste", "wrapJste", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("wrap-php", "wrapPhp", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("fix-backslash", "fixBackslash", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("indent-attributes", "indentAttributes", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("assume-xml-procins", "xmlPIs", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("add-xml-space", "xmlSpace", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("enclose-text", "encloseBodyText", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("enclose-block-text", "encloseBlockText", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("keep-time", "keepFileTimes", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("word-2000", "word2000", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("tidy-mark", "tidyMark", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("gnu-emacs", "emacs", ParsePropertyImpl.BOOL));
+//        // missing: gnu-emacs-file
+//        addConfigOption(new Flag("literal-attributes", "literalAttribs", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("show-body-only", "bodyOnly", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("fix-uri", "fixUri", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("lower-literals", "lowerLiterals", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("hide-comments", "hideComments", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("indent-cdata", "indentCdata", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("force-output", "forceOutput", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("show-errors", "showErrors", ParsePropertyImpl.INT));
+//        addConfigOption(new Flag("ascii-chars", "asciiChars", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("join-classes", "joinClasses", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("join-styles", "joinStyles", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("escape-cdata", "escapeCdata", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("language", "language", ParsePropertyImpl.NAME));
+//        addConfigOption(new Flag("ncr", "ncr", ParsePropertyImpl.BOOL));
+//        // missing: output-bom
+//        addConfigOption(new Flag("replace-color", "replaceColor", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("css-prefix", "cssPrefix", ParsePropertyImpl.CSS1SELECTOR));
+//        addConfigOption(new Flag("new-inline-tags", null, ParsePropertyImpl.TAGNAMES));
+//        addConfigOption(new Flag("new-blocklevel-tags", null, ParsePropertyImpl.TAGNAMES));
+//        addConfigOption(new Flag("new-empty-tags", null, ParsePropertyImpl.TAGNAMES));
+//        addConfigOption(new Flag("new-pre-tags", null, ParsePropertyImpl.TAGNAMES));
+//        // missing: accessibility-check
+//        // missing: vertical-space
+//        // missing: punctuation-wrap
+//        // missing: merge-divs
+//        // missing: decorate-inferred-ul
+//        // missing: preserve-entities
+//        // missing: sort-attributes
+//        // missing: merge-spans
+//        // missing: anchor-as-name
+//        
+//        // options not found in Tidy
+//        addConfigOption(new Flag("output-raw", "rawOut", ParsePropertyImpl.BOOL));
+//        addConfigOption(new Flag("trim-empty-elements", "trimEmpty", ParsePropertyImpl.BOOL));
+//    }
 
     /**
      * trim empty elements.
      */
-    protected boolean trimEmpty = true;
-
-    /**
-     * o/p newline before br or not?
-     */
-    protected boolean breakBeforeBR;
-
-    /**
-     * create slides on each h2 element.
-     */
-    protected boolean burstSlides;
-
-    /**
-     * use numeric entities.
-     */
-    protected boolean numEntities;
-
-    /**
-     * output " marks as &quot;.
-     */
-    protected boolean quoteMarks;
-
-    /**
-     * output non-breaking space as entity.
-     */
-    protected boolean quoteNbsp = true;
-
-    /**
-     * output naked ampersand as &amp;.
-     */
-    protected boolean quoteAmpersand = true;
-
-    /**
-     * wrap within attribute values.
-     */
-    protected boolean wrapAttVals;
-
-    /**
-     * wrap within JavaScript string literals.
-     */
-    protected boolean wrapScriptlets;
-
-    /**
-     * wrap within CDATA section tags.
-     */
-    protected boolean wrapSection = true;
-
-    /**
-     * wrap within ASP pseudo elements.
-     */
-    protected boolean wrapAsp = true;
-
-    /**
-     * wrap within JSTE pseudo elements.
-     */
-    protected boolean wrapJste = true;
-
-    /**
-     * wrap within PHP pseudo elements.
-     */
-    protected boolean wrapPhp = true;
-
-    /**
-     * fix URLs by replacing \ with /.
-     */
-    protected boolean fixBackslash = true;
-
-    /**
-     * newline+indent before each attribute.
-     */
-    protected boolean indentAttributes;
-
-    /**
-     * If set to yes PIs must end with <code>?&gt;</code>.
-     */
-    protected boolean xmlPIs;
-
-    /**
-     * if set to yes adds xml:space attr as needed.
-     */
-    protected boolean xmlSpace;
-
-    /**
-     * if yes text at body is wrapped in p's.
-     */
-    protected boolean encloseBodyText;
-
-    /**
-     * if yes text in blocks is wrapped in p's.
-     */
-    protected boolean encloseBlockText;
-
-    /**
-     * if yes last modied time is preserved.
-     */
-    protected boolean keepFileTimes = true;
-
-    /**
-     * draconian cleaning for Word2000.
-     */
-    protected boolean word2000;
-
-    /**
-     * add meta element indicating tidied doc.
-     */
-    protected boolean tidyMark = true;
-
-    /**
-     * if true format error output for GNU Emacs.
-     */
-    protected boolean emacs;
-
-    /**
-     * if true attributes may use newlines.
-     */
-    protected boolean literalAttribs;
-
-    /**
-     * output BODY content only.
-     */
-    protected boolean bodyOnly;
-
-    /**
-     * properly escape URLs.
-     */
-    protected boolean fixUri = true;
-
-    /**
-     * folds known attribute values to lower case.
-     */
-    protected boolean lowerLiterals = true;
-
-    /**
-     * replace hex color attribute values with names.
-     */
-    protected boolean replaceColor;
-
-    /**
-     * hides all (real) comments in output.
-     */
-    protected boolean hideComments;
-
-    /**
-     * indent CDATA sections.
-     */
-    protected boolean indentCdata;
-
-    /**
-     * output document even if errors were found.
-     */
-    protected boolean forceOutput;
-
-    /**
-     * number of errors to put out.
-     */
-    protected int showErrors = 6;
-
-    /**
-     * convert quotes and dashes to nearest ASCII char.
-     */
-    protected boolean asciiChars = true;
-
-    /**
-     * join multiple class attributes.
-     */
-    protected boolean joinClasses;
-
-    /**
-     * join multiple style attributes.
-     */
-    protected boolean joinStyles = true;
-
-    /**
-     * replace CDATA sections with escaped text.
-     */
-    protected boolean escapeCdata = true;
-
-    /**
-     * allow numeric character references.
-     */
-    protected boolean ncr = true; // #431953
-
-    /**
-     * CSS class naming for -clean option.
-     */
-    protected String cssPrefix;
+    private boolean trimEmpty = true;
 
     /**
      * char encoding used when replacing illegal SGML chars, regardless of specified encoding.
      */
-    protected String replacementCharEncoding = "WIN1252"; // by default
+    private String replacementCharEncoding = "WIN1252"; // by default
 
     /**
      * TagTable associated with this Configuration.
@@ -659,62 +300,38 @@ public class Configuration implements Serializable
     /**
      * track what types of tags user has defined to eliminate unnecessary searches.
      */
-    protected int definedTags;
-
-    /**
-     * bytes for the newline marker.
-     */
-    protected char[] newline = System.getProperty("line.separator").toCharArray();
-
-    /**
-     * Input character encoding (defaults to "ISO8859_1").
-     */
-    private String inCharEncoding = "ISO8859_1";
-
-    /**
-     * Output character encoding (defaults to "ASCII").
-     */
-    private String outCharEncoding = "ASCII";
+    private int definedTags;
 
     /**
      * Avoid mapping values > 127 to entities.
      */
-    protected boolean rawOut;
-
+    private boolean rawOut;
+    
     /**
      * configuration properties.
      */
-    private transient final Properties properties = new Properties();
+    private transient Properties properties = new Properties();
 
     /**
      * Instantiates a new Configuration. This method should be called by Tidy only.
      * @param report Report instance
      */
-    protected Configuration(final Report report)
+    protected Configuration(Report report)
     {
         this.report = report;
-    }
-
-    /**
-     * adds a config option to the map.
-     * @param flag configuration options added
-     */
-    private static void addConfigOption(final Flag flag)
-    {
-        OPTIONS.put(flag.getName(), flag);
     }
 
     /**
      * adds configuration Properties.
      * @param p Properties
      */
-    public void addProps(final Properties p)
+    public void addProps(Properties p)
     {
-        final Enumeration<?> propEnum = p.propertyNames();
+        Enumeration<?> propEnum = p.propertyNames();
         while (propEnum.hasMoreElements())
         {
-            final String key = (String) propEnum.nextElement();
-            final String value = p.getProperty(key);
+            String key = (String) propEnum.nextElement();
+            String value = p.getProperty(key);
             properties.put(key, value);
         }
         parseProps();
@@ -724,13 +341,13 @@ public class Configuration implements Serializable
      * Parses a property file.
      * @param filename file name
      */
-    public void parseFile(final String filename)
+    public void parseFile(String filename)
     {
         try
         {
             properties.load(new FileInputStream(filename));
         }
-        catch (final IOException e)
+        catch (IOException e)
         {
             System.err.println(filename + " " + e.toString());
             return;
@@ -743,9 +360,9 @@ public class Configuration implements Serializable
      * @param name configuration parameter name
      * @return <code>true</code> if the given String is a valid config option
      */
-    public static boolean isKnownOption(final String name)
+    public static boolean isKnownOption(String name)
     {
-        return name != null && OPTIONS.containsKey(name);
+        return name != null && Options.getOption(name) != null;
     }
 
     /**
@@ -753,110 +370,108 @@ public class Configuration implements Serializable
      */
     private void parseProps()
     {
-        final Iterator<Object> iterator = properties.keySet().iterator();
-
-        while (iterator.hasNext())
+        for (Object o : properties.keySet())
         {
-            final String key = (String) iterator.next();
-            final Flag flag = OPTIONS.get(key);
+        	String key = (String) o;
+        	if (key.startsWith("//")) {
+            	continue;
+            }
+        	Option flag = Options.getOption(key);
             if (flag == null)
             {
                 report.unknownOption(key);
                 continue;
             }
 
-            final String stringValue = properties.getProperty(key);
-            final Object value = flag.getParser().parse(stringValue, key, this);
-            if (flag.getLocation() != null)
-            {
-                try
-                {
-                    flag.getLocation().set(this, value);
-                }
-                catch (final IllegalArgumentException e)
-                {
-                    throw new RuntimeException("IllegalArgumentException during config initialization for field "
-                        + key
-                        + "with value ["
-                        + value
-                        + "]: "
-                        + e.getMessage());
-                }
-                catch (final IllegalAccessException e)
-                {
-                    throw new RuntimeException("IllegalArgumentException during config initialization for field "
-                        + key
-                        + "with value ["
-                        + value
-                        + "]: "
-                        + e.getMessage());
-                }
-            }
+            String stringValue = properties.getProperty(key);
+            Object value = flag.getParser().parse(stringValue, flag, this);
+            options.put(flag, value);
         }
+    }
+
+    /* ensure that char encodings are self consistent */
+    protected boolean adjustCharEncoding(final String encoding) {
+    	final String enc = EncodingNameMapper.toJava(encoding);
+        String outenc = null;
+        String inenc = null;
+        
+        if ("MacRoman".equals(enc) || "Cp1252".equals(enc) || "Cp858".equals(enc)
+        		|| "ISO8859_15".equals(enc)) {
+            inenc = enc;
+            outenc = "ASCII";
+        }
+        else if ("ASCII".equals(enc)) {
+            inenc = "ISO8859_1";
+            outenc = "ASCII";
+        }
+        for (String s : ENCODING_NAMES) {
+        	if (s.equals(enc)) {
+        		inenc = outenc = enc;
+        		break;
+        	}
+        }
+
+        if (inenc != null) {
+        	set(Option.CharEncoding, enc);
+        	set(Option.InCharEncoding, inenc);
+        	set(Option.OutCharEncoding, outenc);
+            return true;
+        }
+        return false;
     }
 
     /**
      * Ensure that config is self consistent.
      */
-    public void adjust()
-    {
-        if (encloseBlockText)
-        {
-            encloseBodyText = true;
+    public void adjust() {
+        if (isEncloseBlockText()) {
+            setEncloseBodyText(true);
         }
 
-        // avoid the need to set IndentContent when SmartIndent is set
-        if (smartIndent)
-        {
-            indentContent = true;
+        if (getIndentContent() == TriState.No) {
+        	setSpaces(0);
         }
 
         // disable wrapping
-        if (wraplen == 0)
-        {
-            wraplen = 0x7FFFFFFF;
+        if (getWraplen() == 0) {
+            setWraplen(0x7FFFFFFF);
         }
 
         // Word 2000 needs o:p to be declared as inline
-        if (word2000)
-        {
+        if (isWord2000()) {
             definedTags |= Dict.TAGTYPE_INLINE;
             tt.defineTag(Dict.TAGTYPE_INLINE, "o:p");
         }
 
         // #480701 disable XHTML output flag if both output-xhtml and xml are set
-        if (xmlTags)
-        {
-            xHTML = false;
+        if (isXmlTags()) {
+            setXHTML(false);
         }
 
         // XHTML is written in lower case
-        if (xHTML)
-        {
-            xmlOut = true;
-            upperCaseTags = false;
-            upperCaseAttrs = false;
+        if (isXHTML()) {
+            setXmlOut(true);
+            setUpperCaseTags(false);
+            setUpperCaseAttrs(false);
         }
 
         // if XML in, then XML out
-        if (xmlTags)
-        {
-            xmlOut = true;
-            xmlPIs = true;
+        if (isXmlTags()) {
+            setXmlOut(true);
+            setXmlPIs(true);
         }
 
         // #427837 - fix by Dave Raggett 02 Jun 01
         // generate <?xml version="1.0" encoding="iso-8859-1"?> if the output character encoding is Latin-1 etc.
-        if (!"UTF8".equals(getOutCharEncodingName()) && !"ASCII".equals(getOutCharEncodingName()) && xmlOut)
-        {
-            xmlPi = true;
+        if (!"UTF8".equals(getOutCharEncodingName()) && !"ASCII".equals(getOutCharEncodingName())
+        		&& !getOutCharEncodingName().startsWith("Unicode") && isXmlOut()) {
+            setXmlDecl(true);
         }
 
         // XML requires end tags
-        if (xmlOut)
-        {
-            quoteAmpersand = true;
-            hideEndTags = false;
+        if (isXmlOut()) {
+            setQuoteAmpersand(true);
+            setHideEndTags(false);
         }
     }
 
@@ -865,9 +480,9 @@ public class Configuration implements Serializable
      * @param errout where to write
      * @param showActualConfiguration print actual configuration values
      */
-    public void printConfigOptions(final Writer errout, final boolean showActualConfiguration)
+    public void printConfigOptions(Writer errout, boolean showActualConfiguration)
     {
-        final String pad = "                                                                               ";
+        String pad = "                                                                               ";
         try
         {
             errout.write("\nConfiguration File Settings:\n\n");
@@ -883,179 +498,39 @@ public class Configuration implements Serializable
 
             errout.write("=========================== =========  ========================================\n");
 
-            Flag configItem;
-
-            // sort configuration options
-            final List<Flag> values = new ArrayList<Flag>(OPTIONS.values());
-            Collections.sort(values);
-
-            final Iterator<Flag> iterator = values.iterator();
-
-            while (iterator.hasNext())
-            {
-                configItem = iterator.next();
-
+			for (Option configItem : Options.getOptions()) {
+				final ParseProperty parser = configItem.getParser();
+                if (parser == null) {
+                	continue;
+                }
+                
                 errout.write(configItem.getName());
                 errout.write(pad, 0, 28 - configItem.getName().length());
 
-                errout.write(configItem.getParser().getType());
-                errout.write(pad, 0, 11 - configItem.getParser().getType().length());
+                String type = parser.getType();
+                if (type == null) { // only for ParseFromValues
+                	type = "Enum";
+                }
+				errout.write(type);
+                errout.write(pad, 0, 11 - type.length());
 
-                if (showActualConfiguration)
-                {
-                    final Field field = configItem.getLocation();
-                    Object actualValue = null;
-
-                    if (field != null)
-                    {
-                        try
-                        {
-                            actualValue = field.get(this);
-                        }
-                        catch (final IllegalArgumentException e1)
-                        {
-                            // should never happen
-                            throw new RuntimeException("IllegalArgument when reading field " + field.getName());
-                        }
-                        catch (final IllegalAccessException e1)
-                        {
-                            // should never happen
-                            throw new RuntimeException("IllegalAccess when reading field " + field.getName());
-                        }
+                if (showActualConfiguration) {
+                    final Object actualValue = options.get(configItem);
+                    errout.write(parser.getFriendlyName(configItem.getName(), actualValue, this));
+                } else {
+                    String values = parser.getOptionValues();
+                    if (values == null) { // only for ParseFromValues
+                    	values = configItem.getPickList().getDescription();
                     }
-
-                    errout.write(configItem.getParser().getFriendlyName(configItem.getName(), actualValue, this));
+					errout.write(values);
                 }
-                else
-                {
-                    errout.write(configItem.getParser().getOptionValues());
-                }
-
                 errout.write("\n");
-
             }
             errout.flush();
         }
-        catch (final IOException e)
+        catch (IOException e)
         {
             throw new RuntimeException(e.getMessage());
-        }
-
-    }
-
-    /**
-     * A configuration option.
-     */
-    static class Flag implements Comparable<Flag>
-    {
-
-        /**
-         * option name.
-         */
-        private final String name;
-
-        /**
-         * field name.
-         */
-        private final String fieldName;
-
-        /**
-         * Field where the evaluated value is saved.
-         */
-        private Field location;
-
-        /**
-         * Parser for the configuration property.
-         */
-        private final ParseProperty parser;
-
-        /**
-         * Instantiates a new Flag.
-         * @param name option name
-         * @param fieldName field name (can be null)
-         * @param parser parser for property
-         */
-        Flag(final String name, final String fieldName, final ParseProperty parser)
-        {
-
-            this.fieldName = fieldName;
-            this.name = name;
-            this.parser = parser;
-        }
-
-        /**
-         * Getter for <code>location</code>.
-         * @return Returns the location.
-         */
-        public Field getLocation()
-        {
-            // lazy initialization to speed up loading
-            if (fieldName != null && this.location == null)
-            {
-                try
-                {
-                    this.location = Configuration.class.getDeclaredField(fieldName);
-                }
-                catch (final NoSuchFieldException e)
-                {
-                    throw new RuntimeException("NoSuchField exception during config initialization for field "
-                        + fieldName);
-                }
-                catch (final SecurityException e)
-                {
-                    throw new RuntimeException("Security exception during config initialization for field "
-                        + fieldName
-                        + ": "
-                        + e.getMessage());
-                }
-            }
-
-            return this.location;
-        }
-
-        /**
-         * Getter for <code>name</code>.
-         * @return Returns the name.
-         */
-        public String getName()
-        {
-            return this.name;
-        }
-
-        /**
-         * Getter for <code>parser</code>.
-         * @return Returns the parser.
-         */
-        public ParseProperty getParser()
-        {
-            return this.parser;
-        }
-
-        /**
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
-        @Override
-		public boolean equals(final Object obj)
-        {
-            return this.name.equals(((Flag) obj).name);
-        }
-
-        /**
-         * @see java.lang.Object#hashCode()
-         */
-        @Override
-		public int hashCode()
-        {
-            // returning the hashCode of String, to be consistent with equals and compareTo
-            return this.name.hashCode();
-        }
-
-        /**
-         * @see java.lang.Comparable#compareTo(java.lang.Object)
-         */
-        public int compareTo(final Flag o)
-        {
-            return this.name.compareTo(o.name);
         }
 
     }
@@ -1064,21 +539,18 @@ public class Configuration implements Serializable
      * Getter for <code>inCharEncodingName</code>.
      * @return Returns the inCharEncodingName.
      */
-    protected String getInCharEncodingName()
-    {
-        return this.inCharEncoding;
+    protected String getInCharEncodingName() {
+        return getString(Option.InCharEncoding);
     }
 
     /**
      * Setter for <code>inCharEncodingName</code>.
      * @param encoding The inCharEncodingName to set.
      */
-    protected void setInCharEncodingName(final String encoding)
-    {
+    protected void setInCharEncodingName(final String encoding) {
         final String javaEncoding = EncodingNameMapper.toJava(encoding);
-        if (javaEncoding != null)
-        {
-            this.inCharEncoding = javaEncoding;
+        if (javaEncoding != null) {
+        	set(Option.InCharEncoding, javaEncoding);
         }
     }
 
@@ -1086,21 +558,18 @@ public class Configuration implements Serializable
      * Getter for <code>outCharEncodingName</code>.
      * @return Returns the outCharEncodingName.
      */
-    protected String getOutCharEncodingName()
-    {
-        return this.outCharEncoding;
+    protected String getOutCharEncodingName() {
+        return getString(Option.OutCharEncoding);
     }
 
     /**
      * Setter for <code>outCharEncodingName</code>.
      * @param encoding The outCharEncodingName to set.
      */
-    protected void setOutCharEncodingName(final String encoding)
-    {
+    protected void setOutCharEncodingName(final String encoding) {
         final String javaEncoding = EncodingNameMapper.toJava(encoding);
-        if (javaEncoding != null)
-        {
-            this.outCharEncoding = javaEncoding;
+        if (javaEncoding != null) {
+        	set(Option.OutCharEncoding, javaEncoding);
         }
     }
 
@@ -1108,7 +577,7 @@ public class Configuration implements Serializable
      * Setter for <code>inOutCharEncodingName</code>.
      * @param encoding The CharEncodingName to set.
      */
-    protected void setInOutEncodingName(final String encoding)
+    protected void setInOutEncodingName(String encoding)
     {
         setInCharEncodingName(encoding);
         setOutCharEncodingName(encoding);
@@ -1119,8 +588,7 @@ public class Configuration implements Serializable
      * @param encoding The outCharEncoding to set.
      * @deprecated use setOutCharEncodingName(String)
      */
-    @Deprecated
-	protected void setOutCharEncoding(final int encoding)
+    protected void setOutCharEncoding(int encoding)
     {
         setOutCharEncodingName(convertCharEncoding(encoding));
     }
@@ -1130,8 +598,7 @@ public class Configuration implements Serializable
      * @param encoding The inCharEncoding to set.
      * @deprecated use setInCharEncodingName(String)
      */
-    @Deprecated
-	protected void setInCharEncoding(final int encoding)
+    protected void setInCharEncoding(int encoding)
     {
         setInCharEncodingName(convertCharEncoding(encoding));
     }
@@ -1141,7 +608,7 @@ public class Configuration implements Serializable
      * @param code encoding code
      * @return encoding name
      */
-    protected String convertCharEncoding(final int code)
+    protected String convertCharEncoding(int code)
     {
         if (code != 0 && code < ENCODING_NAMES.length)
         {
@@ -1149,5 +616,696 @@ public class Configuration implements Serializable
         }
         return null;
     }
+    
+    private static RuntimeException badType(final Object x) {
+    	if (x == null) {
+    		return new RuntimeException("Null option value");
+    	}
+    	return new RuntimeException("Unexpected value type: " + x.getClass().getName());
+    }
+    
+    private Object get(final Option option) {
+    	final Object x = options.get(option);
+    	return x == null ? option.getDflt() : x;
+    }
+    
+    private int getInt(final Option option) {
+    	final Object x = get(option);
+    	if (x instanceof Integer) {
+    		return (Integer) x;
+    	}
+    	throw badType(x);
+    }
+    
+    private OptionEnum getOptionEnum(final Option option) {
+    	final Object x = get(option);
+    	if (x instanceof OptionEnum) {
+    		return (OptionEnum) x;
+    	}
+    	throw badType(x);
+    }
+    
+    private String getString(final Option option) {
+    	final Object x = get(option);
+    	if (x == null || x instanceof String) {
+    		return (String) x;
+    	}
+    	throw badType(x);
+    }
+    
+    private boolean getBool(final Option option) {
+    	final Object x = get(option);
+    	if (x instanceof Boolean) {
+    		return (Boolean) x;
+    	}
+    	throw badType(x);
+    }
+    
+    private void set(final Option option, final Object value) {
+    	options.put(option, value);
+    }
+    
+    protected void reset(final Option option) {
+		options.put(option, null);
+	}
 
+	protected void setSpaces(final int spaces) {
+		set(Option.IndentSpaces, spaces);
+	}
+
+	protected int getSpaces() {
+		return getInt(Option.IndentSpaces);
+	}
+
+	protected void setWraplen(final int wraplen) {
+		set(Option.WrapLen, wraplen);
+	}
+
+	protected int getWraplen() {
+		return getInt(Option.WrapLen);
+	}
+
+	protected void setTabsize(final int tabsize) {
+		set(Option.TabSize, tabsize);
+	}
+
+	protected int getTabsize() {
+		return getInt(Option.TabSize);
+	}
+
+	protected void setDocTypeMode(final DoctypeModes docTypeMode) {
+		set(Option.DoctypeMode, docTypeMode);
+	}
+
+	protected DoctypeModes getDocTypeMode() {
+		return (DoctypeModes) getOptionEnum(Option.DoctypeMode);
+	}
+
+	protected void setDuplicateAttrs(final DupAttrModes duplicateAttrs) {
+		set(Option.DuplicateAttrs, duplicateAttrs);
+	}
+
+	protected DupAttrModes getDuplicateAttrs() {
+		return (DupAttrModes) getOptionEnum(Option.DuplicateAttrs);
+	}
+
+	protected void setAltText(final String altText) {
+		set(Option.AltText, altText);
+	}
+
+	protected String getAltText() {
+		return getString(Option.AltText);
+	}
+
+	protected void setLanguage(final String language) {
+		set(Option.Language, language);
+	}
+
+	protected String getLanguage() {
+		return getString(Option.Language);
+	}
+
+	protected void setDocTypeStr(final String docTypeStr) {
+		set(Option.Doctype, docTypeStr);
+	}
+
+	protected String getDocTypeStr() {
+		return getString(Option.Doctype);
+	}
+
+	protected void setErrfile(final String errfile) {
+		set(Option.ErrFile, errfile);
+	}
+
+	protected String getErrfile() {
+		return getString(Option.ErrFile);
+	}
+
+	protected void setWriteback(final boolean writeback) {
+		set(Option.WriteBack, writeback);
+	}
+
+	protected boolean isWriteback() {
+		return getBool(Option.WriteBack);
+	}
+
+	protected void setShowMarkup(final boolean showMarkup) {
+		set(Option.ShowMarkup, showMarkup);
+	}
+
+	protected boolean isShowMarkup() {
+		return getBool(Option.ShowMarkup);
+	}
+
+	protected void setShowWarnings(final boolean showWarnings) {
+		set(Option.ShowWarnings, showWarnings);
+	}
+
+	protected boolean isShowWarnings() {
+		return getBool(Option.ShowWarnings);
+	}
+
+	protected void setQuiet(final boolean quiet) {
+		set(Option.Quiet, quiet);
+	}
+
+	protected boolean isQuiet() {
+		return getBool(Option.Quiet);
+	}
+
+	protected void setIndentContent(final TriState indentContent) {
+		set(Option.IndentContent, indentContent);
+	}
+
+	protected TriState getIndentContent() {
+		return (TriState) getOptionEnum(Option.IndentContent);
+	}
+
+	protected void setHideEndTags(final boolean hideEndTags) {
+		set(Option.HideEndTags, hideEndTags);
+	}
+
+	protected boolean isHideEndTags() {
+		return getBool(Option.HideEndTags);
+	}
+
+	protected void setXmlTags(final boolean xmlTags) {
+		set(Option.XmlTags, xmlTags);
+	}
+
+	protected boolean isXmlTags() {
+		return getBool(Option.XmlTags);
+	}
+
+	protected void setXmlOut(final boolean xmlOut) {
+		set(Option.XmlOut, xmlOut);
+	}
+
+	protected boolean isXmlOut() {
+		return getBool(Option.XmlOut);
+	}
+
+	protected void setXHTML(final boolean xHTML) {
+		set(Option.XhtmlOut, xHTML);
+	}
+
+	protected boolean isXHTML() {
+		return getBool(Option.XhtmlOut);
+	}
+
+	protected void setHtmlOut(final boolean htmlOut) {
+		set(Option.HtmlOut, htmlOut);
+	}
+
+	protected boolean isHtmlOut() {
+		return getBool(Option.HtmlOut);
+	}
+
+	protected void setXmlDecl(final boolean xmlDecl) {
+		set(Option.XmlDecl, xmlDecl);
+	}
+
+	protected boolean isXmlDecl() {
+		return getBool(Option.XmlDecl);
+	}
+
+	protected void setUpperCaseTags(final boolean upperCaseTags) {
+		set(Option.UpperCaseTags, upperCaseTags);
+	}
+
+	protected boolean isUpperCaseTags() {
+		return getBool(Option.UpperCaseTags);
+	}
+
+	protected void setUpperCaseAttrs(final boolean upperCaseAttrs) {
+		set(Option.UpperCaseAttrs, upperCaseAttrs);
+	}
+
+	protected boolean isUpperCaseAttrs() {
+		return getBool(Option.UpperCaseAttrs);
+	}
+
+	protected void setMakeClean(final boolean makeClean) {
+		set(Option.MakeClean, makeClean);
+	}
+
+	protected boolean isMakeClean() {
+		return getBool(Option.MakeClean);
+	}
+
+	protected void setMakeBare(final boolean makeBare) {
+		set(Option.MakeBare, makeBare);
+	}
+
+	protected boolean isMakeBare() {
+		return getBool(Option.MakeBare);
+	}
+
+	protected void setLogicalEmphasis(final boolean logicalEmphasis) {
+		set(Option.LogicalEmphasis, logicalEmphasis);
+	}
+
+	protected boolean isLogicalEmphasis() {
+		return getBool(Option.LogicalEmphasis);
+	}
+
+	protected void setDropFontTags(final boolean dropFontTags) {
+		set(Option.DropFontTags, dropFontTags);
+	}
+
+	protected boolean isDropFontTags() {
+		return getBool(Option.DropFontTags);
+	}
+
+	protected void setDropProprietaryAttributes(final boolean dropProprietaryAttributes) {
+		set(Option.DropPropAttrs, dropProprietaryAttributes);
+	}
+
+	protected boolean isDropProprietaryAttributes() {
+		return getBool(Option.DropPropAttrs);
+	}
+
+	protected void setDropEmptyParas(final boolean dropEmptyParas) {
+		set(Option.DropEmptyParas, dropEmptyParas);
+	}
+
+	protected boolean isDropEmptyParas() {
+		return getBool(Option.DropEmptyParas);
+	}
+
+	protected void setFixComments(final boolean fixComments) {
+		set(Option.FixComments, fixComments);
+	}
+
+	protected boolean isFixComments() {
+		return getBool(Option.FixComments);
+	}
+
+	protected void setTrimEmpty(final boolean trimEmpty) {
+		this.trimEmpty = trimEmpty;
+	}
+
+	protected boolean isTrimEmpty() {
+		return trimEmpty;
+	}
+
+	protected void setBreakBeforeBR(final boolean breakBeforeBR) {
+		set(Option.BreakBeforeBR, breakBeforeBR);
+	}
+
+	protected boolean isBreakBeforeBR() {
+		return getBool(Option.BreakBeforeBR);
+	}
+
+	protected void setNumEntities(final boolean numEntities) {
+		set(Option.NumEntities, numEntities);
+	}
+
+	protected boolean isNumEntities() {
+		return getBool(Option.NumEntities);
+	}
+
+	protected void setQuoteMarks(final boolean quoteMarks) {
+		set(Option.QuoteMarks, quoteMarks);
+	}
+
+	protected boolean isQuoteMarks() {
+		return getBool(Option.QuoteMarks);
+	}
+
+	protected void setQuoteNbsp(final boolean quoteNbsp) {
+		set(Option.QuoteNbsp, quoteNbsp);
+	}
+
+	protected boolean isQuoteNbsp() {
+		return getBool(Option.QuoteNbsp);
+	}
+
+	protected void setQuoteAmpersand(final boolean quoteAmpersand) {
+		set(Option.QuoteAmpersand, quoteAmpersand);
+	}
+
+	protected boolean isQuoteAmpersand() {
+		return getBool(Option.QuoteAmpersand);
+	}
+
+	protected void setWrapAttVals(final boolean wrapAttVals) {
+		set(Option.WrapAttVals, wrapAttVals);
+	}
+
+	protected boolean isWrapAttVals() {
+		return getBool(Option.WrapAttVals);
+	}
+
+	protected void setWrapScriptlets(final boolean wrapScriptlets) {
+		set(Option.WrapScriptlets, wrapScriptlets);
+	}
+
+	protected boolean isWrapScriptlets() {
+		return getBool(Option.WrapScriptlets);
+	}
+
+	protected void setWrapSection(final boolean wrapSection) {
+		set(Option.WrapSection, wrapSection);
+	}
+
+	protected boolean isWrapSection() {
+		return getBool(Option.WrapSection);
+	}
+
+	protected void setWrapAsp(final boolean wrapAsp) {
+		set(Option.WrapAsp, wrapAsp);
+	}
+
+	protected boolean isWrapAsp() {
+		return getBool(Option.WrapAsp);
+	}
+
+	protected void setWrapJste(final boolean wrapJste) {
+		set(Option.WrapJste, wrapJste);
+	}
+
+	protected boolean isWrapJste() {
+		return getBool(Option.WrapJste);
+	}
+
+	protected void setWrapPhp(final boolean wrapPhp) {
+		set(Option.WrapPhp, wrapPhp);
+	}
+
+	protected boolean isWrapPhp() {
+		return getBool(Option.WrapPhp);
+	}
+
+	protected void setFixBackslash(final boolean fixBackslash) {
+		set(Option.FixBackslash, fixBackslash);
+	}
+
+	protected boolean isFixBackslash() {
+		return getBool(Option.FixBackslash);
+	}
+
+	protected void setIndentAttributes(final boolean indentAttributes) {
+		set(Option.IndentAttributes, indentAttributes);
+	}
+
+	protected boolean isIndentAttributes() {
+		return getBool(Option.IndentAttributes);
+	}
+
+	protected void setXmlPIs(final boolean xmlPIs) {
+		set(Option.XmlPIs, xmlPIs);
+	}
+
+	protected boolean isXmlPIs() {
+		return getBool(Option.XmlPIs);
+	}
+
+	protected void setXmlSpace(final boolean xmlSpace) {
+		set(Option.XmlSpace, xmlSpace);
+	}
+
+	protected boolean isXmlSpace() {
+		return getBool(Option.XmlSpace);
+	}
+
+	protected void setEncloseBodyText(final boolean encloseBodyText) {
+		set(Option.EncloseBodyText, encloseBodyText);
+	}
+
+	protected boolean isEncloseBodyText() {
+		return getBool(Option.EncloseBodyText);
+	}
+
+	protected void setEncloseBlockText(final boolean encloseBlockText) {
+		set(Option.EncloseBlockText, encloseBlockText);
+	}
+
+	protected boolean isEncloseBlockText() {
+		return getBool(Option.EncloseBlockText);
+	}
+
+	protected void setKeepFileTimes(final boolean keepFileTimes) {
+		set(Option.KeepFileTimes, keepFileTimes);
+	}
+
+	protected boolean isKeepFileTimes() {
+		return getBool(Option.KeepFileTimes);
+	}
+
+	protected void setWord2000(final boolean word2000) {
+		set(Option.Word2000, word2000);
+	}
+
+	protected boolean isWord2000() {
+		return getBool(Option.Word2000);
+	}
+
+	protected void setTidyMark(final boolean tidyMark) {
+		set(Option.Mark, tidyMark);
+	}
+
+	protected boolean isTidyMark() {
+		return getBool(Option.Mark);
+	}
+
+	protected void setEmacs(final boolean emacs) {
+		set(Option.Emacs, emacs);
+	}
+
+	protected boolean isEmacs() {
+		return getBool(Option.Emacs);
+	}
+
+	protected void setLiteralAttribs(final boolean literalAttribs) {
+		set(Option.LiteralAttribs, literalAttribs);
+	}
+
+	protected boolean isLiteralAttribs() {
+		return getBool(Option.LiteralAttribs);
+	}
+
+	protected void setBodyOnly(final TriState bodyOnly) {
+		set(Option.BodyOnly, bodyOnly);
+	}
+
+	protected TriState getBodyOnly() {
+		return (TriState) getOptionEnum(Option.BodyOnly);
+	}
+
+	protected void setFixUri(final boolean fixUri) {
+		set(Option.FixUri, fixUri);
+	}
+
+	protected boolean isFixUri() {
+		return getBool(Option.FixUri);
+	}
+
+	protected void setLowerLiterals(final boolean lowerLiterals) {
+		set(Option.LowerLiterals, lowerLiterals);
+	}
+
+	protected boolean isLowerLiterals() {
+		return getBool(Option.LowerLiterals);
+	}
+
+	protected void setReplaceColor(final boolean replaceColor) {
+		set(Option.ReplaceColor, replaceColor);
+	}
+
+	protected boolean isReplaceColor() {
+		return getBool(Option.ReplaceColor);
+	}
+
+	protected void setHideComments(final boolean hideComments) {
+		set(Option.HideComments, hideComments);
+	}
+
+	protected boolean isHideComments() {
+		return getBool(Option.HideComments);
+	}
+
+	protected void setIndentCdata(final boolean indentCdata) {
+		set(Option.IndentCdata, indentCdata);
+	}
+
+	protected boolean isIndentCdata() {
+		return getBool(Option.IndentCdata);
+	}
+
+	protected void setForceOutput(final boolean forceOutput) {
+		set(Option.ForceOutput, forceOutput);
+	}
+
+	protected boolean isForceOutput() {
+		return getBool(Option.ForceOutput);
+	}
+
+	protected void setShowErrors(final int showErrors) {
+		set(Option.ShowErrors, showErrors);
+	}
+
+	protected int getShowErrors() {
+		return getInt(Option.ShowErrors);
+	}
+
+	protected void setAsciiChars(final boolean asciiChars) {
+		set(Option.AsciiChars, asciiChars);
+	}
+
+	protected boolean isAsciiChars() {
+		return getBool(Option.AsciiChars);
+	}
+
+	protected void setJoinClasses(final boolean joinClasses) {
+		set(Option.JoinClasses, joinClasses);
+	}
+
+	protected boolean isJoinClasses() {
+		return getBool(Option.JoinClasses);
+	}
+
+	protected void setJoinStyles(final boolean joinStyles) {
+		set(Option.JoinStyles, joinStyles);
+	}
+
+	protected boolean isJoinStyles() {
+		return getBool(Option.JoinStyles);
+	}
+
+	protected void setEscapeCdata(final boolean escapeCdata) {
+		set(Option.EscapeCdata, escapeCdata);
+	}
+
+	protected boolean isEscapeCdata() {
+		return getBool(Option.EscapeCdata);
+	}
+
+	protected void setNcr(final boolean ncr) {
+		set(Option.NCR, ncr);
+	}
+
+	protected boolean isNcr() {
+		return getBool(Option.NCR);
+	}
+
+	protected void setCssPrefix(final String cssPrefix) {
+		set(Option.CSSPrefix, cssPrefix);
+	}
+
+	protected String getCssPrefix() {
+		return getString(Option.CSSPrefix);
+	}
+
+	protected void setReplacementCharEncoding(final String replacementCharEncoding) {
+		this.replacementCharEncoding = replacementCharEncoding;
+	}
+
+	protected String getReplacementCharEncoding() {
+		return replacementCharEncoding;
+	}
+
+	protected void setDefinedTags(final int definedTags) {
+		this.definedTags = definedTags;
+	}
+
+	protected int getDefinedTags() {
+		return definedTags;
+	}
+
+	protected void setNewline(final LineEnding newline) {
+		set(Option.Newline, newline);
+	}
+
+	protected LineEnding getNewline() {
+		return (LineEnding) getOptionEnum(Option.Newline);
+	}
+
+	protected void setRawOut(boolean rawOut) {
+		this.rawOut = rawOut;
+	}
+
+	protected boolean isRawOut() {
+		return rawOut;
+	}
+
+	protected void setAccessibilityCheckLevel(final int accessibilityCheckLevel) {
+		set(Option.AccessibilityCheckLevel, accessibilityCheckLevel);
+	}
+
+	protected int getAccessibilityCheckLevel() {
+		return getInt(Option.AccessibilityCheckLevel);
+	}
+	
+	protected void setVertSpace(final boolean vertSpace) {
+		set(Option.VertSpace, vertSpace);
+	}
+	
+	protected boolean isVertSpace() {
+		return getBool(Option.VertSpace);
+	}
+	
+	protected void setAnchorAsName(final boolean anchorAsName) {
+		set(Option.AnchorAsName, anchorAsName);
+	}
+	
+	protected boolean isAnchorAsName() {
+		return getBool(Option.AnchorAsName);
+	}
+	
+	protected void setPreserveEntities(final boolean preserveEntities) {
+		set(Option.PreserveEntities, preserveEntities);
+	}
+	
+	protected boolean isPreserveEntities() {
+		return getBool(Option.PreserveEntities);
+	}
+	
+	protected void setMergeDivs(final TriState mergeDivs) {
+		set(Option.MergeDivs, mergeDivs);
+	}
+
+	protected TriState getMergeDivs() {
+		return (TriState) getOptionEnum(Option.MergeDivs);
+	}
+
+	protected void setMergeSpans(final TriState mergeSpans) {
+		set(Option.MergeSpans, mergeSpans);
+	}
+
+	protected TriState getMergeSpans() {
+		return (TriState) getOptionEnum(Option.MergeSpans);
+	}
+
+	protected void setTidyCompat(final boolean tidyCompat) {
+		set(Option.TidyCompat, tidyCompat);
+	}
+
+	protected boolean isTidyCompat() {
+		return getBool(Option.TidyCompat);
+	}
+
+	public AttrSortStrategy getSortAttributes() {
+		return (AttrSortStrategy) getOptionEnum(Option.SortAttributes);
+	}
+	
+	public void setSortAttributes(final AttrSortStrategy sortAttributes) {
+		set(Option.SortAttributes, sortAttributes);
+	}
+	
+	public boolean isPunctWrap() {
+		return getBool(Option.PunctWrap);
+	}
+	
+	public void setPunctWrap(final boolean punctWrap) {
+		set(Option.PunctWrap, punctWrap);
+	}
+
+	public boolean isDecorateInferredUL() {
+		return getBool(Option.DecorateInferredUL);
+	}
+	
+	public void setDecorateInferredUL(final boolean decorateInferredUL) {
+		set(Option.DecorateInferredUL, decorateInferredUL);
+	}
 }

@@ -80,7 +80,7 @@ public final class AllWorkingTests
      */
     public static Test suite()
     {
-        final TestSuite suite = new TestSuite("All the working test cases for JTidy");
+        TestSuite suite = new TestSuite("All the working test cases for JTidy");
         suite.addTestSuite(TidyCrashingBugsTest.class);
         suite.addTestSuite(TidyBugsTest.class);
         suite.addTestSuite(JTidyParserBugsTest.class);

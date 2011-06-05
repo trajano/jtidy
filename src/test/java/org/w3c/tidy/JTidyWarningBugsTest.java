@@ -65,7 +65,7 @@ public class JTidyWarningBugsTest extends TidyTestCase
      * Instantiate a new Test case.
      * @param name test name
      */
-    public JTidyWarningBugsTest(final String name)
+    public JTidyWarningBugsTest(String name)
     {
         super(name);
     }

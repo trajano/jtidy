@@ -1,7 +1,6 @@
 package org.w3c.tidy;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -15,18 +14,18 @@ public class TestMessageListener implements TidyMessageListener
     /**
      * filename.
      */
-    private final String filename;
+    private String filename;
 
     /**
      * Contains all the received TidyMessages.
      */
-    private final List<TidyMessage> received = new ArrayList<TidyMessage>();
+    private List<TidyMessage> received = new ArrayList<TidyMessage>();
 
     /**
      * Instantiate a new messag listener for the given test file.
      * @param filename actual test case name
      */
-    public TestMessageListener(final String filename)
+    public TestMessageListener(String filename)
     {
         this.filename = filename;
     }
@@ -34,7 +33,7 @@ public class TestMessageListener implements TidyMessageListener
     /**
      * @see org.w3c.tidy.TidyMessageListener#messageReceived(org.w3c.tidy.TidyMessage)
      */
-    public void messageReceived(final TidyMessage message)
+    public void messageReceived(TidyMessage message)
     {
         received.add(message);
     }
@@ -45,7 +44,7 @@ public class TestMessageListener implements TidyMessageListener
      */
     public String messagesToXml()
     {
-        final StringBuffer buffer = new StringBuffer();
+        StringBuffer buffer = new StringBuffer();
 
         buffer.append("<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>\n");
         buffer.append("<!-- expected messages for test ");
@@ -53,10 +52,8 @@ public class TestMessageListener implements TidyMessageListener
         buffer.append("-->\n");
 
         buffer.append("<messages>\n");
-        final Iterator<TidyMessage> iterator = received.iterator();
-        while (iterator.hasNext())
+        for (TidyMessage msg : received)
         {
-            final TidyMessage msg = iterator.next();
             buffer.append("  <message>\n");
 
             buffer.append("    <code>");

@@ -66,13 +66,13 @@ public class DOMNodeListImpl implements org.w3c.dom.NodeList
     /**
      * Parent Node.
      */
-    private final Node parent;
+    private Node parent;
 
     /**
      * Instantiates a new DOM node list.
      * @param parent parent Node
      */
-    protected DOMNodeListImpl(final Node parent)
+    protected DOMNodeListImpl(Node parent)
     {
         this.parent = parent;
     }
@@ -80,7 +80,7 @@ public class DOMNodeListImpl implements org.w3c.dom.NodeList
     /**
      * @see org.w3c.dom.NodeList#item(int)
      */
-    public org.w3c.dom.Node item(final int index)
+    public org.w3c.dom.Node item(int index)
     {
         if (parent == null)
         {

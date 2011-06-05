@@ -67,9 +67,9 @@ public abstract class EncodingNameMapper
 {
 
     /**
-     * Map containing uppercase alias - {standard IANA, standard java}.
+     * Map containing uppercase alias - {standard iana, standard java}.
      */
-    private static Map<String,String[]> encodingNameMap = new HashMap<String,String[]>();
+    private static Map<String, String[]> encodingNameMap = new HashMap<String, String[]>();
 
     static
     {
@@ -277,14 +277,14 @@ public abstract class EncodingNameMapper
      * @param encoding java encoding name or alias
      * @return iana equivalent or null if no match is found.
      */
-    public static String toIana(final String encoding)
+    public static String toIana(String encoding)
     {
         if (encoding == null)
         {
             return null;
         }
 
-        final String[] values = (String[]) encodingNameMap.get(handlecommonAlias(encoding));
+        String[] values = encodingNameMap.get(handlecommonAlias(encoding));
         if (values != null)
         {
             return values[0];
@@ -299,7 +299,7 @@ public abstract class EncodingNameMapper
      * @param encoding encoding name
      * @return "fixed" encoding.
      */
-    private static String handlecommonAlias(final String encoding)
+    private static String handlecommonAlias(String encoding)
     {
         String key = encoding.toUpperCase();
 
@@ -338,14 +338,14 @@ public abstract class EncodingNameMapper
      * @param encoding IANA encoding name or alias
      * @return java equivalent or null if no match is found.
      */
-    public static String toJava(final String encoding)
+    public static String toJava(String encoding)
     {
         if (encoding == null)
         {
             return null;
         }
 
-        final String[] values = (String[]) encodingNameMap.get(handlecommonAlias(encoding));
+        String[] values = encodingNameMap.get(handlecommonAlias(encoding));
         if (values != null)
         {
             return values[1];

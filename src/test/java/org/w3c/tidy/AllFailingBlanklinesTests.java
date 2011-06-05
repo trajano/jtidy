@@ -78,7 +78,7 @@ public final class AllFailingBlanklinesTests
      */
     public static Test suite()
     {
-        final TestSuite suite = new TestSuite("All the tests failing with unneeded blank lines or spaces");
+        TestSuite suite = new TestSuite("All the tests failing with unneeded blank lines or spaces");
 
         suite.addTest(new JTidyBugsTest("test922302"));
         suite.addTest(new TidyOutputBugsTest("test427826"));

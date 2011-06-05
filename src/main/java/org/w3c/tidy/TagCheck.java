@@ -66,8 +66,8 @@ public interface TagCheck
 
     /**
      * Checks attributes in given Node.
-     * @param lexer {@link Lexer}
-     * @param node {@link Node} to check for valid attributes.
+     * @param lexer Lexer
+     * @param node Node to check for valid attributes.
      */
     void check(Lexer lexer, Node node);
 

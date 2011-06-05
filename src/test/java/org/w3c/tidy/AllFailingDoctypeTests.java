@@ -78,7 +78,7 @@ public final class AllFailingDoctypeTests
      */
     public static Test suite()
     {
-        final TestSuite suite = new TestSuite("All the tests failing because of a wrong doctype");
+        TestSuite suite = new TestSuite("All the tests failing because of a wrong doctype");
 
         suite.addTest(new JTidyBugsTest("test763186"));
 
