@@ -489,14 +489,14 @@ public final class ParsePropertyImpl
                 return "";
             }
 
-            List tagList = configuration.tt.findAllDefinedTag(tagType);
+            List<String> tagList = configuration.tt.findAllDefinedTag(tagType);
             if (tagList.isEmpty())
             {
                 return "";
             }
 
             StringBuffer buffer = new StringBuffer();
-            Iterator iterator = tagList.iterator();
+            Iterator<String> iterator = tagList.iterator();
             while (iterator.hasNext())
             {
                 buffer.append(iterator.next());

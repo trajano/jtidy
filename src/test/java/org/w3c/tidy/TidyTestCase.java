@@ -257,16 +257,16 @@ public class TidyTestCase extends TestCase
 
         MsgXmlHandler handler = new MsgXmlHandler();
         saxParser.parse(new InputSource(messagesFile.openStream()), handler);
-        List expectedMsgs = handler.getMessages();
+        List<TidyMessage> expectedMsgs = handler.getMessages();
 
-        List tidyMsgs = this.messageListener.getReceived();
+        List<TidyMessage> tidyMsgs = this.messageListener.getReceived();
 
         // assert size
         if (expectedMsgs.size() != tidyMsgs.size())
         {
             StringBuffer messagesAsString = new StringBuffer();
 
-            for (Iterator iter = tidyMsgs.iterator(); iter.hasNext();)
+            for (Iterator<TidyMessage> iter = tidyMsgs.iterator(); iter.hasNext();)
             {
                 TidyMessage message = (TidyMessage) iter.next();
                 messagesAsString.append("\n");
@@ -282,8 +282,8 @@ public class TidyTestCase extends TestCase
         }
 
         // compare messages
-        Iterator expectedMsgIt = expectedMsgs.iterator();
-        Iterator tidyMsgIt = tidyMsgs.iterator();
+        Iterator<TidyMessage> expectedMsgIt = expectedMsgs.iterator();
+        Iterator<TidyMessage> tidyMsgIt = tidyMsgs.iterator();
         int count = 0;
         while (tidyMsgIt.hasNext())
         {
@@ -604,7 +604,7 @@ public class TidyTestCase extends TestCase
         /**
          * Parsed messages.
          */
-        private List messages = new ArrayList();
+        private List<TidyMessage> messages = new ArrayList<TidyMessage>();
 
         /**
          * Error code for the current message.
@@ -708,7 +708,7 @@ public class TidyTestCase extends TestCase
          * Returns the list of parsed messages.
          * @return List containing TidyMessage elements
          */
-        public List getMessages()
+        public List<TidyMessage> getMessages()
         {
             return messages;
         }

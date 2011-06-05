@@ -647,7 +647,7 @@ public final class TagTable
     /**
      * hashTable containing tags.
      */
-    private Map tagHashtable = new Hashtable();
+    private Map<String,Dict> tagHashtable = new Hashtable<String,Dict>();
 
     /**
      * Instantiates a new tag table with known tags.
@@ -873,14 +873,14 @@ public final class TagTable
      * @param tagType one of Dict.TAGTYPE_EMPTY | Dict.TAGTYPE_INLINE | Dict.TAGTYPE_BLOCK | Dict.TAGTYPE_PRE
      * @return List containing all the user-defined tag names
      */
-    List findAllDefinedTag(short tagType)
+    List<String> findAllDefinedTag(short tagType)
     {
-        List tagNames = new ArrayList();
+        List<String> tagNames = new ArrayList<String>();
 
-        Iterator iterator = tagHashtable.values().iterator();
+        Iterator<Dict> iterator = tagHashtable.values().iterator();
         while (iterator.hasNext())
         {
-            Dict curDictEntry = (Dict) iterator.next();
+            Dict curDictEntry = iterator.next();
 
             if (curDictEntry != null)
             {

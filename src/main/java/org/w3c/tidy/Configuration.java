@@ -205,10 +205,10 @@ public class Configuration implements Serializable
     public static final int KEEP_FIRST = 1;
 
     /**
-     * Map containg all the valid configuration options and the related parser. Tag entry contains String(option
+     * Map containing all the valid configuration options and the related parser. Tag entry contains String(option
      * name)-Flag instance.
      */
-    private static final Map OPTIONS = new HashMap();
+    private static final Map<String, Flag> OPTIONS = new HashMap<String, Flag>();
 
     /**
      * serial version UID for this class.
@@ -723,7 +723,7 @@ public class Configuration implements Serializable
      */
     public void addProps(Properties p)
     {
-        Enumeration propEnum = p.propertyNames();
+        Enumeration<?> propEnum = p.propertyNames();
         while (propEnum.hasMoreElements())
         {
             String key = (String) propEnum.nextElement();
@@ -766,7 +766,7 @@ public class Configuration implements Serializable
      */
     private void parseProps()
     {
-        Iterator iterator = properties.keySet().iterator();
+        Iterator<Object> iterator = properties.keySet().iterator();
 
         while (iterator.hasNext())
         {
@@ -899,10 +899,10 @@ public class Configuration implements Serializable
             Flag configItem;
 
             // sort configuration options
-            List values = new ArrayList(OPTIONS.values());
+            List<Flag> values = new ArrayList<Flag>(OPTIONS.values());
             Collections.sort(values);
 
-            Iterator iterator = values.iterator();
+            Iterator<Flag> iterator = values.iterator();
 
             while (iterator.hasNext())
             {
@@ -959,7 +959,7 @@ public class Configuration implements Serializable
     /**
      * A configuration option.
      */
-    static class Flag implements Comparable
+    static class Flag implements Comparable<Flag>
     {
 
         /**
@@ -1064,9 +1064,9 @@ public class Configuration implements Serializable
         /**
          * @see java.lang.Comparable#compareTo(java.lang.Object)
          */
-        public int compareTo(Object o)
+        public int compareTo(Flag o)
         {
-            return this.name.compareTo(((Flag) o).name);
+            return this.name.compareTo(o.name);
         }
 
     }

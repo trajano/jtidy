@@ -156,7 +156,7 @@ public final class TidyMessage
      * @author fgiust
      * @version $Revision$ ($Author$)
      */
-    public static final class Level implements Comparable
+    public static final class Level implements Comparable<Level>
     {
 
         /**
@@ -228,9 +228,9 @@ public final class TidyMessage
         /**
          * @see java.lang.Comparable#compareTo(Object)
          */
-        public int compareTo(Object object)
+        public int compareTo(Level object)
         {
-            return this.code - ((Level) object).code;
+            return this.code - object.code;
         }
 
         /**

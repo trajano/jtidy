@@ -169,7 +169,7 @@ public class JTidyTask extends Task
     /**
      * Filesets.
      */
-    private List filesets = new ArrayList();
+    private List<FileSet> filesets = new ArrayList<FileSet>();
 
     /**
      * Destination directory for output.
@@ -403,7 +403,7 @@ public class JTidyTask extends Task
 
         mapper.setTo(this.destdir.getAbsolutePath());
 
-        Iterator iterator = filesets.iterator();
+        Iterator<FileSet> iterator = filesets.iterator();
         while (iterator.hasNext())
         {
             FileSet fileSet = (FileSet) iterator.next();

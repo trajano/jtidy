@@ -324,7 +324,7 @@ public class AttributeTable
     /**
      * Map containing all the installed attributes.
      */
-    private Map attributeHashtable = new Hashtable();
+    private Map<String,Attribute> attributeHashtable = new Hashtable<String,Attribute>();
 
     /**
      * lookup an installed Attribute.
@@ -338,7 +338,7 @@ public class AttributeTable
 
     /**
      * installs a new Attribute.
-     * @param attr Atribute
+     * @param attr Attribute
      * @return installed Attribute
      */
     public Attribute install(Attribute attr)

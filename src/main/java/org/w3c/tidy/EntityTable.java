@@ -333,7 +333,7 @@ public final class EntityTable
     /**
      * Entity map.
      */
-    private Map entityHashtable = new Hashtable();
+    private Map<String, Entity> entityHashtable = new Hashtable<String, Entity>();
 
     /**
      * use getDefaultEntityTable to get an entity table instance.
@@ -422,7 +422,7 @@ public final class EntityTable
     {
         String name = null;
         Entity ent;
-        Iterator en = this.entityHashtable.values().iterator();
+        Iterator<Entity> en = this.entityHashtable.values().iterator();
         while (en.hasNext())
         {
             ent = (Entity) en.next();

@@ -861,7 +861,7 @@ public final class AttrCheckImpl
         /**
          * valid html colors.
          */
-        private static final Map COLORS = new HashMap();
+        private static final Map<String,String> COLORS = new HashMap<String,String>();
 
         static
         {
@@ -900,11 +900,11 @@ public final class AttrCheckImpl
 
             String given = attval.value;
 
-            Iterator colorIter = COLORS.entrySet().iterator();
+            Iterator<Map.Entry<String, String>> colorIter = COLORS.entrySet().iterator();
 
             while (colorIter.hasNext())
             {
-                Map.Entry color = (Map.Entry) colorIter.next();
+                Map.Entry<String,String> color = colorIter.next();
 
                 if (given.charAt(0) == '#')
                 {
