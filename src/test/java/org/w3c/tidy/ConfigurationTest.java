@@ -59,8 +59,7 @@ import junit.framework.TestCase;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.tidy.Options.DupAttrModes;
-import org.w3c.tidy.Options.TriState;
+
 
 /**
  * @author Fabrizio Giustina
@@ -76,14 +75,15 @@ public class ConfigurationTest extends TestCase
 
     /**
      * Test for -help-config.
+     * @throws Exception any exception thrown during test
      */
-    public void testPrintConfig()
+    public void testPrintConfig() throws Exception
     {
-        Tidy tidy = new Tidy();
-        Configuration configuration = tidy.getConfiguration();
-        StringWriter writer = new StringWriter();
+        final Tidy tidy = new Tidy();
+        final Configuration configuration = tidy.getConfiguration();
+        final StringWriter writer = new StringWriter();
         configuration.printConfigOptions(writer, false);
-        String result = writer.toString();
+        final String result = writer.toString();
         // just test that no exception occurred and that something was printed
         assertTrue(result.length() > 200);
         log.debug(result);
@@ -91,16 +91,17 @@ public class ConfigurationTest extends TestCase
 
     /**
      * Test for -show-config.
+     * @throws Exception any exception thrown during test
      */
-    public void testPrintActualConfig()
+    public void testPrintActualConfig() throws Exception
     {
-        Tidy tidy = new Tidy();
+        final Tidy tidy = new Tidy();
         tidy.getConfiguration().tt.defineTag(Dict.TAGTYPE_INLINE, "something");
         tidy.getConfiguration().tt.defineTag(Dict.TAGTYPE_INLINE, "second");
-        Configuration configuration = tidy.getConfiguration();
-        StringWriter writer = new StringWriter();
+        final Configuration configuration = tidy.getConfiguration();
+        final StringWriter writer = new StringWriter();
         configuration.printConfigOptions(writer, true);
-        String result = writer.toString();
+        final String result = writer.toString();
         // just test that no exception occurred and that something was printed
         assertTrue(result.length() > 200);
         log.debug(result);
@@ -108,10 +109,11 @@ public class ConfigurationTest extends TestCase
 
     /**
      * Test for configuration getters and setters.
+     * @throws Exception any exception thrown during test
      */
-    public void testGetSet()
+    public void testGetSet() throws Exception
     {
-        Tidy tidy = new Tidy();
+        final Tidy tidy = new Tidy();
 
         tidy.setAltText("alt");
         assertEquals("alt", tidy.getAltText());
@@ -121,6 +123,9 @@ public class ConfigurationTest extends TestCase
 
         tidy.setBreakBeforeBR(true);
         assertEquals(true, tidy.getBreakBeforeBR());
+
+        tidy.setBurstSlides(true);
+        assertEquals(true, tidy.getBurstSlides());
 
         tidy.setDropEmptyParas(false);
         assertEquals(false, tidy.getDropEmptyParas());
@@ -167,8 +172,8 @@ public class ConfigurationTest extends TestCase
         tidy.setIndentCdata(true);
         assertEquals(true, tidy.getIndentCdata());
 
-        tidy.setIndentContent(TriState.Yes);
-        assertEquals(TriState.Yes, tidy.getIndentContent());
+        tidy.setIndentContent(true);
+        assertEquals(true, tidy.getIndentContent());
 
         tidy.setJoinClasses(true);
         assertEquals(true, tidy.getJoinClasses());
@@ -197,11 +202,11 @@ public class ConfigurationTest extends TestCase
         tidy.setNumEntities(true);
         assertEquals(true, tidy.getNumEntities());
 
-        tidy.setShowMarkup(false);
-        assertEquals(false, tidy.isShowMarkup());
+        tidy.setOnlyErrors(true);
+        assertEquals(true, tidy.getOnlyErrors());
 
-        tidy.setPrintBodyOnly(TriState.Yes);
-        assertEquals(TriState.Yes, tidy.getPrintBodyOnly());
+        tidy.setPrintBodyOnly(true);
+        assertEquals(true, tidy.getPrintBodyOnly());
 
         tidy.setQuiet(true);
         assertEquals(true, tidy.getQuiet());
@@ -223,6 +228,9 @@ public class ConfigurationTest extends TestCase
 
         tidy.setShowWarnings(true);
         assertEquals(true, tidy.getShowWarnings());
+
+        tidy.setSmartIndent(true);
+        assertEquals(true, tidy.getSmartIndent());
 
         tidy.setTidyMark(true);
         assertEquals(true, tidy.getTidyMark());
@@ -269,8 +277,8 @@ public class ConfigurationTest extends TestCase
         tidy.setXmlOut(true);
         assertEquals(true, tidy.getXmlOut());
 
-        tidy.setXmlDecl(true);
-        assertEquals(true, tidy.getXmlDecl());
+        tidy.setXmlPi(true);
+        assertEquals(true, tidy.getXmlPi());
 
         tidy.setXmlPIs(true);
         assertEquals(true, tidy.getXmlPIs());
@@ -290,8 +298,8 @@ public class ConfigurationTest extends TestCase
         tidy.setInputEncoding("UTF8");
         assertEquals("UTF8", tidy.getInputEncoding());
 
-        tidy.setRepeatedAttributes(DupAttrModes.KeepFirst);
-        assertEquals(DupAttrModes.KeepFirst, tidy.getRepeatedAttributes());
+        tidy.setRepeatedAttributes(Configuration.KEEP_FIRST);
+        assertEquals(Configuration.KEEP_FIRST, tidy.getRepeatedAttributes());
 
         tidy.setShowErrors(10);
         assertEquals(10, tidy.getShowErrors());

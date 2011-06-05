@@ -64,6 +64,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
@@ -279,8 +280,7 @@ public class JTidyTask extends Task
     /**
      * Initializes the task.
      */
-    @Override
-	public void init()
+    public void init()
     {
         super.init();
 
@@ -330,8 +330,7 @@ public class JTidyTask extends Task
      * Run the task.
      * @exception BuildException The exception raised during task execution.
      */
-    @Override
-	public void execute() throws BuildException
+    public void execute() throws BuildException
     {
         // validate
         validateParameters();
@@ -404,7 +403,10 @@ public class JTidyTask extends Task
 
         mapper.setTo(this.destdir.getAbsolutePath());
 
-        for (FileSet fileSet : filesets) {
+        Iterator<FileSet> iterator = filesets.iterator();
+        while (iterator.hasNext())
+        {
+            FileSet fileSet = (FileSet) iterator.next();
             DirectoryScanner directoryScanner = fileSet.getDirectoryScanner(getProject());
             String[] sourceFiles = directoryScanner.getIncludedFiles();
             File inputdir = directoryScanner.getBasedir();

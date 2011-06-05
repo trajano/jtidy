@@ -5,7 +5,7 @@
     <code>13</code>
     <level>2</level>
     <line>1</line>
-    <column>1</column>
+    <column>-3</column>
     <text><![CDATA[unexpected </foo>]]></text>
   </message>
   <message>
@@ -13,7 +13,6 @@
     <level>0</level>
     <line>0</line>
     <column>0</column>
-    <text><![CDATA[1 warning, 0 errors were found!
-]]></text>
+    <text><![CDATA[1 warning, no errors were found!]]></text>
   </message>
 </messages>

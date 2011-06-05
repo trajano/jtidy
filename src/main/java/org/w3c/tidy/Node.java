@@ -53,8 +53,6 @@
  */
 package org.w3c.tidy;
 
-import org.w3c.tidy.Options.DupAttrModes;
-
 /**
  * Used for elements and text nodes element name is null for text nodes start and end are offsets into lexbuf which
  * contains the textual content of all elements in the parse tree. Parent and content allow traversal of the parse tree
@@ -65,19 +63,103 @@ import org.w3c.tidy.Options.DupAttrModes;
  * @author Fabrizio Giustina
  * @version $Revision$ ($Author$)
  */
-public class Node {
-	static enum NodeType {
-		RootNode, DocTypeTag, CommentTag, ProcInsTag, TextNode, StartTag, EndTag, StartEndTag, CDATATag, SectionTag,
-		AspTag, JsteTag, PhpTag, XmlDecl
-	}
-	
+public class Node
+{
+
+    /**
+     * node type: root.
+     */
+    public static final short ROOT_NODE = 0;
+
+    /**
+     * node type: doctype.
+     */
+    public static final short DOCTYPE_TAG = 1;
+
+    /**
+     * node type: comment.
+     */
+    public static final short COMMENT_TAG = 2;
+
+    /**
+     * node type: .
+     */
+    public static final short PROC_INS_TAG = 3;
+
+    /**
+     * node type: text.
+     */
+    public static final short TEXT_NODE = 4;
+
+    /**
+     * Start tag.
+     */
+    public static final short START_TAG = 5;
+
+    /**
+     * End tag.
+     */
+    public static final short END_TAG = 6;
+
+    /**
+     * Start of an end tag.
+     */
+    public static final short START_END_TAG = 7;
+
+    /**
+     * node type: CDATA.
+     */
+    public static final short CDATA_TAG = 8;
+
+    /**
+     * node type: section tag.
+     */
+    public static final short SECTION_TAG = 9;
+
+    /**
+     * node type: asp tag.
+     */
+    public static final short ASP_TAG = 10;
+
+    /**
+     * node type: jste tag.
+     */
+    public static final short JSTE_TAG = 11;
+
+    /**
+     * node type: php tag.
+     */
+    public static final short PHP_TAG = 12;
+
+    /**
+     * node type: doctype.
+     */
+    public static final short XML_DECL = 13;
+
+    /**
+     * Description for all the node types. Used in toString.
+     */
+    private static final String[] NODETYPE_STRING = {
+        "RootNode",
+        "DocTypeTag",
+        "CommentTag",
+        "ProcInsTag",
+        "TextNode",
+        "StartTag",
+        "EndTag",
+        "StartEndTag",
+        "SectionTag",
+        "AspTag",
+        "PhpTag",
+        "XmlDecl"};
+
     /**
      * parent node.
      */
     protected Node parent;
 
     /**
-     * previous node.
+     * pevious node.
      */
     protected Node prev;
 
@@ -109,10 +191,7 @@ public class Node {
     /**
      * TextNode, StartTag, EndTag etc.
      */
-    protected NodeType type;
-    
-    protected int line;
-    protected int column;
+    protected short type;
 
     /**
      * true if closed by explicit end tag.
@@ -164,17 +243,19 @@ public class Node {
      */
     public Node()
     {
-        this(NodeType.TextNode, null, 0, 0);
+        this(TEXT_NODE, null, 0, 0);
     }
 
     /**
      * Instantiates a new node.
-     * @param type node type
+     * @param type node type: Node.ROOT_NODE | Node.DOCTYPE_TAG | Node.COMMENT_TAG | Node.PROC_INS_TAG | Node.TEXT_NODE |
+     * Node.START_TAG | Node.END_TAG | Node.START_END_TAG | Node.CDATA_TAG | Node.SECTION_TAG | Node. ASP_TAG |
+     * Node.JSTE_TAG | Node.PHP_TAG | Node.XML_DECL
      * @param textarray array of bytes contained in the Node
      * @param start start position
      * @param end end position
      */
-    public Node(NodeType type, byte[] textarray, int start, int end)
+    public Node(final short type, final byte[] textarray, final int start, final int end)
     {
         this.parent = null;
         this.prev = null;
@@ -196,14 +277,16 @@ public class Node {
 
     /**
      * Instantiates a new node.
-     * @param type node type
+     * @param type node type: Node.ROOT_NODE | Node.DOCTYPE_TAG | Node.COMMENT_TAG | Node.PROC_INS_TAG | Node.TEXT_NODE |
+     * Node.START_TAG | Node.END_TAG | Node.START_END_TAG | Node.CDATA_TAG | Node.SECTION_TAG | Node. ASP_TAG |
+     * Node.JSTE_TAG | Node.PHP_TAG | Node.XML_DECL
      * @param textarray array of bytes contained in the Node
      * @param start start position
      * @param end end position
      * @param element tag name
      * @param tt tag table instance
      */
-    public Node(NodeType type, byte[] textarray, int start, int end, String element, TagTable tt)
+    public Node(final short type, final byte[] textarray, final int start, final int end, final String element, final TagTable tt)
     {
         this.parent = null;
         this.prev = null;
@@ -221,7 +304,7 @@ public class Node {
         this.element = element;
         this.attributes = null;
         this.content = null;
-        if (type == NodeType.StartTag || type == NodeType.StartEndTag || type == NodeType.EndTag)
+        if (type == START_TAG || type == START_END_TAG || type == END_TAG)
         {
             tt.findTag(this);
         }
@@ -232,7 +315,7 @@ public class Node {
      * @param name attribute name.
      * @return AttVal instance or null if no attribute with the iven name is found
      */
-    public AttVal getAttrByName(String name)
+    public AttVal getAttrByName(final String name)
     {
         AttVal attr;
 
@@ -246,21 +329,12 @@ public class Node {
 
         return attr;
     }
-    
-    public AttVal getAttrById(final AttrId id) {
-		for (AttVal av = attributes; av != null; av = av.next) {
-			if (av.hasId(id)) {
-				return av;
-			}
-		}
-		return null;
-	}
 
     /**
      * Default method for checking an element's attributes.
      * @param lexer Lexer
      */
-    public void checkAttributes(Lexer lexer)
+    public void checkAttributes(final Lexer lexer)
     {
         AttVal attval;
 
@@ -275,123 +349,163 @@ public class Node {
      * configuration.
      * @param lexer Lexer
      */
-    public void repairDuplicateAttributes(Lexer lexer) {
-        for (AttVal first = this.attributes; first != null;) {
-        	if (!(first.asp == null && first.php == null)) {
-        		first = first.next;
-        		continue;
-        	}
-        	boolean firstRedefined = false;
-        	
-            for (AttVal second = first.next; second != null;) {
-                if (!(second.asp == null && second.php == null && first.attribute != null
-                		&& first.attribute.equalsIgnoreCase(second.attribute))) {
-                	second = second.next;
-                	continue;
-                }
-                
-                AttVal temp;
+    public void repairDuplicateAttributes(final Lexer lexer)
+    {
+        AttVal attval;
 
-                if ("class".equalsIgnoreCase(second.attribute) && lexer.configuration.isJoinClasses())
+        for (attval = this.attributes; attval != null;)
+        {
+            if (attval.asp == null && attval.php == null)
+            {
+                AttVal current;
+
+                for (current = attval.next; current != null;)
                 {
-                    // concatenate classes
-                    second.value = second.value + " " + first.value;
-
-                    temp = first.next;
-
-                    if (temp.next == null)
+                    if (current.asp == null
+                        && current.php == null
+                        && attval.attribute != null
+                        && attval.attribute.equalsIgnoreCase(current.attribute))
                     {
-                        second = null;
+                        AttVal temp;
+
+                        if ("class".equalsIgnoreCase(current.attribute) && lexer.configuration.joinClasses)
+                        {
+                            // concatenate classes
+                            current.value = current.value + " " + attval.value;
+
+                            temp = attval.next;
+
+                            if (temp.next == null)
+                            {
+                                current = null;
+                            }
+                            else
+                            {
+                                current = current.next;
+                            }
+
+                            lexer.report.attrError(lexer, this, attval, Report.JOINING_ATTRIBUTE);
+
+                            removeAttribute(attval);
+                            attval = temp;
+                        }
+                        else if ("style".equalsIgnoreCase(current.attribute) && lexer.configuration.joinStyles)
+                        {
+                            // concatenate styles
+
+                            // this doesn't handle CSS comments and leading/trailing white-space very well see
+                            // http://www.w3.org/TR/css-style-attr
+
+                            final int end = current.value.length() - 1;
+
+                            if (current.value.charAt(end) == ';')
+                            {
+                                // attribute ends with declaration seperator
+                                current.value = current.value + " " + attval.value;
+                            }
+                            else if (current.value.charAt(end) == '}')
+                            {
+                                // attribute ends with rule set
+                                current.value = current.value + " { " + attval.value + " }";
+                            }
+                            else
+                            {
+                                // attribute ends with property value
+                                current.value = current.value + "; " + attval.value;
+                            }
+
+                            temp = attval.next;
+
+                            if (temp.next == null)
+                            {
+                                current = null;
+                            }
+                            else
+                            {
+                                current = current.next;
+                            }
+
+                            lexer.report.attrError(lexer, this, attval, Report.JOINING_ATTRIBUTE);
+
+                            removeAttribute(attval);
+                            attval = temp;
+
+                        }
+                        else if (lexer.configuration.duplicateAttrs == Configuration.KEEP_LAST)
+                        {
+                            temp = current.next;
+
+                            lexer.report.attrError(lexer, this, current, Report.REPEATED_ATTRIBUTE);
+
+                            removeAttribute(current);
+                            current = temp;
+                        }
+                        else
+                        {
+                            temp = attval.next;
+
+                            if (attval.next == null)
+                            {
+                                current = null;
+                            }
+                            else
+                            {
+                                current = current.next;
+                            }
+
+                            lexer.report.attrError(lexer, this, attval, Report.REPEATED_ATTRIBUTE);
+
+                            removeAttribute(attval);
+                            attval = temp;
+                        }
                     }
                     else
                     {
-                        second = second.next;
+                        current = current.next;
                     }
-
-                    lexer.report.attrError(lexer, this, first, ErrorCode.JOINING_ATTRIBUTE);
-
-                    removeAttribute(first);
-                    first = temp;
                 }
-                else if (first.is(AttrId.STYLE) && lexer.configuration.isJoinStyles()) {
-                    // concatenate styles
-
-                    // this doesn't handle CSS comments and leading/trailing white-space very well see
-                    // http://www.w3.org/TR/css-style-attr
-
-                    final int end = first.value.length();
-
-                    if (end > 0 && first.value.charAt(end - 1) == ';') {
-                        // attribute ends with declaration seperator
-                    	first.value = first.value + " " + second.value;
-                    }
-                    else if (end > 0 && first.value.charAt(end - 1) == '}') {
-                        // attribute ends with rule set
-                    	first.value = first.value + " { " + second.value + " }";
-                    }
-                    else {
-                        // attribute ends with property value
-                    	first.value = first.value + (end > 0 ? "; " : "") + second.value;
-                    }
-
-                    temp = second.next;
-                    lexer.report.attrError(lexer, this, second, ErrorCode.JOINING_ATTRIBUTE);
-                    removeAttribute(second);
-                    second = temp;
-                }
-                else if (lexer.configuration.getDuplicateAttrs() == DupAttrModes.KeepLast)
-                {
-                    temp = first.next;
-                    lexer.report.attrError(lexer, this, first, ErrorCode.REPEATED_ATTRIBUTE);
-                    removeAttribute(first);
-                    firstRedefined = true;
-                    first = temp;
-                    second = second.next;
-                } else {
-                    temp = second.next;
-                    lexer.report.attrError(lexer, this, second, ErrorCode.REPEATED_ATTRIBUTE);
-                    removeAttribute(second);
-                    second = temp;
-                }
+                attval = attval.next;
             }
-            if (!firstRedefined) {
-            	first = first.next;
+            else
+            {
+                attval = attval.next;
             }
         }
     }
-    
-    AttVal repairAttrValue(final String name, final String value) {
-        final AttVal old = getAttrByName(name);
-        if (old != null) {
-        	old.value = value;
-            return old;
-        } else {
-            return addAttribute(name, value);
-        }
-    }
-
-	protected void insertAttributeAtEnd(final AttVal av) {
-		attributes = AttVal.addAttrToList(attributes, av);
-	}
 
     /**
      * Adds an attribute to the node.
      * @param name attribute name
      * @param value attribute value
-     * @return 
      */
-    public AttVal addAttribute(final String name, final String value) {
+    public void addAttribute(final String name, final String value)
+    {
         final AttVal av = new AttVal(null, null, null, null, '"', name, value);
         av.dict = AttributeTable.getDefaultAttributeTable().findAttribute(av);
-        insertAttributeAtEnd(av);
-        return av;
+
+        if (this.attributes == null)
+        {
+            this.attributes = av;
+        }
+        else
+        {
+            // append to end of attributes
+            AttVal here = this.attributes;
+
+            while (here.next != null)
+            {
+                here = here.next;
+            }
+
+            here.next = av;
+        }
     }
 
     /**
      * Remove an attribute from node and then free it.
      * @param attr attribute to remove
      */
-    public void removeAttribute(AttVal attr)
+    public void removeAttribute(final AttVal attr)
     {
         AttVal av;
         AttVal prev = null;
@@ -427,7 +541,7 @@ public class Node {
     {
         Node node = this.content;
 
-        while (node != null && node.type != NodeType.DocTypeTag)
+        while (node != null && node.type != DOCTYPE_TAG)
         {
             node = node.next;
         }
@@ -468,7 +582,7 @@ public class Node {
      * @param element discarded node
      * @return next node
      */
-    public static Node discardElement(Node element)
+    public static Node discardElement(final Node element)
     {
         Node next = null;
 
@@ -485,7 +599,7 @@ public class Node {
      * Insert a node into markup tree.
      * @param node to insert
      */
-    public void insertNodeAtStart(Node node)
+    public void insertNodeAtStart(final Node node)
     {
         node.parent = this;
 
@@ -507,7 +621,7 @@ public class Node {
      * Insert node into markup tree.
      * @param node Node to insert
      */
-    public void insertNodeAtEnd(Node node)
+    public void insertNodeAtEnd(final Node node)
     {
         node.parent = this;
         node.prev = this.last;
@@ -529,7 +643,7 @@ public class Node {
      * @param element child node. Will be inserted as a child of element
      * @param node parent node
      */
-    public static void insertNodeAsParent(Node element, Node node)
+    public static void insertNodeAsParent(final Node element, final Node node)
     {
         node.content = element;
         node.last = element;
@@ -568,7 +682,7 @@ public class Node {
      * @param element child node. Will be insertedbefore element
      * @param node following node
      */
-    public static void insertNodeBeforeElement(Node element, Node node)
+    public static void insertNodeBeforeElement(final Node element, final Node node)
     {
         Node parent;
 
@@ -593,7 +707,7 @@ public class Node {
      * Insert node into markup tree after element.
      * @param node new node to insert
      */
-    public void insertNodeAfterElement(Node node)
+    public void insertNodeAfterElement(final Node node)
     {
         Node parent;
 
@@ -624,14 +738,31 @@ public class Node {
      * @param lexer Lexer
      * @param element empty node to be removed
      */
-    public static Node trimEmptyElement(final Lexer lexer, final Node element) {
-    	if (lexer.canPrune(element)) {
-            if (element.type != NodeType.TextNode) {
-                lexer.report.warning(lexer, element, null, ErrorCode.TRIM_EMPTY_ELEMENT);
+    public static void trimEmptyElement(final Lexer lexer, final Node element)
+    {
+        // don't trim if user explicitely set trim-empty-elements to false
+        // empty element can be needed in css sites
+        if (lexer.configuration.trimEmpty)
+        {
+            final TagTable tt = lexer.configuration.tt;
+
+            if (lexer.canPrune(element))
+            {
+                if (element.type != TEXT_NODE)
+                {
+                    lexer.report.warning(lexer, element, null, Report.TRIM_EMPTY_ELEMENT);
+                }
+
+                discardElement(element);
             }
-            return discardElement(element);
+            else if (element.tag == tt.tagP && element.content == null)
+            {
+                // replace <p></p> by <br><br> to preserve formatting
+                final Node node = lexer.inferredTag("br");
+                Node.coerceNode(lexer, element, tt.tagBr);
+                element.insertNodeAfterElement(node);
+            }
         }
-        return element.next;
     }
 
     /**
@@ -641,11 +772,12 @@ public class Node {
      * @param element node
      * @param last last child of element
      */
-    public static void trimTrailingSpace(Lexer lexer, Node element, Node last)
+    public static void trimTrailingSpace(final Lexer lexer, final Node element, final Node last)
     {
         byte c;
+        final TagTable tt = lexer.configuration.tt;
 
-        if (last != null && last.type == NodeType.TextNode)
+        if (last != null && last.type == Node.TEXT_NODE)
         {
             if (last.end > last.start)
 
@@ -656,7 +788,7 @@ public class Node {
                 {
                     // take care with <td> &nbsp; </td>
                     // fix for [435920]
-                    if (c == 160 && (element.is(TagId.TD) || element.is(TagId.TH)))
+                    if (c == 160 && (element.tag == tt.tagTd || element.tag == tt.tagTh))
                     {
                         if (last.end > last.start + 1)
                         {
@@ -689,14 +821,14 @@ public class Node {
      * @param element node to be escaped
      * @return escaped node
      */
-    protected static Node escapeTag(Lexer lexer, Node element)
+    protected static Node escapeTag(final Lexer lexer, final Node element)
     {
-        Node node = lexer.newNode();
+        final Node node = lexer.newNode();
         node.start = lexer.lexsize;
         node.textarray = element.textarray; // @todo check it
         lexer.addByte('<');
 
-        if (element.type == NodeType.EndTag)
+        if (element.type == END_TAG)
         {
             lexer.addByte('/');
         }
@@ -705,7 +837,7 @@ public class Node {
         {
             lexer.addStringLiteral(element.element);
         }
-        else if (element.type == NodeType.DocTypeTag)
+        else if (element.type == DOCTYPE_TAG)
         {
             int i;
 
@@ -725,7 +857,7 @@ public class Node {
             }
         }
 
-        if (element.type == NodeType.StartEndTag)
+        if (element.type == START_END_TAG)
         {
             lexer.addByte('/');
         }
@@ -741,9 +873,9 @@ public class Node {
      * @param lexer Lexer
      * @return <code>true</code> if the node content empty or blank
      */
-    public boolean isBlank(Lexer lexer)
+    public boolean isBlank(final Lexer lexer)
     {
-        if (this.type == NodeType.TextNode)
+        if (this.type == TEXT_NODE)
         {
             if (this.end == this.start)
             {
@@ -765,17 +897,18 @@ public class Node {
      * @param element parent node
      * @param text text node
      */
-    public static void trimInitialSpace(Lexer lexer, Node element, Node text)
+    public static void trimInitialSpace(final Lexer lexer, final Node element, final Node text)
     {
         Node prev, node;
 
-        if (text.type == NodeType.TextNode && lexer.lexbuf[text.start] == (byte) ' ' && (text.start < text.end))
+        if (text.type == TEXT_NODE && lexer.lexbuf[text.start] == (byte) ' ' && text.start < text.end)
         {
-            if (element.hasCM(Dict.CM_INLINE) && !element.hasCM(Dict.CM_FIELD))
+            if (TidyUtils.toBoolean(element.tag.model & Dict.CM_INLINE)
+                && !TidyUtils.toBoolean(element.tag.model & Dict.CM_FIELD))
             {
                 prev = element.prev;
 
-                if (prev != null && prev.type == NodeType.TextNode)
+                if (prev != null && prev.type == TEXT_NODE)
                 {
                     if (prev.textarray[prev.end - 1] != (byte) ' ')
                     {
@@ -788,9 +921,24 @@ public class Node {
                 {
                     // create new node
                     node = lexer.newNode();
-                    node.start = element.start++;
-                    node.end = element.start;
-                    lexer.lexbuf[node.start] = (byte) ' ';
+                    // Local fix for bug 228486 (GLP). This handles the case
+                    // where we need to create a preceeding text node but there are
+                    // no "slots" in textarray that we can steal from the current
+                    // element. Therefore, we create a new textarray containing
+                    // just the blank. When Tidy is fixed, this should be removed.
+                    if (element.start >= element.end)
+                    {
+                        node.start = 0;
+                        node.end = 1;
+                        node.textarray = new byte[1];
+                    }
+                    else
+                    {
+                        node.start = element.start++;
+                        node.end = element.start;
+                        node.textarray = element.textarray;
+                    }
+                    node.textarray[node.start] = (byte) ' ';
                     Node.insertNodeBeforeElement(element, node);
                 }
             }
@@ -806,18 +954,19 @@ public class Node {
      * @param lexer Lexer
      * @param element Node
      */
-    public static void trimSpaces(Lexer lexer, Node element)
+    public static void trimSpaces(final Lexer lexer, final Node element)
     {
         Node text = element.content;
+        final TagTable tt = lexer.configuration.tt;
 
-        if (text != null && text.type == NodeType.TextNode && !element.is(TagId.PRE))
+        if (text != null && text.type == Node.TEXT_NODE && element.tag != tt.tagPre)
         {
             trimInitialSpace(lexer, element, text);
         }
 
         text = element.last;
 
-        if (text != null && text.type == NodeType.TextNode)
+        if (text != null && text.type == Node.TEXT_NODE)
         {
             trimTrailingSpace(lexer, element, text);
         }
@@ -825,13 +974,21 @@ public class Node {
 
     /**
      * Is this node contained in a given tag?
+     * @param tag descendant tag
+     * @return <code>true</code> if node is contained in tag
      */
-    public boolean isDescendantOf(final TagId id) {
-        for (Node parent = this.parent; parent != null; parent = parent.parent) {
-            if (parent.is(id)) {
+    public boolean isDescendantOf(final Dict tag)
+    {
+        Node parent;
+
+        for (parent = this.parent; parent != null; parent = parent.parent)
+        {
+            if (parent.tag == tag)
+            {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -841,31 +998,32 @@ public class Node {
      * @param element document
      * @param doctype doctype node to insert at the beginning of element
      */
-    public static void insertDocType(final Lexer lexer, Node element, final Node doctype) {
-    	Node existing = lexer.root.findDocType();
-    	if (existing != null) {
-    		lexer.report.warning(lexer, element, doctype, ErrorCode.DISCARDING_UNEXPECTED);
-    	}
-    	else {
-    		lexer.report.warning(lexer, element, doctype, ErrorCode.DOCTYPE_AFTER_TAGS);
-    		while (!element.is(TagId.HTML)) {
-    			element = element.parent;
-    		}
-    		insertNodeBeforeElement(element, doctype);
-    	}
+    public static void insertDocType(final Lexer lexer, Node element, final Node doctype)
+    {
+        final TagTable tt = lexer.configuration.tt;
+
+        lexer.report.warning(lexer, element, doctype, Report.DOCTYPE_AFTER_TAGS);
+
+        while (element.tag != tt.tagHtml)
+        {
+            element = element.parent;
+        }
+
+        insertNodeBeforeElement(element, doctype);
     }
 
     /**
      * Find the body node.
+     * @param tt tag table
      * @return body node
      */
-    public Node findBody()
+    public Node findBody(final TagTable tt)
     {
         Node node;
 
         node = this.content;
 
-        while (node != null && !node.is(TagId.HTML))
+        while (node != null && node.tag != tt.tagHtml)
         {
             node = node.next;
         }
@@ -877,16 +1035,16 @@ public class Node {
 
         node = node.content;
 
-        while (node != null && !node.is(TagId.BODY) && !node.is(TagId.FRAMESET))
+        while (node != null && node.tag != tt.tagBody && node.tag != tt.tagFrameset)
         {
             node = node.next;
         }
 
-        if (node != null && node.is(TagId.FRAMESET))
+        if (node.tag == tt.tagFrameset)
         {
             node = node.content;
 
-            while (node != null && !node.is(TagId.NOFRAMES))
+            while (node != null && node.tag != tt.tagNoframes)
             {
                 node = node.next;
             }
@@ -894,7 +1052,7 @@ public class Node {
             if (node != null)
             {
                 node = node.content;
-                while (node != null && !node.is(TagId.BODY))
+                while (node != null && node.tag != tt.tagBody)
                 {
                     node = node.next;
                 }
@@ -908,8 +1066,9 @@ public class Node {
      * Is the node an element?
      * @return <code>true</code> if type is START_TAG | START_END_TAG
      */
-    public boolean isElement() {
-        return this.type == NodeType.StartTag || this.type == NodeType.StartEndTag;
+    public boolean isElement()
+    {
+        return this.type == START_TAG || this.type == START_END_TAG ? true : false;
     }
 
     /**
@@ -917,15 +1076,16 @@ public class Node {
      * assumes that node hasn't been inserted into the row.
      * @param row Row node
      * @param node Node which should be moved before the table
+     * @param tt tag table
      */
-    public static void moveBeforeTable(Node row, Node node)
+    public static void moveBeforeTable(final Node row, final Node node, final TagTable tt)
     {
         Node table;
 
         /* first find the table element */
         for (table = row.parent; table != null; table = table.parent)
         {
-            if (table.is(TagId.TABLE))
+            if (table.tag == tt.tagTable)
             {
                 if (table.parent.content == table)
                 {
@@ -953,15 +1113,15 @@ public class Node {
      * @param lexer Lexer
      * @param row row node
      */
-    public static void fixEmptyRow(Lexer lexer, Node row)
+    public static void fixEmptyRow(final Lexer lexer, final Node row)
     {
         Node cell;
 
         if (row.content == null)
         {
-            cell = lexer.inferredTag(TagId.TD);
+            cell = lexer.inferredTag("td");
             row.insertNodeAtEnd(cell);
-            lexer.report.warning(lexer, row, cell, ErrorCode.MISSING_STARTTAG);
+            lexer.report.warning(lexer, row, cell, Report.MISSING_STARTTAG);
         }
     }
 
@@ -971,20 +1131,13 @@ public class Node {
      * @param node Node
      * @param tag tag dictionary reference
      */
-    public static void coerceNode(final Lexer lexer, final Node node, final TagId tid, final boolean obsolete,
-    		final boolean unexpected) {
-    	final Dict tag = lexer.configuration.tt.lookup(tid);
-        Node tmp = lexer.inferredTag(tag.id);
-        if (obsolete) {
-        	lexer.report.warning(lexer, node, tmp, ErrorCode.OBSOLETE_ELEMENT);
-        } else if (unexpected) {
-        	lexer.report.warning(lexer, node, tmp, ErrorCode.REPLACING_UNEX_ELEMENT);
-        } else {
-        	lexer.report.warning(lexer, node, tmp, ErrorCode.REPLACING_ELEMENT);
-        }
+    public static void coerceNode(final Lexer lexer, final Node node, final Dict tag)
+    {
+        final Node tmp = lexer.inferredTag(tag.name);
+        lexer.report.warning(lexer, node, tmp, Report.OBSOLETE_ELEMENT);
         node.was = node.tag;
         node.tag = tag;
-        node.type = NodeType.StartTag;
+        node.type = START_TAG;
         node.implicit = true;
         node.element = tag.name;
     }
@@ -1028,37 +1181,19 @@ public class Node {
      * @param node will be inserted at the end of element
      * @return <code>true</code> if the node has been inserted
      */
-    public static boolean insertMisc(Node element, Node node) {
-        if (node.type == NodeType.CommentTag
-	            || node.type == NodeType.ProcInsTag
-	            || node.type == NodeType.CDATATag
-	            || node.type == NodeType.SectionTag
-	            || node.type == NodeType.AspTag
-	            || node.type == NodeType.JsteTag
-	            || node.type == NodeType.PhpTag) {
+    public static boolean insertMisc(final Node element, final Node node)
+    {
+        if (node.type == COMMENT_TAG
+            || node.type == PROC_INS_TAG
+            || node.type == CDATA_TAG
+            || node.type == SECTION_TAG
+            || node.type == ASP_TAG
+            || node.type == JSTE_TAG
+            || node.type == PHP_TAG
+            || node.type == XML_DECL)
+        {
             element.insertNodeAtEnd(node);
             return true;
-        }
-        
-        if (node.type == NodeType.XmlDecl) {
-        	Node root = element;
-            while (root != null && root.parent != null) {
-                root = root.parent;
-            }
-            if (root != null && !(root.content != null && root.content.type == NodeType.XmlDecl)) {
-            	root.insertNodeAtStart(node);
-            	return true;
-            }
-        }
-        
-        /* Declared empty tags seem to be slipping through
-         ** the cracks.  This is an experiment to figure out
-         ** a decent place to pick them up.
-         */
-        if (node.tag != null && node.isElement() && node.hasCM(Dict.CM_EMPTY) && node.is(TagId.UNKNOWN)
-        		&& (node.tag.versions & Versions.VERS_PROPRIETARY) != 0) {
-        	element.insertNodeAtEnd(node);
-        	return true;
         }
 
         return false;
@@ -1085,18 +1220,19 @@ public class Node {
      */
     public boolean hasOneChild()
     {
-        return (this.content != null && this.content.next == null);
+        return this.content != null && this.content.next == null;
     }
 
     /**
      * Find the "html" element.
+     * @param tt tag table
      * @return html node
      */
-    public Node findHTML()
+    public Node findHTML(final TagTable tt)
     {
         Node node;
 
-        for (node = this.content; node != null && !node.is(TagId.HTML); node = node.next)
+        for (node = this.content; node != null && node.tag != tt.tagHtml; node = node.next)
         {
             //
         }
@@ -1106,17 +1242,18 @@ public class Node {
 
     /**
      * Find the head tag.
+     * @param tt tag table
      * @return head node
      */
-    public Node findHEAD()
+    public Node findHEAD(final TagTable tt)
     {
         Node node;
 
-        node = this.findHTML();
+        node = this.findHTML(tt);
 
         if (node != null)
         {
-            for (node = node.content; node != null && !node.is(TagId.HEAD); node = node.next)
+            for (node = node.content; node != null && node.tag != tt.tagHead; node = node.next)
             {
                 //
             }
@@ -1125,10 +1262,10 @@ public class Node {
         return node;
     }
     
-    public Node findTITLE() {
-        Node node = findHEAD();
+    public Node findTITLE(final TagTable tt) {
+        Node node = findHEAD(tt);
         if (node != null) {
-            for (node = node.content; node != null && !node.is(TagId.TITLE); node = node.next) {
+            for (node = node.content; node != null && node.tag != tt.tagTitle; node = node.next) {
             	// do nothing
             }
         }
@@ -1186,9 +1323,9 @@ public class Node {
      * Add a css class to the node. If a class attribute already exists adds the value to the existing attribute.
      * @param classname css class name
      */
-    public void addClass(String classname)
+    public void addClass(final String classname)
     {
-        AttVal classattr = this.getAttrByName("class");
+        final AttVal classattr = this.getAttrByName("class");
 
         // if there already is a class attribute then append class name after a space
         if (classattr != null)
@@ -1202,48 +1339,59 @@ public class Node {
         }
     }
 
-    protected String toString(final String indent) {
-    	final StringBuilder sb = new StringBuilder();
-    	sb.append(type);
-    	if (element != null) {
-    		sb.append(':').append(element);
-    	}
-        if (type == NodeType.TextNode || type == NodeType.CommentTag || type == NodeType.ProcInsTag) {
-            if (textarray != null && start <= end) {
-                sb.append(" \"");
-                sb.append(TidyUtils.getString(textarray, start, end - start));
-                sb.append('"');
-            }
-            else {
-            	sb.append(" null");
-            }
-        }
-        for (AttVal av = attributes; av != null; av = av.next) {
-        	sb.append(' ').append(av.attribute).append('=');
-        	if (av.value == null) {
-        		sb.append("null");
-        	}
-        	else {
-        		sb.append('"').append(av.value).append('"');
-        	}
-        }
-        if (content != null) {
-        	sb.append("\n ").append(indent);
-        	sb.append(content.toString(indent + ' '));
-        }
-        if (next != null) {
-        	sb.append('\n').append(indent);
-        	sb.append(next.toString(indent));
-        }
-        return sb.toString();
-    }
-
     /**
      * @see java.lang.Object#toString()
      */
     @Override
-	public String toString() {
-    	return toString("");
+	public String toString()
+    {
+        String s = "";
+        Node n = this;
+
+        while (n != null)
+        {
+            s += "[Node type=";
+            s += NODETYPE_STRING[n.type];
+            s += ",element=";
+            if (n.element != null)
+            {
+                s += n.element;
+            }
+            else
+            {
+                s += "null";
+            }
+            if (n.type == TEXT_NODE || n.type == COMMENT_TAG || n.type == PROC_INS_TAG)
+            {
+                s += ",text=";
+                if (n.textarray != null && n.start <= n.end)
+                {
+                    s += "\"";
+                    s += TidyUtils.getString(n.textarray, n.start, n.end - n.start);
+                    s += "\"";
+                }
+                else
+                {
+                    s += "null";
+                }
+            }
+            s += ",content=";
+            if (n.content != null)
+            {
+                s += n.content.toString();
+            }
+            else
+            {
+                s += "null";
+            }
+            s += "]";
+            if (n.next != null)
+            {
+                s += ",";
+            }
+            n = n.next;
+        }
+        return s;
     }
 
     /**
@@ -1256,29 +1404,29 @@ public class Node {
         {
             switch (this.type)
             {
-                case RootNode:
+                case ROOT_NODE :
                     adapter = new DOMDocumentImpl(this);
                     break;
-                case StartTag:
-                case StartEndTag:
+                case START_TAG :
+                case START_END_TAG :
                     adapter = new DOMElementImpl(this);
                     break;
-                case DocTypeTag:
+                case DOCTYPE_TAG :
                     adapter = new DOMDocumentTypeImpl(this);
                     break;
-                case CommentTag:
+                case COMMENT_TAG :
                     adapter = new DOMCommentImpl(this);
                     break;
-                case TextNode:
+                case TEXT_NODE :
                     adapter = new DOMTextImpl(this);
                     break;
-                case CDATATag:
+                case CDATA_TAG :
                     adapter = new DOMCDATASectionImpl(this);
                     break;
-                case ProcInsTag:
+                case PROC_INS_TAG :
                     adapter = new DOMProcessingInstructionImpl(this);
                     break;
-                default:
+                default :
                     adapter = new DOMNodeImpl(this);
             }
         }
@@ -1290,16 +1438,14 @@ public class Node {
      * @param deep if true deep clone the node (also clones all the contained nodes)
      * @return cloned node
      */
-    protected Node cloneNode(boolean deep)
+    protected Node cloneNode(final boolean deep)
     {
-    	Node node = new Node(type, textarray, start, end);
+    	final Node node = new Node(type, textarray, start, end);
         node.parent = parent;
         node.closed = closed;
         node.implicit = implicit;
         node.tag = tag;
         node.element = element;
-        node.line = line;
-        node.column = column;
         if (attributes != null) {
         	node.attributes = (AttVal) attributes.clone();
         }
@@ -1320,7 +1466,7 @@ public class Node {
      * Setter for node type.
      * @param newType a valid node type constant
      */
-    protected void setType(NodeType newType)
+    protected void setType(final short newType)
     {
         this.type = newType;
     }
@@ -1358,7 +1504,7 @@ public class Node {
      */
     public boolean expectsContent()
     {
-        if (this.type != NodeType.StartTag)
+        if (this.type != Node.START_TAG)
         {
             return false;
         }
@@ -1374,94 +1520,6 @@ public class Node {
             return false;
         }
 
-        return true;
-    }
-    
-    public boolean is(final TagId id) {
-    	return tag != null && tag.id == id;
-    }
-    
-    public TagId getId() {
-    	return tag == null ? TagId.UNKNOWN : tag.id;
-    }
-
-	/** May id or name serve as anchor? */    
-    public boolean isAnchorElement() {
-		final TagId tid = getId();
-		return tid == TagId.A || tid == TagId.APPLET || tid == TagId.FORM
-				|| tid == TagId.FRAME || tid == TagId.IFRAME
-				|| tid == TagId.IMG || tid == TagId.MAP;
-	}
-    
-    /** Checks for content model flags */
-    public boolean hasCM(final int contentModel) {
-    	return tag != null && (tag.model & contentModel) != 0;
-    }
-    
-    public boolean isText() {
-    	return type == NodeType.TextNode;
-    }
-    
-    boolean hasMixedContent() {
-        for (Node node = content; node != null; node = node.next) {
-        	if (node.isText()) {
-        		return true;
-        	}
-        }
-        return false;
-    }
-
-    /** Finds parent container element */
-    Node findContainer() {
-    	Node node;
-        for (node = parent;
-              node != null && node.hasCM(Dict.CM_INLINE);
-              node = node.parent )
-            /**/;
-        return node;
-    }
-    
-    protected int getAttributeVersions(final AttVal attval) {
-    	if (attval == null || attval.dict == null) {
-            return Versions.VERS_UNKNOWN;
-    	}
-        if (tag == null || tag.attrvers == null) {
-            return attval.dict.getVersions();
-        }
-        if (tag.attrvers.containsKey(attval.dict.id)) {
-        	return tag.attrvers.get(attval.dict.id);
-        }
-        return (attval.dict.getVersions() & Versions.VERS_ALL) != 0
-                 ? Versions.VERS_UNKNOWN
-                 : attval.dict.getVersions();
-    }
-    
-    /* return the version of the attribute "id" of element "node" */
-    protected int getAttributeVersions(final AttrId id) {
-        if (tag == null || tag.attrvers == null) {
-            return Versions.VERS_UNKNOWN;
-        }
-        if (tag.attrvers.containsKey(id)) {
-        	return tag.attrvers.get(id);
-        }
-        return Versions.VERS_UNKNOWN;
-    }
-    
-    /* returns true if the element is a W3C defined element */
-    /* but the element/attribute combination is not         */
-    protected boolean attributeIsProprietary(final AttVal attval) {
-        if (attval == null) {
-            return false;
-        }
-        if (tag == null) {
-            return false;
-        }
-        if ((tag.versions & Versions.VERS_ALL) == 0) {
-            return false;
-        }
-        if ((getAttributeVersions(attval) & Versions.VERS_ALL) != 0) {
-            return false;
-        }
         return true;
     }
 }

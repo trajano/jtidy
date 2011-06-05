@@ -56,7 +56,6 @@ package org.w3c.tidy;
 import java.util.Hashtable;
 import java.util.Map;
 
-import static org.w3c.tidy.Versions.*;
 
 /**
  * HTML attribute hash table.
@@ -67,6 +66,97 @@ import static org.w3c.tidy.Versions.*;
  */
 public class AttributeTable
 {
+
+    /**
+     * href attribute.
+     */
+    protected static Attribute attrHref;
+
+    /**
+     * src attribute.
+     */
+    protected static Attribute attrSrc;
+
+    /**
+     * id attribute.
+     */
+    protected static Attribute attrId;
+
+    /**
+     * name attribute.
+     */
+    protected static Attribute attrName;
+
+    /**
+     * summary attribute.
+     */
+    protected static Attribute attrSummary;
+
+    /**
+     * alt attribute.
+     */
+    protected static Attribute attrAlt;
+
+    /**
+     * logdesc attribute.
+     */
+    protected static Attribute attrLongdesc;
+
+    /**
+     * usemap attribute.
+     */
+    protected static Attribute attrUsemap;
+
+    /**
+     * ismap attribute.
+     */
+    protected static Attribute attrIsmap;
+
+    /**
+     * language attribute.
+     */
+    protected static Attribute attrLanguage;
+
+    /**
+     * type attribute.
+     */
+    protected static Attribute attrType;
+
+    /**
+     * title attribute.
+     */
+    protected static Attribute attrTitle;
+
+    /**
+     * xmlns attribute.
+     */
+    protected static Attribute attrXmlns;
+
+    /**
+     * value attribute.
+     */
+    protected static Attribute attrValue;
+
+    /**
+     * content attribute.
+     */
+    protected static Attribute attrContent;
+
+    /**
+     * datafld attribute.
+     */
+    protected static Attribute attrDatafld;
+
+    /**
+     * width attribute.
+     */
+    protected static Attribute attrWidth;
+
+    /**
+     * height attribute.
+     */
+    protected static Attribute attrHeight;
+
     /**
      * attribute table instance.
      */
@@ -76,195 +166,184 @@ public class AttributeTable
      * all the known attributes.
      */
     private static final Attribute[] ATTRS = {
-    	new Attribute(AttrId.UNKNOWN,           "unknown!",          VERS_PROPRIETARY,  null         ), 
-    	new Attribute(AttrId.ABBR,              "abbr",              VERS_HTML40,       AttrCheckImpl.PCDATA    ), 
-    	new Attribute(AttrId.ACCEPT,            "accept",            VERS_ALL,          AttrCheckImpl.XTYPE     ), 
-    	new Attribute(AttrId.ACCEPT_CHARSET,    "accept-charset",    VERS_HTML40,       AttrCheckImpl.CHARSET   ), 
-    	new Attribute(AttrId.ACCESSKEY,         "accesskey",         VERS_HTML40,       AttrCheckImpl.CHARACTER ), 
-    	new Attribute(AttrId.ACTION,            "action",            VERS_ALL,          AttrCheckImpl.ACTION    ), 
-    	new Attribute(AttrId.ADD_DATE,          "add_date",          VERS_NETSCAPE,     AttrCheckImpl.PCDATA    ), /* A */
-    	new Attribute(AttrId.ALIGN,             "align",             VERS_ALL,          AttrCheckImpl.ALIGN     ), /* varies by element */
-    	new Attribute(AttrId.ALINK,             "alink",             VERS_LOOSE,        AttrCheckImpl.COLOR     ), 
-    	new Attribute(AttrId.ALT,               "alt",               VERS_ALL,          AttrCheckImpl.PCDATA    ), /* nowrap */
-    	new Attribute(AttrId.ARCHIVE,           "archive",           VERS_HTML40,       AttrCheckImpl.URLS      ), /* space or comma separated list */
-    	new Attribute(AttrId.AXIS,              "axis",              VERS_HTML40,       AttrCheckImpl.PCDATA    ), 
-    	new Attribute(AttrId.BACKGROUND,        "background",        VERS_LOOSE,        AttrCheckImpl.URL       ), 
-    	new Attribute(AttrId.BGCOLOR,           "bgcolor",           VERS_LOOSE,        AttrCheckImpl.COLOR     ), 
-    	new Attribute(AttrId.BGPROPERTIES,      "bgproperties",      VERS_PROPRIETARY,  AttrCheckImpl.PCDATA    ), /* BODY "fixed" fixes background */
-    	new Attribute(AttrId.BORDER,            "border",            VERS_ALL,          AttrCheckImpl.BORDER    ), /* like LENGTH + "border" */
-    	new Attribute(AttrId.BORDERCOLOR,       "bordercolor",       VERS_MICROSOFT,    AttrCheckImpl.COLOR     ), /* used on TABLE */
-    	new Attribute(AttrId.BOTTOMMARGIN,      "bottommargin",      VERS_MICROSOFT,    AttrCheckImpl.NUMBER    ), /* used on BODY */
-    	new Attribute(AttrId.CELLPADDING,       "cellpadding",       VERS_FROM32,       AttrCheckImpl.LENGTH    ), /* % or pixel values */
-    	new Attribute(AttrId.CELLSPACING,       "cellspacing",       VERS_FROM32,       AttrCheckImpl.LENGTH    ), 
-    	new Attribute(AttrId.CHAR,              "char",              VERS_HTML40,       AttrCheckImpl.CHARACTER ), 
-    	new Attribute(AttrId.CHAROFF,           "charoff",           VERS_HTML40,       AttrCheckImpl.LENGTH    ), 
-    	new Attribute(AttrId.CHARSET,           "charset",           VERS_HTML40,       AttrCheckImpl.CHARSET   ), 
-    	new Attribute(AttrId.CHECKED,           "checked",           VERS_ALL,          AttrCheckImpl.BOOL      ), /* i.e. "checked" or absent */
-    	new Attribute(AttrId.CITE,              "cite",              VERS_HTML40,       AttrCheckImpl.URL       ), 
-    	new Attribute(AttrId.CLASS,             "class",             VERS_HTML40,       AttrCheckImpl.PCDATA    ), 
-    	new Attribute(AttrId.CLASSID,           "classid",           VERS_HTML40,       AttrCheckImpl.URL       ), 
-    	new Attribute(AttrId.CLEAR,             "clear",             VERS_LOOSE,        AttrCheckImpl.CLEAR     ), /* BR: left, right, all */
-    	new Attribute(AttrId.CODE,              "code",              VERS_LOOSE,        AttrCheckImpl.PCDATA    ), /* APPLET */
-    	new Attribute(AttrId.CODEBASE,          "codebase",          VERS_HTML40,       AttrCheckImpl.URL       ), /* OBJECT */
-    	new Attribute(AttrId.CODETYPE,          "codetype",          VERS_HTML40,       AttrCheckImpl.XTYPE     ), /* OBJECT */
-    	new Attribute(AttrId.COLOR,             "color",             VERS_LOOSE,        AttrCheckImpl.COLOR     ), /* BASEFONT, FONT */
-    	new Attribute(AttrId.COLS,              "cols",              VERS_IFRAME,       AttrCheckImpl.COLS      ), /* TABLE & FRAMESET */
-    	new Attribute(AttrId.COLSPAN,           "colspan",           VERS_FROM32,       AttrCheckImpl.NUMBER    ), 
-    	new Attribute(AttrId.COMPACT,           "compact",           VERS_ALL,          AttrCheckImpl.BOOL      ), /* lists */
-    	new Attribute(AttrId.CONTENT,           "content",           VERS_ALL,          AttrCheckImpl.PCDATA    ), 
-    	new Attribute(AttrId.COORDS,            "coords",            VERS_FROM32,       AttrCheckImpl.COORDS    ), /* AREA, A */
-    	new Attribute(AttrId.DATA,              "data",              VERS_HTML40,       AttrCheckImpl.URL       ), /* OBJECT */
-    	new Attribute(AttrId.DATAFLD,           "datafld",           VERS_MICROSOFT,    AttrCheckImpl.PCDATA    ), /* used on DIV, IMG */
-    	new Attribute(AttrId.DATAFORMATAS,      "dataformatas",      VERS_MICROSOFT,    AttrCheckImpl.PCDATA    ), /* used on DIV, IMG */
-    	new Attribute(AttrId.DATAPAGESIZE,      "datapagesize",      VERS_MICROSOFT,    AttrCheckImpl.NUMBER    ), /* used on DIV, IMG */
-    	new Attribute(AttrId.DATASRC,           "datasrc",           VERS_MICROSOFT,    AttrCheckImpl.URL       ), /* used on TABLE */
-    	new Attribute(AttrId.DATETIME,          "datetime",          VERS_HTML40,       AttrCheckImpl.DATE      ), /* INS, DEL */
-    	new Attribute(AttrId.DECLARE,           "declare",           VERS_HTML40,       AttrCheckImpl.BOOL      ), /* OBJECT */
-    	new Attribute(AttrId.DEFER,             "defer",             VERS_HTML40,       AttrCheckImpl.BOOL      ), /* SCRIPT */
-    	new Attribute(AttrId.DIR,               "dir",               VERS_HTML40,       AttrCheckImpl.TEXTDIR   ), /* ltr or rtl */
-    	new Attribute(AttrId.DISABLED,          "disabled",          VERS_HTML40,       AttrCheckImpl.BOOL      ), /* form fields */
-    	new Attribute(AttrId.ENCODING,          "encoding",          VERS_XML,          AttrCheckImpl.PCDATA    ), /* <?xml?> */
-    	new Attribute(AttrId.ENCTYPE,           "enctype",           VERS_ALL,          AttrCheckImpl.XTYPE     ), /* FORM */
-    	new Attribute(AttrId.FACE,              "face",              VERS_LOOSE,        AttrCheckImpl.PCDATA    ), /* BASEFONT, FONT */
-    	new Attribute(AttrId.FOR,               "for",               VERS_HTML40,       AttrCheckImpl.IDREF     ), /* LABEL */
-    	new Attribute(AttrId.FRAME,             "frame",             VERS_HTML40,       AttrCheckImpl.TFRAME    ), /* TABLE */
-    	new Attribute(AttrId.FRAMEBORDER,       "frameborder",       VERS_FRAMESET,     AttrCheckImpl.FBORDER   ), /* 0 or 1 */
-    	new Attribute(AttrId.FRAMESPACING,      "framespacing",      VERS_PROPRIETARY,  AttrCheckImpl.NUMBER    ), 
-    	new Attribute(AttrId.GRIDX,             "gridx",             VERS_PROPRIETARY,  AttrCheckImpl.NUMBER    ), /* TABLE Adobe golive*/
-    	new Attribute(AttrId.GRIDY,             "gridy",             VERS_PROPRIETARY,  AttrCheckImpl.NUMBER    ), /* TABLE Adobe golive */
-    	new Attribute(AttrId.HEADERS,           "headers",           VERS_HTML40,       AttrCheckImpl.IDREFS    ), /* table cells */
-    	new Attribute(AttrId.HEIGHT,            "height",            VERS_ALL,          AttrCheckImpl.LENGTH    ), /* pixels only for TH/TD */
-    	new Attribute(AttrId.HREF,              "href",              VERS_ALL,          AttrCheckImpl.URL       ), /* A, AREA, LINK and BASE */
-    	new Attribute(AttrId.HREFLANG,          "hreflang",          VERS_HTML40,       AttrCheckImpl.LANG      ), /* A, LINK */
-    	new Attribute(AttrId.HSPACE,            "hspace",            VERS_ALL,          AttrCheckImpl.NUMBER    ), /* APPLET, IMG, OBJECT */
-    	new Attribute(AttrId.HTTP_EQUIV,        "http-equiv",        VERS_ALL,          AttrCheckImpl.PCDATA    ), /* META */
-    	new Attribute(AttrId.ID,                "id",                VERS_HTML40,       AttrCheckImpl.IDDEF     ), 
-    	new Attribute(AttrId.ISMAP,             "ismap",             VERS_ALL,          AttrCheckImpl.BOOL      ), /* IMG */
-    	new Attribute(AttrId.LABEL,             "label",             VERS_HTML40,       AttrCheckImpl.PCDATA    ), /* OPT, OPTGROUP */
-    	new Attribute(AttrId.LANG,              "lang",              VERS_HTML40,       AttrCheckImpl.LANG      ), 
-    	new Attribute(AttrId.LANGUAGE,          "language",          VERS_LOOSE,        AttrCheckImpl.PCDATA    ), /* SCRIPT */
-    	new Attribute(AttrId.LAST_MODIFIED,     "last_modified",     VERS_NETSCAPE,     AttrCheckImpl.PCDATA    ), /* A */
-    	new Attribute(AttrId.LAST_VISIT,        "last_visit",        VERS_NETSCAPE,     AttrCheckImpl.PCDATA    ), /* A */
-    	new Attribute(AttrId.LEFTMARGIN,        "leftmargin",        VERS_MICROSOFT,    AttrCheckImpl.NUMBER    ), /* used on BODY */
-    	new Attribute(AttrId.LINK,              "link",              VERS_LOOSE,        AttrCheckImpl.COLOR     ), /* BODY */
-    	new Attribute(AttrId.LONGDESC,          "longdesc",          VERS_HTML40,       AttrCheckImpl.URL       ), /* IMG */
-    	new Attribute(AttrId.LOWSRC,            "lowsrc",            VERS_PROPRIETARY,  AttrCheckImpl.URL       ), /* IMG */
-    	new Attribute(AttrId.MARGINHEIGHT,      "marginheight",      VERS_IFRAME,       AttrCheckImpl.NUMBER    ), /* FRAME, IFRAME, BODY */
-    	new Attribute(AttrId.MARGINWIDTH,       "marginwidth",       VERS_IFRAME,       AttrCheckImpl.NUMBER    ), /* ditto */
-    	new Attribute(AttrId.MAXLENGTH,         "maxlength",         VERS_ALL,          AttrCheckImpl.NUMBER    ), /* INPUT */
-    	new Attribute(AttrId.MEDIA,             "media",             VERS_HTML40,       AttrCheckImpl.MEDIA     ), /* STYLE, LINK */
-    	new Attribute(AttrId.METHOD,            "method",            VERS_ALL,          AttrCheckImpl.FSUBMIT   ), /* FORM: get or post */
-    	new Attribute(AttrId.MULTIPLE,          "multiple",          VERS_ALL,          AttrCheckImpl.BOOL      ), /* SELECT */
-    	new Attribute(AttrId.NAME,              "name",              VERS_ALL,          AttrCheckImpl.NAME      ), 
-    	new Attribute(AttrId.NOHREF,            "nohref",            VERS_FROM32,       AttrCheckImpl.BOOL      ), /* AREA */
-    	new Attribute(AttrId.NORESIZE,          "noresize",          VERS_FRAMESET,     AttrCheckImpl.BOOL      ), /* FRAME */
-    	new Attribute(AttrId.NOSHADE,           "noshade",           VERS_LOOSE,        AttrCheckImpl.BOOL      ), /* HR */
-    	new Attribute(AttrId.NOWRAP,            "nowrap",            VERS_LOOSE,        AttrCheckImpl.BOOL      ), /* table cells */
-    	new Attribute(AttrId.OBJECT,            "object",            VERS_HTML40_LOOSE, AttrCheckImpl.PCDATA    ), /* APPLET */
-    	new Attribute(AttrId.OnAFTERUPDATE,     "onafterupdate",     VERS_MICROSOFT,    AttrCheckImpl.SCRIPT    ), 
-    	new Attribute(AttrId.OnBEFOREUNLOAD,    "onbeforeunload",    VERS_MICROSOFT,    AttrCheckImpl.SCRIPT    ), 
-    	new Attribute(AttrId.OnBEFOREUPDATE,    "onbeforeupdate",    VERS_MICROSOFT,    AttrCheckImpl.SCRIPT    ), 
-    	new Attribute(AttrId.OnBLUR,            "onblur",            VERS_EVENTS,       AttrCheckImpl.SCRIPT    ), /* event */
-    	new Attribute(AttrId.OnCHANGE,          "onchange",          VERS_EVENTS,       AttrCheckImpl.SCRIPT    ), /* event */
-    	new Attribute(AttrId.OnCLICK,           "onclick",           VERS_EVENTS,       AttrCheckImpl.SCRIPT    ), /* event */
-    	new Attribute(AttrId.OnDATAAVAILABLE,   "ondataavailable",   VERS_MICROSOFT,    AttrCheckImpl.SCRIPT    ), /* object, applet */
-    	new Attribute(AttrId.OnDATASETCHANGED,  "ondatasetchanged",  VERS_MICROSOFT,    AttrCheckImpl.SCRIPT    ), /* object, applet */
-    	new Attribute(AttrId.OnDATASETCOMPLETE, "ondatasetcomplete", VERS_MICROSOFT,    AttrCheckImpl.SCRIPT    ), 
-    	new Attribute(AttrId.OnDBLCLICK,        "ondblclick",        VERS_EVENTS,       AttrCheckImpl.SCRIPT    ), /* event */
-    	new Attribute(AttrId.OnERRORUPDATE,     "onerrorupdate",     VERS_MICROSOFT,    AttrCheckImpl.SCRIPT    ), /* form fields */
-    	new Attribute(AttrId.OnFOCUS,           "onfocus",           VERS_EVENTS,       AttrCheckImpl.SCRIPT    ), /* event */
-    	new Attribute(AttrId.OnKEYDOWN,         "onkeydown",         VERS_EVENTS,       AttrCheckImpl.SCRIPT    ), /* event */
-    	new Attribute(AttrId.OnKEYPRESS,        "onkeypress",        VERS_EVENTS,       AttrCheckImpl.SCRIPT    ), /* event */
-    	new Attribute(AttrId.OnKEYUP,           "onkeyup",           VERS_EVENTS,       AttrCheckImpl.SCRIPT    ), /* event */
-    	new Attribute(AttrId.OnLOAD,            "onload",            VERS_EVENTS,       AttrCheckImpl.SCRIPT    ), /* event */
-    	new Attribute(AttrId.OnMOUSEDOWN,       "onmousedown",       VERS_EVENTS,       AttrCheckImpl.SCRIPT    ), /* event */
-    	new Attribute(AttrId.OnMOUSEMOVE,       "onmousemove",       VERS_EVENTS,       AttrCheckImpl.SCRIPT    ), /* event */
-    	new Attribute(AttrId.OnMOUSEOUT,        "onmouseout",        VERS_EVENTS,       AttrCheckImpl.SCRIPT    ), /* event */
-    	new Attribute(AttrId.OnMOUSEOVER,       "onmouseover",       VERS_EVENTS,       AttrCheckImpl.SCRIPT    ), /* event */
-    	new Attribute(AttrId.OnMOUSEUP,         "onmouseup",         VERS_EVENTS,       AttrCheckImpl.SCRIPT    ), /* event */
-    	new Attribute(AttrId.OnRESET,           "onreset",           VERS_EVENTS,       AttrCheckImpl.SCRIPT    ), /* event */
-    	new Attribute(AttrId.OnROWENTER,        "onrowenter",        VERS_MICROSOFT,    AttrCheckImpl.SCRIPT    ), /* form fields */
-    	new Attribute(AttrId.OnROWEXIT,         "onrowexit",         VERS_MICROSOFT,    AttrCheckImpl.SCRIPT    ), /* form fields */
-    	new Attribute(AttrId.OnSELECT,          "onselect",          VERS_EVENTS,       AttrCheckImpl.SCRIPT    ), /* event */
-    	new Attribute(AttrId.OnSUBMIT,          "onsubmit",          VERS_EVENTS,       AttrCheckImpl.SCRIPT    ), /* event */
-    	new Attribute(AttrId.OnUNLOAD,          "onunload",          VERS_EVENTS,       AttrCheckImpl.SCRIPT    ), /* event */
-    	new Attribute(AttrId.PROFILE,           "profile",           VERS_HTML40,       AttrCheckImpl.URL       ), /* HEAD */
-    	new Attribute(AttrId.PROMPT,            "prompt",            VERS_LOOSE,        AttrCheckImpl.PCDATA    ), /* ISINDEX */
-    	new Attribute(AttrId.RBSPAN,            "rbspan",            VERS_XHTML11,      AttrCheckImpl.NUMBER    ), /* ruby markup */
-    	new Attribute(AttrId.READONLY,          "readonly",          VERS_HTML40,       AttrCheckImpl.BOOL      ), /* form fields */
-    	new Attribute(AttrId.REL,               "rel",               VERS_ALL,          AttrCheckImpl.LINKTYPES ), 
-    	new Attribute(AttrId.REV,               "rev",               VERS_ALL,          AttrCheckImpl.LINKTYPES ), 
-    	new Attribute(AttrId.RIGHTMARGIN,       "rightmargin",       VERS_MICROSOFT,    AttrCheckImpl.NUMBER    ), /* used on BODY */
-    	new Attribute(AttrId.ROWS,              "rows",              VERS_ALL,          AttrCheckImpl.NUMBER    ), /* TEXTAREA */
-    	new Attribute(AttrId.ROWSPAN,           "rowspan",           VERS_ALL,          AttrCheckImpl.NUMBER    ), /* table cells */
-    	new Attribute(AttrId.RULES,             "rules",             VERS_HTML40,       AttrCheckImpl.TRULES    ), /* TABLE */
-    	new Attribute(AttrId.SCHEME,            "scheme",            VERS_HTML40,       AttrCheckImpl.PCDATA    ), /* META */
-    	new Attribute(AttrId.SCOPE,             "scope",             VERS_HTML40,       AttrCheckImpl.SCOPE     ), /* table cells */
-    	new Attribute(AttrId.SCROLLING,         "scrolling",         VERS_IFRAME,       AttrCheckImpl.SCROLL    ), /* yes, no or auto */
-    	new Attribute(AttrId.SELECTED,          "selected",          VERS_ALL,          AttrCheckImpl.BOOL      ), /* OPTION */
-    	new Attribute(AttrId.SHAPE,             "shape",             VERS_FROM32,       AttrCheckImpl.SHAPE     ), /* AREA, A */
-    	new Attribute(AttrId.SHOWGRID,          "showgrid",          VERS_PROPRIETARY,  AttrCheckImpl.BOOL      ), /* TABLE Adobe golive */
-    	new Attribute(AttrId.SHOWGRIDX,         "showgridx",         VERS_PROPRIETARY,  AttrCheckImpl.BOOL      ), /* TABLE Adobe golive*/
-    	new Attribute(AttrId.SHOWGRIDY,         "showgridy",         VERS_PROPRIETARY,  AttrCheckImpl.BOOL      ), /* TABLE Adobe golive*/
-    	new Attribute(AttrId.SIZE,              "size",              VERS_LOOSE,        AttrCheckImpl.NUMBER    ), /* HR, FONT, BASEFONT, SELECT */
-    	new Attribute(AttrId.SPAN,              "span",              VERS_HTML40,       AttrCheckImpl.NUMBER    ), /* COL, COLGROUP */
-    	new Attribute(AttrId.SRC,               "src",               VERS_ALL,          AttrCheckImpl.URL       ), /* IMG, FRAME, IFRAME */
-    	new Attribute(AttrId.STANDBY,           "standby",           VERS_HTML40,       AttrCheckImpl.PCDATA    ), /* OBJECT */
-    	new Attribute(AttrId.START,             "start",             VERS_ALL,          AttrCheckImpl.NUMBER    ), /* OL */
-    	new Attribute(AttrId.STYLE,             "style",             VERS_HTML40,       AttrCheckImpl.PCDATA    ), 
-    	new Attribute(AttrId.SUMMARY,           "summary",           VERS_HTML40,       AttrCheckImpl.PCDATA    ), /* TABLE */
-    	new Attribute(AttrId.TABINDEX,          "tabindex",          VERS_HTML40,       AttrCheckImpl.NUMBER    ), /* fields, OBJECT  and A */
-    	new Attribute(AttrId.TARGET,            "target",            VERS_HTML40,       AttrCheckImpl.TARGET    ), /* names a frame/window */
-    	new Attribute(AttrId.TEXT,              "text",              VERS_LOOSE,        AttrCheckImpl.COLOR     ), /* BODY */
-    	new Attribute(AttrId.TITLE,             "title",             VERS_HTML40,       AttrCheckImpl.PCDATA    ), /* text tool tip */
-    	new Attribute(AttrId.TOPMARGIN,         "topmargin",         VERS_MICROSOFT,    AttrCheckImpl.NUMBER    ), /* used on BODY */
-    	new Attribute(AttrId.TYPE,              "type",              VERS_FROM32,       AttrCheckImpl.TYPE      ), /* also used by SPACER */
-    	new Attribute(AttrId.USEMAP,            "usemap",            VERS_ALL,          AttrCheckImpl.URL       ), /* things with images */
-    	new Attribute(AttrId.VALIGN,            "valign",            VERS_FROM32,       AttrCheckImpl.VALIGN    ), 
-    	new Attribute(AttrId.VALUE,             "value",             VERS_ALL,          AttrCheckImpl.PCDATA    ), 
-    	new Attribute(AttrId.VALUETYPE,         "valuetype",         VERS_HTML40,       AttrCheckImpl.VTYPE     ), /* PARAM: data, ref, object */
-    	new Attribute(AttrId.VERSION,           "version",           VERS_ALL|VERS_XML, AttrCheckImpl.PCDATA    ), /* HTML <?xml?> */
-    	new Attribute(AttrId.VLINK,             "vlink",             VERS_LOOSE,        AttrCheckImpl.COLOR     ), /* BODY */
-    	new Attribute(AttrId.VSPACE,            "vspace",            VERS_LOOSE,        AttrCheckImpl.NUMBER    ), /* IMG, OBJECT, APPLET */
-    	new Attribute(AttrId.WIDTH,             "width",             VERS_ALL,          AttrCheckImpl.LENGTH    ), /* pixels only for TD/TH */
-    	new Attribute(AttrId.WRAP,              "wrap",              VERS_NETSCAPE,     AttrCheckImpl.PCDATA    ), /* textarea */
-    	new Attribute(AttrId.XML_LANG,          "xml:lang",          VERS_XML,          AttrCheckImpl.LANG      ), /* XML language */
-    	new Attribute(AttrId.XML_SPACE,         "xml:space",         VERS_XML,          AttrCheckImpl.PCDATA    ), /* XML white space */
-
-    	/* todo: VERS_ALL is wrong! */
-    	new Attribute(AttrId.XMLNS,             "xmlns",             VERS_ALL,          AttrCheckImpl.PCDATA    ), /* name space */
-    	new Attribute(AttrId.EVENT,             "event",             VERS_HTML40,       AttrCheckImpl.PCDATA    ), /* reserved for <script> */
-    	new Attribute(AttrId.METHODS,           "methods",           VERS_HTML20,       AttrCheckImpl.PCDATA    ), /* for <a>, never implemented */
-    	new Attribute(AttrId.N,                 "n",                 VERS_HTML20,       AttrCheckImpl.PCDATA    ), /* for <nextid> */
-    	new Attribute(AttrId.SDAFORM,           "sdaform",           VERS_HTML20,       AttrCheckImpl.PCDATA    ), /* SDATA attribute in HTML 2.0 */
-    	new Attribute(AttrId.SDAPREF,           "sdapref",           VERS_HTML20,       AttrCheckImpl.PCDATA    ), /* SDATA attribute in HTML 2.0 */
-    	new Attribute(AttrId.SDASUFF,           "sdasuff",           VERS_HTML20,       AttrCheckImpl.PCDATA    ), /* SDATA attribute in HTML 2.0 */
-    	new Attribute(AttrId.URN,               "urn",               VERS_HTML20,       AttrCheckImpl.PCDATA    ), /* for <a>, never implemented */
+        new Attribute("abbr", Dict.VERS_HTML40, AttrCheckImpl.TEXT),
+        new Attribute("accept-charset", Dict.VERS_HTML40, AttrCheckImpl.CHARSET),
+        new Attribute("accept", Dict.VERS_ALL, AttrCheckImpl.TYPE),
+        new Attribute("accesskey", Dict.VERS_HTML40, AttrCheckImpl.CHARACTER),
+        new Attribute("action", Dict.VERS_ALL, AttrCheckImpl.URL),
+        new Attribute("add_date", Dict.VERS_NETSCAPE, AttrCheckImpl.TEXT), // A
+        new Attribute("align", Dict.VERS_ALL, AttrCheckImpl.ALIGN), // set varies with element
+        new Attribute("alink", Dict.VERS_LOOSE, AttrCheckImpl.COLOR),
+        new Attribute("alt", Dict.VERS_ALL, AttrCheckImpl.TEXT),
+        new Attribute("archive", Dict.VERS_HTML40, AttrCheckImpl.URLS), // space or comma separated list
+        new Attribute("axis", Dict.VERS_HTML40, AttrCheckImpl.TEXT),
+        new Attribute("background", Dict.VERS_LOOSE, AttrCheckImpl.URL),
+        new Attribute("bgcolor", Dict.VERS_LOOSE, AttrCheckImpl.COLOR),
+        new Attribute("bgproperties", Dict.VERS_PROPRIETARY, AttrCheckImpl.TEXT), // BODY "fixed" fixes background
+        new Attribute("border", Dict.VERS_ALL, AttrCheckImpl.BOOL), // like LENGTH + "border"
+        new Attribute("bordercolor", Dict.VERS_MICROSOFT, AttrCheckImpl.COLOR), // used on TABLE
+        new Attribute("bottommargin", Dict.VERS_MICROSOFT, AttrCheckImpl.NUMBER), // used on BODY
+        new Attribute("cellpadding", Dict.VERS_FROM32, AttrCheckImpl.LENGTH), // % or pixel values
+        new Attribute("cellspacing", Dict.VERS_FROM32, AttrCheckImpl.LENGTH),
+        new Attribute("char", Dict.VERS_HTML40, AttrCheckImpl.CHARACTER),
+        new Attribute("charoff", Dict.VERS_HTML40, AttrCheckImpl.LENGTH),
+        new Attribute("charset", Dict.VERS_HTML40, AttrCheckImpl.CHARSET),
+        new Attribute("checked", Dict.VERS_ALL, AttrCheckImpl.BOOL), // i.e. "checked" or absent
+        new Attribute("cite", Dict.VERS_HTML40, AttrCheckImpl.URL),
+        new Attribute("class", Dict.VERS_HTML40, AttrCheckImpl.TEXT),
+        new Attribute("classid", Dict.VERS_HTML40, AttrCheckImpl.URL),
+        new Attribute("clear", Dict.VERS_LOOSE, AttrCheckImpl.CLEAR), // BR: left, right, all
+        new Attribute("code", Dict.VERS_LOOSE, AttrCheckImpl.TEXT), // APPLET
+        new Attribute("codebase", Dict.VERS_HTML40, AttrCheckImpl.URL), // OBJECT
+        new Attribute("codetype", Dict.VERS_HTML40, AttrCheckImpl.TYPE), // OBJECT
+        new Attribute("color", Dict.VERS_LOOSE, AttrCheckImpl.COLOR), // BASEFONT, FONT
+        new Attribute("cols", Dict.VERS_IFRAME, AttrCheckImpl.COLS), // TABLE & FRAMESET
+        new Attribute("colspan", Dict.VERS_FROM32, AttrCheckImpl.NUMBER),
+        new Attribute("compact", Dict.VERS_ALL, AttrCheckImpl.BOOL), // lists
+        new Attribute("content", Dict.VERS_ALL, AttrCheckImpl.TEXT), // META
+        new Attribute("coords", Dict.VERS_FROM32, AttrCheckImpl.COORDS), // AREA, A
+        new Attribute("data", Dict.VERS_HTML40, AttrCheckImpl.URL), // OBJECT
+        new Attribute("datafld", Dict.VERS_MICROSOFT, AttrCheckImpl.TEXT), // used on DIV, IMG
+        new Attribute("dataformatas", Dict.VERS_MICROSOFT, AttrCheckImpl.TEXT), // used on DIV, IMG
+        new Attribute("datapagesize", Dict.VERS_MICROSOFT, AttrCheckImpl.NUMBER), // used on DIV, IMG
+        new Attribute("datasrc", Dict.VERS_MICROSOFT, AttrCheckImpl.URL), // used on TABLE
+        new Attribute("datetime", Dict.VERS_HTML40, AttrCheckImpl.DATE), // INS, DEL
+        new Attribute("declare", Dict.VERS_HTML40, AttrCheckImpl.BOOL), // OBJECT
+        new Attribute("defer", Dict.VERS_HTML40, AttrCheckImpl.BOOL), // SCRIPT
+        new Attribute("dir", Dict.VERS_HTML40, AttrCheckImpl.TEXTDIR), // ltr or rtl
+        new Attribute("disabled", Dict.VERS_HTML40, AttrCheckImpl.BOOL), // form fields
+        new Attribute("enctype", Dict.VERS_ALL, AttrCheckImpl.TYPE), // FORM
+        new Attribute("face", Dict.VERS_LOOSE, AttrCheckImpl.TEXT), // BASEFONT, FONT
+        new Attribute("for", Dict.VERS_HTML40, AttrCheckImpl.IDREF), // LABEL
+        new Attribute("frame", Dict.VERS_HTML40, AttrCheckImpl.TFRAME), // TABLE
+        new Attribute("frameborder", (short) (Dict.VERS_FRAMESET | Dict.VERS_IFRAME), AttrCheckImpl.FBORDER), // 0 or 1
+        new Attribute("framespacing", Dict.VERS_PROPRIETARY, AttrCheckImpl.NUMBER), // pixel value
+        new Attribute("gridx", Dict.VERS_PROPRIETARY, AttrCheckImpl.NUMBER), // TABLE Adobe golive
+        new Attribute("gridy", Dict.VERS_PROPRIETARY, AttrCheckImpl.NUMBER), // TABLE Adobe golive
+        new Attribute("headers", Dict.VERS_HTML40, AttrCheckImpl.IDREF), // table cells
+        new Attribute("height", Dict.VERS_ALL, AttrCheckImpl.LENGTH), // pixels only for TH/TD
+        new Attribute("href", Dict.VERS_ALL, AttrCheckImpl.URL), // A, AREA, LINK and BASE
+        new Attribute("hreflang", Dict.VERS_HTML40, AttrCheckImpl.LANG), // A, LINK
+        new Attribute("hspace", Dict.VERS_ALL, AttrCheckImpl.NUMBER), // APPLET, IMG, OBJECT
+        new Attribute("http-equiv", Dict.VERS_ALL, AttrCheckImpl.TEXT), // META
+        new Attribute("id", Dict.VERS_HTML40, AttrCheckImpl.ID),
+        new Attribute("ismap", Dict.VERS_ALL, AttrCheckImpl.BOOL), // IMG
+        new Attribute("label", Dict.VERS_HTML40, AttrCheckImpl.TEXT), // OPT, OPTGROUP
+        new Attribute("lang", Dict.VERS_HTML40, AttrCheckImpl.LANG),
+        new Attribute("language", Dict.VERS_LOOSE, AttrCheckImpl.TEXT), // SCRIPT
+        new Attribute("last_modified", Dict.VERS_NETSCAPE, AttrCheckImpl.TEXT), // A
+        new Attribute("last_visit", Dict.VERS_NETSCAPE, AttrCheckImpl.TEXT), // A
+        new Attribute("leftmargin", Dict.VERS_MICROSOFT, AttrCheckImpl.NUMBER), // used on BODY
+        new Attribute("link", Dict.VERS_LOOSE, AttrCheckImpl.COLOR), // BODY
+        new Attribute("longdesc", Dict.VERS_HTML40, AttrCheckImpl.URL), // IMG
+        new Attribute("lowsrc", Dict.VERS_PROPRIETARY, AttrCheckImpl.URL), // IMG
+        new Attribute("marginheight", Dict.VERS_IFRAME, AttrCheckImpl.NUMBER), // FRAME, IFRAME, BODY
+        new Attribute("marginwidth", Dict.VERS_IFRAME, AttrCheckImpl.NUMBER), // ditto
+        new Attribute("maxlength", Dict.VERS_ALL, AttrCheckImpl.NUMBER), // INPUT
+        new Attribute("media", Dict.VERS_HTML40, AttrCheckImpl.MEDIA), // STYLE, LINK
+        new Attribute("method", Dict.VERS_ALL, AttrCheckImpl.FSUBMIT), // FORM: get or post
+        new Attribute("multiple", Dict.VERS_ALL, AttrCheckImpl.BOOL), // SELECT
+        new Attribute("name", Dict.VERS_ALL, AttrCheckImpl.NAME),
+        new Attribute("nohref", Dict.VERS_FROM32, AttrCheckImpl.BOOL), // AREA
+        new Attribute("noresize", Dict.VERS_FRAMESET, AttrCheckImpl.BOOL), // FRAME
+        new Attribute("noshade", Dict.VERS_LOOSE, AttrCheckImpl.BOOL), // HR
+        new Attribute("nowrap", Dict.VERS_LOOSE, AttrCheckImpl.BOOL), // table cells
+        new Attribute("object", Dict.VERS_HTML40_LOOSE, AttrCheckImpl.TEXT), // APPLET
+        new Attribute("onblur", Dict.VERS_EVENTS, AttrCheckImpl.SCRIPT), // event
+        new Attribute("onchange", Dict.VERS_EVENTS, AttrCheckImpl.SCRIPT), // event
+        new Attribute("onclick", Dict.VERS_EVENTS, AttrCheckImpl.SCRIPT), // event
+        new Attribute("ondblclick", Dict.VERS_EVENTS, AttrCheckImpl.SCRIPT), // event
+        new Attribute("onkeydown", Dict.VERS_EVENTS, AttrCheckImpl.SCRIPT), // event
+        new Attribute("onkeypress", Dict.VERS_EVENTS, AttrCheckImpl.SCRIPT), // event
+        new Attribute("onkeyup", Dict.VERS_EVENTS, AttrCheckImpl.SCRIPT), // event
+        new Attribute("onload", Dict.VERS_EVENTS, AttrCheckImpl.SCRIPT), // event
+        new Attribute("onmousedown", Dict.VERS_EVENTS, AttrCheckImpl.SCRIPT), // event
+        new Attribute("onmousemove", Dict.VERS_EVENTS, AttrCheckImpl.SCRIPT), // event
+        new Attribute("onmouseout", Dict.VERS_EVENTS, AttrCheckImpl.SCRIPT), // event
+        new Attribute("onmouseover", Dict.VERS_EVENTS, AttrCheckImpl.SCRIPT), // event
+        new Attribute("onmouseup", Dict.VERS_EVENTS, AttrCheckImpl.SCRIPT), // event
+        new Attribute("onsubmit", Dict.VERS_EVENTS, AttrCheckImpl.SCRIPT), // event
+        new Attribute("onreset", Dict.VERS_EVENTS, AttrCheckImpl.SCRIPT), // event
+        new Attribute("onselect", Dict.VERS_EVENTS, AttrCheckImpl.SCRIPT), // event
+        new Attribute("onunload", Dict.VERS_EVENTS, AttrCheckImpl.SCRIPT), // event
+        new Attribute("onfocus", Dict.VERS_EVENTS, AttrCheckImpl.SCRIPT), // event
+        new Attribute("onafterupdate", Dict.VERS_MICROSOFT, AttrCheckImpl.SCRIPT), // form fields
+        new Attribute("onbeforeupdate", Dict.VERS_MICROSOFT, AttrCheckImpl.SCRIPT), // form fields
+        new Attribute("onerrorupdate", Dict.VERS_MICROSOFT, AttrCheckImpl.SCRIPT), // form fields
+        new Attribute("onrowenter", Dict.VERS_MICROSOFT, AttrCheckImpl.SCRIPT), // form fields
+        new Attribute("onrowexit", Dict.VERS_MICROSOFT, AttrCheckImpl.SCRIPT), // form fields
+        new Attribute("onbeforeunload", Dict.VERS_MICROSOFT, AttrCheckImpl.SCRIPT), // form fields
+        new Attribute("ondatasetchanged", Dict.VERS_MICROSOFT, AttrCheckImpl.SCRIPT), // object, applet
+        new Attribute("ondataavailable", Dict.VERS_MICROSOFT, AttrCheckImpl.SCRIPT), // object, applet
+        new Attribute("ondatasetcomplete", Dict.VERS_MICROSOFT, AttrCheckImpl.SCRIPT), // object, applet
+        new Attribute("profile", Dict.VERS_HTML40, AttrCheckImpl.URL), // HEAD
+        new Attribute("prompt", Dict.VERS_LOOSE, AttrCheckImpl.TEXT), // ISINDEX
+        new Attribute("readonly", Dict.VERS_HTML40, AttrCheckImpl.BOOL), // form fields
+        new Attribute("rel", Dict.VERS_ALL, AttrCheckImpl.LINKTYPES), // A, LINK
+        new Attribute("rev", Dict.VERS_ALL, AttrCheckImpl.LINKTYPES), // A, LINK
+        new Attribute("rightmargin", Dict.VERS_MICROSOFT, AttrCheckImpl.NUMBER), // used on BODY
+        new Attribute("rows", Dict.VERS_ALL, AttrCheckImpl.NUMBER), // TEXTAREA
+        new Attribute("rowspan", Dict.VERS_ALL, AttrCheckImpl.NUMBER), // table cells
+        new Attribute("rules", Dict.VERS_HTML40, AttrCheckImpl.TRULES), // TABLE
+        new Attribute("scheme", Dict.VERS_HTML40, AttrCheckImpl.TEXT), // META
+        new Attribute("scope", Dict.VERS_HTML40, AttrCheckImpl.SCOPE), // table cells
+        new Attribute("scrolling", Dict.VERS_IFRAME, AttrCheckImpl.SCROLL), // yes, no or auto
+        new Attribute("selected", Dict.VERS_ALL, AttrCheckImpl.BOOL), // OPTION
+        new Attribute("shape", Dict.VERS_FROM32, AttrCheckImpl.SHAPE), // AREA, A
+        new Attribute("showgrid", Dict.VERS_PROPRIETARY, AttrCheckImpl.BOOL), // TABLE Adobe golive
+        new Attribute("showgridx", Dict.VERS_PROPRIETARY, AttrCheckImpl.BOOL), // TABLE Adobe golive
+        new Attribute("showgridy", Dict.VERS_PROPRIETARY, AttrCheckImpl.BOOL), // TABLE Adobe golive
+        new Attribute("size", Dict.VERS_LOOSE, AttrCheckImpl.NUMBER), // HR, FONT, BASEFONT, SELECT
+        new Attribute("span", Dict.VERS_HTML40, AttrCheckImpl.NUMBER), // COL, COLGROUP
+        new Attribute("src", Dict.VERS_ALL, AttrCheckImpl.URL), // IMG, FRAME, IFRAME
+        new Attribute("standby", Dict.VERS_HTML40, AttrCheckImpl.TEXT), // OBJECT
+        new Attribute("start", Dict.VERS_ALL, AttrCheckImpl.NUMBER), // OL
+        new Attribute("style", Dict.VERS_HTML40, AttrCheckImpl.TEXT),
+        new Attribute("summary", Dict.VERS_HTML40, AttrCheckImpl.TEXT), // TABLE
+        new Attribute("tabindex", Dict.VERS_HTML40, AttrCheckImpl.NUMBER), // fields, OBJECT and A
+        new Attribute("target", Dict.VERS_HTML40, AttrCheckImpl.TARGET), // names a frame/window
+        new Attribute("text", Dict.VERS_LOOSE, AttrCheckImpl.COLOR), // BODY
+        new Attribute("title", Dict.VERS_HTML40, AttrCheckImpl.TEXT), // text tool tip
+        new Attribute("topmargin", Dict.VERS_MICROSOFT, AttrCheckImpl.NUMBER), // used on BODY
+        new Attribute("type", Dict.VERS_FROM32, AttrCheckImpl.TYPE), // also used by SPACER
+        new Attribute("usemap", Dict.VERS_ALL, AttrCheckImpl.BOOL), // things with images
+        new Attribute("valign", Dict.VERS_FROM32, AttrCheckImpl.VALIGN),
+        new Attribute("value", Dict.VERS_ALL, AttrCheckImpl.TEXT), // OPTION, PARAM
+        new Attribute("valuetype", Dict.VERS_HTML40, AttrCheckImpl.VTYPE), // PARAM: data, ref, object
+        new Attribute("version", Dict.VERS_ALL, AttrCheckImpl.TEXT), // HTML
+        new Attribute("vlink", Dict.VERS_LOOSE, AttrCheckImpl.COLOR), // BODY
+        new Attribute("vspace", Dict.VERS_LOOSE, AttrCheckImpl.NUMBER), // IMG, OBJECT, APPLET
+        new Attribute("width", Dict.VERS_ALL, AttrCheckImpl.LENGTH), // pixels only for TD/TH
+        new Attribute("wrap", Dict.VERS_NETSCAPE, AttrCheckImpl.TEXT), // textarea
+        new Attribute("xml:lang", Dict.VERS_XML, AttrCheckImpl.TEXT), // XML language
+        new Attribute("xml:space", Dict.VERS_XML, AttrCheckImpl.TEXT), // XML language
+        new Attribute("xmlns", Dict.VERS_ALL, AttrCheckImpl.TEXT), // name space
+        new Attribute("rbspan", Dict.VERS_XHTML11, AttrCheckImpl.NUMBER), // ruby markup
     };
 
     /**
      * Map containing all the installed attributes.
      */
-    private Map<String, Attribute> attributeHashtable = new Hashtable<String, Attribute>();
+    private final Map<String,Attribute> attributeHashtable = new Hashtable<String,Attribute>();
 
     /**
      * lookup an installed Attribute.
      * @param name attribute name
      * @return Attribute or null if the attribute is not found
      */
-    public Attribute lookup(String name)
+    public Attribute lookup(final String name)
     {
-        return attributeHashtable.get(name);
+        return (Attribute) this.attributeHashtable.get(name);
     }
 
     /**
      * installs a new Attribute.
-     * @param attr Atribute
+     * @param attr Attribute
      * @return installed Attribute
      */
-    public Attribute install(Attribute attr)
+    public Attribute install(final Attribute attr)
     {
-        return attributeHashtable.put(attr.getName(), attr);
+        return (Attribute) this.attributeHashtable.put(attr.getName(), attr);
     }
 
     /**
@@ -272,7 +351,7 @@ public class AttributeTable
      * @param attval AttVal instance
      * @return Attribute with name = attval.name
      */
-    public Attribute findAttribute(AttVal attval)
+    public Attribute findAttribute(final AttVal attval)
     {
         Attribute np;
 
@@ -290,12 +369,12 @@ public class AttributeTable
      * @param attrname attribute name
      * @return <code>true</code> if the given attribute is expected to contain an URL
      */
-    public boolean isUrl(String attrname)
+    public boolean isUrl(final String attrname)
     {
         Attribute np;
 
         np = lookup(attrname);
-        return (np != null && np.getAttrchk() == AttrCheckImpl.URL);
+        return np != null && np.getAttrchk() == AttrCheckImpl.URL;
     }
 
     /**
@@ -303,12 +382,44 @@ public class AttributeTable
      * @param attrname attribute name
      * @return <code>true</code> if the given attribute is expected to contain a script
      */
-    public boolean isScript(String attrname)
+    public boolean isScript(final String attrname)
     {
         Attribute np;
 
         np = lookup(attrname);
-        return (np != null && np.getAttrchk() == AttrCheckImpl.SCRIPT);
+        return np != null && np.getAttrchk() == AttrCheckImpl.SCRIPT;
+    }
+
+    /**
+     * Does the given attibute contains a literal attribute?
+     * @param attrname attribute name
+     * @return <code>true</code> if the given attribute is expected to contain a literal attribute
+     */
+    public boolean isLiteralAttribute(final String attrname)
+    {
+        Attribute np;
+
+        np = lookup(attrname);
+        return np != null && np.isLiteral();
+    }
+
+    /**
+     * Declare a new literal attribute.
+     * @param name atribute name
+     */
+    public void declareLiteralAttrib(final String name)
+    {
+        // Henry Zrepa reports that some folk are using embed with script attributes where newlines are signficant.
+        // These
+        // need to be declared and handled specially!
+        Attribute attrib = lookup(name);
+
+        if (attrib == null)
+        {
+            attrib = install(new Attribute(name, Dict.VERS_PROPRIETARY, null));
+        }
+
+        attrib.setLiteral(true);
     }
 
     /**
@@ -324,6 +435,28 @@ public class AttributeTable
             {
                 defaultAttributeTable.install(ATTRS[i]);
             }
+            attrHref = defaultAttributeTable.lookup("href");
+            attrSrc = defaultAttributeTable.lookup("src");
+            attrId = defaultAttributeTable.lookup("id");
+            attrName = defaultAttributeTable.lookup("name");
+            attrSummary = defaultAttributeTable.lookup("summary");
+            attrAlt = defaultAttributeTable.lookup("alt");
+            attrLongdesc = defaultAttributeTable.lookup("longdesc");
+            attrUsemap = defaultAttributeTable.lookup("usemap");
+            attrIsmap = defaultAttributeTable.lookup("ismap");
+            attrLanguage = defaultAttributeTable.lookup("language");
+            attrType = defaultAttributeTable.lookup("type");
+            attrTitle = defaultAttributeTable.lookup("title");
+            attrXmlns = defaultAttributeTable.lookup("xmlns");
+            attrValue = defaultAttributeTable.lookup("value");
+            attrContent = defaultAttributeTable.lookup("content");
+            attrDatafld = defaultAttributeTable.lookup("datafld");
+            attrWidth = defaultAttributeTable.lookup("width");
+            attrHeight = defaultAttributeTable.lookup("height");
+
+            attrAlt.setNowrap(true);
+            attrValue.setNowrap(true);
+            attrContent.setNowrap(true);
         }
         return defaultAttributeTable;
     }

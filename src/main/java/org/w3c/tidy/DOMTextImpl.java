@@ -71,7 +71,7 @@ public class DOMTextImpl extends DOMCharacterDataImpl implements org.w3c.dom.Tex
      * Instantiates a new DOM text node.
      * @param adaptee wrapped Tidy node
      */
-    protected DOMTextImpl(Node adaptee)
+    protected DOMTextImpl(final Node adaptee)
     {
         super(adaptee);
     }
@@ -80,7 +80,7 @@ public class DOMTextImpl extends DOMCharacterDataImpl implements org.w3c.dom.Tex
      * @see org.w3c.dom.Node#getNodeName
      */
     @Override
-    public String getNodeName()
+	public String getNodeName()
     {
         return "#text";
     }
@@ -89,7 +89,7 @@ public class DOMTextImpl extends DOMCharacterDataImpl implements org.w3c.dom.Tex
      * @see org.w3c.dom.Node#getNodeType
      */
     @Override
-    public short getNodeType()
+	public short getNodeType()
     {
         return org.w3c.dom.Node.TEXT_NODE;
     }
@@ -98,7 +98,7 @@ public class DOMTextImpl extends DOMCharacterDataImpl implements org.w3c.dom.Tex
      * @todo DOM level 2 splitText() Not supported. Throws NO_MODIFICATION_ALLOWED_ERR.
      * @see org.w3c.dom.Text#splitText(int)
      */
-    public org.w3c.dom.Text splitText(int offset) throws DOMException
+    public org.w3c.dom.Text splitText(final int offset) throws DOMException
     {
         throw new DOMException(DOMException.NO_MODIFICATION_ALLOWED_ERR, "Not supported");
     }
@@ -125,7 +125,7 @@ public class DOMTextImpl extends DOMCharacterDataImpl implements org.w3c.dom.Tex
      * @todo DOM level 3 replaceWholeText() Not implemented. Returns the same node.
      * @see org.w3c.dom.Text#isElementContentWhitespace()
      */
-    public Text replaceWholeText(String content) throws DOMException
+    public Text replaceWholeText(final String content) throws DOMException
     {
         return this;
     }

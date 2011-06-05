@@ -67,7 +67,7 @@ public class DOMCommentImpl extends DOMCharacterDataImpl implements org.w3c.dom.
      * Instantiates a new DOMCommentImpl which wraps the given Node.
      * @param adaptee wrapped node.
      */
-    protected DOMCommentImpl(Node adaptee)
+    protected DOMCommentImpl(final Node adaptee)
     {
         super(adaptee);
     }
@@ -76,7 +76,7 @@ public class DOMCommentImpl extends DOMCharacterDataImpl implements org.w3c.dom.
      * @see org.w3c.dom.Node#getNodeName
      */
     @Override
-    public String getNodeName()
+	public String getNodeName()
     {
         return "#comment";
     }
@@ -85,7 +85,7 @@ public class DOMCommentImpl extends DOMCharacterDataImpl implements org.w3c.dom.
      * @see org.w3c.dom.Node#getNodeType
      */
     @Override
-    public short getNodeType()
+	public short getNodeType()
     {
         return org.w3c.dom.Node.COMMENT_NODE;
     }

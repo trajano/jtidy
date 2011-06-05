@@ -66,23 +66,21 @@ public class Entity
     /**
      * entity name.
      */
-    private String name;
-    
-    private final int versions;
+    private final String name;
 
     /**
      * entity code.
      */
-    private short code;
+    private final short code;
 
     /**
      * instantiates a new entity.
      * @param name entity name
      * @param code entity code (will be casted to short)
      */
-    public Entity(final String name, final int versions, final int code) {
+    public Entity(final String name, final int code)
+    {
         this.name = name;
-        this.versions = versions;
         this.code = (short) code;
     }
 
@@ -103,8 +101,4 @@ public class Entity
     {
         return this.name;
     }
-
-	public int getVersions() {
-		return versions;
-	}
 }

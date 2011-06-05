@@ -71,7 +71,7 @@ public class TidyBeanInfo extends SimpleBeanInfo
      * @see java.beans.BeanInfo#getIcon(int)
      */
     @Override
-	public Image getIcon(int kind)
+	public Image getIcon(final int kind)
     {
         return loadImage("tidy.gif");
     }

@@ -75,7 +75,7 @@ public class DOMAttrMapImpl implements org.w3c.dom.NamedNodeMap
      * instantiates a new DOMAttrMapImpl for the given AttVal.
      * @param firstAttVal wrapped AttVal
      */
-    protected DOMAttrMapImpl(AttVal firstAttVal)
+    protected DOMAttrMapImpl(final AttVal firstAttVal)
     {
         this.first = firstAttVal;
     }
@@ -83,7 +83,7 @@ public class DOMAttrMapImpl implements org.w3c.dom.NamedNodeMap
     /**
      * @see org.w3c.dom.NamedNodeMap#getNamedItem(java.lang.String)
      */
-    public org.w3c.dom.Node getNamedItem(String name)
+    public org.w3c.dom.Node getNamedItem(final String name)
     {
         AttVal att = this.first;
         while (att != null)
@@ -105,7 +105,7 @@ public class DOMAttrMapImpl implements org.w3c.dom.NamedNodeMap
     /**
      * @see org.w3c.dom.NamedNodeMap#item
      */
-    public org.w3c.dom.Node item(int index)
+    public org.w3c.dom.Node item(final int index)
     {
         int i = 0;
         AttVal att = this.first;
@@ -145,7 +145,7 @@ public class DOMAttrMapImpl implements org.w3c.dom.NamedNodeMap
      * @todo DOM level 2 setNamedItem() Not implemented. Throws NOT_SUPPORTED_ERR.
      * @see org.w3c.dom.NamedNodeMap#setNamedItem
      */
-    public org.w3c.dom.Node setNamedItem(org.w3c.dom.Node arg) throws DOMException
+    public org.w3c.dom.Node setNamedItem(final org.w3c.dom.Node arg) throws DOMException
     {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "DOM method not supported");
     }
@@ -153,7 +153,7 @@ public class DOMAttrMapImpl implements org.w3c.dom.NamedNodeMap
     /**
      * @see org.w3c.dom.NamedNodeMap#removeNamedItem
      */
-    public org.w3c.dom.Node removeNamedItem(String name) throws DOMException
+    public org.w3c.dom.Node removeNamedItem(final String name) throws DOMException
     {
         AttVal att = this.first;
         AttVal previous = null;
@@ -189,7 +189,7 @@ public class DOMAttrMapImpl implements org.w3c.dom.NamedNodeMap
      * Not supported, returns <code>DOMException.NOT_SUPPORTED_ERR</code>.
      * @see org.w3c.dom.NamedNodeMap#getNamedItemNS(java.lang.String, java.lang.String)
      */
-    public org.w3c.dom.Node getNamedItemNS(String namespaceURI, String localName)
+    public org.w3c.dom.Node getNamedItemNS(final String namespaceURI, final String localName)
     {
         // NOT_SUPPORTED_ERR: May be raised if the implementation does not support the feature "XML" and the language
         // exposed through the Document does not support XML Namespaces (such as HTML 4.01).
@@ -200,7 +200,7 @@ public class DOMAttrMapImpl implements org.w3c.dom.NamedNodeMap
      * Not supported, returns <code>DOMException.NOT_SUPPORTED_ERR</code>.
      * @see org.w3c.dom.NamedNodeMap#setNamedItemNS(org.w3c.dom.Node)
      */
-    public org.w3c.dom.Node setNamedItemNS(org.w3c.dom.Node arg) throws org.w3c.dom.DOMException
+    public org.w3c.dom.Node setNamedItemNS(final org.w3c.dom.Node arg) throws org.w3c.dom.DOMException
     {
         // NOT_SUPPORTED_ERR: May be raised if the implementation does not support the feature "XML" and the language
         // exposed through the Document does not support XML Namespaces (such as HTML 4.01).
@@ -211,7 +211,7 @@ public class DOMAttrMapImpl implements org.w3c.dom.NamedNodeMap
      * Not supported, returns <code>DOMException.NOT_SUPPORTED_ERR</code>.
      * @see org.w3c.dom.NamedNodeMap#removeNamedItemNS(java.lang.String, java.lang.String)
      */
-    public org.w3c.dom.Node removeNamedItemNS(String namespaceURI, String localName) throws org.w3c.dom.DOMException
+    public org.w3c.dom.Node removeNamedItemNS(final String namespaceURI, final String localName) throws org.w3c.dom.DOMException
     {
         // NOT_SUPPORTED_ERR: May be raised if the implementation does not support the feature "XML" and the language
         // exposed through the Document does not support XML Namespaces (such as HTML 4.01).

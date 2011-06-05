@@ -9,11 +9,11 @@
     <text><![CDATA[missing <!DOCTYPE> declaration]]></text>
   </message>
   <message>
-    <code>72</code>
+    <code>51</code>
     <level>2</level>
     <line>5</line>
     <column>1</column>
-    <text><![CDATA[<body> attribute name "Ã1/2" (value="xx") is invalid]]></text>
+    <text><![CDATA[<body> attribute "Ã1/2" has invalid value "xx"]]></text>
   </message>
   <message>
     <code>59</code>
@@ -37,25 +37,17 @@
     <text><![CDATA[<body> attribute "width" has invalid value "align="""]]></text>
   </message>
   <message>
-    <code>53</code>
-    <level>2</level>
-    <line>5</line>
-    <column>1</column>
-    <text><![CDATA[<body> proprietary attribute "width"]]></text>
-  </message>
-  <message>
     <code>111</code>
-    <level>1</level>
-    <line>0</line>
-    <column>0</column>
-    <text><![CDATA[Document content looks like HTML Proprietary]]></text>
+    <level>0</level>
+    <line>1</line>
+    <column>1</column>
+    <text><![CDATA[InputStream: Document content looks like HTML 3.2]]></text>
   </message>
   <message>
     <code>-1</code>
     <level>0</level>
     <line>0</line>
     <column>0</column>
-    <text><![CDATA[6 warnings, 0 errors were found!
-]]></text>
+    <text><![CDATA[5 warnings, no errors were found!]]></text>
   </message>
 </messages>

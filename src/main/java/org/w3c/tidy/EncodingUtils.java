@@ -658,7 +658,7 @@ public final class EncodingUtils
      * @param c char to decode
      * @return decoded char
      */
-    protected static int decodeWin1252(int c)
+    protected static int decodeWin1252(final int c)
     {
         return WIN2UNICODE[c - 128];
     }
@@ -682,7 +682,7 @@ public final class EncodingUtils
      * @param c char to decode
      * @return decoded char
      */
-    static int decodeSymbolFont(int c)
+    static int decodeSymbolFont(final int c)
     {
         if (c > 255)
         {
@@ -702,8 +702,8 @@ public final class EncodingUtils
      * @param startInSuccessorBytesArray starting offset for bytes in successorBytes
      * @return <code>true</code> if error
      */
-    static boolean decodeUTF8BytesToChar(int[] c, int firstByte, byte[] successorBytes, GetBytes getter, int[] count,
-        int startInSuccessorBytesArray)
+    static boolean decodeUTF8BytesToChar(final int[] c, final int firstByte, final byte[] successorBytes, final GetBytes getter, final int[] count,
+        final int startInSuccessorBytesArray)
     {
         byte[] buf = new byte[10];
 
@@ -770,13 +770,13 @@ public final class EncodingUtils
 
         for (i = 1; i < bytes; ++i)
         {
-            int[] tempCount = new int[1]; // no. of additional bytes to get
+            final int[] tempCount = new int[1]; // no. of additional bytes to get
 
             // successor bytes should have the form 10XX XXXX
-            if (getter != null && (bytes - i > 0))
+            if (getter != null && bytes - i > 0)
             {
                 tempCount[0] = 1; // to simplify things, get 1 byte at a time
-                int[] buftocopy = new int[]{buf[startInSuccessorBytesArray + i - 1]};
+                final int[] buftocopy = new int[]{buf[startInSuccessorBytesArray + i - 1]};
 
                 getter.doGet(buftocopy, tempCount, false);
                 //readRawBytesFromStream(buftocopy, tempCount, false);
@@ -795,27 +795,27 @@ public final class EncodingUtils
                 bytes = i;
                 if (getter != null)
                 {
-                    int[] buftocopy = new int[]{buf[startInSuccessorBytesArray + i - 1]};
+                    final int[] buftocopy = new int[]{buf[startInSuccessorBytesArray + i - 1]};
                     tempCount[0] = 1; // to simplify things, unget 1 byte at a time
                     getter.doGet(buftocopy, tempCount, true);
                 }
                 break;
             }
 
-            n = (n << 6) | (buf[startInSuccessorBytesArray + i - 1] & 0x3F);
+            n = n << 6 | buf[startInSuccessorBytesArray + i - 1] & 0x3F;
         }
 
-        if (!hasError && ((n == UTF8_BYTE_SWAP_NOT_A_CHAR) || (n == UTF8_NOT_A_CHAR)))
+        if (!hasError && (n == UTF8_BYTE_SWAP_NOT_A_CHAR || n == UTF8_NOT_A_CHAR))
         {
             hasError = true;
         }
 
-        if (!hasError && (n > MAX_UTF8_FROM_UCS4))
+        if (!hasError && n > MAX_UTF8_FROM_UCS4)
         {
             hasError = true;
         }
 
-        if (!hasError && (n >= UTF16_LOW_SURROGATE_BEGIN) && (n <= UTF16_HIGH_SURROGATE_END))
+        if (!hasError && n >= UTF16_LOW_SURROGATE_BEGIN && n <= UTF16_HIGH_SURROGATE_END)
         {
             // unpaired surrogates not allowed
             hasError = true;
@@ -823,11 +823,11 @@ public final class EncodingUtils
 
         if (!hasError)
         {
-            int lo = OFFSET_UTF8_SEQUENCES[bytes - 1];
-            int hi = OFFSET_UTF8_SEQUENCES[bytes] - 1;
+            final int lo = OFFSET_UTF8_SEQUENCES[bytes - 1];
+            final int hi = OFFSET_UTF8_SEQUENCES[bytes] - 1;
 
             // check for overlong sequences
-            if ((n < VALID_UTF8[lo].lowChar) || (n > VALID_UTF8[hi].highChar))
+            if (n < VALID_UTF8[lo].lowChar || n > VALID_UTF8[hi].highChar)
             {
                 hasError = true;
             }
@@ -850,8 +850,8 @@ public final class EncodingUtils
                         {
                             theByte = (char) buf[startInSuccessorBytesArray + tempCount - 1];
                         }
-                        if ((theByte >= VALID_UTF8[i].validBytes[(tempCount * 2)])
-                            && (theByte <= VALID_UTF8[i].validBytes[(tempCount * 2) + 1]))
+                        if (theByte >= VALID_UTF8[i].validBytes[(tempCount * 2)]
+                            && theByte <= VALID_UTF8[i].validBytes[tempCount * 2 + 1])
                         {
                             hasError = false;
                         }
@@ -882,7 +882,7 @@ public final class EncodingUtils
      * @param count number of bytes written
      * @return <code>false</code>= ok, <code>true</code>= error
      */
-    static boolean encodeCharToUTF8Bytes(int c, byte[] encodebuf, PutBytes putter, int[] count)
+    static boolean encodeCharToUTF8Bytes(final int c, final byte[] encodebuf, final PutBytes putter, final int[] count)
     {
         int bytes = 0;
 
@@ -902,21 +902,21 @@ public final class EncodingUtils
         }
         else if (c <= 0x7FF) // 110X XXXX two bytes
         {
-            buf[0] = (byte) (0xC0 | (c >> 6));
-            buf[1] = (byte) (0x80 | (c & 0x3F));
+            buf[0] = (byte) (0xC0 | c >> 6);
+            buf[1] = (byte) (0x80 | c & 0x3F);
             bytes = 2;
         }
         else if (c <= 0xFFFF) // 1110 XXXX three bytes
         {
-            buf[0] = (byte) (0xE0 | (c >> 12));
-            buf[1] = (byte) (0x80 | ((c >> 6) & 0x3F));
-            buf[2] = (byte) (0x80 | (c & 0x3F));
+            buf[0] = (byte) (0xE0 | c >> 12);
+            buf[1] = (byte) (0x80 | c >> 6 & 0x3F);
+            buf[2] = (byte) (0x80 | c & 0x3F);
             bytes = 3;
-            if ((c == UTF8_BYTE_SWAP_NOT_A_CHAR) || (c == UTF8_NOT_A_CHAR))
+            if (c == UTF8_BYTE_SWAP_NOT_A_CHAR || c == UTF8_NOT_A_CHAR)
             {
                 hasError = true;
             }
-            else if ((c >= UTF16_LOW_SURROGATE_BEGIN) && (c <= UTF16_HIGH_SURROGATE_END))
+            else if (c >= UTF16_LOW_SURROGATE_BEGIN && c <= UTF16_HIGH_SURROGATE_END)
             {
                 // unpaired surrogates not allowed
                 hasError = true;
@@ -924,10 +924,10 @@ public final class EncodingUtils
         }
         else if (c <= 0x1FFFFF) // 1111 0XXX four bytes
         {
-            buf[0] = (byte) (0xF0 | (c >> 18));
-            buf[1] = (byte) (0x80 | ((c >> 12) & 0x3F));
-            buf[2] = (byte) (0x80 | ((c >> 6) & 0x3F));
-            buf[3] = (byte) (0x80 | (c & 0x3F));
+            buf[0] = (byte) (0xF0 | c >> 18);
+            buf[1] = (byte) (0x80 | c >> 12 & 0x3F);
+            buf[2] = (byte) (0x80 | c >> 6 & 0x3F);
+            buf[3] = (byte) (0x80 | c & 0x3F);
             bytes = 4;
             if (c > MAX_UTF8_FROM_UCS4)
             {
@@ -936,22 +936,22 @@ public final class EncodingUtils
         }
         else if (c <= 0x3FFFFFF) // 1111 10XX five bytes
         {
-            buf[0] = (byte) (0xF8 | (c >> 24));
-            buf[1] = (byte) (0x80 | (c >> 18));
-            buf[2] = (byte) (0x80 | ((c >> 12) & 0x3F));
-            buf[3] = (byte) (0x80 | ((c >> 6) & 0x3F));
-            buf[4] = (byte) (0x80 | (c & 0x3F));
+            buf[0] = (byte) (0xF8 | c >> 24);
+            buf[1] = (byte) (0x80 | c >> 18);
+            buf[2] = (byte) (0x80 | c >> 12 & 0x3F);
+            buf[3] = (byte) (0x80 | c >> 6 & 0x3F);
+            buf[4] = (byte) (0x80 | c & 0x3F);
             bytes = 5;
             hasError = true;
         }
         else if (c <= 0x7FFFFFFF) // 1111 110X six bytes
         {
-            buf[0] = (byte) (0xFC | (c >> 30));
-            buf[1] = (byte) (0x80 | ((c >> 24) & 0x3F));
-            buf[2] = (byte) (0x80 | ((c >> 18) & 0x3F));
-            buf[3] = (byte) (0x80 | ((c >> 12) & 0x3F));
-            buf[4] = (byte) (0x80 | ((c >> 6) & 0x3F));
-            buf[5] = (byte) (0x80 | (c & 0x3F));
+            buf[0] = (byte) (0xFC | c >> 30);
+            buf[1] = (byte) (0x80 | c >> 24 & 0x3F);
+            buf[2] = (byte) (0x80 | c >> 18 & 0x3F);
+            buf[3] = (byte) (0x80 | c >> 12 & 0x3F);
+            buf[4] = (byte) (0x80 | c >> 6 & 0x3F);
+            buf[5] = (byte) (0x80 | c & 0x3F);
             bytes = 6;
             hasError = true;
         }
@@ -962,7 +962,7 @@ public final class EncodingUtils
 
         if (!hasError && putter != null) // don't output invalid UTF-8 byte sequence to a stream
         {
-            int[] tempCount = new int[]{bytes};
+            final int[] tempCount = new int[]{bytes};
             putter.doPut(buf, tempCount);
 
             if (tempCount[0] < bytes)

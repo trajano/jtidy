@@ -58,10 +58,6 @@ import java.util.List;
 import java.util.Stack;
 import java.util.Vector;
 
-import org.w3c.tidy.Node.NodeType;
-import org.w3c.tidy.Options.DoctypeModes;
-
-import static org.w3c.tidy.Versions.*;
 
 /**
  * Lexer for html parser.
@@ -102,27 +98,49 @@ public class Lexer
     public static final short IGNORE_MARKUP = 3;
 
     /**
+     * URI for XHTML 1.0 transitional DTD.
+     */
+    private static final String VOYAGER_LOOSE = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd";
+
+    /**
+     * URI for XHTML 1.0 strict DTD.
+     */
+    private static final String VOYAGER_STRICT = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd";
+
+    /**
+     * URI for XHTML 1.0 frameset DTD.
+     */
+    private static final String VOYAGER_FRAMESET = "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd";
+
+    /**
+     * URI for XHTML 1.1.
+     */
+    private static final String VOYAGER_11 = "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd";
+
+    /**
+     * URI for XHTML Basic 1.0.
+     */
+    // private static final String VOYAGER_BASIC = "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd";
+    /**
+     * xhtml namespace.
+     */
+    private static final String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
+
+    /**
      * lists all the known versions.
      */
-    private static final W3CDoctype[] W3C_DOCTYPES = {
-    	new W3CDoctype(  2, HT20, "HTML 2.0",               "-//IETF//DTD HTML 2.0//EN",              null                                                        ),
-    	new W3CDoctype(  2, HT20, "HTML 2.0",               "-//IETF//DTD HTML//EN",                  null                                                        ),
-    	new W3CDoctype(  2, HT20, "HTML 2.0",               "-//W3C//DTD HTML 2.0//EN",               null                                                        ),
-    	new W3CDoctype(  1, HT32, "HTML 3.2",               "-//W3C//DTD HTML 3.2//EN",               null                                                        ),
-    	new W3CDoctype(  1, HT32, "HTML 3.2",               "-//W3C//DTD HTML 3.2 Final//EN",         null                                                        ),
-    	new W3CDoctype(  1, HT32, "HTML 3.2",               "-//W3C//DTD HTML 3.2 Draft//EN",         null                                                        ),
-    	new W3CDoctype(  6, H40S, "HTML 4.0 Strict",        "-//W3C//DTD HTML 4.0//EN",               "http://www.w3.org/TR/REC-html40/strict.dtd"                ),
-    	new W3CDoctype(  8, H40T, "HTML 4.0 Transitional",  "-//W3C//DTD HTML 4.0 Transitional//EN",  "http://www.w3.org/TR/REC-html40/loose.dtd"                 ),
-    	new W3CDoctype(  7, H40F, "HTML 4.0 Frameset",      "-//W3C//DTD HTML 4.0 Frameset//EN",      "http://www.w3.org/TR/REC-html40/frameset.dtd"              ),
-    	new W3CDoctype(  3, H41S, "HTML 4.01 Strict",       "-//W3C//DTD HTML 4.01//EN",              "http://www.w3.org/TR/html4/strict.dtd"                     ),
-    	new W3CDoctype(  5, H41T, "HTML 4.01 Transitional", "-//W3C//DTD HTML 4.01 Transitional//EN", "http://www.w3.org/TR/html4/loose.dtd"                      ),
-    	new W3CDoctype(  4, H41F, "HTML 4.01 Frameset",     "-//W3C//DTD HTML 4.01 Frameset//EN",     "http://www.w3.org/TR/html4/frameset.dtd"                   ),
-    	new W3CDoctype(  9, X10S, "XHTML 1.0 Strict",       "-//W3C//DTD XHTML 1.0 Strict//EN",       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"         ),
-    	new W3CDoctype( 11, X10T, "XHTML 1.0 Transitional", "-//W3C//DTD XHTML 1.0 Transitional//EN", "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"   ),
-    	new W3CDoctype( 10, X10F, "XHTML 1.0 Frameset",     "-//W3C//DTD XHTML 1.0 Frameset//EN",     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd"       ),
-    	new W3CDoctype( 12, XH11, "XHTML 1.1",              "-//W3C//DTD XHTML 1.1//EN",              "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd"              ),
-    	new W3CDoctype( 13, XB10, "XHTML Basic 1.0",        "-//W3C//DTD XHTML Basic 1.0//EN",        "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"        ),
-    };
+    private static final Lexer.W3CVersionInfo[] W3CVERSION = {
+        new W3CVersionInfo("HTML 4.01", "XHTML 1.0 Strict", VOYAGER_STRICT, Dict.VERS_HTML40_STRICT),
+        new W3CVersionInfo("HTML 4.01 Transitional", "XHTML 1.0 Transitional", VOYAGER_LOOSE, Dict.VERS_HTML40_LOOSE),
+        new W3CVersionInfo("HTML 4.01 Frameset", "XHTML 1.0 Frameset", VOYAGER_FRAMESET, Dict.VERS_FRAMESET),
+        new W3CVersionInfo("HTML 4.0", "XHTML 1.0 Strict", VOYAGER_STRICT, Dict.VERS_HTML40_STRICT),
+        new W3CVersionInfo("HTML 4.0 Transitional", "XHTML 1.0 Transitional", VOYAGER_LOOSE, Dict.VERS_HTML40_LOOSE),
+        new W3CVersionInfo("HTML 4.0 Frameset", "XHTML 1.0 Frameset", VOYAGER_FRAMESET, Dict.VERS_FRAMESET),
+        new W3CVersionInfo("HTML 3.2", "XHTML 1.0 Transitional", VOYAGER_LOOSE, Dict.VERS_HTML32),
+        new W3CVersionInfo("HTML 3.2 Final", "XHTML 1.0 Transitional", VOYAGER_LOOSE, Dict.VERS_HTML32),
+        new W3CVersionInfo("HTML 3.2 Draft", "XHTML 1.0 Transitional", VOYAGER_LOOSE, Dict.VERS_HTML32),
+        new W3CVersionInfo("HTML 2.0", "XHTML 1.0 Strict", VOYAGER_STRICT, Dict.VERS_HTML20),
+        new W3CVersionInfo("HTML 4.01", "XHTML 1.1", VOYAGER_STRICT, Dict.VERS_XHTML11)};
 
     /**
      * getToken state: content.
@@ -222,17 +240,12 @@ public class Lexer
     /**
      * count of warnings in this document.
      */
-    protected int warnings;
+    protected short warnings;
 
     /**
      * count of errors.
      */
-    protected int errors;
-    
-    protected int optionErrors;
-    protected int accessErrors;
-    protected int infoMessages;
-    protected int docErrors;
+    protected short errors;
 
     /**
      * lines seen.
@@ -277,14 +290,12 @@ public class Lexer
     /**
      * bit vector of HTML versions.
      */
-    protected int versions;
+    protected short versions;
 
     /**
      * version as given by doctype (if any).
      */
     protected int doctype;
-    
-    protected int versionEmitted;
 
     /**
      * set if html or PUBLIC is missing.
@@ -380,30 +391,23 @@ public class Lexer
     /**
      * node list.
      */
-    private List<Node> nodeList;
-    
-    protected String givenDoctype;
-    
-    /**
-     * sequential number for generated css classes.
-     */
-    private int classNum;
+    private final List<Node> nodeList;
 
     /**
-     * Instantiates a new Lexer.
+     * Instantiates a new {@link Lexer}.
      * @param in StreamIn
-     * @param configuration configuation instance
+     * @param configuration {@link Configuration} instance
      * @param report report instance, for reporting errors
      */
-    public Lexer(StreamIn in, Configuration configuration, Report report)
+    public Lexer(final StreamIn in, final Configuration configuration, final Report report)
     {
         this.report = report;
         this.in = in;
         this.lines = 1;
         this.columns = 1;
         this.state = LEX_CONTENT;
-        this.versions = (VERS_ALL | VERS_PROPRIETARY);
-        this.doctype = VERS_UNKNOWN;
+        this.versions = Dict.VERS_ALL | Dict.VERS_PROPRIETARY;
+        this.doctype = Dict.VERS_UNKNOWN;
         this.insert = -1;
         this.istack = new Stack<IStack>();
         this.configuration = configuration;
@@ -416,55 +420,43 @@ public class Lexer
      */
     public Node newNode()
     {
-        Node node = new Node();
+        final Node node = new Node();
         this.nodeList.add(node);
-        node.line = lines;
-        node.column = columns;
         return node;
     }
 
     /**
      * Creates a new node and add it to nodelist.
-     * @param type node type
+     * @param type node type: Node.ROOT_NODE | Node.DOCTYPE_TAG | Node.COMMENT_TAG | Node.PROC_INS_TAG | Node.TEXT_NODE |
+     * Node.START_TAG | Node.END_TAG | Node.START_END_TAG | Node.CDATA_TAG | Node.SECTION_TAG | Node. ASP_TAG |
+     * Node.JSTE_TAG | Node.PHP_TAG | Node.XML_DECL
      * @param textarray array of bytes contained in the Node
      * @param start start position
      * @param end end position
      * @return Node
      */
-    public Node newNode(NodeType type, byte[] textarray, int start, int end)
+    public Node newNode(final short type, final byte[] textarray, final int start, final int end)
     {
-        Node node = new Node(type, textarray, start, end);
+        final Node node = new Node(type, textarray, start, end);
         this.nodeList.add(node);
-        node.line = lines;
-        node.column = columns;
         return node;
-    }
-    
-    protected Node textToken() {
-        return newNode(NodeType.TextNode, lexbuf, txtstart, txtend);
-    }
-    
-    protected Node newLiteralTextNode(final String s) {
-    	final int start = lexsize;
-    	addStringToLexer(s);
-        return newNode(NodeType.TextNode, lexbuf, start, lexsize);
     }
 
     /**
      * Creates a new node and add it to nodelist.
-     * @param type node type
+     * @param type node type: Node.ROOT_NODE | Node.DOCTYPE_TAG | Node.COMMENT_TAG | Node.PROC_INS_TAG | Node.TEXT_NODE |
+     * Node.START_TAG | Node.END_TAG | Node.START_END_TAG | Node.CDATA_TAG | Node.SECTION_TAG | Node. ASP_TAG |
+     * Node.JSTE_TAG | Node.PHP_TAG | Node.XML_DECL
      * @param textarray array of bytes contained in the Node
      * @param start start position
      * @param end end position
      * @param element tag name
      * @return Node
      */
-    public Node newNode(NodeType type, byte[] textarray, int start, int end, String element)
+    public Node newNode(final short type, final byte[] textarray, final int start, final int end, final String element)
     {
-        Node node = new Node(type, textarray, start, end, element, this.configuration.tt);
+        final Node node = new Node(type, textarray, start, end, element, this.configuration.tt);
         this.nodeList.add(node);
-        node.line = lines;
-        node.column = columns;
         return node;
     }
 
@@ -473,11 +465,9 @@ public class Lexer
      * @param node Node
      * @return cloned Node
      */
-    public Node cloneNode(Node node)
+    public Node cloneNode(final Node node)
     {
-        Node cnode = node.cloneNode(false);
-        cnode.line = lines;
-        cnode.column = columns;
+        final Node cnode = node.cloneNode(false);
         this.nodeList.add(cnode);
         for (AttVal att = cnode.attributes; att != null; att = att.next)
         {
@@ -498,9 +488,9 @@ public class Lexer
      * @param attrs original AttVal
      * @return cloned AttVal
      */
-    public AttVal cloneAttributes(AttVal attrs)
+    public AttVal cloneAttributes(final AttVal attrs)
     {
-        AttVal cattrs = (AttVal) attrs.clone();
+        final AttVal cattrs = (AttVal) attrs.clone();
         for (AttVal att = cattrs; att != null; att = att.next)
         {
             if (att.asp != null)
@@ -520,7 +510,7 @@ public class Lexer
      * @param oldtextarray previous text array
      * @param newtextarray new text array
      */
-    protected void updateNodeTextArrays(byte[] oldtextarray, byte[] newtextarray)
+    protected void updateNodeTextArrays(final byte[] oldtextarray, final byte[] newtextarray)
     {
         Node node;
         for (int i = 0; i < this.nodeList.size(); i++)
@@ -539,7 +529,7 @@ public class Lexer
      */
     public Node newLineNode()
     {
-        Node node = newNode();
+        final Node node = newNode();
 
         node.textarray = this.lexbuf;
         node.start = this.lexsize;
@@ -561,7 +551,7 @@ public class Lexer
      * Adds a byte to lexer buffer.
      * @param c byte to add
      */
-    public void addByte(int c)
+    public void addByte(final int c)
     {
         if (this.lexsize + 1 >= this.lexlength)
         {
@@ -577,7 +567,7 @@ public class Lexer
                 }
             }
 
-            byte[] temp = this.lexbuf;
+            final byte[] temp = this.lexbuf;
             this.lexbuf = new byte[this.lexlength];
             if (temp != null)
             {
@@ -594,7 +584,7 @@ public class Lexer
      * Substitute the last char in buffer.
      * @param c new char
      */
-    public void changeChar(byte c)
+    public void changeChar(final byte c)
     {
         if (this.lexsize > 0)
         {
@@ -606,27 +596,27 @@ public class Lexer
      * Store char c as UTF-8 encoded byte stream.
      * @param c char to store
      */
-    public void addCharToLexer(int c)
+    public void addCharToLexer(final int c)
     {
         // Allow only valid XML characters. See: http://www.w3.org/TR/2004/REC-xml-20040204/#NT-Char
         // Fix by Pablo Mayrgundter 17-08-2004
 
-        if ((this.configuration.isXmlOut() || this.configuration.isXHTML()) // only for xml output
-            && !((c >= 0x20 && c <= 0xD7FF) // Check the common-case first.
+        if ((this.configuration.xmlOut || this.configuration.xHTML) // only for xml output
+            && !(c >= 0x20 && c <= 0xD7FF
                 || c == 0x9
                 || c == 0xA
                 || c == 0xD // Then white-space.
-                || (c >= 0xE000 && c <= 0xFFFD) // Then high-range unicode.
-            || (c >= 0x10000 && c <= 0x10FFFF)))
+                || c >= 0xE000 && c <= 0xFFFD
+            || c >= 0x10000 && c <= 0x10FFFF))
         {
             return;
         }
 
         int i = 0;
-        int[] count = new int[]{0};
-        byte[] buf = new byte[10]; // unsigned char
+        final int[] count = new int[]{0};
+        final byte[] buf = new byte[10]; // unsigned char
 
-        boolean err = EncodingUtils.encodeCharToUTF8Bytes(c, buf, null, count);
+        final boolean err = EncodingUtils.encodeCharToUTF8Bytes(c, buf, null, count);
         if (err)
         {
             // replacement char 0xFFFD encoded as UTF-8
@@ -647,47 +637,20 @@ public class Lexer
      * Adds a string to lexer buffer.
      * @param str String to add
      */
-    public void addStringToLexer(String str)
+    public void addStringToLexer(final String str)
     {
         for (int i = 0; i < str.length(); i++)
         {
             addCharToLexer(str.charAt(i));
         }
     }
-    
-    private void setLocus() {
-        lines = in.getCurline();
-        columns = in.getCurcol();
-    }
-    
-    private enum ENTState {
-        DEFAULT {
-			@Override
-			public boolean check(final int x) {
-				return TidyUtils.isNamechar((char) x);
-			}
-		},
-        NUMDEC {
-			@Override
-			public boolean check(final int x) {
-				return TidyUtils.isDigit((char) x);
-			}
-		},
-        NUMHEX {
-			@Override
-			public boolean check(final int x) {
-				return TidyUtils.isDigitHex((char) x);
-			}
-		};
-        
-        public abstract boolean check(int x);
-    }
 
     /**
      * Parse an html entity.
      * @param mode mode
      */
-    public void parseEntity(final short mode) {
+    public void parseEntity(final short mode)
+    {
         // No longer attempts to insert missing ';' for unknown
         // entities unless one was present already, since this
         // gives unexpected results.
@@ -715,45 +678,43 @@ public class Lexer
         // numeric character references. Invalid NCR's are now reported.
 
         int start;
-        ENTState entState = ENTState.DEFAULT;
-        int charRead = 0;
+        boolean first = true;
         boolean semicolon = false;
-        boolean isXml = configuration.isXmlTags();
-        boolean preserveEntities = configuration.isPreserveEntities();
-        int c, startcol;
+        int c, ch, startcol;
+        String str;
 
         start = this.lexsize - 1; // to start at "&"
         startcol = this.in.getCurcol() - 1;
 
-        while ((c = this.in.readChar()) != StreamIn.END_OF_STREAM) {
-            if (c == ';') {
+        while ((c = this.in.readChar()) != StreamIn.END_OF_STREAM)
+        {
+            if (c == ';')
+            {
                 semicolon = true;
                 break;
             }
-            ++charRead;
 
-            if (charRead == 1 && c == '#') {
+            if (first && c == '#')
+            {
                 // #431953 - start RJ
-                if (!this.configuration.isNcr()
+                if (!this.configuration.ncr
                     || "BIG5".equals(this.configuration.getInCharEncodingName())
-                    || "SHIFTJIS".equals(this.configuration.getInCharEncodingName())) {
-                    this.in.ungetChar('#');
+                    || "SHIFTJIS".equals(this.configuration.getInCharEncodingName()))
+                {
+                    this.in.ungetChar(c);
                     return;
                 }
                 // #431953 - end RJ
 
                 addCharToLexer(c);
-                entState = ENTState.NUMDEC;
+                first = false;
                 continue;
             }
-            else if (charRead == 2 && entState == ENTState.NUMDEC
-                    && (c == 'x' || (!isXml && c == 'X'))) {
-            	addCharToLexer(c);
-                entState = ENTState.NUMHEX;
-                continue;
-            }
-            
-            if (entState.check(c)) {
+
+            first = false;
+
+            if (TidyUtils.isNamechar((char) c))
+            {
                 addCharToLexer(c);
                 continue;
             }
@@ -762,98 +723,120 @@ public class Lexer
             this.in.ungetChar(c);
             break;
         }
-        
-        final String str = TidyUtils.getString(this.lexbuf, start, this.lexsize - start);
 
-        if ("&apos".equals(str) && !configuration.isXmlOut() && !this.isvoyager && !configuration.isXHTML()) {
-            report.entityError(this, ErrorCode.APOS_UNDEFINED, str, 39);
+        str = TidyUtils.getString(this.lexbuf, start, this.lexsize - start);
+
+        if ("&apos".equals(str) && !configuration.xmlOut && !this.isvoyager && !configuration.xHTML)
+        {
+            report.entityError(this, Report.APOS_UNDEFINED, str, 39);
         }
 
-        final Entity ent = EntityTable.getDefaultEntityTable().entityInfo(str, isXml);
-        boolean found = ent != null;
-        int ch = found ? ent.getCode() : 0;
-        if (found && ch == 0 && !configuration.isTidyCompat()) {
-       		found = false;
-        }
-        final int entver = found ? ent.getVersions() : isXml ? VERS_XML : VERS_PROPRIETARY;
+        ch = EntityTable.getDefaultEntityTable().entityCode(str);
+
+        // drops invalid numeric entities from XML mode. Fix by Pablo Mayrgundter 17-08-2004
+        // if ((this.configuration.xmlOut || this.configuration.xHTML) // only for xml output
+        // && !((ch >= 0x20 && ch <= 0xD7FF) // Check the common-case first.
+        // || ch == 0x9 || ch == 0xA || ch == 0xD // Then white-space.
+        // || (ch >= 0xE000 && ch <= 0xFFFD)))
+        // {
+        // this.lexsize = start;
+        // return;
+        // }
 
         // deal with unrecognized or invalid entities
         // #433012 - fix by Randy Waki 17 Feb 01
         // report invalid NCR's - Terry Teague 01 Sep 01
-        if (!found || (ch >= 128 && ch <= 159) || (ch >= 256 && c != ';')) {
+        if (ch <= 0 || ch >= 256 && c != ';')
+        {
             // set error position just before offending character
-        	setLocus();
-        	columns = startcol;
+            this.lines = this.in.getCurline();
+            this.columns = startcol;
 
-            if (this.lexsize > start + 1) {
-                if (ch >= 128 && ch <= 159) {
+            if (this.lexsize > start + 1)
+            {
+                if (ch >= 128 && ch <= 159)
+                {
                     // invalid numeric character reference
                     int c1 = 0;
-                    int replaceMode = Report.DISCARDED_CHAR;
 
-                    if ("WIN1252".equals(configuration.getReplacementCharEncoding())) {
+                    if ("WIN1252".equals(configuration.replacementCharEncoding))
+                    {
                         c1 = EncodingUtils.decodeWin1252(ch);
                     }
-                    else if ("MACROMAN".equals(configuration.getReplacementCharEncoding())) {
+                    else if ("MACROMAN".equals(configuration.replacementCharEncoding))
+                    {
                         c1 = EncodingUtils.decodeMacRoman(ch);
                     }
-                    
-                    if (c1 != 0) {
-                    	replaceMode = Report.REPLACED_CHAR;
+
+                    // "or" DISCARDED_CHAR with the other errors if discarding char; otherwise default is replacing
+
+                    final int replaceMode = c1 != 0 ? Report.REPLACED_CHAR : Report.DISCARDED_CHAR;
+
+                    if (c != ';') /* issue warning if not terminated by ';' */
+                    {
+                        report.entityError(this, Report.MISSING_SEMICOLON_NCR, str, c);
                     }
 
-                    if (c != ';') {/* issue warning if not terminated by ';' */
-                        report.entityError(this, ErrorCode.MISSING_SEMICOLON_NCR, str, c);
-                    }
+                    report.encodingError(this, (short) (Report.INVALID_NCR | replaceMode), ch);
 
-                    report.encodingError(this, ErrorCode.INVALID_NCR, ch, replaceMode);
-
-                    if (c1 != 0) {
+                    if (c1 != 0)
+                    {
                         // make the replacement
                         this.lexsize = start;
                         addCharToLexer(c1);
                         semicolon = false;
-                    } else {
+                    }
+                    else
+                    {
                         /* discard */
                         this.lexsize = start;
                         semicolon = false;
                     }
-                } else {
-                    report.entityError(this, ErrorCode.UNKNOWN_ENTITY, str, ch);
+
+                }
+                else
+                {
+                    report.entityError(this, Report.UNKNOWN_ENTITY, str, ch);
                 }
 
-                if (semicolon) {
+                if (semicolon)
+                {
                     addCharToLexer(';');
                 }
-            } else {
+            }
+            else
+            {
                 // naked &
-                report.entityError(this, ErrorCode.UNESCAPED_AMPERSAND, str, ch);
+                report.entityError(this, Report.UNESCAPED_AMPERSAND, str, ch);
             }
-        } else {
+        }
+        else
+        {
             // issue warning if not terminated by ';'
-            if (c != ';') {
+            if (c != ';')
+            {
                 // set error position just before offending character
-            	setLocus();
+                this.lines = this.in.getCurline();
                 this.columns = startcol;
-                report.entityError(this, ErrorCode.MISSING_SEMICOLON, str, c);
+                report.entityError(this, Report.MISSING_SEMICOLON, str, c);
             }
-            
-            if (preserveEntities) {
-            	addCharToLexer(';');
-            } else {
-	            this.lexsize = start;
-	
-	            if (ch == 160 && mode == PREFORMATTED) {
-	                ch = ' ';
-	            }
-	
-	            addCharToLexer(ch);
-	
-	            if (ch == '&' && !this.configuration.isQuoteAmpersand()) {
-	                addStringToLexer("amp;");
-	            }
+
+            this.lexsize = start;
+
+            if (ch == 160 && TidyUtils.toBoolean(mode & PREFORMATTED))
+            {
+                ch = ' ';
             }
-            constrainVersion(entver);
+
+            addCharToLexer(ch);
+
+            if (ch == '&' && !this.configuration.quoteAmpersand)
+            {
+                addCharToLexer('a');
+                addCharToLexer('m');
+                addCharToLexer('p');
+                addCharToLexer(';');
+            }
         }
     }
 
@@ -868,7 +851,7 @@ public class Lexer
         // fold case of first char in buffer
         c = this.lexbuf[this.txtstart];
 
-        if (!this.configuration.isXmlTags() && TidyUtils.isUpper((char) c))
+        if (!this.configuration.xmlTags && TidyUtils.isUpper((char) c))
         {
             c = TidyUtils.toLower((char) c);
             this.lexbuf[this.txtstart] = (byte) c;
@@ -882,7 +865,7 @@ public class Lexer
             }
 
             // fold case of subsequent chars
-            if (!this.configuration.isXmlTags() && TidyUtils.isUpper((char) c))
+            if (!this.configuration.xmlTags && TidyUtils.isUpper((char) c))
             {
                 c = TidyUtils.toLower((char) c);
             }
@@ -898,9 +881,9 @@ public class Lexer
      * calls addCharToLexer for any char in the string.
      * @param str input String
      */
-    public void addStringLiteral(String str)
+    public void addStringLiteral(final String str)
     {
-        int len = str.length();
+        final int len = str.length();
         for (int i = 0; i < len; i++)
         {
             addCharToLexer(str.charAt(i));
@@ -912,9 +895,9 @@ public class Lexer
      * @param str input String
      * @param len length of the substring to be added
      */
-    void addStringLiteralLen(String str, int len)
+    void addStringLiteralLen(final String str, int len)
     {
-        int strlen = str.length();
+        final int strlen = str.length();
         if (strlen < len)
         {
             len = strlen;
@@ -929,91 +912,65 @@ public class Lexer
      * Choose what version to use for new doctype.
      * @return html version constant
      */
-    public int htmlVersion() {
-    	int j = 0;
-        int score = 0;
-        int vers = versions;
-        int dtver = doctype;
-        DoctypeModes dtmode = configuration.getDocTypeMode();
-        boolean xhtml = (configuration.isXmlOut() || isvoyager) &&
-                     !configuration.isHtmlOut();
-        boolean html4 = dtmode == DoctypeModes.Strict || dtmode == DoctypeModes.Loose
-        		|| (VERS_FROM40 & dtver) != 0;
-
-        for (int i = 0; i < W3C_DOCTYPES.length; ++i) {
-        	if ((xhtml && (VERS_XHTML & W3C_DOCTYPES[i].vers) == 0) ||
-                (html4 && (VERS_FROM40 & W3C_DOCTYPES[i].vers) == 0)) {
-                continue;
-            }
-            if ((vers & W3C_DOCTYPES[i].vers) != 0 &&
-            		(W3C_DOCTYPES[i].score < score || score == 0)) {
-                score = W3C_DOCTYPES[i].score;
-                j = i;
-            }
+    public short htmlVersion()
+    {
+        if (TidyUtils.toBoolean(versions & Dict.VERS_HTML20))
+        {
+            return Dict.VERS_HTML20;
         }
 
-        if (score != 0) {
-            return W3C_DOCTYPES[j].vers;
+        if (!(this.configuration.xmlOut | this.configuration.xmlTags | this.isvoyager)
+            && TidyUtils.toBoolean(versions & Dict.VERS_HTML32))
+        {
+            return Dict.VERS_HTML32;
         }
-        return VERS_UNKNOWN;
-    }
-    
-    private static String getFPIFromVers(final int vers) {
-        for (W3CDoctype d : W3C_DOCTYPES) {
-            if (d.vers == vers) {
-                return d.fpi;
-            }
+        if (TidyUtils.toBoolean(versions & Dict.VERS_XHTML11))
+        {
+            return Dict.VERS_XHTML11;
         }
-        return null;
-    }
-    
-    private static String getSIFromVers(final int vers) {
-        for (W3CDoctype d : W3C_DOCTYPES) {
-            if (d.vers == vers) {
-                return d.si;
-            }
+        if (TidyUtils.toBoolean(versions & Dict.VERS_HTML40_STRICT))
+        {
+            return Dict.VERS_HTML40_STRICT;
         }
-        return null;
+
+        if (TidyUtils.toBoolean(versions & Dict.VERS_HTML40_LOOSE))
+        {
+            return Dict.VERS_HTML40_LOOSE;
+        }
+
+        if (TidyUtils.toBoolean(versions & Dict.VERS_FRAMESET))
+        {
+            return Dict.VERS_FRAMESET;
+        }
+
+        return Dict.VERS_UNKNOWN;
     }
 
-    static String getNameFromVers(final int vers) {
-        for (W3CDoctype d : W3C_DOCTYPES) {
-            if (d.vers == vers) {
-                return d.name;
+    /**
+     * Choose what version to use for new doctype.
+     * @return html version name
+     */
+    public String htmlVersionName()
+    {
+        short guessed;
+        int j;
+
+        guessed = apparentVersion();
+
+        for (j = 0; j < W3CVERSION.length; ++j)
+        {
+            if (guessed == W3CVERSION[j].code)
+            {
+                if (this.isvoyager)
+                {
+                    return W3CVERSION[j].voyagerName;
+                }
+
+                return W3CVERSION[j].name;
             }
         }
+
         return null;
-    }
-    
-    private static int getVersFromFPI(final String fpi) {
-    	for (W3CDoctype d : W3C_DOCTYPES) {
-            if (d.fpi.equalsIgnoreCase(fpi)) {
-                return d.vers;
-            }
-    	}
-        return 0;
-    }
-    
-    boolean warnMissingSIInEmittedDocType() {
-        boolean isXhtml = isvoyager;
-        Node doctype;
-        /* Do not warn in XHTML mode */
-        if (isXhtml) {
-            return false;
-        }
-        /* Do not warn if emitted doctype is proprietary */
-        if (getNameFromVers(versionEmitted) == null) {
-            return false;
-        }
-        /* Do not warn if no SI is possible */
-        if (getSIFromVers(versionEmitted) == null) {
-            return false;
-        }
-        if ((doctype = root.findDocType()) != null
-             && doctype.getAttrByName("SYSTEM") == null) {
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -1021,19 +978,19 @@ public class Lexer
      * @param root root node
      * @return <code>true</code> if the tag has been added
      */
-    public boolean addGenerator(Node root)
+    public boolean addGenerator(final Node root)
     {
         AttVal attval;
         Node node;
-        Node head = root.findHEAD();
+        final Node head = root.findHEAD(this.configuration.tt);
 
         if (head != null)
         {
-            String meta = "HTML Tidy for Java (vers. " + Report.RELEASE_DATE_STRING + "), see jtidy.sourceforge.net";
+            final String meta = "HTML Tidy for Java (vers. " + Report.RELEASE_DATE_STRING + "), see jtidy.sourceforge.net";
 
             for (node = head.content; node != null; node = node.next)
             {
-                if (node.is(TagId.META))
+                if (node.tag == this.configuration.tt.tagMeta)
                 {
                     attval = node.getAttrByName("name");
 
@@ -1053,7 +1010,7 @@ public class Lexer
                 }
             }
 
-            node = this.inferredTag(TagId.META);
+            node = this.inferredTag("meta");
             node.addAttribute("content", meta);
             node.addAttribute("name", "generator");
             head.insertNodeAtStart(node);
@@ -1068,10 +1025,10 @@ public class Lexer
      * @param doctype doctype node
      * @return true if doctype keywords are all uppercase
      */
-    public boolean checkDocTypeKeyWords(Node doctype)
+    public boolean checkDocTypeKeyWords(final Node doctype)
     {
-        int len = doctype.end - doctype.start;
-        String s = TidyUtils.getString(this.lexbuf, doctype.start, len);
+        final int len = doctype.end - doctype.start;
+        final String s = TidyUtils.getString(this.lexbuf, doctype.start, len);
 
         return !(TidyUtils.findBadSubString("SYSTEM", s, s.length())
             || TidyUtils.findBadSubString("PUBLIC", s, s.length())
@@ -1085,22 +1042,100 @@ public class Lexer
      * @param doctype doctype node
      * @return version code
      */
-    public int findGivenVersion(final Node doctype) {
-    	AttVal fpi = doctype.getAttrByName("PUBLIC");
+    public short findGivenVersion(final Node doctype)
+    {
+        String p, s;
+        int i, j;
+        int len;
+        String str1;
+        String str2;
 
-        if (fpi == null || fpi.value == null) {
-            return VERS_UNKNOWN;
+        // if root tag for doctype isn't html give up now
+        str1 = TidyUtils.getString(this.lexbuf, doctype.start, 5);
+        if (!"html ".equalsIgnoreCase(str1))
+        {
+            return 0;
         }
-        int vers = getVersFromFPI(fpi.value);
 
-        if ((VERS_XHTML & vers) != 0) {
-        	configuration.setXmlOut(true);
-        	configuration.setXHTML(true);
-            isvoyager = true;
+        if (!checkDocTypeKeyWords(doctype))
+        {
+            report.warning(this, doctype, null, Report.DTYPE_NOT_UPPER_CASE);
         }
-        /* todo: add a warning if case does not match? */
-        fpi.value = getFPIFromVers(vers);
-        return vers;
+
+        // give up if all we are given is the system id for the doctype
+        str1 = TidyUtils.getString(this.lexbuf, doctype.start + 5, 7);
+        if ("SYSTEM ".equalsIgnoreCase(str1))
+        {
+            // but at least ensure the case is correct
+            if (!str1.substring(0, 6).equals("SYSTEM"))
+            {
+                System.arraycopy(TidyUtils.getBytes("SYSTEM"), 0, this.lexbuf, doctype.start + 5, 6);
+            }
+            return 0; // unrecognized
+        }
+
+        if ("PUBLIC ".equalsIgnoreCase(str1))
+        {
+            if (!str1.substring(0, 6).equals("PUBLIC"))
+            {
+                System.arraycopy(TidyUtils.getBytes("PUBLIC "), 0, this.lexbuf, doctype.start + 5, 6);
+            }
+        }
+        else
+        {
+            this.badDoctype = true;
+        }
+
+        for (i = doctype.start; i < doctype.end; ++i)
+        {
+            if (this.lexbuf[i] == (byte) '"')
+            {
+                str1 = TidyUtils.getString(this.lexbuf, i + 1, 12);
+                str2 = TidyUtils.getString(this.lexbuf, i + 1, 13);
+                if (str1.equals("-//W3C//DTD "))
+                {
+                    // compute length of identifier e.g. "HTML 4.0 Transitional"
+                    for (j = i + 13; j < doctype.end && this.lexbuf[j] != (byte) '/'; ++j)
+                    {
+                        //
+                    }
+                    len = j - i - 13;
+                    p = TidyUtils.getString(this.lexbuf, i + 13, len);
+
+                    for (j = 1; j < W3CVERSION.length; ++j)
+                    {
+                        s = W3CVERSION[j].name;
+                        if (len == s.length() && s.equals(p))
+                        {
+                            return W3CVERSION[j].code;
+                        }
+                    }
+
+                    // else unrecognized version
+                }
+                else if (str2.equals("-//IETF//DTD "))
+                {
+                    // compute length of identifier e.g. "HTML 2.0"
+                    for (j = i + 14; j < doctype.end && this.lexbuf[j] != (byte) '/'; ++j)
+                    {
+                        //
+                    }
+                    len = j - i - 14;
+
+                    p = TidyUtils.getString(this.lexbuf, i + 14, len);
+                    s = W3CVERSION[0].name;
+                    if (len == s.length() && s.equals(p))
+                    {
+                        return W3CVERSION[0].code;
+                    }
+
+                    // else unrecognized version
+                }
+                break;
+            }
+        }
+
+        return 0;
     }
 
     /**
@@ -1108,13 +1143,13 @@ public class Lexer
      * @param root root Node
      * @param profile current profile
      */
-    public void fixHTMLNameSpace(Node root, String profile)
+    public void fixHTMLNameSpace(final Node root, final String profile)
     {
         Node node;
         AttVal attr;
 
         node = root.content;
-        while (node != null && !node.is(TagId.HTML))
+        while (node != null && node.tag != this.configuration.tt.tagHtml)
         {
             node = node.next;
         }
@@ -1135,7 +1170,7 @@ public class Lexer
             {
                 if (!attr.value.equals(profile))
                 {
-                    report.warning(this, node, null, ErrorCode.INCONSISTENT_NAMESPACE);
+                    report.warning(this, node, null, Report.INCONSISTENT_NAMESPACE);
                     attr.value = profile;
                 }
             }
@@ -1154,16 +1189,16 @@ public class Lexer
      * @param root root node
      * @return new doctype node
      */
-    Node newDocTypeNode(Node root)
+    Node newXhtmlDocTypeNode(final Node root)
     {
-        Node html = root.findHTML();
+        final Node html = root.findHTML(this.configuration.tt);
         if (html == null)
         {
             return null;
         }
 
-        Node newdoctype = newNode();
-        newdoctype.setType(NodeType.DocTypeTag);
+        final Node newdoctype = newNode();
+        newdoctype.setType(Node.DOCTYPE_TAG);
         newdoctype.next = html;
         newdoctype.parent = root;
         newdoctype.prev = null;
@@ -1190,93 +1225,163 @@ public class Lexer
      * @param root root node
      * @return <code>true</code> if a doctype has been added
      */
-    public boolean setXHTMLDocType(final Node root) {
-    	Node doctype = root.findDocType();
-    	DoctypeModes dtmode = configuration.getDocTypeMode();
-    	final String pub = "PUBLIC";
-    	final String sys = "SYSTEM";
-    	
-    	versionEmitted = apparentVersion();
-    	if (dtmode == DoctypeModes.Omit) {
-    		if (doctype != null) {
-    			Node.discardElement(doctype);
-    		}
-    	}
-    	if (dtmode == DoctypeModes.User && configuration.getDocTypeStr() == null) {
-    		return false;
-    	}
-    	if (doctype == null) {
-    		doctype = newDocTypeNode(root);
-    		doctype.element = "html";
-    	} else {
-    		doctype.element = doctype.element.toLowerCase();
-    	}
-    	
-    	switch(dtmode) {
-        case Strict:
-            /* XHTML 1.0 Strict */
-        	doctype.repairAttrValue(pub, getFPIFromVers(X10S));
-        	doctype.repairAttrValue(sys, getSIFromVers(X10S));
-            versionEmitted = X10S;
-            break;
-        case Loose:
-            /* XHTML 1.0 Transitional */
-        	doctype.repairAttrValue(pub, getFPIFromVers(X10T));
-        	doctype.repairAttrValue(sys, getSIFromVers(X10T));
-            versionEmitted = X10T;
-            break;
-        case User:
-            /* user defined document type declaration */
-        	doctype.repairAttrValue(pub, configuration.getDocTypeStr());
-        	doctype.repairAttrValue(sys, "");
-            break;
-        case Auto:
-            if ((versions & XH11) != 0 && this.doctype == XH11) {
-                if (doctype.getAttrByName(sys) == null) {
-                	doctype.repairAttrValue(sys, getSIFromVers(XH11));
-                }
-                versionEmitted = XH11;
-                return true;
+    public boolean setXHTMLDocType(final Node root)
+    {
+        String fpi = " ";
+        String sysid = "";
+        final String namespace = XHTML_NAMESPACE;
+        String dtdsub = null;
+        Node doctype;
+        int dtdlen = 0;
+
+        doctype = root.findDocType();
+
+        fixHTMLNameSpace(root, namespace); // #427839 - fix by Evan Lenz 05 Sep 00
+
+        if (this.configuration.docTypeMode == DocTypeMode.DOCTYPE_OMIT)
+        {
+            if (doctype != null)
+            {
+                Node.discardElement(doctype);
             }
-            else if ((versions & XH11) != 0 && (versions & VERS_HTML40) == 0) {
-            	doctype.repairAttrValue(pub, getFPIFromVers(XH11));
-            	doctype.repairAttrValue(sys, getSIFromVers(XH11));
-            	
-                versionEmitted = XH11;
+            return true;
+        }
+
+        if (this.configuration.docTypeMode == DocTypeMode.DOCTYPE_AUTO)
+        {
+            // see what flavor of XHTML this document matches
+            if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML40_STRICT))
+            {
+                // use XHTML strict
+                fpi = "-//W3C//DTD XHTML 1.0 Strict//EN";
+                sysid = VOYAGER_STRICT;
             }
-            else if ((versions & XB10) != 0 && this.doctype == XB10) {
-                if (doctype.getAttrByName(sys) == null) {
-                	doctype.repairAttrValue(sys, getSIFromVers(XB10));
-                }
-                versionEmitted = XB10;
-                return true;
+            else if (TidyUtils.toBoolean(this.versions & Dict.VERS_FRAMESET))
+            {
+                // use XHTML frames
+                fpi = "-//W3C//DTD XHTML 1.0 Frameset//EN";
+                sysid = VOYAGER_FRAMESET;
             }
-            else if ((versions & VERS_HTML40_STRICT) != 0) {
-            	doctype.repairAttrValue(pub, getFPIFromVers(X10S));
-            	doctype.repairAttrValue(sys, getSIFromVers(X10S));
-                versionEmitted = X10S;
+            else if (TidyUtils.toBoolean(this.versions & Dict.VERS_LOOSE))
+            {
+                fpi = "-//W3C//DTD XHTML 1.0 Transitional//EN";
+                sysid = VOYAGER_LOOSE;
             }
-            else if ((versions & VERS_FRAMESET) != 0) {
-            	doctype.repairAttrValue(pub, getFPIFromVers(X10F));
-            	doctype.repairAttrValue(sys, getSIFromVers(X10F));
-                versionEmitted = X10F;
+            else if (TidyUtils.toBoolean(this.versions & Dict.VERS_XHTML11))
+            {
+                // use XHTML 1.1
+                fpi = "-//W3C//DTD XHTML 1.1//EN";
+                sysid = VOYAGER_11;
             }
-            else if ((versions & VERS_LOOSE) != 0) {
-            	doctype.repairAttrValue(pub, getFPIFromVers(X10T));
-            	doctype.repairAttrValue(sys, getSIFromVers(X10T));
-                versionEmitted = X10T;
-            }
-            else {
-                if (doctype != null) {
+            else
+            {
+                // proprietary
+                fpi = null;
+                sysid = "";
+                if (doctype != null)// #473490 - fix by Bjšrn Hšhrmann 10 Oct 01
+                {
                     Node.discardElement(doctype);
                 }
+            }
+        }
+        else if (this.configuration.docTypeMode == DocTypeMode.DOCTYPE_STRICT)
+        {
+            fpi = "-//W3C//DTD XHTML 1.0 Strict//EN";
+            sysid = VOYAGER_STRICT;
+        }
+        else if (this.configuration.docTypeMode == DocTypeMode.DOCTYPE_LOOSE)
+        {
+            fpi = "-//W3C//DTD XHTML 1.0 Transitional//EN";
+            sysid = VOYAGER_LOOSE;
+        }
+
+        if (this.configuration.docTypeMode == DocTypeMode.DOCTYPE_USER && this.configuration.docTypeStr != null)
+        {
+            fpi = this.configuration.docTypeStr;
+            sysid = "";
+        }
+
+        if (fpi == null)
+        {
+            return false;
+        }
+
+        if (doctype != null)
+        {
+            // Look for internal DTD subset
+            if (configuration.xHTML || configuration.xmlOut)
+            {
+
+                final int len = doctype.end - doctype.start + 1;
+                final String start = TidyUtils.getString(this.lexbuf, doctype.start, len);
+
+                final int dtdbeg = start.indexOf('[');
+                if (dtdbeg >= 0)
+                {
+                    final int dtdend = start.substring(dtdbeg).indexOf(']');
+                    if (dtdend >= 0)
+                    {
+                        dtdlen = dtdend + 1;
+                        dtdsub = start.substring(dtdbeg);
+                    }
+                }
+            }
+        }
+        else
+        {
+            if ((doctype = newXhtmlDocTypeNode(root)) == null)
+            {
                 return false;
             }
-            break;
-        case Omit:
-            assert(false);
-            break;
         }
+
+        this.txtstart = this.lexsize;
+        this.txtend = this.lexsize;
+
+        // add public identifier
+        addStringLiteral("html PUBLIC ");
+
+        // check if the fpi is quoted or not
+        if (fpi.charAt(0) == '"')
+        {
+            addStringLiteral(fpi);
+        }
+        else
+        {
+            addStringLiteral("\"");
+            addStringLiteral(fpi);
+            addStringLiteral("\"");
+        }
+
+        if (this.configuration.wraplen != 0 && sysid.length() + 6 >= this.configuration.wraplen)
+        {
+            addStringLiteral("\n\"");
+        }
+        else
+        {
+            // FG: don't wrap
+            addStringLiteral(" \"");
+        }
+
+        // add system identifier
+        addStringLiteral(sysid);
+        addStringLiteral("\"");
+
+        if (dtdlen > 0 && dtdsub != null)
+        {
+            addCharToLexer(' ');
+            addStringLiteralLen(dtdsub, dtdlen);
+        }
+
+        this.txtend = this.lexsize;
+
+        final int length = this.txtend - this.txtstart;
+        doctype.textarray = new byte[length];
+
+        System.arraycopy(this.lexbuf, this.txtstart, doctype.textarray, 0, length);
+        doctype.start = 0;
+        doctype.end = length;
+
         return false;
     }
 
@@ -1284,13 +1389,74 @@ public class Lexer
      * Return the html version used in document.
      * @return version code
      */
-    public int apparentVersion() {
-    	if ((doctype == XH11 || doctype == XB10) &&
-    	        (versions & doctype) != 0) {
-   	        return doctype;
-    	} else {
-    		return htmlVersion();
-    	}
+    public short apparentVersion()
+    {
+        switch (this.doctype)
+        {
+            case Dict.VERS_UNKNOWN :
+                return htmlVersion();
+
+            case Dict.VERS_HTML20 :
+                if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML20))
+                {
+                    return Dict.VERS_HTML20;
+                }
+
+                break;
+
+            case Dict.VERS_HTML32 :
+                if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML32))
+                {
+                    return Dict.VERS_HTML32;
+                }
+
+                break; // to replace old version by new
+
+            case Dict.VERS_HTML40_STRICT :
+                if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML40_STRICT))
+                {
+                    return Dict.VERS_HTML40_STRICT;
+                }
+
+                break;
+
+            case Dict.VERS_HTML40_LOOSE :
+                if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML40_LOOSE))
+                {
+                    return Dict.VERS_HTML40_LOOSE;
+                }
+
+                break; // to replace old version by new
+
+            case Dict.VERS_FRAMESET :
+                if (TidyUtils.toBoolean(this.versions & Dict.VERS_FRAMESET))
+                {
+                    return Dict.VERS_FRAMESET;
+                }
+
+                break;
+
+            case Dict.VERS_XHTML11 :
+                if (TidyUtils.toBoolean(this.versions & Dict.VERS_XHTML11))
+                {
+                    return Dict.VERS_XHTML11;
+                }
+
+                break;
+            default :
+                // should never reach here
+                break;
+        }
+
+        // kludge to avoid error appearing at end of file
+        // it would be better to note the actual position
+        // when first encountering the doctype declaration
+
+        this.lines = 1;
+        this.columns = 1;
+
+        report.warning(this, null, null, Report.INCONSISTENT_VERSION);
+        return this.htmlVersion();
     }
 
     /**
@@ -1298,69 +1464,205 @@ public class Lexer
      * @param root root node
      * @return <code>false</code> if current version has not been identified
      */
-    public boolean fixDocType(Node root) {
-        Node doctype = root.findDocType();
-        DoctypeModes dtmode = configuration.getDocTypeMode();
-        int guessed = VERS_UNKNOWN;
-        boolean hadSI = false;
+    public boolean fixDocType(final Node root)
+    {
+        Node doctype;
+        int guessed = Dict.VERS_HTML40_STRICT, i;
 
-        if (dtmode == DoctypeModes.Auto &&
-            (this.versions & this.doctype) != 0 &&
-            !((VERS_XHTML & this.doctype) != 0 && !isvoyager)
-            && doctype != null) {
-            versionEmitted = this.doctype;
-            return true;
+        if (this.badDoctype)
+        {
+            report.warning(this, null, null, Report.MALFORMED_DOCTYPE);
         }
 
-        if (dtmode == DoctypeModes.Omit) {
-            if (doctype != null) {
+        doctype = root.findDocType();
+
+        if (DocTypeMode.DOCTYPE_OMIT.equals(this.configuration.docTypeMode))
+        {
+            if (doctype != null)
+            {
                 Node.discardElement(doctype);
             }
-            versionEmitted = apparentVersion();
             return true;
         }
 
-        if (configuration.isXmlOut()) {
+        if (this.configuration.xmlOut)
+        {
             return true;
         }
-        if (doctype != null) {
-            hadSI = doctype.getAttrByName("SYSTEM") != null;
-        }
-        if ((dtmode == DoctypeModes.Strict ||
-             dtmode == DoctypeModes.Loose) && doctype != null) {
+
+        if (DocTypeMode.DOCTYPE_STRICT.equals(this.configuration.docTypeMode))
+        {
             Node.discardElement(doctype);
             doctype = null;
+            guessed = Dict.VERS_HTML40_STRICT;
         }
-
-        switch (dtmode)
+        else if (DocTypeMode.DOCTYPE_LOOSE.equals(this.configuration.docTypeMode))
         {
-        case Strict:
-            guessed = H41S;
-            break;
-        case Loose:
-            guessed = H41T;
-            break;
-        case Auto:
+            Node.discardElement(doctype);
+            doctype = null;
+            guessed = Dict.VERS_HTML40_LOOSE;
+        }
+        else if (DocTypeMode.DOCTYPE_AUTO.equals(this.configuration.docTypeMode))
+        {
+            if (doctype != null)
+            {
+                if (this.doctype == Dict.VERS_UNKNOWN)
+                {
+                    return false;
+                }
+
+                switch (this.doctype)
+                {
+                    case Dict.VERS_UNKNOWN :
+                        return false;
+
+                    case Dict.VERS_HTML20 :
+                        if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML20))
+                        {
+                            return true;
+                        }
+
+                        break; // to replace old version by new
+
+                    case Dict.VERS_HTML32 :
+                        if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML32))
+                        {
+                            return true;
+                        }
+
+                        break; // to replace old version by new
+
+                    case Dict.VERS_HTML40_STRICT :
+                        if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML40_STRICT))
+                        {
+                            return true;
+                        }
+
+                        break; // to replace old version by new
+
+                    case Dict.VERS_HTML40_LOOSE :
+                        if (TidyUtils.toBoolean(this.versions & Dict.VERS_HTML40_LOOSE))
+                        {
+                            return true;
+                        }
+
+                        break; // to replace old version by new
+
+                    case Dict.VERS_FRAMESET :
+                        if (TidyUtils.toBoolean(this.versions & Dict.VERS_FRAMESET))
+                        {
+                            return true;
+                        }
+
+                        break; // to replace old version by new
+
+                    case Dict.VERS_XHTML11 :
+                        if (TidyUtils.toBoolean(this.versions & Dict.VERS_XHTML11))
+                        {
+                            return true;
+                        }
+
+                        break; // to replace old version by new
+                    default :
+                        // should never reach here
+                        break;
+                }
+
+                // INCONSISTENT_VERSION warning is now issued by ApparentVersion()
+            }
+
+            // choose new doctype
             guessed = htmlVersion();
-            break;
         }
 
-        versionEmitted = guessed;
-        if (guessed == VERS_UNKNOWN) {
+        if (guessed == Dict.VERS_UNKNOWN)
+        {
             return false;
         }
-        if (doctype != null) {
-            doctype.element = doctype.element.toLowerCase();
-        } else {
-            doctype = newDocTypeNode(root);
-            doctype.element = "html";
+
+        // for XML use the Voyager system identifier
+        if (this.configuration.xmlOut || this.configuration.xmlTags || this.isvoyager)
+        {
+            if (doctype != null)
+            {
+                Node.discardElement(doctype);
+            }
+
+            fixHTMLNameSpace(root, XHTML_NAMESPACE);
+
+            // Namespace is the same for all XHTML variants
+            // Also, don't return yet. Still need to add DOCTYPE declaration.
+            //
+            // for (i = 0; i < W3CVersion.length; ++i)
+            // {
+            // if (guessed == W3CVersion[i].code)
+            // {
+            // fixHTMLNameSpace(root, W3CVersion[i].profile);
+            // break;
+            // }
+            // }
+            // return true;
         }
 
-        doctype.repairAttrValue("PUBLIC", getFPIFromVers(guessed));
-
-        if (hadSI) {
-            doctype.repairAttrValue("SYSTEM", getSIFromVers(guessed));
+        if (doctype == null)
+        {
+            if ((doctype = newXhtmlDocTypeNode(root)) == null)
+            {
+                return false;
+            }
         }
+
+        this.txtstart = this.lexsize;
+        this.txtend = this.lexsize;
+
+        // use the appropriate public identifier
+        addStringLiteral("html PUBLIC ");
+
+        if (DocTypeMode.DOCTYPE_USER.equals(this.configuration.docTypeMode)
+            && this.configuration.docTypeStr != null
+            && this.configuration.docTypeStr.length() > 0)
+        {
+            // check if the fpi is quoted or not
+            if (this.configuration.docTypeStr.charAt(0) == '"')
+            {
+                addStringLiteral(this.configuration.docTypeStr);
+            }
+            else
+            {
+                addStringLiteral("\""); // #431889 - fix by Dave Bryan 04 Jan 2001
+                addStringLiteral(this.configuration.docTypeStr);
+                addStringLiteral("\""); // #431889 - fix by Dave Bryan 04 Jan 2001
+            }
+        }
+        else if (guessed == Dict.VERS_HTML20)
+        {
+            addStringLiteral("\"-//IETF//DTD HTML 2.0//EN\"");
+        }
+        else
+        {
+            addStringLiteral("\"-//W3C//DTD ");
+
+            for (i = 0; i < W3CVERSION.length; ++i)
+            {
+                if (guessed == W3CVERSION[i].code)
+                {
+                    addStringLiteral(W3CVERSION[i].name);
+                    break;
+                }
+            }
+
+            addStringLiteral("//EN\"");
+        }
+
+        this.txtend = this.lexsize;
+
+        final int length = this.txtend - this.txtstart;
+        doctype.textarray = new byte[length];
+
+        System.arraycopy(this.lexbuf, this.txtstart, doctype.textarray, 0, length);
+        doctype.start = 0;
+        doctype.end = length;
+
         return true;
     }
 
@@ -1370,28 +1672,41 @@ public class Lexer
      * @param root root node
      * @return always true
      */
-    public boolean fixXmlDecl(final Node root) {
-        final Node xml;
-        if (root.content != null && root.content.type == NodeType.XmlDecl) {
+    public boolean fixXmlDecl(final Node root)
+    {
+        Node xml;
+        AttVal version;
+        AttVal encoding;
+
+        if (root.content != null && root.content.type == Node.XML_DECL) {
             xml = root.content;
         } else {
-            xml = newNode(NodeType.XmlDecl, this.lexbuf, 0, 0);
+            xml = newNode(Node.XML_DECL, this.lexbuf, 0, 0);
             root.insertNodeAtStart(xml);
         }
-        final AttVal version = xml.getAttrByName("version");
-        final AttVal encoding = xml.getAttrByName("encoding");
+
+        version = xml.getAttrByName("version");
+        encoding = xml.getAttrByName("encoding");
 
         // We need to insert a check if declared encoding and output encoding mismatch
         // and fix the Xml declaration accordingly!!!
-        if (encoding == null && !"UTF8".equals(this.configuration.getOutCharEncodingName())) {
-        	final String enc = EncodingNameMapper.toIana(configuration.getOutCharEncodingName()).toLowerCase();
-            if (enc != null) {
-                xml.addAttribute("encoding", enc);
+        if (encoding == null && !"UTF8".equals(this.configuration.getOutCharEncodingName()))
+        {
+            if ("ISO8859_1".equals(this.configuration.getOutCharEncodingName()))
+            {
+                xml.addAttribute("encoding", "iso-8859-1");
+            }
+            if ("ISO2022".equals(this.configuration.getOutCharEncodingName()))
+            {
+                xml.addAttribute("encoding", "iso-2022");
             }
         }
-        if (version == null) {
+
+        if (version == null)
+        {
             xml.addAttribute("version", "1.0");
         }
+
         return true;
     }
 
@@ -1400,19 +1715,18 @@ public class Lexer
      * @param name tag name
      * @return generated node
      */
-    public Node inferredTag(final TagId id) {
-    	final Dict dict = configuration.tt.lookup(id);
-        if (dict == null) {
-        	throw new RuntimeException();
-        }
-        Node node = newNode(NodeType.StartTag, this.lexbuf, this.txtstart, this.txtend, dict.name);
+    public Node inferredTag(final String name)
+    {
+        Node node;
+
+        node = newNode(Node.START_TAG, this.lexbuf, this.txtstart, this.txtend, name);
         node.implicit = true;
         return node;
     }
 
-    private static enum CDataState {
-    	INTERMEDIATE, STARTTAG, ENDTAG;
-    }
+    private static final int CDATA_INTERMEDIATE = 0;
+    private static final int CDATA_STARTTAG = 1;
+    private static final int CDATA_ENDTAG = 2;
 
     /**
      * Create a text node for the contents of a CDATA element like style or script which ends with &lt;/foo> for some
@@ -1420,15 +1734,15 @@ public class Lexer
      * @param container container node
      * @return cdata node
      */
-    public Node getCDATA(Node container)
+    public Node getCDATA(final Node container)
     {
         int start = 0;
         int nested = 0;
-        CDataState state = CDataState.INTERMEDIATE;
+        int state = CDATA_INTERMEDIATE;
         int c;
         boolean isEmpty = true;
         boolean matches = false;
-        boolean hasSrc = container.getAttrById(AttrId.SRC) != null;
+        final boolean hasSrc = container.getAttrByName("src") != null;
 
         this.lines = this.in.getCurline();
         this.columns = this.in.getCurcol();
@@ -1441,7 +1755,7 @@ public class Lexer
         	addCharToLexer(c);
         	txtend = lexsize;
         	
-            if (state == CDataState.INTERMEDIATE) {
+            if (state == CDATA_INTERMEDIATE) {
             	if (c != '<') {
                     if (isEmpty && !TidyUtils.isWhite((char) c)) {
                         isEmpty = false;
@@ -1451,7 +1765,7 @@ public class Lexer
             	c = in.readChar();
             	if (TidyUtils.isLetter((char) c)) {
             		/* <head><script src=foo><meta name=foo content=bar>*/
-                    if (hasSrc && isEmpty && container.is(TagId.SCRIPT)) {
+                    if (hasSrc && isEmpty && container.tag == configuration.tt.tagScript) {
                         /* ReportError(doc, container, NULL, MISSING_ENDTAG_FOR); */
                         lexsize = txtstart;
                         in.ungetChar(c);
@@ -1460,7 +1774,7 @@ public class Lexer
                     }
                     addCharToLexer(c);
                     start = lexsize - 1;
-                    state = CDataState.STARTTAG;
+                    state = CDATA_STARTTAG;
             	} else if (c == '/') {
                     addCharToLexer(c);
                     c = in.readChar();
@@ -1470,7 +1784,7 @@ public class Lexer
                     }
                     in.ungetChar(c);
                     start = lexsize;
-                    state = CDataState.ENDTAG;
+                    state = CDATA_ENDTAG;
                 } else if (c == '\\') {
                     /* recognize document.write("<script><\/script>") */
                 	addCharToLexer(c);
@@ -1487,11 +1801,11 @@ public class Lexer
                     }
                 	in.ungetChar(c);
                     start = lexsize;
-                    state = CDataState.ENDTAG;
+                    state = CDATA_ENDTAG;
                 } else {
                 	in.ungetChar(c);
                 }
-            } else if (state == CDataState.STARTTAG) {
+            } else if (state == CDATA_STARTTAG) {
             	/* '<' + Letter found */
             	if (TidyUtils.isLetter((char) c)) {
                      continue;
@@ -1501,8 +1815,8 @@ public class Lexer
             	if (matches) {
             		nested++;
             	}
-            	state = CDataState.INTERMEDIATE;
-            } else if (state == CDataState.ENDTAG) {
+            	state = CDATA_INTERMEDIATE;
+            } else if (state == CDATA_ENDTAG) {
             	/* '<' + '/' + Letter found */
             	if (TidyUtils.isLetter((char) c)) {
                     continue;
@@ -1525,14 +1839,14 @@ public class Lexer
                     }
                     in.ungetChar('/');
                     in.ungetChar('<');
-                    lexsize -= (lexsize - start) + 2;
+                    lexsize -= lexsize - start + 2;
                     break;
                 } else if (lexbuf[start - 2] != '\\') {
                     /* if the end tag is not already escaped using backslash */
                 	lines = in.getCurline();
                     columns = in.getCurcol();
                     columns -= 3;
-                    report.warning(this, null, null, ErrorCode.BAD_CDATA_CONTENT);
+                    report.warning(this, null, null, Report.BAD_CDATA_CONTENT);
 
                     /* if javascript insert backslash before / */
                     if (container.isJavaScript()) {
@@ -1543,7 +1857,7 @@ public class Lexer
                         lexsize++;
                     }
                 }
-                state = CDataState.INTERMEDIATE;
+                state = CDATA_INTERMEDIATE;
             }
         }
         if (isEmpty) {
@@ -1552,7 +1866,7 @@ public class Lexer
             txtend = lexsize;
         }
         if (c == StreamIn.END_OF_STREAM) {
-            report.warning(this, container, null, ErrorCode.MISSING_ENDTAG_FOR);
+            report.warning(this, container, null, Report.MISSING_ENDTAG_FOR);
         }
 	    /* this was disabled for some reason... */
 //	    #if 0
@@ -1561,7 +1875,7 @@ public class Lexer
 //	        else
 //	            return NULL;
 //	    #else
-	        return textToken();
+	        return newNode(Node.TEXT_NODE, lexbuf, txtstart, txtend);
 //	    #endif
     }
 
@@ -1589,13 +1903,14 @@ public class Lexer
         int c = 0;
         int badcomment = 0;
         // pass by reference
-        boolean[] isempty = new boolean[1];
+        final boolean[] isempty = new boolean[1];
+        boolean inDTDSubset = false;
         AttVal attributes = null;
 
         if (this.pushed)
         {
             // duplicate inlines in preference to pushed text nodes when appropriate
-            if (this.token.type != NodeType.TextNode || (this.insert == -1 && this.inode == null))
+            if (this.token.type != Node.TEXT_NODE || this.insert == -1 && this.inode == null)
             {
                 this.pushed = false;
                 return this.token;
@@ -1603,7 +1918,6 @@ public class Lexer
         }
 
         // at start of block elements, unclosed inline
-        // elements are inserted into the token stream
         if (this.insert != -1 || this.inode != null)
         {
             return insertedToken();
@@ -1618,8 +1932,14 @@ public class Lexer
 
         while ((c = this.in.readChar()) != StreamIn.END_OF_STREAM)
         {
-        	if (this.insertspace) {
+            // FG fix for [427846] different from tidy
+            // if (this.insertspace && (!TidyUtils.toBoolean(mode & IGNORE_WHITESPACE)))
+            if (this.insertspace && mode != IGNORE_WHITESPACE)
+            {
                 addCharToLexer(' ');
+            }
+            if (this.insertspace && !TidyUtils.toBoolean(mode & IGNORE_WHITESPACE))
+            {
                 this.waswhite = true;
                 this.insertspace = false;
             }
@@ -1647,7 +1967,7 @@ public class Lexer
                     // Discard white space if appropriate.
                     // Its cheaper to do this here rather than in parser methods for elements that
                     // don't have mixed content.
-                    if (TidyUtils.isWhite((char) c) && (mode == IGNORE_WHITESPACE) && this.lexsize == this.txtstart + 1)
+                    if (TidyUtils.isWhite((char) c) && mode == IGNORE_WHITESPACE && this.lexsize == this.txtstart + 1)
                     {
                         --this.lexsize;
                         this.waswhite = false;
@@ -1723,7 +2043,10 @@ public class Lexer
                             this.in.ungetChar(c);
                             this.state = LEX_ENDTAG;
                             this.lexbuf[this.lexsize] = (byte) '\0'; // debug
-                            in.moveCurcol(-2);
+
+                            // changed from
+                            // this.in.curcol -= 2;
+                            this.columns -= 2;
 
                             // if some text before the </ return it now
                             if (this.txtend > this.txtstart)
@@ -1735,7 +2058,7 @@ public class Lexer
                                     this.txtend = this.lexsize;
                                 }
 
-                                this.token = textToken();
+                                this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
                                 return this.token;
                             }
 
@@ -1774,7 +2097,7 @@ public class Lexer
                                 // if some text before < return it now
                                 if (this.txtend > this.txtstart)
                                 {
-                                    this.token = textToken();
+                                    this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
                                     return this.token;
                                 }
 
@@ -1782,7 +2105,7 @@ public class Lexer
                                 continue;
                             }
 
-                            report.warning(this, null, null, ErrorCode.MALFORMED_COMMENT);
+                            report.warning(this, null, null, Report.MALFORMED_COMMENT);
                         }
                         else if (c == 'd' || c == 'D')
                         {
@@ -1835,7 +2158,7 @@ public class Lexer
                             // if some text before < return it now
                             if (this.txtend > this.txtstart)
                             {
-                                this.token = textToken();
+                                this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
                                 return this.token;
                             }
 
@@ -1852,7 +2175,7 @@ public class Lexer
                             // if some text before < return it now
                             if (this.txtend > this.txtstart)
                             {
-                                this.token = textToken();
+                                this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
                                 return this.token;
                             }
 
@@ -1892,7 +2215,7 @@ public class Lexer
                         // if some text before < return it now
                         if (this.txtend > this.txtstart)
                         {
-                            this.token = textToken();
+                            this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
                             return this.token;
                         }
 
@@ -1910,7 +2233,7 @@ public class Lexer
                         // if some text before < return it now
                         if (this.txtend > this.txtstart)
                         {
-                            this.token = textToken();
+                            this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
                             return this.token;
                         }
 
@@ -1928,7 +2251,7 @@ public class Lexer
                         // if some text before < return it now
                         if (this.txtend > this.txtstart)
                         {
-                            this.token = textToken();
+                            this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
                             return this.token;
                         }
 
@@ -1940,7 +2263,6 @@ public class Lexer
                     if (TidyUtils.isLetter((char) c))
                     {
                         this.in.ungetChar(c); // push back letter
-                        in.ungetChar('<');
                         this.lexsize -= 2; // discard " <" + letter
                         this.txtend = this.lexsize;
                         this.state = LEX_STARTTAG; // ready to read tag name
@@ -1948,7 +2270,7 @@ public class Lexer
                         // if some text before < return it now
                         if (this.txtend > this.txtstart)
                         {
-                            this.token = textToken();
+                            this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
                             return this.token;
                         }
 
@@ -1963,9 +2285,13 @@ public class Lexer
                 case LEX_ENDTAG :
                     // </letter
                     this.txtstart = this.lexsize - 1;
-                    in.moveCurcol(2);
+
+                    // changed from
+                    // this.in.curcol -= 2;
+                    this.columns -= 2;
+
                     c = parseTagName();
-                    this.token = newNode(NodeType.EndTag, // create endtag token
+                    this.token = newNode(Node.END_TAG, // create endtag token
                         this.lexbuf,
                         this.txtstart,
                         this.txtend,
@@ -1979,11 +2305,10 @@ public class Lexer
                         c = this.in.readChar();
                     }
 
-                    if (c == StreamIn.END_OF_STREAM) {
-                        if (!configuration.isTidyCompat()) {
-                        	in.ungetChar(c);
-                        	report.attrError(this, token, null, ErrorCode.UNEXPECTED_GT);
-                        }
+                    if (c == StreamIn.END_OF_STREAM)
+                    {
+                        this.in.ungetChar(c);
+                        report.attrError(this, this.token, null, Report.UNEXPECTED_GT);
                         continue;
                     }
 
@@ -1991,7 +2316,7 @@ public class Lexer
                     if (c != '>') {
                         this.in.ungetChar(c);
                         c = '>';
-                        report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_GT);
+                        report.attrError(this, this.token, null, Report.UNEXPECTED_GT);
                     }
 
                     this.state = LEX_CONTENT;
@@ -1999,15 +2324,13 @@ public class Lexer
                     return this.token; // the endtag token
 
                 case LEX_STARTTAG :
-                	c = in.readChar();
-                	changeChar((byte)c);
                     // first letter of tagname
                     this.txtstart = this.lexsize - 1; // set txtstart to first letter
                     c = parseTagName();
                     isempty[0] = false;
                     attributes = null;
                     this.token = newNode(
-                        (isempty[0] ? NodeType.StartEndTag : NodeType.StartTag),
+                        (isempty[0] ? Node.START_END_TAG : Node.START_TAG),
                         this.lexbuf,
                         this.txtstart,
                         this.txtend,
@@ -2026,7 +2349,7 @@ public class Lexer
 
                     if (isempty[0])
                     {
-                        this.token.type = NodeType.StartEndTag;
+                        this.token.type = Node.START_END_TAG;
                     }
 
                     this.token.attributes = attributes;
@@ -2038,8 +2361,10 @@ public class Lexer
                     // this doesn't apply to empty elements
                     // nor to preformatted content that needs escaping
 
-                    if ((mode != PREFORMATTED || preContent(this.token))
-                        && (this.token.expectsContent() || this.token.is(TagId.BR)))
+                    if (
+
+                    (mode != PREFORMATTED || preContent(this.token))
+                        && (this.token.expectsContent() || this.token.tag == this.configuration.tt.tagBr))
                     {
 
                         c = this.in.readChar();
@@ -2069,34 +2394,42 @@ public class Lexer
 
                     if (this.token.tag == null)
                     {
-                        report.error(this, null, this.token, ErrorCode.UNKNOWN_ELEMENT);
+                        report.error(this, null, this.token, Report.UNKNOWN_ELEMENT);
                     }
-                    else if (!this.configuration.isXmlTags())
+                    else if (!this.configuration.xmlTags)
                     {
                         constrainVersion(this.token.tag.versions);
 
-                        if (TidyUtils.toBoolean(this.token.tag.versions & VERS_PROPRIETARY))
+                        if (TidyUtils.toBoolean(this.token.tag.versions & Dict.VERS_PROPRIETARY))
                         {
-                            if (!this.configuration.isMakeClean() || (!this.token.is(TagId.NOBR) &&
-                                !this.token.is(TagId.WBR))) {
-                                report.warning(this, null, this.token, ErrorCode.PROPRIETARY_ELEMENT);
-                                
-                                if (token.is(TagId.LAYER)) {
-                                    badLayout |= Report.USING_LAYER;
-                                }
-                                else if (token.is(TagId.SPACER)) {
-                                    badLayout |= Report.USING_SPACER;
-                                }
-                                else if (token.is(TagId.NOBR)) {
-                                    badLayout |= Report.USING_NOBR;
-                                }
+                            // #427810 - fix by Gary Deschaines 24 May 00
+                            if (this.configuration.makeClean && this.token.tag != this.configuration.tt.tagNobr && //
+                                this.token.tag != this.configuration.tt.tagWbr)
+                            {
+                                report.warning(this, null, this.token, Report.PROPRIETARY_ELEMENT);
+                            }
+                            // #427810 - fix by Terry Teague 2 Jul 01
+                            else if (!this.configuration.makeClean)
+                            {
+                                report.warning(this, null, this.token, Report.PROPRIETARY_ELEMENT);
                             }
                         }
-                        token.repairDuplicateAttributes(this);
-                    } else {
-                    	token.repairDuplicateAttributes(this);
+
+                        if (this.token.tag.getChkattrs() != null)
+                        {
+                            this.token.tag.getChkattrs().check(this, this.token);
+                        }
+                        else
+                        {
+                            this.token.checkAttributes(this);
+                        }
+
+                        // should this be called before attribute checks?
+                        this.token.repairDuplicateAttributes(this);
+
                     }
-                    return token; // return start tag
+
+                    return this.token; // return start tag
 
                 case LEX_COMMENT :
                     // seen <!-- so look for -->
@@ -2114,21 +2447,22 @@ public class Lexer
                         continue;
                     }
 
-                    while (true) {
+                    end_comment : while (true)
+                    {
                         c = this.in.readChar();
 
                         if (c == '>')
                         {
                             if (badcomment != 0)
                             {
-                                report.warning(this, null, null, ErrorCode.MALFORMED_COMMENT);
+                                report.warning(this, null, null, Report.MALFORMED_COMMENT);
                             }
 
                             this.txtend = this.lexsize - 2; // AQ 8Jul2000
                             this.lexbuf[this.lexsize] = (byte) '\0';
                             this.state = LEX_CONTENT;
                             this.waswhite = false;
-                            this.token = newNode(NodeType.CommentTag, this.lexbuf, this.txtstart, this.txtend);
+                            this.token = newNode(Node.COMMENT_TAG, this.lexbuf, this.txtstart, this.txtend);
 
                             // now look for a line break
 
@@ -2164,41 +2498,65 @@ public class Lexer
                         }
 
                         badcomment++;
-                        if (this.configuration.isFixComments())
+                        if (this.configuration.fixComments)
                         {
                             this.lexbuf[this.lexsize - 2] = (byte) '=';
                         }
 
+                        addCharToLexer(c);
+
                         // if '-' then look for '>' to end the comment
-                        if (c == '-') {
-                        	addCharToLexer(c);
+                        if (c != '-')
+                        {
+                            break end_comment;
                         }
-                        else {
-                        	// otherwise continue to look for -->
-                            this.lexbuf[this.lexsize - 1] = (byte) '=';
-                            addCharToLexer(c);
-                        	break;
-                        }
+
                     }
+                    // otherwise continue to look for -->
+                    this.lexbuf[this.lexsize - 2] = (byte) '=';
                     continue;
 
                 case LEX_DOCTYPE :
                     // seen <!d so look for '> ' munging whitespace
 
-                	/* use ParseDocTypeDecl() to tokenize doctype declaration */
-                    in.ungetChar(c);
+                    if (TidyUtils.isWhite((char) c))
+                    {
+                        if (this.waswhite)
+                        {
+                            this.lexsize -= 1;
+                        }
+
+                        this.waswhite = true;
+                    }
+                    else
+                    {
+                        this.waswhite = false;
+                    }
+
+                    if (inDTDSubset)
+                    {
+                        if (c == ']')
+                        {
+                            inDTDSubset = false;
+                        }
+                    }
+                    else if (c == '[')
+                    {
+                        inDTDSubset = true;
+                    }
+                    if (inDTDSubset || c != '>')
+                    {
+                        continue;
+                    }
+
                     this.lexsize -= 1;
-                    token = parseDocTypeDecl();
-                    
                     this.txtend = this.lexsize;
-//                    this.lexbuf[this.lexsize] = (byte) '\0';
+                    this.lexbuf[this.lexsize] = (byte) '\0';
                     this.state = LEX_CONTENT;
                     this.waswhite = false;
-
+                    this.token = newNode(Node.DOCTYPE_TAG, this.lexbuf, this.txtstart, this.txtend);
                     // make a note of the version named by the doctype
-                    if (doctype == VERS_UNKNOWN && token != null && !configuration.isXmlTags()) {
-                    	this.doctype = findGivenVersion(this.token);
-                    }
+                    this.doctype = findGivenVersion(this.token);
                     return this.token;
 
                 case LEX_PROCINSTR :
@@ -2207,7 +2565,7 @@ public class Lexer
 
                     if (this.lexsize - this.txtstart == 3)
                     {
-                        if ((TidyUtils.getString(this.lexbuf, this.txtstart, 3)).equals("php"))
+                        if (TidyUtils.getString(this.lexbuf, this.txtstart, 3).equals("php"))
                         {
                             this.state = LEX_PHP;
                             continue;
@@ -2216,7 +2574,7 @@ public class Lexer
 
                     if (this.lexsize - this.txtstart == 4)
                     {
-                        if ((TidyUtils.getString(this.lexbuf, this.txtstart, 3)).equals("xml")
+                        if (TidyUtils.getString(this.lexbuf, this.txtstart, 3).equals("xml")
                             && TidyUtils.isWhite((char) this.lexbuf[this.txtstart + 3]))
                         {
                             this.state = LEX_XMLDECL;
@@ -2225,7 +2583,7 @@ public class Lexer
                         }
                     }
 
-                    if (this.configuration.isXmlPIs()) // insist on ?> as terminator
+                    if (this.configuration.xmlPIs) // insist on ?> as terminator
                     {
                         if (c != '?')
                         {
@@ -2237,7 +2595,7 @@ public class Lexer
 
                         if (c == StreamIn.END_OF_STREAM)
                         {
-                            report.warning(this, null, null, ErrorCode.UNEXPECTED_END_OF_FILE);
+                            report.warning(this, null, null, Report.UNEXPECTED_END_OF_FILE);
                             this.in.ungetChar(c);
                             continue;
                         }
@@ -2255,7 +2613,7 @@ public class Lexer
                     this.lexbuf[this.lexsize] = (byte) '\0';
                     this.state = LEX_CONTENT;
                     this.waswhite = false;
-                    this.token = newNode(NodeType.ProcInsTag, this.lexbuf, this.txtstart, this.txtend);
+                    this.token = newNode(Node.PROC_INS_TAG, this.lexbuf, this.txtstart, this.txtend);
                     return this.token;
 
                 case LEX_ASP :
@@ -2279,7 +2637,7 @@ public class Lexer
                     this.lexbuf[this.lexsize] = (byte) '\0';
                     this.state = LEX_CONTENT;
                     this.waswhite = false;
-                    this.token = newNode(NodeType.AspTag, this.lexbuf, this.txtstart, this.txtend);
+                    this.token = newNode(Node.ASP_TAG, this.lexbuf, this.txtstart, this.txtend);
                     return this.token;
 
                 case LEX_JSTE :
@@ -2303,7 +2661,7 @@ public class Lexer
                     this.lexbuf[this.lexsize] = (byte) '\0';
                     this.state = LEX_CONTENT;
                     this.waswhite = false;
-                    this.token = newNode(NodeType.JsteTag, this.lexbuf, this.txtstart, this.txtend);
+                    this.token = newNode(Node.JSTE_TAG, this.lexbuf, this.txtstart, this.txtend);
                     return this.token;
 
                 case LEX_PHP :
@@ -2327,7 +2685,7 @@ public class Lexer
                     this.lexbuf[this.lexsize] = (byte) '\0';
                     this.state = LEX_CONTENT;
                     this.waswhite = false;
-                    this.token = newNode(NodeType.PhpTag, this.lexbuf, this.txtstart, this.txtend);
+                    this.token = newNode(Node.PHP_TAG, this.lexbuf, this.txtstart, this.txtend);
                     return this.token;
 
                 case LEX_XMLDECL : // seen "<?xml" so look for "?>"
@@ -2341,10 +2699,10 @@ public class Lexer
                     if (c != '?')
                     {
                         String name;
-                        Node[] asp = new Node[1];
-                        Node[] php = new Node[1];
-                        AttVal av = new AttVal();
-                        int[] pdelim = new int[1];
+                        final Node[] asp = new Node[1];
+                        final Node[] php = new Node[1];
+                        final AttVal av = new AttVal();
+                        final int[] pdelim = new int[1];
                         isempty[0] = false;
 
                         this.in.ungetChar(c);
@@ -2355,7 +2713,6 @@ public class Lexer
                         av.value = this.parseValue(name, true, isempty, pdelim);
                         av.delim = pdelim[0];
                         av.next = attributes;
-                        av.dict = AttributeTable.getDefaultAttributeTable().findAttribute(av);
 
                         attributes = av;
                         // continue;
@@ -2374,7 +2731,7 @@ public class Lexer
                     this.lexbuf[this.txtend] = '\0';
                     this.state = LEX_CONTENT;
                     this.waswhite = false;
-                    this.token = newNode(NodeType.XmlDecl, this.lexbuf, this.txtstart, this.txtend);
+                    this.token = newNode(Node.XML_DECL, this.lexbuf, this.txtstart, this.txtend);
                     this.token.attributes = attributes;
                     return this.token;
 
@@ -2382,8 +2739,8 @@ public class Lexer
                     // seen " <![" so look for "]> "
                     if (c == '[')
                     {
-                        if (this.lexsize == (this.txtstart + 6)
-                            && (TidyUtils.getString(this.lexbuf, this.txtstart, 6)).equals("CDATA["))
+                        if (this.lexsize == this.txtstart + 6
+                            && TidyUtils.getString(this.lexbuf, this.txtstart, 6).equals("CDATA["))
                         {
                             this.state = LEX_CDATA;
                             this.lexsize -= 6;
@@ -2410,7 +2767,7 @@ public class Lexer
                     this.lexbuf[this.lexsize] = (byte) '\0';
                     this.state = LEX_CONTENT;
                     this.waswhite = false;
-                    this.token = newNode(NodeType.SectionTag, this.lexbuf, this.txtstart, this.txtend);
+                    this.token = newNode(Node.SECTION_TAG, this.lexbuf, this.txtstart, this.txtend);
                     return this.token;
 
                 case LEX_CDATA :
@@ -2443,7 +2800,7 @@ public class Lexer
                     this.lexbuf[this.lexsize] = (byte) '\0';
                     this.state = LEX_CONTENT;
                     this.waswhite = false;
-                    this.token = newNode(NodeType.CDATATag, this.lexbuf, this.txtstart, this.txtend);
+                    this.token = newNode(Node.CDATA_TAG, this.lexbuf, this.txtstart, this.txtend);
                     return this.token;
 
                 default :
@@ -2466,7 +2823,7 @@ public class Lexer
                     this.txtend = this.lexsize;
                 }
 
-                this.token = textToken();
+                this.token = newNode(Node.TEXT_NODE, this.lexbuf, this.txtstart, this.txtend);
                 return this.token;
             }
         }
@@ -2474,14 +2831,14 @@ public class Lexer
         {
             if (c == StreamIn.END_OF_STREAM)
             {
-                report.warning(this, null, null, ErrorCode.MALFORMED_COMMENT);
+                report.warning(this, null, null, Report.MALFORMED_COMMENT);
             }
 
             this.txtend = this.lexsize;
             this.lexbuf[this.lexsize] = (byte) '\0';
             this.state = LEX_CONTENT;
             this.waswhite = false;
-            this.token = newNode(NodeType.CommentTag, this.lexbuf, this.txtstart, this.txtend);
+            this.token = newNode(Node.COMMENT_TAG, this.lexbuf, this.txtstart, this.txtend);
             return this.token;
         }
 
@@ -2530,7 +2887,7 @@ public class Lexer
 
         if (this.txtend > this.txtstart)
         {
-            asp = newNode(NodeType.AspTag, this.lexbuf, this.txtstart, this.txtend);
+            asp = newNode(Node.ASP_TAG, this.lexbuf, this.txtstart, this.txtend);
         }
 
         this.txtstart = this.txtend;
@@ -2574,7 +2931,7 @@ public class Lexer
 
         if (this.txtend > this.txtstart)
         {
-            php = newNode(NodeType.PhpTag, this.lexbuf, this.txtstart, this.txtend);
+            php = newNode(Node.PHP_TAG, this.lexbuf, this.txtstart, this.txtend);
         }
 
         this.txtstart = this.txtend;
@@ -2588,7 +2945,7 @@ public class Lexer
      * @param php php Node, passed as array so it can be modified
      * @return parsed attribute
      */
-    public String parseAttribute(boolean[] isempty, Node[] asp, Node[] php)
+    public String parseAttribute(final boolean[] isempty, final Node[] asp, final Node[] php)
     {
         int start = 0;
         String attr;
@@ -2643,25 +3000,25 @@ public class Lexer
                 {
                     this.in.ungetChar('<'); // fix for 433360
                 }
-                report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_GT);
+                report.attrError(this, this.token, null, Report.UNEXPECTED_GT);
                 return null;
             }
 
             if (c == '=')
             {
-                report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_EQUALSIGN);
+                report.attrError(this, this.token, null, Report.UNEXPECTED_EQUALSIGN);
                 continue;
             }
 
             if (c == '"' || c == '\'')
             {
-                report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_QUOTEMARK);
+                report.attrError(this, this.token, null, Report.UNEXPECTED_QUOTEMARK);
                 continue;
             }
 
             if (c == StreamIn.END_OF_STREAM)
             {
-                report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_END_OF_FILE);
+                report.attrError(this, this.token, null, Report.UNEXPECTED_END_OF_FILE);
                 this.in.ungetChar(c);
                 return null;
             }
@@ -2703,7 +3060,7 @@ public class Lexer
             // what should be done about non-namechar characters?
             // currently these are incorporated into the attr name
 
-            if (!this.configuration.isXmlTags() && TidyUtils.isUpper((char) c))
+            if (!this.configuration.xmlTags && TidyUtils.isUpper((char) c))
             {
                 c = TidyUtils.toLower((char) c);
             }
@@ -2716,8 +3073,8 @@ public class Lexer
         }
 
         // #427672 - handle attribute names with multibyte chars - fix by Randy Waki - 10 Aug 00
-        int len = this.lexsize - start;
-        attr = (len > 0 ? TidyUtils.getString(this.lexbuf, start, len) : null);
+        final int len = this.lexsize - start;
+        attr = len > 0 ? TidyUtils.getString(this.lexbuf, start, len) : null;
         this.lexsize = start;
 
         return attr;
@@ -2785,14 +3142,14 @@ public class Lexer
 
                     if (endOfInput()) // #427840 - fix by Terry Teague 30 Jun 01
                     {
-                        report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_END_OF_FILE);
+                        report.attrError(this, this.token, null, Report.UNEXPECTED_END_OF_FILE);
                         this.in.ungetChar(c);
                         return 0;
                     }
                     if (c == '>') // #427840 - fix by Terry Teague 30 Jun 01
                     {
                         this.in.ungetChar(c);
-                        report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_GT);
+                        report.attrError(this, this.token, null, Report.UNEXPECTED_GT);
                         return 0;
                     }
 
@@ -2811,14 +3168,14 @@ public class Lexer
 
                     if (endOfInput()) // #427840 - fix by Terry Teague 30 Jun 01
                     {
-                        report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_END_OF_FILE);
+                        report.attrError(this, this.token, null, Report.UNEXPECTED_END_OF_FILE);
                         this.in.ungetChar(c);
                         return 0;
                     }
                     if (c == '>') // #427840 - fix by Terry Teague 30 Jun 01
                     {
                         this.in.ungetChar(c);
-                        report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_GT);
+                        report.attrError(this, this.token, null, Report.UNEXPECTED_GT);
                         return 0;
                     }
 
@@ -2839,7 +3196,7 @@ public class Lexer
      * @param pdelim delimiter, passed as an array reference to allow modification
      * @return parsed value
      */
-    public String parseValue(String name, boolean foldCase, boolean[] isempty, int[] pdelim)
+    public String parseValue(final String name, final boolean foldCase, final boolean[] isempty, final int[] pdelim)
     {
         // values start with "=" or " = " etc.
         // doesn't consume the ">" at end of start tag
@@ -2858,7 +3215,7 @@ public class Lexer
         // Henry Zrepa reports that some folk are using the embed element with script attributes where newlines are
         // significant and must be preserved
 
-        if (this.configuration.isLiteralAttribs())
+        if (this.configuration.literalAttribs)
         {
             munge = false;
         }
@@ -2919,7 +3276,7 @@ public class Lexer
             pdelim[0] = parseServerInstruction();
             len = this.lexsize - start;
             this.lexsize = start;
-            return (len > 0 ? TidyUtils.getString(this.lexbuf, start, len) : null);
+            return len > 0 ? TidyUtils.getString(this.lexbuf, start, len) : null;
         }
         else
         {
@@ -2939,7 +3296,7 @@ public class Lexer
 
             if (c == StreamIn.END_OF_STREAM)
             {
-                report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_END_OF_FILE);
+                report.attrError(this, this.token, null, Report.UNEXPECTED_END_OF_FILE);
                 this.in.ungetChar(c);
                 break;
             }
@@ -2954,8 +3311,8 @@ public class Lexer
 
                 if (c == '"' || c == '\'')
                 {
-                    int q = c;
-                    report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_QUOTEMARK);
+                	final int q = c;
+                    report.attrError(this, this.token, null, Report.UNEXPECTED_QUOTEMARK);
                     
                     /* handle <input onclick=s("btn1")> and <a title=foo""">...</a> */
                     /* this doesn't handle <a title=foo"/> which browsers treat as  */
@@ -2977,7 +3334,7 @@ public class Lexer
                     this.in.ungetChar(c); // fix for 433360
                     c = '>';
                     this.in.ungetChar(c);
-                    report.attrError(this, this.token, null, ErrorCode.UNEXPECTED_GT);
+                    report.attrError(this, this.token, null, Report.UNEXPECTED_GT);
                     break;
                 }
 
@@ -3039,16 +3396,14 @@ public class Lexer
                 // no entities in ID attributes
                 if ("id".equalsIgnoreCase(name))
                 {
-                    report.attrError(this, null, null, ErrorCode.ENTITY_IN_ID);
+                    report.attrError(this, null, null, Report.ENTITY_IN_ID);
                     continue;
                 }
 
                 addCharToLexer(c);
                 parseEntity((short) 0);
-                if (lexbuf[lexsize - 1] == '\n' && munge) {
-                    changeChar((byte)' ');
-                }
                 continue;
+
             }
 
             // kludge for JavaScript attribute values with line continuations in string literals
@@ -3078,7 +3433,7 @@ public class Lexer
                     if (c == '\n' && AttributeTable.getDefaultAttributeTable().isUrl(name))
                     {
                         // warn that we discard this newline
-                        report.attrError(this, this.token, null, ErrorCode.NEWLINE_IN_URI);
+                        report.attrError(this, this.token, null, Report.NEWLINE_IN_URI);
                         continue;
                     }
 
@@ -3086,9 +3441,6 @@ public class Lexer
 
                     if (lastc == ' ')
                     {
-                    	if (AttributeTable.getDefaultAttributeTable().isUrl(name)) {
-                            report.attrError(this, token, null, ErrorCode.WHITE_IN_URI);
-                    	}
                         continue;
                     }
                 }
@@ -3115,7 +3467,7 @@ public class Lexer
                 && !"<xml ".equals(TidyUtils.getString(this.lexbuf, start, 5))) // #500236 - fix by Klaus Johannes Rusch
             // 06 Jan 02
             {
-                report.error(this, null, null, ErrorCode.SUSPECTED_MISSING_QUOTE);
+                report.error(this, null, null, Report.SUSPECTED_MISSING_QUOTE);
             }
         }
 
@@ -3167,7 +3519,7 @@ public class Lexer
      * @param attr String to check, must be non-null
      * @return <code>true</code> if attr is a valid name.
      */
-    public static boolean isValidAttrName(String attr)
+    public static boolean isValidAttrName(final String attr)
     {
         char c;
         int i;
@@ -3205,7 +3557,7 @@ public class Lexer
      * @param buf css selector name
      * @return <code>true</code> if the given string is a valid css1 selector name
      */
-    public static boolean isCSS1Selector(String buf)
+    public static boolean isCSS1Selector(final String buf)
     {
         if (buf == null)
         {
@@ -3230,19 +3582,19 @@ public class Lexer
                 // Digit not 1st, unless escaped (Max length "\112F")
                 if (esclen > 0)
                 {
-                    valid = (++esclen < 6);
+                    valid = ++esclen < 6;
                 }
                 if (valid)
                 {
-                    valid = (pos > 0 || esclen > 0);
+                    valid = pos > 0 || esclen > 0;
                 }
             }
             else
             {
-                valid = (esclen > 0 // Escaped? Anything goes.
-                    || (pos > 0 && c == '-') // Dash cannot be 1st char
+                valid = esclen > 0 // Escaped? Anything goes.
+                    || pos > 0 && c == '-'
                     || Character.isLetter(c) // a-z, A-Z anywhere
-                || (c >= 161 && c <= 255)); // Unicode 161-255 anywhere
+                || c >= 161 && c <= 255; // Unicode 161-255 anywhere
                 esclen = 0;
             }
         }
@@ -3254,13 +3606,13 @@ public class Lexer
      * @param isempty is tag empty?
      * @return parsed attribute/value list
      */
-    public AttVal parseAttrs(boolean[] isempty)
+    public AttVal parseAttrs(final boolean[] isempty)
     {
         AttVal av, list;
         String attribute, value;
-        int[] delim = new int[1];
-        Node[] asp = new Node[1];
-        Node[] php = new Node[1];
+        final int[] delim = new int[1];
+        final Node[] asp = new Node[1];
+        final Node[] php = new Node[1];
 
         list = null;
 
@@ -3290,31 +3642,29 @@ public class Lexer
             }
 
             value = parseValue(attribute, false, isempty, delim);
-            if (value != null) {
-            	final int x = value.indexOf(0);
-            	if (x >= 0 && configuration.isTidyCompat()) {
-	            	// workaround to emulate broken Tidy behavior in compatibility mode
-            		// invalid entity becomes character 0 that terminates the C string, see test 1062345
-	            	value = value.substring(0, x);
-            	}
-            }
 
             if (attribute != null && isValidAttrName(attribute))
             {
-                av = new AttVal(null, null, null, null, delim[0], attribute, value);
+                av = new AttVal(list, null, null, null, delim[0], attribute, value);
                 av.dict = AttributeTable.getDefaultAttributeTable().findAttribute(av);
-                list = AttVal.addAttrToList(list, av);
+                list = av;
             }
             else
             {
                 av = new AttVal(null, null, null, null, 0, attribute, value);
 
-                if (TidyUtils.lastChar(attribute) == '"') {
-                    report.attrError(this, this.token, av, ErrorCode.MISSING_QUOTEMARK);
-                } else if (value == null) {
-                	report.attrError(this, this.token, av, ErrorCode.MISSING_ATTR_VALUE);
-                } else {
-                	report.attrError(this, this.token, av, ErrorCode.INVALID_ATTRIBUTE);
+                // #427664 - fix by Gary Peskin 04 Aug 00; other fixes by Dave Raggett
+                if (value != null)
+                {
+                    report.attrError(this, this.token, av, Report.BAD_ATTRIBUTE_VALUE);
+                }
+                else if (TidyUtils.lastChar(attribute) == '"')
+                {
+                    report.attrError(this, this.token, av, Report.MISSING_QUOTEMARK);
+                }
+                else
+                {
+                    report.attrError(this, this.token, av, Report.UNKNOWN_ATTRIBUTE);
                 }
             }
         }
@@ -3329,7 +3679,7 @@ public class Lexer
      * <code>&lt;p>&lt;em> text &lt;/em>&lt;/p>&lt;p>&lt;em>&lt;em> more text &lt;/em>&lt;/em></code>
      * @param node Node to be pushed
      */
-    public void pushInline(Node node)
+    public void pushInline(final Node node)
     {
         IStack is;
 
@@ -3353,7 +3703,7 @@ public class Lexer
             return;
         }
 
-        if (!node.is(TagId.FONT) && isPushed(node))
+        if (node.tag != this.configuration.tt.tagFont && isPushed(node))
         {
             return;
         }
@@ -3373,7 +3723,7 @@ public class Lexer
      * Pop a copy of an inline node from the stack.
      * @param node Node to be popped
      */
-    public void popInline(Node node)
+    public void popInline(final Node node)
     {
         IStack is;
 
@@ -3396,13 +3746,13 @@ public class Lexer
             }
 
             // if node is </a> then pop until we find an <a>
-            if (node.is(TagId.A))
+            if (node.tag == this.configuration.tt.tagA)
             {
 
                 while (this.istack.size() > 0)
                 {
                     is = this.istack.pop();
-                    if (is.tag.id == TagId.A)
+                    if (is.tag == this.configuration.tt.tagA)
                     {
                         break;
                     }
@@ -3431,7 +3781,7 @@ public class Lexer
      * @param node Node
      * @return <code>true</code> is the node is found in the stack
      */
-    public boolean isPushed(Node node)
+    public boolean isPushed(final Node node)
     {
         int i;
         IStack is;
@@ -3457,7 +3807,7 @@ public class Lexer
      * @param node original node
      * @return stack size
      */
-    public int inlineDup(Node node)
+    public int inlineDup(final Node node)
     {
         int n;
 
@@ -3495,7 +3845,7 @@ public class Lexer
             this.columns = this.in.getCurcol();
         }
 
-        node = newNode(NodeType.StartTag, this.lexbuf, this.txtstart, this.txtend);
+        node = newNode(Node.START_TAG, this.lexbuf, this.txtstart, this.txtend);
 
         // GLP: Bugfix 126261. Remove when this change is fixed in istack.c in the original Tidy
         node.implicit = true;
@@ -3528,66 +3878,75 @@ public class Lexer
      * @param element node
      * @return <code>true</code> if he element can be removed
      */
-    public boolean canPrune(final Node element) {
-        if (element.type == NodeType.TextNode) {
+    public boolean canPrune(final Node element)
+    {
+        if (element.type == Node.TEXT_NODE)
+        {
             return true;
         }
-        if (element.content != null) {
+
+        if (element.content != null)
+        {
             return false;
         }
-        if (element.hasCM(Dict.CM_BLOCK) && element.attributes != null) {
+
+        if (element.tag == this.configuration.tt.tagA && element.attributes != null)
+        {
             return false;
         }
-        if (element.is(TagId.A) && element.attributes != null) {
+
+        if (element.tag == this.configuration.tt.tagP && !this.configuration.dropEmptyParas)
+        {
             return false;
         }
-        if (element.is(TagId.P) && !this.configuration.isDropEmptyParas()) {
+
+        if (element.tag == null)
+        {
             return false;
         }
-        if (element.hasCM(Dict.CM_ROW)) {
+
+        if (TidyUtils.toBoolean(element.tag.model & Dict.CM_ROW))
+        {
             return false;
         }
-        if (element.hasCM(Dict.CM_EMPTY)) {
+
+        if (TidyUtils.toBoolean(element.tag.model & Dict.CM_EMPTY))
+        {
             return false;
         }
-        if (element.is(TagId.APPLET)) {
+
+        if (element.tag == this.configuration.tt.tagApplet)
+        {
             return false;
         }
-        if (element.is(TagId.OBJECT)) {
+
+        if (element.tag == this.configuration.tt.tagObject)
+        {
             return false;
         }
-        if (element.is(TagId.SCRIPT) && element.getAttrById(AttrId.SRC) != null) {
+
+        if (element.tag == this.configuration.tt.tagScript && element.getAttrByName("src") != null)
+        {
             return false;
         }
-        if (element.is(TagId.TITLE)) {
+
+        // #540555 Empty title tag is trimmed
+        if (element.tag == this.configuration.tt.tagTitle)
+        {
             return false;
         }
+
         // #433359 - fix by Randy Waki 12 Mar 01 - Empty iframe is trimmed
-        if (element.is(TagId.IFRAME)) {
+        if (element.tag == this.configuration.tt.tagIframe)
+        {
             return false;
         }
-        /* fix for bug 770297 */
-        if (element.is(TagId.TEXTAREA)) {
+
+        if (element.getAttrByName("id") != null || element.getAttrByName("name") != null)
+        {
             return false;
         }
-        if (element.getAttrById(AttrId.ID) != null || element.getAttrById(AttrId.NAME) != null) {
-            return false;
-        }
-        /* fix for bug 695408; a better fix would look for unknown and    */
-        /* known proprietary attributes that make the element significant */
-        if (element.getAttrById(AttrId.DATAFLD) != null) {
-            return false;
-        }
-        /* fix for bug 723772, don't trim new-...-tags */
-        if (element.tag.id == TagId.UNKNOWN) {
-            return false;
-        }
-        if (element.is(TagId.BODY)) {
-            return false;
-        }
-        if (element.is(TagId.COLGROUP)) {
-            return false;
-        }
+
         return true;
     }
 
@@ -3595,10 +3954,10 @@ public class Lexer
      * duplicate name attribute as an id and check if id and name match.
      * @param node Node to check for name/it attributes
      */
-    public void fixId(Node node)
+    public void fixId(final Node node)
     {
-        AttVal name = node.getAttrByName("name");
-        AttVal id = node.getAttrByName("id");
+        final AttVal name = node.getAttrByName("name");
+        final AttVal id = node.getAttrByName("id");
 
         if (name != null)
         {
@@ -3606,10 +3965,10 @@ public class Lexer
             {
                 if (id.value != null && !id.value.equals(name.value))
                 {
-                    report.attrError(this, node, name, ErrorCode.ID_NAME_MISMATCH);
+                    report.attrError(this, node, name, Report.ID_NAME_MISMATCH);
                 }
             }
-            else if (this.configuration.isXmlOut())
+            else if (this.configuration.xmlOut)
             {
                 node.addAttribute("id", name.value);
             }
@@ -3630,9 +3989,9 @@ public class Lexer
      * HTML this is handled here rather than in the tag/attr dicts.
      * @param vers html version code
      */
-    void constrainVersion(int vers)
+    void constrainVersion(final int vers)
     {
-        this.versions &= (vers | VERS_PROPRIETARY);
+        this.versions &= vers | Dict.VERS_PROPRIETARY;
     }
 
     /**
@@ -3640,16 +3999,16 @@ public class Lexer
      * @param node content
      * @return <code>true</code> if node is acceptable in pre elements
      */
-    protected boolean preContent(Node node)
+    protected boolean preContent(final Node node)
     {
         // p is coerced to br's
-        if (node.is(TagId.P))
+        if (node.tag == this.configuration.tt.tagP)
         {
             return true;
         }
 
         if (node.tag == null
-            || node.is(TagId.P)
+            || node.tag == this.configuration.tt.tagP
             || !TidyUtils.toBoolean(node.tag.model & (Dict.CM_INLINE | Dict.CM_NEW)))
         {
             return false;
@@ -3660,283 +4019,38 @@ public class Lexer
     /**
      * document type.
      */
-    private static class W3CDoctype {
-    	int score;
-    	int vers;
+    private static class W3CVersionInfo
+    {
+
+        /**
+         * name.
+         */
         String name;
-        String fpi;
-        String si;
-        
-		public W3CDoctype(final int score, final int vers, final String name, final String fpi, final String si) {
-			this.score = score;
-			this.vers = vers;
-			this.name = name;
-			this.fpi = fpi;
-			this.si = si;
-		}
-    }
-    
-    private enum ParseDocTypeDeclState {
-      DT_INTERMEDIATE,
-      DT_DOCTYPENAME,
-      DT_PUBLICSYSTEM,
-      DT_QUOTEDSTRING,
-      DT_INTSUBSET
-    };
-    
-    /*
-    Returns document type declarations like
 
-    <!DOCTYPE foo PUBLIC "fpi" "sysid">
-    <!DOCTYPE bar SYSTEM "sysid">
-    <!DOCTYPE baz [ <!ENTITY ouml "&#246"> ]>
+        /**
+         * voyager name.
+         */
+        String voyagerName;
 
-    as
+        /**
+         * code.
+         */
+        short code;
 
-    <foo PUBLIC="fpi" SYSTEM="sysid" />
-    <bar SYSTEM="sysid" />
-    <baz> &lt;!ENTITY ouml &quot;&amp;#246&quot;&gt; </baz>
-  */
-    private Node parseDocTypeDecl() {
-        int start = lexsize;
-        ParseDocTypeDeclState state = ParseDocTypeDeclState.DT_DOCTYPENAME;
-        int c;
-        int delim = 0;
-        boolean hasfpi = true;
-
-        Node node = newNode(NodeType.DocTypeTag, lexbuf, txtstart, txtend);
-
-        waswhite = false;
-
-        /* todo: reset lexsize when appropriate to avoid wasting memory */
-
-        while ((c = in.readChar()) != StreamIn.END_OF_STREAM) {
-            /* convert newlines to spaces */
-            if (state != ParseDocTypeDeclState.DT_INTSUBSET) {
-                c = c == '\n' ? ' ' : c;
-            }
-
-            /* convert white-space sequences to single space character */
-            if (TidyUtils.isWhite((char) c) && state != ParseDocTypeDeclState.DT_INTSUBSET) {
-                if (!waswhite) {
-                	addCharToLexer(c);
-                    waswhite = true;
-                } else {
-                    /* discard space */
-                    continue;
-                }
-            } else {
-                addCharToLexer(c);
-                waswhite = false;
-            }
-
-            switch(state) {
-            case DT_INTERMEDIATE:
-                /* determine what's next */
-                if (TidyUtils.toUpper((char) c) == 'P' || TidyUtils.toUpper((char) c) == 'S') {
-                    start = lexsize - 1;
-                    state = ParseDocTypeDeclState.DT_PUBLICSYSTEM;
-                    continue;
-                }
-                else if (c == '[') {
-                    start = lexsize;
-                    state = ParseDocTypeDeclState.DT_INTSUBSET;
-                    continue;
-                }
-                else if (c == '\'' || c == '"') {
-                    start = lexsize;
-                    delim = c;
-                    state = ParseDocTypeDeclState.DT_QUOTEDSTRING;
-                    continue;
-                }
-                else if (c == '>') {
-                    AttVal si;
-
-                    node.end = --(lexsize);
-
-                    si = node.getAttrByName("SYSTEM");
-                    if (si != null) {
-                    	AttrCheckImpl.URL.check(this, node, si);
-                    }
-                    if (node.element == null || !TidyUtils.isValidXMLID(node.element)) {
-                        report.warning(this, null, null, ErrorCode.MALFORMED_DOCTYPE);
-                        return null;
-                    }
-//    #ifdef TIDY_STORE_ORIGINAL_TEXT
-//                    StoreOriginalTextInToken(doc, node, 0);
-//    #endif
-                    return node;
-                }
-                else {
-                    /* error */
-                }
-                break;
-            case DT_DOCTYPENAME:
-                /* read document type name */
-                if (TidyUtils.isWhite((char) c) || c == '>' || c == '[') {
-                    node.element = TidyUtils.getString(lexbuf, start, lexsize - start - 1);
-                    if (c == '>' || c == '[') {
-                        --(lexsize);
-                        in.ungetChar(c);
-                    }
-
-                    state = ParseDocTypeDeclState.DT_INTERMEDIATE;
-                    continue;
-                }
-                break;
-            case DT_PUBLICSYSTEM:
-                /* read PUBLIC/SYSTEM */
-                if (TidyUtils.isWhite((char) c) || c == '>') {
-                    String attname = TidyUtils.getString(lexbuf, start, lexsize - start - 1);
-                    hasfpi = !attname.equalsIgnoreCase("SYSTEM");
-
-                    /* todo: report an error if SYSTEM/PUBLIC not uppercase */
-
-                    if (c == '>') {
-                        --(lexsize);
-                        in.ungetChar(c);
-                    }
-
-                    state = ParseDocTypeDeclState.DT_INTERMEDIATE;
-                    continue;
-                }
-                break;
-            case DT_QUOTEDSTRING:
-                /* read quoted string */
-                if (c == delim) {
-                    String value = TidyUtils.getString(lexbuf, start, lexsize - start - 1);
-                    AttVal att = node.addAttribute(hasfpi ? "PUBLIC" : "SYSTEM", value);
-                    att.delim = delim;
-                    hasfpi = false;
-                    state = ParseDocTypeDeclState.DT_INTERMEDIATE;
-                    delim = 0;
-                    continue;
-                }
-                break;
-            case DT_INTSUBSET:
-                /* read internal subset */
-                if (c == ']') {
-                    Node subset;
-                    txtstart = start;
-                    txtend = lexsize - 1;
-                    subset = textToken();
-                    node.insertNodeAtEnd(subset);
-                    state = ParseDocTypeDeclState.DT_INTERMEDIATE;
-                }
-                break;
-            }
+        /**
+         * Instantiates a new W3CVersionInfo.
+         * @param name version name
+         * @param voyagerName voyager (xhtml) name
+         * @param profile VOYAGER_STRICT | VOYAGER_LOOSE | VOYAGER_FRAMESET
+         * @param code unique code for this version info
+         */
+        public W3CVersionInfo(final String name, final String voyagerName, final String profile, final short code)
+        {
+            this.name = name;
+            this.voyagerName = voyagerName;
+            this.code = code;
         }
-
-        /* document type declaration not finished */
-        report.warning(this, null, null, ErrorCode.MALFORMED_DOCTYPE);
-        return null;
     }
 
-	protected Node findXmlDecl() {
-		Node node = root.content;
-	    while (node != null && node.type != NodeType.XmlDecl) {
-	    	node = node.next;
-	    }
-	    return node;
-	}
-	
-	protected boolean textNodeEndWithSpace(final Node node) {
-        if (node.isText() && node.end > node.start) {
-            int i, c = '\0'; /* initialised to avoid warnings */
-            for (i = node.start; i < node.end; ++i) {
-                c = lexbuf[i] & 0xFF; // Convert to unsigned.
-            }
-
-            if (c == ' ' || c == '\n') {
-                return true;
-            }
-        }
-        return false;
-    }
-	
-	/*
-	   We have two CM_INLINE elements pushed ... the first is closing,
-	   but, like the browser, the second should be retained ...
-	   Like <b>bold <i>bold and italics</b> italics only</i>
-	   This function switches the tag positions on the stack,
-	   returning true if both were found in the expected order.
-	*/
-	protected boolean switchInline(final Node element, final Node node) {
-	    if (element != null && element.tag != null
-	    		&& node != null && node.tag != null
-	    		&& isPushed(element) && isPushed(node)
-	    		&& istack.size() - istackbase >= 2) {
-	        /* we have a chance of succeeding ... */
-	        for (int i = (istack.size() - istackbase - 1); i >= 0; --i) {
-	            if (istack.get(i).tag == element.tag) {
-	                /* found the element tag - phew */
-	                int istack1 = i;
-	                int istack2 = -1;
-	                --i; /* back one more, and continue */
-	                for ( ; i >= 0; --i) {
-	                    if (istack.get(i).tag == node.tag) {
-	                        /* found the element tag - phew */
-	                        istack2 = i;
-	                        break;
-	                    }
-	                }
-	                if (istack2 >= 0) {
-	                    /* perform the swap */
-	                    IStack tmp = istack.get(istack2);
-	                    istack.set(istack2, istack.get(istack1));
-	                    istack.set(istack1, tmp);
-	                    return true;
-	                }
-	            }
-	        }
-	    }
-	    return false;
-	}
-
-	/*
-	  We want to push a specific a specific element on the stack,
-	  but it may not be the last element, which InlineDup()
-	  would handle. Return true if found and inserted.
-	*/
-	protected boolean inlineDup1(final Node node, final Node element) {
-		int n;
-		if (element != null && element.tag != null
-				&& ((n = istack.size() - istackbase) > 0)) {
-			for (int i = n - 1; i >=0; --i ) {
-				if (istack.get(i).tag == element.tag) {
-					/* found our element tag - insert it */
-					insert = i;
-					inode = node;
-					return true;
-				}
-			}
-		}
-		return false;
-	}
-	
-	protected void addClassNoIndent(final Node node) {
-		final String sprop = "padding-left: 2ex; margin-left: 0ex; margin-top: 0ex; margin-bottom: 0ex";
-		if (!configuration.isDecorateInferredUL()) {
-			return;
-		}
-		if (configuration.isMakeClean()) {
-			Clean.addStyleAsClass(this, node, sprop);
-		}
-		else {
-			Clean.addStyleProperty(node, sprop);
-		}
-	}
-	
-	/**
-     * Generates a new css class name.
-     * @param lexer Lexer
-     * @return generated css class
-     */
-    protected String gensymClass() {
-        String pfx = configuration.getCssPrefix();
-        if (pfx == null) {
-        	pfx = "c";
-        }
-        return pfx + ++classNum;
-    }
 }
+
