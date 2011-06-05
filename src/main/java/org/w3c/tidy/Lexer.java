@@ -53,6 +53,30 @@
  */
 package org.w3c.tidy;
 
+import static org.w3c.tidy.Versions.H40F;
+import static org.w3c.tidy.Versions.H40S;
+import static org.w3c.tidy.Versions.H40T;
+import static org.w3c.tidy.Versions.H41F;
+import static org.w3c.tidy.Versions.H41S;
+import static org.w3c.tidy.Versions.H41T;
+import static org.w3c.tidy.Versions.HT20;
+import static org.w3c.tidy.Versions.HT32;
+import static org.w3c.tidy.Versions.VERS_ALL;
+import static org.w3c.tidy.Versions.VERS_FRAMESET;
+import static org.w3c.tidy.Versions.VERS_FROM40;
+import static org.w3c.tidy.Versions.VERS_HTML40;
+import static org.w3c.tidy.Versions.VERS_HTML40_STRICT;
+import static org.w3c.tidy.Versions.VERS_LOOSE;
+import static org.w3c.tidy.Versions.VERS_PROPRIETARY;
+import static org.w3c.tidy.Versions.VERS_UNKNOWN;
+import static org.w3c.tidy.Versions.VERS_XHTML;
+import static org.w3c.tidy.Versions.VERS_XML;
+import static org.w3c.tidy.Versions.X10F;
+import static org.w3c.tidy.Versions.X10S;
+import static org.w3c.tidy.Versions.X10T;
+import static org.w3c.tidy.Versions.XB10;
+import static org.w3c.tidy.Versions.XH11;
+
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.Stack;
@@ -60,8 +84,6 @@ import java.util.Vector;
 
 import org.w3c.tidy.Node.NodeType;
 import org.w3c.tidy.Options.DoctypeModes;
-
-import static org.w3c.tidy.Versions.*;
 
 /**
  * Lexer for html parser.
@@ -1232,6 +1254,7 @@ public class Lexer
         	doctype.repairAttrValue(pub, configuration.getDocTypeStr());
         	doctype.repairAttrValue(sys, "");
             break;
+        case Omit:
         case Auto:
             if ((versions & XH11) != 0 && this.doctype == XH11) {
                 if (doctype.getAttrByName(sys) == null) {
@@ -1274,9 +1297,6 @@ public class Lexer
                 }
                 return false;
             }
-            break;
-        case Omit:
-            assert false;
             break;
         }
         return false;
