@@ -83,73 +83,85 @@ public class Configuration implements Serializable
      * character encoding = RAW.
      * @deprecated use <code>Tidy.setRawOut(true)</code> for raw output
      */
-    public static final int RAW = 0;
+    @Deprecated
+	public static final int RAW = 0;
 
     /**
      * character encoding = ASCII.
      * @deprecated
      */
-    public static final int ASCII = 1;
+    @Deprecated
+	public static final int ASCII = 1;
 
     /**
      * character encoding = LATIN1.
      * @deprecated
      */
-    public static final int LATIN1 = 2;
+    @Deprecated
+	public static final int LATIN1 = 2;
 
     /**
      * character encoding = UTF8.
      * @deprecated
      */
-    public static final int UTF8 = 3;
+    @Deprecated
+	public static final int UTF8 = 3;
 
     /**
      * character encoding = ISO2022.
      * @deprecated
      */
-    public static final int ISO2022 = 4;
+    @Deprecated
+	public static final int ISO2022 = 4;
 
     /**
      * character encoding = MACROMAN.
      * @deprecated
      */
-    public static final int MACROMAN = 5;
+    @Deprecated
+	public static final int MACROMAN = 5;
 
     /**
      * character encoding = UTF16LE.
      * @deprecated
      */
-    public static final int UTF16LE = 6;
+    @Deprecated
+	public static final int UTF16LE = 6;
 
     /**
      * character encoding = UTF16BE.
      * @deprecated
      */
-    public static final int UTF16BE = 7;
+    @Deprecated
+	public static final int UTF16BE = 7;
 
     /**
      * character encoding = UTF16.
      * @deprecated
      */
-    public static final int UTF16 = 8;
+    @Deprecated
+	public static final int UTF16 = 8;
 
     /**
      * character encoding = WIN1252.
      * @deprecated
      */
-    public static final int WIN1252 = 9;
+    @Deprecated
+	public static final int WIN1252 = 9;
 
     /**
      * character encoding = BIG5.
      * @deprecated
      */
-    public static final int BIG5 = 10;
+    @Deprecated
+	public static final int BIG5 = 10;
 
     /**
      * character encoding = SHIFTJIS.
      * @deprecated
      */
-    public static final int SHIFTJIS = 11;
+    @Deprecated
+	public static final int SHIFTJIS = 11;
 
     /**
      * Convert from deprecated tidy encoding constant to standard java encoding name.

@@ -155,7 +155,8 @@ public class AttVal extends Object implements Cloneable
     /**
      * @see java.lang.Object#clone()
      */
-    protected Object clone()
+    @Override
+	protected Object clone()
     {
         AttVal av = null;
         try

@@ -85,7 +85,8 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
     /**
      * @see org.w3c.dom.Node#getNodeName
      */
-    public String getNodeName()
+    @Override
+	public String getNodeName()
     {
         return "#document";
     }
@@ -93,7 +94,8 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
     /**
      * @see org.w3c.dom.Node#getNodeType
      */
-    public short getNodeType()
+    @Override
+	public short getNodeType()
     {
         return org.w3c.dom.Node.DOCUMENT_NODE;
     }

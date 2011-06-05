@@ -75,7 +75,8 @@ public class DOMCDATASectionImpl extends DOMTextImpl implements org.w3c.dom.CDAT
     /**
      * @see org.w3c.dom.Node#getNodeName
      */
-    public String getNodeName()
+    @Override
+	public String getNodeName()
     {
         return "#cdata-section";
     }
@@ -83,7 +84,8 @@ public class DOMCDATASectionImpl extends DOMTextImpl implements org.w3c.dom.CDAT
     /**
      * @see org.w3c.dom.Node#getNodeType
      */
-    public short getNodeType()
+    @Override
+	public short getNodeType()
     {
         return org.w3c.dom.Node.CDATA_SECTION_NODE;
     }

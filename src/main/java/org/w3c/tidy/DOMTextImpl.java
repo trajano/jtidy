@@ -79,7 +79,8 @@ public class DOMTextImpl extends DOMCharacterDataImpl implements org.w3c.dom.Tex
     /**
      * @see org.w3c.dom.Node#getNodeName
      */
-    public String getNodeName()
+    @Override
+	public String getNodeName()
     {
         return "#text";
     }
@@ -87,7 +88,8 @@ public class DOMTextImpl extends DOMCharacterDataImpl implements org.w3c.dom.Tex
     /**
      * @see org.w3c.dom.Node#getNodeType
      */
-    public short getNodeType()
+    @Override
+	public short getNodeType()
     {
         return org.w3c.dom.Node.TEXT_NODE;
     }

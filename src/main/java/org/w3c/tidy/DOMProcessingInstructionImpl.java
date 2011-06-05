@@ -78,7 +78,8 @@ public class DOMProcessingInstructionImpl extends DOMNodeImpl implements org.w3c
     /**
      * @see org.w3c.dom.Node#getNodeType
      */
-    public short getNodeType()
+    @Override
+	public short getNodeType()
     {
         return org.w3c.dom.Node.PROCESSING_INSTRUCTION_NODE;
     }

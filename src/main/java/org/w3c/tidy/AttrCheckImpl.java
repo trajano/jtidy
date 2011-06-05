@@ -914,11 +914,11 @@ public final class AttrCheckImpl
                         invalid = true;
                         break;
                     }
-                    else if (given.equalsIgnoreCase((String) color.getValue()))
+                    else if (given.equalsIgnoreCase(color.getValue()))
                     {
                         if (lexer.configuration.replaceColor)
                         {
-                            attval.value = (String) color.getKey();
+                            attval.value = color.getKey();
                         }
                         found = true;
                         break;
@@ -926,11 +926,11 @@ public final class AttrCheckImpl
                 }
                 else if (TidyUtils.isLetter(given.charAt(0)))
                 {
-                    if (given.equalsIgnoreCase((String) color.getKey()))
+                    if (given.equalsIgnoreCase(color.getKey()))
                     {
                         if (lexer.configuration.replaceColor)
                         {
-                            attval.value = (String) color.getKey();
+                            attval.value = color.getKey();
                         }
                         found = true;
                         break;

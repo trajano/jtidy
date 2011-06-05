@@ -145,7 +145,8 @@ public class TidyTestCase extends TestCase
     /**
      * @see junit.framework.TestCase#setUp()
      */
-    protected void setUp() throws Exception
+    @Override
+	protected void setUp() throws Exception
     {
         super.setUp();
 
@@ -156,7 +157,8 @@ public class TidyTestCase extends TestCase
     /**
      * @see junit.framework.TestCase#tearDown()
      */
-    protected void tearDown() throws Exception
+    @Override
+	protected void tearDown() throws Exception
     {
         this.tidy = null;
         this.errorLog = null;
@@ -268,7 +270,7 @@ public class TidyTestCase extends TestCase
 
             for (Iterator<TidyMessage> iter = tidyMsgs.iterator(); iter.hasNext();)
             {
-                TidyMessage message = (TidyMessage) iter.next();
+                TidyMessage message = iter.next();
                 messagesAsString.append("\n");
                 messagesAsString.append(message.getMessage());
             }
@@ -287,8 +289,8 @@ public class TidyTestCase extends TestCase
         int count = 0;
         while (tidyMsgIt.hasNext())
         {
-            TidyMessage expectedOne = (TidyMessage) expectedMsgIt.next();
-            TidyMessage tidyOne = (TidyMessage) tidyMsgIt.next();
+            TidyMessage expectedOne = expectedMsgIt.next();
+            TidyMessage tidyOne = tidyMsgIt.next();
 
             assertEquals("Error code for message [" + count + "] is different from expected", expectedOne
                 .getErrorCode(), tidyOne.getErrorCode());
@@ -644,7 +646,8 @@ public class TidyTestCase extends TestCase
         /**
          * @see org.xml.sax.ContentHandler#startElement(String, String, String, org.xml.sax.Attributes)
          */
-        public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
+        @Override
+		public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
         {
             if ("message".equals(qName))
             {
@@ -661,7 +664,8 @@ public class TidyTestCase extends TestCase
         /**
          * @see org.xml.sax.ContentHandler#endElement(String, String, String)
          */
-        public void endElement(String uri, String localName, String qName) throws SAXException
+        @Override
+		public void endElement(String uri, String localName, String qName) throws SAXException
         {
             if ("message".equals(qName))
             {
@@ -675,7 +679,8 @@ public class TidyTestCase extends TestCase
         /**
          * @see org.xml.sax.ContentHandler#characters(char[], int, int)
          */
-        public void characters(char[] ch, int start, int length) throws SAXException
+        @Override
+		public void characters(char[] ch, int start, int length) throws SAXException
         {
             if (!intag)
             {

@@ -789,7 +789,7 @@ public class Tidy implements Serializable
                 }
 
                 // handle "special" aliases
-                String alias = (String) CMDLINE_ALIAS.get(argName);
+                String alias = CMDLINE_ALIAS.get(argName);
                 if (alias != null)
                 {
                     argName = alias;

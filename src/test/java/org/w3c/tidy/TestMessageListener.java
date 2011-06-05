@@ -56,7 +56,7 @@ public class TestMessageListener implements TidyMessageListener
         Iterator<TidyMessage> iterator = received.iterator();
         while (iterator.hasNext())
         {
-            TidyMessage msg = (TidyMessage) iterator.next();
+            TidyMessage msg = iterator.next();
             buffer.append("  <message>\n");
 
             buffer.append("    <code>");

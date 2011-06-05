@@ -236,7 +236,8 @@ public final class TidyMessage
         /**
          * @see java.lang.Object#equals(Object)
          */
-        public boolean equals(Object object)
+        @Override
+		public boolean equals(Object object)
         {
             if (!(object instanceof Level))
             {
@@ -248,7 +249,8 @@ public final class TidyMessage
         /**
          * @see java.lang.Object#toString()
          */
-        public String toString()
+        @Override
+		public String toString()
         {
             switch (code)
             {
@@ -270,7 +272,8 @@ public final class TidyMessage
         /**
          * @see java.lang.Object#hashCode()
          */
-        public int hashCode()
+        @Override
+		public int hashCode()
         {
             // new instances should not be created
             return super.hashCode();

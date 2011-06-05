@@ -92,7 +92,8 @@ public class JTidyTaskTest extends TestCase
     /**
      * @see junit.framework.TestCase#setUp()
      */
-    protected void setUp() throws Exception
+    @Override
+	protected void setUp() throws Exception
     {
         super.setUp();
         task = new JTidyTask();
