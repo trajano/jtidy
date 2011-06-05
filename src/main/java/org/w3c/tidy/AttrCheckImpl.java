@@ -257,7 +257,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
             int escapeCount = 0;
             boolean backslashFound = false;
 
@@ -267,14 +267,14 @@ public final class AttrCheckImpl
             }
 
             String p = attval.value;
-            boolean isJavascript = attval.value.startsWith("javascript:");
+            final boolean isJavascript = attval.value.startsWith("javascript:");
 
             for (int i = 0; i < p.length(); ++i) {
-                char c = p.charAt(i);
+                final char c = p.charAt(i);
                 // find \
                 if (c == '\\') {
                     backslashFound = true;
-                } else if ((c > 0x7e) || (c <= 0x20) || (c == '<') || (c == '>')) {
+                } else if (c > 0x7e || c <= 0x20 || c == '<' || c == '>') {
                     ++escapeCount;
                 }
             }
@@ -286,16 +286,16 @@ public final class AttrCheckImpl
 
             // non-ascii chars found, fix them
             if (lexer.configuration.isFixUri() && escapeCount > 0) {
-                StringBuilder dest = new StringBuilder(p.length() + escapeCount * 2);
+                final StringBuilder dest = new StringBuilder(p.length() + escapeCount * 2);
 
                 for (int i = 0; i < p.length(); ++i) {
-                    char c = p.charAt(i);
-                    if ((c > 0x7e) || (c <= 0x20) || (c == '<') || (c == '>')) {
+                    final char c = p.charAt(i);
+                    if (c > 0x7e || c <= 0x20 || c == '<' || c == '>') {
                     	try {
-							for (byte b : String.valueOf(c).getBytes("UTF-8")) {
+							for (final byte b : String.valueOf(c).getBytes("UTF-8")) {
 								dest.append(String.format("%%%02X", b));
 							}
-						} catch (UnsupportedEncodingException e) {
+						} catch (final UnsupportedEncodingException e) {
 							throw new RuntimeException(e);
 						}
                     } else {
@@ -346,7 +346,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
             // not implemented
         }
     }
@@ -373,7 +373,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
             if (!attval.hasValue()) {
                 lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
                 return;
@@ -400,7 +400,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
             if (!attval.hasValue()) {
                 lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
                 return;
@@ -430,7 +430,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
             if (!attval.hasValue()) {
                 return;
             }
@@ -452,9 +452,9 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
             // IMG, OBJECT, APPLET and EMBED use align for vertical position
-            if (node.tag != null && ((node.tag.model & Dict.CM_IMG) != 0)) {
+            if (node.tag != null && (node.tag.model & Dict.CM_IMG) != 0) {
                 VALIGN.check(lexer, node, attval);
                 return;
             }
@@ -508,7 +508,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
             if (!attval.hasValue()) {
                 lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
                 return;
@@ -519,7 +519,7 @@ public final class AttrCheckImpl
             if (attval.valueIsAmong(VALID_VALUES)) {
                 // all is fine
             } else if (attval.valueIsAmong(VALID_VALUES_IMG)) {
-                if (!(node.tag != null && ((node.tag.model & Dict.CM_IMG) != 0))) {
+                if (!(node.tag != null && (node.tag.model & Dict.CM_IMG) != 0)) {
                     lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE);
                 }
             } else if (attval.valueIsAmong(VALID_VALUES_PROPRIETARY)) {
@@ -539,7 +539,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
 
             if (!attval.hasValue()) {
                 lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
@@ -551,7 +551,7 @@ public final class AttrCheckImpl
                 return;
             }
 
-            String p = attval.value;
+            final String p = attval.value;
 
             if (p.length() == 0 || !Character.isDigit(p.charAt(0))) {
                 lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE);
@@ -579,14 +579,14 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
 
             if (!attval.hasValue()) {
                 lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
                 return;
             }
 
-            String value = attval.value;
+            final String value = attval.value;
 
             // target names must begin with A-Za-z ...
             if (value.length() > 0 && Character.isLetter(value.charAt(0))) {
@@ -613,7 +613,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
         	checkAttrValidity(lexer, node, attval, VALID_VALUES);
         }
     }
@@ -631,7 +631,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
         	if (!attval.hasValue()) {
                 lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
                 if (attval.value == null) { // TODO redundant check?
@@ -661,7 +661,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
         	checkAttrValidity(lexer, node, attval, VALID_VALUES);
         }
     }
@@ -679,7 +679,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
         	checkAttrValidity(lexer, node, attval, VALID_VALUES);
         }
     }
@@ -692,7 +692,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
 
             if (!attval.hasValue()) {
                 lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
@@ -704,7 +704,7 @@ public final class AttrCheckImpl
                 return;
             }
 
-            String p = attval.value;
+            final String p = attval.value;
 
             int j = 0;
 
@@ -785,7 +785,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
             if (!attval.hasValue()) {
                 lexer.report.attrError(lexer, node, attval, ErrorCode.MISSING_ATTR_VALUE);
                 return;
@@ -796,7 +796,7 @@ public final class AttrCheckImpl
             
             // 727851 - add hash to hash-less color values
             if (given.length() > 0 && given.charAt(0) != '#' && (valid = isValidColorCode(given))) {
-            	String s = '#' + given;
+            	final String s = '#' + given;
             	lexer.report.attrError(lexer, node, attval, ErrorCode.BAD_ATTRIBUTE_VALUE_REPLACED);
                 given = attval.value = s;
             }
@@ -806,7 +806,7 @@ public final class AttrCheckImpl
             }
             
             if (valid && given.charAt(0) == '#' && lexer.configuration.isReplaceColor()) {
-            	String newName = getColorName(given);
+            	final String newName = getColorName(given);
             	if (newName != null) {
             		given = attval.value = newName;
             	}
@@ -841,7 +841,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
         	checkAttrValidity(lexer, node, attval, VALID_VALUES);
         }
     }
@@ -859,7 +859,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
         	checkAttrValidity(lexer, node, attval, VALID_VALUES);
         }
     }
@@ -877,7 +877,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
         	checkAttrValidity(lexer, node, attval, VALID_VALUES);
         }
     }
@@ -890,7 +890,7 @@ public final class AttrCheckImpl
         /**
          * @see AttrCheck#check(Lexer, Node, AttVal)
          */
-        public void check(Lexer lexer, Node node, AttVal attval) {
+        public void check(final Lexer lexer, final Node node, final AttVal attval) {
         	// empty xml:lang is allowed through XML 1.0 SE errata
         	if (!attval.hasValue() && !attval.is(AttrId.XML_LANG)) {
         		if (lexer.configuration.getAccessibilityCheckLevel() == 0) {

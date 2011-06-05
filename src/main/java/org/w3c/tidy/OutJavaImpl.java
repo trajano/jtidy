@@ -71,12 +71,12 @@ public class OutJavaImpl implements Out
     /**
      * Java input stream writer.
      */
-    private Writer writer;
+    private final Writer writer;
 
     /**
      * Newline string.
      */
-    private String newline;
+    private final String newline;
 
     /**
      * Constructor.
@@ -85,7 +85,7 @@ public class OutJavaImpl implements Out
      * @param out output stream
      * @throws UnsupportedEncodingException if the undelining OutputStreamWriter doesn't support the rquested encoding.
      */
-    protected OutJavaImpl(Configuration configuration, String encoding, OutputStream out)
+    protected OutJavaImpl(final Configuration configuration, final String encoding, final OutputStream out)
         throws UnsupportedEncodingException
     {
         this.writer = new OutputStreamWriter(out, encoding);
@@ -97,7 +97,7 @@ public class OutJavaImpl implements Out
      * @param configuration actual configuration instance (needed for newline configuration)
      * @param out Writer
      */
-    protected OutJavaImpl(Configuration configuration, Writer out)
+    protected OutJavaImpl(final Configuration configuration, final Writer out)
     {
         this.writer = out;
         this.newline = configuration.getNewline().getValue();
@@ -106,13 +106,13 @@ public class OutJavaImpl implements Out
     /**
      * @see org.w3c.tidy.Out#outc(int)
      */
-    public void outc(int c)
+    public void outc(final int c)
     {
         try
         {
             writer.write(c);
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             // @todo throws exception
             System.err.println("OutJavaImpl.outc: " + e.getMessage());
@@ -122,13 +122,13 @@ public class OutJavaImpl implements Out
     /**
      * @see org.w3c.tidy.Out#outc(byte)
      */
-    public void outc(byte c)
+    public void outc(final byte c)
     {
         try
         {
             writer.write(c);
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             // @todo throws exception
             System.err.println("OutJavaImpl.outc: " + e.getMessage());
@@ -144,7 +144,7 @@ public class OutJavaImpl implements Out
         {
             writer.write(this.newline);
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             // @todo throws exception
             System.err.println("OutJavaImpl.newline: " + e.getMessage());
@@ -160,7 +160,7 @@ public class OutJavaImpl implements Out
         {
             writer.flush();
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             System.err.println("OutJavaImpl.flush: " + e.getMessage());
         }

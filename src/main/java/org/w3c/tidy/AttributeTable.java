@@ -245,14 +245,14 @@ public class AttributeTable
     /**
      * Map containing all the installed attributes.
      */
-    private Map<String, Attribute> attributeHashtable = new Hashtable<String, Attribute>();
+    private final Map<String, Attribute> attributeHashtable = new Hashtable<String, Attribute>();
 
     /**
      * lookup an installed Attribute.
      * @param name attribute name
      * @return Attribute or null if the attribute is not found
      */
-    public Attribute lookup(String name)
+    public Attribute lookup(final String name)
     {
         return attributeHashtable.get(name);
     }
@@ -262,7 +262,7 @@ public class AttributeTable
      * @param attr Atribute
      * @return installed Attribute
      */
-    public Attribute install(Attribute attr)
+    public Attribute install(final Attribute attr)
     {
         return attributeHashtable.put(attr.getName(), attr);
     }
@@ -272,7 +272,7 @@ public class AttributeTable
      * @param attval AttVal instance
      * @return Attribute with name = attval.name
      */
-    public Attribute findAttribute(AttVal attval)
+    public Attribute findAttribute(final AttVal attval)
     {
         Attribute np;
 
@@ -290,12 +290,12 @@ public class AttributeTable
      * @param attrname attribute name
      * @return <code>true</code> if the given attribute is expected to contain an URL
      */
-    public boolean isUrl(String attrname)
+    public boolean isUrl(final String attrname)
     {
         Attribute np;
 
         np = lookup(attrname);
-        return (np != null && np.getAttrchk() == AttrCheckImpl.URL);
+        return np != null && np.getAttrchk() == AttrCheckImpl.URL;
     }
 
     /**
@@ -303,12 +303,12 @@ public class AttributeTable
      * @param attrname attribute name
      * @return <code>true</code> if the given attribute is expected to contain a script
      */
-    public boolean isScript(String attrname)
+    public boolean isScript(final String attrname)
     {
         Attribute np;
 
         np = lookup(attrname);
-        return (np != null && np.getAttrchk() == AttrCheckImpl.SCRIPT);
+        return np != null && np.getAttrchk() == AttrCheckImpl.SCRIPT;
     }
 
     /**

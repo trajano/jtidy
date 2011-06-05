@@ -48,7 +48,7 @@ public class TidyTester extends TestCase {
     	tidy.setTidyCompat(true);
     	String fname = null;
     	File f = null;
-    	for (String s : EXT) {
+    	for (final String s : EXT) {
     		fname = "./input/in_" + t + '.' + s;
     		f = new File(base, fname);
     		if (f.exists()) {
@@ -58,32 +58,32 @@ public class TidyTester extends TestCase {
     	final InputStream is;
 		try {
 			is = new FileInputStream(f);
-		} catch (FileNotFoundException e1) {
+		} catch (final FileNotFoundException e1) {
 			throw new RuntimeException("can't find input file");
 		}
     	final ByteArrayOutputStream os = new ByteArrayOutputStream();
     	final ByteArrayOutputStream es = new ByteArrayOutputStream();
     	try {
 			tidy.setErrout(new PrintWriter(new OutputStreamWriter(es, "UTF-8")));
-		} catch (UnsupportedEncodingException e) {
+		} catch (final UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
     	tidy.setInputStreamName(fname);
     	tidy.parse(is, os);
-    	int x = tidy.getParseErrors() > 0 ? 2 : tidy.getParseWarnings() > 0 ? 1 : 0;
+    	final int x = tidy.getParseErrors() > 0 ? 2 : tidy.getParseWarnings() > 0 ? 1 : 0;
     	try {
     		write(os, base + "tmp/out_" + t + ".html");
     		write(es, base + "tmp/msg_" + t + ".txt");
     		InputStream os2 = null;
     		try {
     			os2 = new BufferedInputStream(new FileInputStream(base + "output/out_" + t + ".html"));
-    		} catch (IOException e) {
+    		} catch (final IOException e) {
     			os2 = new ByteArrayInputStream(new byte[0]);
     		}
 			diff("outputs", new ByteArrayInputStream(os.toByteArray()), os2, tidy.getOutputEncoding());
 			diff("messages", new ByteArrayInputStream(es.toByteArray()),
 					new BufferedInputStream(new FileInputStream(base + "output/msg_" + t + ".txt")), "UTF-8");
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
 		assertEquals(r, x);
@@ -94,8 +94,8 @@ public class TidyTester extends TestCase {
     	s1.mark(100000);
     	s2.mark(100000);
     	for (int x = 1; ; ++x) {
-    		int b1 = s1.read();
-    		int b2 = s2.read();
+    		final int b1 = s1.read();
+    		final int b2 = s2.read();
     		if (b1 != b2) {
     			if (b1 == -1 && b2 == 'T') {
     				final byte[] b = new byte[19];

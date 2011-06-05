@@ -97,7 +97,7 @@ public final class Report
     		final InputStream s = Report.class.getResourceAsStream("/jtidy.properties");
 			p.load(s);
 			s.close();
-    	} catch (Exception e) {
+    	} catch (final Exception e) {
 			throw new RuntimeException("Failed to load jtidy.properties", e);
 		}
 		return p.getProperty("date");
@@ -219,7 +219,7 @@ public final class Report
         {
             res = ResourceBundle.getBundle("org/w3c/tidy/TidyMessages");
         }
-        catch (MissingResourceException e)
+        catch (final MissingResourceException e)
         {
             throw new Error(e.toString());
         }
@@ -251,7 +251,7 @@ public final class Report
      * @throws MissingResourceException if <code>message</code> key is not available in jtidy resource bundle.
      * @see TidyMessage
      */
-    protected String getMessageLexer(int errorCode, Lexer lexer, Level level, String messageKey, Object... params)
+    protected String getMessageLexer(final int errorCode, final Lexer lexer, final Level level, final String messageKey, final Object... params)
         	throws MissingResourceException {
     	final boolean b = lexer != null && level != null;
     	return getMessagePos(errorCode, lexer, level, b ? lexer.lines : 0, b ? lexer.columns : 0,
@@ -298,13 +298,13 @@ public final class Report
     
     private String getMessagePos(final int errorCode, final Lexer lexer, final Level level, final int line, final int col,
     		final String messageKey, final Object... args) throws MissingResourceException {
-    	boolean go = updateCount(lexer, level);
+    	final boolean go = updateCount(lexer, level);
     	if (go) {
-	    	String position = line > 0 && col > 0 ? getPosition(lexer, line, col) : "";
-	        String prefix = level == Level.SUMMARY ? "" : (level + ": ");
-	        String messageString = MessageFormat.format(res.getString(messageKey), args);
+	    	final String position = line > 0 && col > 0 ? getPosition(lexer, line, col) : "";
+	        final String prefix = level == Level.SUMMARY ? "" : level + ": ";
+	        final String messageString = MessageFormat.format(res.getString(messageKey), args);
 	        if (listener != null) {
-	            TidyMessage msg = new TidyMessage(errorCode, line, col, level, messageString);
+	            final TidyMessage msg = new TidyMessage(errorCode, line, col, level, messageString);
 	            listener.messageReceived(msg);
 	        }
 	        return position + prefix + messageString;
@@ -346,7 +346,7 @@ public final class Report
             if (s != null) {
             	lexer.errout.println(s);
             }
-        } catch (MissingResourceException e) {
+        } catch (final MissingResourceException e) {
             lexer.errout.println("Can't find message string for \"" + messageKey + "\"!");
         }
     }
@@ -371,10 +371,10 @@ public final class Report
      * @param params optional parameters added with MessageFormat
      * @see TidyMessage
      */
-    private void printMessage(PrintWriter errout, Level level, String message, Object... params) {
+    private void printMessage(final PrintWriter errout, final Level level, final String message, final Object... params) {
         try {
         	errout.println(getMessageLexer(-1, null, level, message, params));
-        } catch (MissingResourceException e) {
+        } catch (final MissingResourceException e) {
         	errout.println("Can't find message string for \"" + message + "\"!");
         }
     }
@@ -420,13 +420,13 @@ public final class Report
      * Prints an "unknown option" error message. Lexer is not defined when this is called.
      * @param option unknown option name
      */
-    public void unknownOption(String option)
+    public void unknownOption(final String option)
     {
         try
         {
             System.err.println(MessageFormat.format(res.getString("unknown_option"), option));
         }
-        catch (MissingResourceException e)
+        catch (final MissingResourceException e)
         {
             System.err.println(e.toString());
         }
@@ -440,7 +440,7 @@ public final class Report
     public void badArgument(final String value, final Option option) {
         try {
             System.err.println(MessageFormat.format(res.getString("bad_argument"), option.getName(), value));
-        } catch (MissingResourceException e) {
+        } catch (final MissingResourceException e) {
             System.err.println(e.toString());
         }
     }
@@ -464,7 +464,7 @@ public final class Report
      * @param code error code
      * @param c invalid char
      */
-    public void encodingError(Lexer lexer, ErrorCode code, int c, int replaceMode)
+    public void encodingError(final Lexer lexer, final ErrorCode code, final int c, final int replaceMode)
     {
         if (lexer.errors > lexer.configuration.getShowErrors()) // keep quiet after <showErrors> errors
         {
@@ -473,7 +473,7 @@ public final class Report
 
         if (lexer.configuration.isShowWarnings())
         {
-            String buf = Integer.toHexString(c);
+            final String buf = Integer.toHexString(c);
 
             // An encoding mismatch is currently treated as a non-fatal error
             switch(code) {
@@ -528,7 +528,7 @@ public final class Report
      * @param entity invalid entity String
      * @param c invalid char
      */
-    public void entityError(final Lexer lexer, final ErrorCode code, final String entity, int c) {
+    public void entityError(final Lexer lexer, final ErrorCode code, final String entity, final int c) {
         messageLexer(lexer, Level.WARNING, code, entity);
     }
 
@@ -539,7 +539,7 @@ public final class Report
      * @param attribute attribute
      * @param code error code
      */
-    public void attrError(Lexer lexer, Node node, AttVal attribute, ErrorCode code)
+    public void attrError(final Lexer lexer, final Node node, final AttVal attribute, final ErrorCode code)
     {
         final String tagdesc = getTagName(node);
         final String name = attribute == null || attribute.attribute == null ? "NULL" : attribute.attribute;
@@ -660,7 +660,7 @@ public final class Report
      * @param node current tag
      * @param code error code
      */
-    public void warning(Lexer lexer, Node element, Node node, ErrorCode code)
+    public void warning(final Lexer lexer, final Node element, final Node node, final ErrorCode code)
     {
     	final String nodedesc = getTagName(node);
     	final Node rpt = element != null ? element : node;
@@ -795,7 +795,7 @@ public final class Report
                 break;
         }
 
-        if ((code == DISCARDING_UNEXPECTED) && lexer.badForm != 0)
+        if (code == DISCARDING_UNEXPECTED && lexer.badForm != 0)
         {
             // the case for when this is a warning not an error, is handled earlier
             messageLexer(lexer, Level.ERROR, code, getTagName(node));
@@ -810,7 +810,7 @@ public final class Report
      * @param node current tag
      * @param code error code
      */
-    public void error(Lexer lexer, Node element, Node node, ErrorCode code) {
+    public void error(final Lexer lexer, final Node element, final Node node, final ErrorCode code) {
     	final Node rpt = element != null ? element : node;
     	
         switch (code) {
@@ -836,12 +836,12 @@ public final class Report
      * Prints error summary.
      * @param lexer Lexer
      */
-    public void errorSummary(Lexer lexer)
+    public void errorSummary(final Lexer lexer)
     {
         // adjust badAccess to that its null if frames are ok
         if ((lexer.badAccess & (USING_FRAMES | USING_NOFRAMES)) != 0)
         {
-            if (!(((lexer.badAccess & USING_FRAMES) != 0) && ((lexer.badAccess & USING_NOFRAMES) == 0)))
+            if (!((lexer.badAccess & USING_FRAMES) != 0 && (lexer.badAccess & USING_NOFRAMES) == 0))
             {
                 lexer.badAccess &= ~(USING_FRAMES | USING_NOFRAMES);
             }
@@ -923,7 +923,7 @@ public final class Report
                 messageLexer(MISSING_LINK_ALT, lexer, Level.SUMMARY, "badaccess_missing_link_alt");
             }
 
-            if (((lexer.badAccess & USING_FRAMES) != 0) && ((lexer.badAccess & USING_NOFRAMES) == 0))
+            if ((lexer.badAccess & USING_FRAMES) != 0 && (lexer.badAccess & USING_NOFRAMES) == 0)
             {
                 messageLexer(USING_FRAMES, lexer, Level.SUMMARY, "badaccess_frames");
             }
@@ -967,7 +967,7 @@ public final class Report
      * @param errout PrintWriter
      * @param c invalid option char
      */
-    public void unknownOption(PrintWriter errout, char c)
+    public void unknownOption(final PrintWriter errout, final char c)
     {
         printMessage(errout, Level.ERROR, "unrecognized_option", new String(new char[]{c}));
     }
@@ -977,7 +977,7 @@ public final class Report
      * @param errout PrintWriter
      * @param file invalid file name
      */
-    public void unknownFile(PrintWriter errout, String file)
+    public void unknownFile(final PrintWriter errout, final String file)
     {
         printMessage(errout, Level.ERROR, "unknown_file", "Tidy", file);
     }
@@ -986,7 +986,7 @@ public final class Report
      * Prints the "needs author intervention" message.
      * @param errout PrintWriter
      */
-    public void needsAuthorIntervention(PrintWriter errout)
+    public void needsAuthorIntervention(final PrintWriter errout)
     {
         printMessage(errout, Level.SUMMARY, "needs_author_intervention");
     }
@@ -995,7 +995,7 @@ public final class Report
      * Prints the "missing body" message.
      * @param errout PrintWriter
      */
-    public void missingBody(PrintWriter errout)
+    public void missingBody(final PrintWriter errout)
     {
         printMessage(errout, Level.ERROR, "missing_body");
     }
@@ -1005,7 +1005,7 @@ public final class Report
      * @param errout PrintWriter
      * @param count slides count
      */
-    public void reportNumberOfSlides(PrintWriter errout, int count)
+    public void reportNumberOfSlides(final PrintWriter errout, final int count)
     {
         printMessage(errout, Level.SUMMARY, "slides_found", new Integer(count));
     }
@@ -1014,7 +1014,7 @@ public final class Report
      * Prints tidy general info.
      * @param errout PrintWriter
      */
-    public void generalInfo(PrintWriter errout)
+    public void generalInfo(final PrintWriter errout)
     {
         printMessage(errout, Level.SUMMARY, "general_info");
     }
@@ -1023,7 +1023,7 @@ public final class Report
      * Sets the current file name.
      * @param filename current file.
      */
-    public void setFilename(String filename)
+    public void setFilename(final String filename)
     {
         this.currentFile = filename; // for use with Gnu Emacs
     }
@@ -1054,7 +1054,7 @@ public final class Report
      * @param errout PrintWriter
      * @param lexer Lexer
      */
-    public void reportNumWarnings(PrintWriter errout, Lexer lexer) {
+    public void reportNumWarnings(final PrintWriter errout, final Lexer lexer) {
         if (lexer.warnings > 0 || lexer.errors > 0) {
         	final int incomplete = lexer.errors > lexer.configuration.getShowErrors()
         			|| !lexer.configuration.isShowWarnings() ? 1 : 0;
@@ -1069,7 +1069,7 @@ public final class Report
      * Prints tidy help.
      * @param out PrintWriter
      */
-    public void helpText(PrintWriter out)
+    public void helpText(final PrintWriter out)
     {
         printMessage(out, Level.SUMMARY, "help_text", "Tidy", RELEASE_DATE_STRING);
     }
@@ -1078,7 +1078,7 @@ public final class Report
      * Prints the "bad tree" message.
      * @param errout PrintWriter
      */
-    public void badTree(PrintWriter errout)
+    public void badTree(final PrintWriter errout)
     {
         printMessage(errout, Level.ERROR, "bad_tree");
     }
@@ -1087,7 +1087,7 @@ public final class Report
      * Adds a message listener.
      * @param listener TidyMessageListener
      */
-    public void addMessageListener(TidyMessageListener listener)
+    public void addMessageListener(final TidyMessageListener listener)
     {
         this.listener = listener;
     }

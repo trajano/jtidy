@@ -21,7 +21,7 @@ public class OptionValues {
 		for (int i = 0; i < values.length; ++i) {
 			final OptionEnum v = values[i];
 			valueMap.put(v.getName(), v);
-			for (String s : v.getSynonyms()) {
+			for (final String s : v.getSynonyms()) {
 				valueMap.put(s, v);
 			}
 		}
@@ -49,9 +49,9 @@ public class OptionValues {
 	 */
 	public String getDescription() {
 		final StringBuilder sb = new StringBuilder();
-		for (OptionEnum o : values) {
+		for (final OptionEnum o : values) {
 			sb.append(o.getName());
-			for (String s : o.getSynonyms()) {
+			for (final String s : o.getSynonyms()) {
 				sb.append('/').append(s);
 			}
 			sb.append(", ");

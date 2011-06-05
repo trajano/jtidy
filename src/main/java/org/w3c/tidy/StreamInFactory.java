@@ -80,13 +80,13 @@ public final class StreamInFactory
      * @param stream input stream
      * @return StreamIn instance
      */
-    public static StreamIn getStreamIn(Configuration config, InputStream stream)
+    public static StreamIn getStreamIn(final Configuration config, final InputStream stream)
     {
         try
         {
             return new StreamInJavaImpl(stream, config.getInCharEncodingName(), config.getTabsize());
         }
-        catch (UnsupportedEncodingException e)
+        catch (final UnsupportedEncodingException e)
         {
             throw new RuntimeException("Unsupported encoding: " + e.getMessage());
         }
@@ -98,7 +98,7 @@ public final class StreamInFactory
      * @param stream input stream
      * @return StreamIn instance
      */
-    public static StreamIn getStreamIn(Configuration config, Reader reader)
+    public static StreamIn getStreamIn(final Configuration config, final Reader reader)
     {
         return new StreamInJavaImpl(reader, config.getTabsize());
     }

@@ -67,7 +67,7 @@ public class Attribute
     /**
      * attribute name.
      */
-    private String name;
+    private final String name;
 
     /**
      * don't wrap attribute.
@@ -78,12 +78,12 @@ public class Attribute
     /**
      * html versions for this attribute.
      */
-    private int versions;
+    private final int versions;
 
     /**
      * checker for the attribute.
      */
-    private AttrCheck attrchk;
+    private final AttrCheck attrchk;
 
     /**
      * Instantiates a new Attribute.
@@ -102,7 +102,7 @@ public class Attribute
      * Don't wrap this attribute?
      * @param isNowrap boolean <code>true</code>= don't wrap
      */
-    public void setNowrap(boolean isNowrap)
+    public void setNowrap(final boolean isNowrap)
     {
         this.nowrap = isNowrap;
     }

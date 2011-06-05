@@ -29,27 +29,27 @@ public class Versions {
 	public static final int VERS_XML          = 65536;
 
 	/* compatibility symbols */
-	public static final int VERS_UNKNOWN      = (xxxx);
-	public static final int VERS_HTML20       = (HT20);
-	public static final int VERS_HTML32       = (HT32);
-	public static final int VERS_HTML40_STRICT = (H40S|H41S|X10S);
-	public static final int VERS_HTML40_LOOSE  = (H40T|H41T|X10T);
-	public static final int VERS_FRAMESET     = (H40F|H41F|X10F);
-	public static final int VERS_XHTML11      = (XH11);
-	public static final int VERS_BASIC        = (XB10);
+	public static final int VERS_UNKNOWN      = xxxx;
+	public static final int VERS_HTML20       = HT20;
+	public static final int VERS_HTML32       = HT32;
+	public static final int VERS_HTML40_STRICT = H40S|H41S|X10S;
+	public static final int VERS_HTML40_LOOSE  = H40T|H41T|X10T;
+	public static final int VERS_FRAMESET     = H40F|H41F|X10F;
+	public static final int VERS_XHTML11      = XH11;
+	public static final int VERS_BASIC        = XB10;
 
 	/* meta symbols */
-	public static final int VERS_HTML40       = (VERS_HTML40_STRICT|VERS_HTML40_LOOSE|VERS_FRAMESET);
-	public static final int VERS_IFRAME       = (VERS_HTML40_LOOSE|VERS_FRAMESET);
-	public static final int VERS_LOOSE        = (VERS_HTML20|VERS_HTML32|VERS_IFRAME);
-	public static final int VERS_EVENTS       = (VERS_HTML40|VERS_XHTML11);
-	public static final int VERS_FROM32       = (VERS_HTML32|VERS_HTML40);
-	public static final int VERS_FROM40       = (VERS_HTML40|VERS_XHTML11|VERS_BASIC);
-	public static final int VERS_XHTML        = (X10S|X10T|X10F|XH11|XB10);
+	public static final int VERS_HTML40       = VERS_HTML40_STRICT|VERS_HTML40_LOOSE|VERS_FRAMESET;
+	public static final int VERS_IFRAME       = VERS_HTML40_LOOSE|VERS_FRAMESET;
+	public static final int VERS_LOOSE        = VERS_HTML20|VERS_HTML32|VERS_IFRAME;
+	public static final int VERS_EVENTS       = VERS_HTML40|VERS_XHTML11;
+	public static final int VERS_FROM32       = VERS_HTML32|VERS_HTML40;
+	public static final int VERS_FROM40       = VERS_HTML40|VERS_XHTML11|VERS_BASIC;
+	public static final int VERS_XHTML        = X10S|X10T|X10F|XH11|XB10;
 
 	/* all W3C defined document types */
-	public static final int VERS_ALL          = (VERS_HTML20|VERS_HTML32|VERS_FROM40);
+	public static final int VERS_ALL          = VERS_HTML20|VERS_HTML32|VERS_FROM40;
 
 	/* all proprietary types */
-	public static final int VERS_PROPRIETARY  = (VERS_NETSCAPE|VERS_MICROSOFT|VERS_SUN);
+	public static final int VERS_PROPRIETARY  = VERS_NETSCAPE|VERS_MICROSOFT|VERS_SUN;
 }

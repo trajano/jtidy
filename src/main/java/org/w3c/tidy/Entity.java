@@ -66,14 +66,14 @@ public class Entity
     /**
      * entity name.
      */
-    private String name;
+    private final String name;
     
     private final int versions;
 
     /**
      * entity code.
      */
-    private short code;
+    private final short code;
 
     /**
      * instantiates a new entity.

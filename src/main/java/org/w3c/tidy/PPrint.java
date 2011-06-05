@@ -175,18 +175,18 @@ public class PPrint
 		}
     }
 
-    private TidyIndent indent[] = new TidyIndent[2];
+    private final TidyIndent indent[] = new TidyIndent[2];
 
     /**
      * current configuration.
      */
-    private Configuration configuration;
+    private final Configuration configuration;
 
     /**
      * Instantiates a new PPrint.
      * @param configuration configuration
      */
-    public PPrint(Configuration configuration)
+    public PPrint(final Configuration configuration)
     {
         this.configuration = configuration;
         indent[0] = new TidyIndent();
@@ -197,7 +197,7 @@ public class PPrint
      * @param ind
      * @return
      */
-    int cWrapLen(int ind)
+    int cWrapLen(final int ind)
     {
         /* #431953 - start RJ Wraplen adjusted for smooth international ride */
         if ("zh".equals(this.configuration.getLanguage()))
@@ -205,14 +205,14 @@ public class PPrint
             // Chinese characters take two positions on a fixed-width screen
             // It would be more accurate to keep a parallel linelen and wraphere incremented by 2 for Chinese characters
             // and 1 otherwise, but this is way simpler.
-            return (ind + ((this.configuration.getWraplen() - ind) / 2));
+            return ind + (this.configuration.getWraplen() - ind) / 2;
         }
         if ("ja".equals(this.configuration.getLanguage()))
         {
             /* average Japanese text is 30% kanji */
-            return (ind + (((this.configuration.getWraplen() - ind) * 7) / 10));
+            return ind + (this.configuration.getWraplen() - ind) * 7 / 10;
         }
-        return (this.configuration.getWraplen());
+        return this.configuration.getWraplen();
         /* #431953 - end RJ */
     }
 
@@ -223,18 +223,18 @@ public class PPrint
      * @param ch initialized to 1st byte, passed as an array to allow modification
      * @return one less that the number of bytes used by UTF-8 char
      */
-    public static int getUTF8(byte[] str, int start, int[] ch)
+    public static int getUTF8(final byte[] str, final int start, final int[] ch)
     {
 
-        int[] n = new int[1];
+        final int[] n = new int[1];
 
-        int[] bytes = new int[]{0};
+        final int[] bytes = new int[]{0};
 
         // first byte "str[0]" is passed in separately from the
         // rest of the UTF-8 byte sequence starting at "str[1]"
-        byte[] successorBytes = str;
+        final byte[] successorBytes = str;
 
-        boolean err = EncodingUtils.decodeUTF8BytesToChar(
+        final boolean err = EncodingUtils.decodeUTF8BytesToChar(
             n,
             TidyUtils.toUnsigned(str[start]),
             successorBytes,
@@ -258,11 +258,11 @@ public class PPrint
      * @param c
      * @return
      */
-    public static int putUTF8(byte[] buf, int start, int c)
+    public static int putUTF8(final byte[] buf, int start, final int c)
     {
-        int[] count = new int[]{0};
+        final int[] count = new int[]{0};
 
-        boolean err = EncodingUtils.encodeCharToUTF8Bytes(c, buf, null, count);
+        final boolean err = EncodingUtils.encodeCharToUTF8Bytes(c, buf, null, count);
         if (err)
         {
             // replacement char 0xFFFD encoded as UTF-8
@@ -286,7 +286,7 @@ public class PPrint
             buflen *= 2;
     	}
 
-        int[] temp = new int[buflen];
+        final int[] temp = new int[buflen];
         if (temp != null) {
         	if (linebuf != null) {
         		System.arraycopy(linebuf, 0, temp, 0, lbufsize);
@@ -296,7 +296,7 @@ public class PPrint
         }
     }
 
-    private void addC(int c, int index) {
+    private void addC(final int c, final int index) {
         if (index + 1 >= lbufsize) {
         	expand(index + 1);
         }
@@ -314,9 +314,9 @@ public class PPrint
      * @param index actual line lenght
      * @return final line length
      */
-    private int addAsciiString(String str, int index)
+    private int addAsciiString(final String str, final int index)
     {
-        int len = str.length();
+        final int len = str.length();
         if (index + len >= lbufsize) {
         	expand(index + len);
         }
@@ -335,7 +335,7 @@ public class PPrint
     ** the current line.  Otherwise keep previous wrap point.
     */
     private boolean setWrap(final int indent) {
-        boolean wrap = indent + linelen < configuration.getWraplen();
+        final boolean wrap = indent + linelen < configuration.getWraplen();
         if (wrap) {
             if (this.indent[0].spaces < 0) {
             	this.indent[0].spaces = indent;
@@ -350,33 +350,33 @@ public class PPrint
     }
     
     private boolean isWrapInString() {
-        TidyIndent ind = indent[0]; /* Always 1st */
-        int wrap = wraphere;
+        final TidyIndent ind = indent[0]; /* Always 1st */
+        final int wrap = wraphere;
         return ind.attrStringStart == 0 ||
-                 (ind.attrStringStart > 0 && ind.attrStringStart < wrap);
+                 ind.attrStringStart > 0 && ind.attrStringStart < wrap;
     }
     
     private void clearInAttrVal() {
-        TidyIndent ind = indent[ixInd];
+        final TidyIndent ind = indent[ixInd];
         ind.attrValStart = -1;
     }
     
     private int setInAttrVal() {
-        TidyIndent ind = indent[ixInd];
+        final TidyIndent ind = indent[ixInd];
         return ind.attrValStart = linelen;
     }
     
     private boolean isWrapInAttrVal() {
-        TidyIndent ind = indent[0]; /* Always 1st */
-        int wrap = wraphere;
+        final TidyIndent ind = indent[0]; /* Always 1st */
+        final int wrap = wraphere;
         return ind.attrValStart == 0 ||
-                 (ind.attrValStart > 0 && ind.attrValStart < wrap);
+                 ind.attrValStart > 0 && ind.attrValStart < wrap;
     }
     
     private boolean wantIndent() {
         boolean wantIt = getSpaces() > 0;
         if (wantIt) {
-            boolean indentAttrs = configuration.isIndentAttributes();
+            final boolean indentAttrs = configuration.isIndentAttributes();
             wantIt = (!isWrapInAttrVal() || indentAttrs ) && !isWrapInString();
         }
         return wantIt;
@@ -393,9 +393,9 @@ public class PPrint
     }
     
     private boolean setWrapAttr(final int indent, final int attrStart, final int strStart) {
-		TidyIndent ind = this.indent[0];
+		final TidyIndent ind = this.indent[0];
 		
-		boolean wrap = indent + linelen < configuration.getWraplen();
+		final boolean wrap = indent + linelen < configuration.getWraplen();
 		if (wrap) {
 			if (ind.spaces < 0 ) {
 				ind.spaces = indent;
@@ -430,7 +430,7 @@ public class PPrint
         }
 
         if (wraphere > 0) {
-            int wrap = wraphere;
+            final int wrap = wraphere;
             if (indent[0].attrStringStart > wrap) {
             	indent[0].attrStringStart -= wrap;
             }
@@ -455,7 +455,7 @@ public class PPrint
     	if (linelen > wraphere) {
     		int p = 0;
     		int q = p + wraphere;
-    		int end = p + linelen;
+    		final int end = p + linelen;
     		
     		if (!isWrapInAttrVal()) {
                 while (q < end && linebuf[q] == ' ') {
@@ -483,7 +483,7 @@ public class PPrint
             return;
         }
         if (wantIndent()) {
-        	int spaces = getSpaces();
+        	final int spaces = getSpaces();
         	for (int i = 0; i < spaces; ++i) {
         		fout.outc(' ');
 			}
@@ -508,7 +508,7 @@ public class PPrint
         int i;
         
         if (wantIndent()) {
-        	int spaces = getSpaces();
+        	final int spaces = getSpaces();
         	for (i = 0; i < spaces; ++i) {
                 fout.outc(' ');
             }
@@ -529,7 +529,7 @@ public class PPrint
     }
     
     private int getSpaces() {
-        int spaces = indent[0].spaces;
+        final int spaces = indent[0].spaces;
         return spaces < 0 ? 0 : spaces;
     }
     
@@ -557,18 +557,18 @@ public class PPrint
     }
     
     private int clearInString() {
-        TidyIndent ind = indent[ixInd];
+        final TidyIndent ind = indent[ixInd];
         return ind.attrStringStart = -1;
     }
     
     private int toggleInString() {
-        TidyIndent ind = indent[ixInd];
-        boolean inString = ind.attrStringStart >= 0;
+        final TidyIndent ind = indent[ixInd];
+        final boolean inString = ind.attrStringStart >= 0;
         return ind.attrStringStart = inString ? -1 : linelen;
     }
     
     private boolean isInString() {
-        TidyIndent ind = indent[0]; /* Always 1st */
+        final TidyIndent ind = indent[0]; /* Always 1st */
         return ind.attrStringStart >= 0 && 
                  ind.attrStringStart < linelen;
     }
@@ -577,7 +577,7 @@ public class PPrint
         checkWrapLine(fout);
 
         if (wantIndent()) {
-            int spaces = getSpaces();
+            final int spaces = getSpaces();
             for (int i = 0; i < spaces; ++i) {
             	fout.outc(' ');
             }
@@ -622,7 +622,7 @@ public class PPrint
      * @param c
      * @param mode
      */
-    private void printChar(int c, short mode)
+    private void printChar(int c, final short mode)
     {
         String entity;
         boolean breakable = false; // #431953 - RJ
@@ -708,29 +708,29 @@ public class PPrint
             // But we leave the ASCII range punctuation untouched
 
             // Break after any punctuation or spaces characters
-            if ((c >= 0x2000) && !TidyUtils.toBoolean(mode & PREFORMATTED) && configuration.isPunctWrap())
+            if (c >= 0x2000 && !TidyUtils.toBoolean(mode & PREFORMATTED) && configuration.isPunctWrap())
             {
-                if (((c >= 0x2000) && (c <= 0x2006))
-                    || ((c >= 0x2008) && (c <= 0x2010))
-                    || ((c >= 0x2011) && (c <= 0x2046))
-                    || ((c >= 0x207D) && (c <= 0x207E))
-                    || ((c >= 0x208D) && (c <= 0x208E))
-                    || ((c >= 0x2329) && (c <= 0x232A))
-                    || ((c >= 0x3001) && (c <= 0x3003))
-                    || ((c >= 0x3008) && (c <= 0x3011))
-                    || ((c >= 0x3014) && (c <= 0x301F))
-                    || ((c >= 0xFD3E) && (c <= 0xFD3F))
-                    || ((c >= 0xFE30) && (c <= 0xFE44))
-                    || ((c >= 0xFE49) && (c <= 0xFE52))
-                    || ((c >= 0xFE54) && (c <= 0xFE61))
-                    || ((c >= 0xFE6A) && (c <= 0xFE6B))
-                    || ((c >= 0xFF01) && (c <= 0xFF03))
-                    || ((c >= 0xFF05) && (c <= 0xFF0A))
-                    || ((c >= 0xFF0C) && (c <= 0xFF0F))
-                    || ((c >= 0xFF1A) && (c <= 0xFF1B))
-                    || ((c >= 0xFF1F) && (c <= 0xFF20))
-                    || ((c >= 0xFF3B) && (c <= 0xFF3D))
-                    || ((c >= 0xFF61) && (c <= 0xFF65)))
+                if (c >= 0x2000 && c <= 0x2006
+                    || c >= 0x2008 && c <= 0x2010
+                    || c >= 0x2011 && c <= 0x2046
+                    || c >= 0x207D && c <= 0x207E
+                    || c >= 0x208D && c <= 0x208E
+                    || c >= 0x2329 && c <= 0x232A
+                    || c >= 0x3001 && c <= 0x3003
+                    || c >= 0x3008 && c <= 0x3011
+                    || c >= 0x3014 && c <= 0x301F
+                    || c >= 0xFD3E && c <= 0xFD3F
+                    || c >= 0xFE30 && c <= 0xFE44
+                    || c >= 0xFE49 && c <= 0xFE52
+                    || c >= 0xFE54 && c <= 0xFE61
+                    || c >= 0xFE6A && c <= 0xFE6B
+                    || c >= 0xFF01 && c <= 0xFF03
+                    || c >= 0xFF05 && c <= 0xFF0A
+                    || c >= 0xFF0C && c <= 0xFF0F
+                    || c >= 0xFF1A && c <= 0xFF1B
+                    || c >= 0xFF1F && c <= 0xFF20
+                    || c >= 0xFF3B && c <= 0xFF3D
+                    || c >= 0xFF61 && c <= 0xFF65)
                 {
                     wraphere = linelen + 2; // 2, because AddChar is not till later
                     breakable = true;
@@ -753,7 +753,7 @@ public class PPrint
                 // but break before a left punctuation
                 if (breakable)
                 {
-                    if (((c >= 0x201A) && (c <= 0x201C)) || ((c >= 0x201E) && (c <= 0x201F)))
+                    if (c >= 0x201A && c <= 0x201C || c >= 0x201E && c <= 0x201F)
                     {
                         wraphere--;
                     }
@@ -803,11 +803,11 @@ public class PPrint
                 // Allow linebreak at Chinese punctuation characters
                 // There are not many spaces in Chinese
                 addC(c, linelen++);
-                if (((c & 0xFF00) == 0xA100) && !TidyUtils.toBoolean(mode & PREFORMATTED))
+                if ((c & 0xFF00) == 0xA100 && !TidyUtils.toBoolean(mode & PREFORMATTED))
                 {
                     wraphere = linelen;
                     // opening brackets have odd codes: break before them
-                    if ((c > 0x5C) && (c < 0xAD) && ((c & 1) == 1))
+                    if (c > 0x5C && c < 0xAD && (c & 1) == 1)
                     {
                         wraphere--;
                     }
@@ -943,7 +943,7 @@ public class PPrint
         }
 
         // default treatment for ASCII
-        if ("ASCII".equals(this.configuration.getOutCharEncodingName()) && (c > 126 || (c < ' ' && c != '\t')))
+        if ("ASCII".equals(this.configuration.getOutCharEncodingName()) && (c > 126 || c < ' ' && c != '\t'))
         {
             if (!this.configuration.isNumEntities())
             {
@@ -975,7 +975,7 @@ public class PPrint
     
 	private int incrWS(int start, final int end, final int indent, final int ixWS) {
 		if (ixWS > 0) {
-			int st = start + Math.min(ixWS, indent);
+			final int st = start + Math.min(ixWS, indent);
 			start = Math.min(st, end);
 		}
 		return start;
@@ -991,17 +991,17 @@ public class PPrint
      * @param start
      * @param end
      */
-    private void printText(Lexer lexer, Out fout, short mode, int indent, Node node) {
+    private void printText(final Lexer lexer, final Out fout, final short mode, final int indent, final Node node) {
     	int start = node.start;
     	int end = node.end;
         int ix, c = 0;
-        int ixNL = textEndsWithNewline(lexer, node, mode);
+        final int ixNL = textEndsWithNewline(lexer, node, mode);
         int ixWS = textStartsWithWhitespace(lexer, node, start, mode);
         if (ixNL > 0) {
         	end -= ixNL;
         }
         start = incrWS( start, end, indent, ixWS );
-        int[] ci = new int[1];
+        final int[] ci = new int[1];
 
         for (ix = start; ix < end; ++ix) {
         	checkWrapIndent(fout, indent);
@@ -1028,13 +1028,13 @@ public class PPrint
      * @param delim
      * @param wrappable
      */
-    private void printAttrValue(Out fout, int indent, String value, int delim, boolean wrappable, boolean scriptAttr)
+    private void printAttrValue(final Out fout, final int indent, final String value, int delim, final boolean wrappable, final boolean scriptAttr)
     {
-    	boolean scriptlets = configuration.isWrapScriptlets();
-        int[] ci = new int[1];
+    	final boolean scriptlets = configuration.isWrapScriptlets();
+        final int[] ci = new int[1];
         byte[] valueChars = null;
         int i;
-        short mode = (wrappable ? (short) (NORMAL | ATTRIBVALUE) : (short) (PREFORMATTED | ATTRIBVALUE));
+        short mode = wrappable ? (short) (NORMAL | ATTRIBVALUE) : (short) (PREFORMATTED | ATTRIBVALUE);
 
         if (value != null)
         {
@@ -1044,7 +1044,7 @@ public class PPrint
         // look for ASP, Tango or PHP instructions for computed attribute value
         if (valueChars != null && valueChars.length >= 5 && valueChars[0] == '<')
         {
-            if (valueChars[1] == '%' || valueChars[1] == '@' || (new String(valueChars, 0, 5)).equals("<?php"))
+            if (valueChars[1] == '%' || valueChars[1] == '@' || new String(valueChars, 0, 5).equals("<?php"))
             {
                 mode |= CDATA;
             }
@@ -1066,13 +1066,13 @@ public class PPrint
         addC(delim, linelen++);
 
         if (value != null) {
-        	int wraplen = configuration.getWraplen();
-        	int attrStart = setInAttrVal();
+        	final int wraplen = configuration.getWraplen();
+        	final int attrStart = setInAttrVal();
         	int strStart = clearInString();
 
             i = 0;
             while (i < valueChars.length) {
-                int c = (valueChars[i]) & 0xFF; // Convert to unsigned.
+                int c = valueChars[i] & 0xFF; // Convert to unsigned.
 
                 if (wrappable && c == ' ') {
                 	setWrapAttr(indent, attrStart, strStart);
@@ -1083,7 +1083,7 @@ public class PPrint
                 }
 
                 if (c == delim) {
-                    String entity = (c == '"' ? "&quot;" : "&#39;");
+                    final String entity = c == '"' ? "&quot;" : "&#39;";
                     addString(entity);
                     ++i;
                     continue;
@@ -1141,8 +1141,8 @@ public class PPrint
     }
     
 	private int attrIndent(Node node) {
-		int spaces = configuration.getSpaces();
-		int xtra = 2; /* 1 for the '<', another for the ' ' */
+		final int spaces = configuration.getSpaces();
+		final int xtra = 2; /* 1 for the '<', another for the ' ' */
 		if (node.element == null) {
 			return spaces;
 		}
@@ -1165,15 +1165,15 @@ public class PPrint
      * @param node
      * @param attr
      */
-    private void printAttribute(Out fout, int indent, Node node, AttVal attr) {
-    	boolean xmlOut    = configuration.isXmlOut();
-    	boolean xhtmlOut  = configuration.isXHTML();
-    	boolean wrapAttrs = configuration.isWrapAttVals();
-    	boolean ucAttrs   = configuration.isUpperCaseAttrs();
+    private void printAttribute(final Out fout, int indent, final Node node, final AttVal attr) {
+    	final boolean xmlOut    = configuration.isXmlOut();
+    	final boolean xhtmlOut  = configuration.isXHTML();
+    	final boolean wrapAttrs = configuration.isWrapAttVals();
+    	final boolean ucAttrs   = configuration.isUpperCaseAttrs();
 	    boolean indAttrs  = configuration.isIndentAttributes();
 	    int xtra      = attrIndent(node);
-	    boolean first     = attrNoIndentFirst(node, attr);
-	    String name    = attr.attribute;
+	    final boolean first     = attrNoIndentFirst(node, attr);
+	    final String name    = attr.attribute;
 	    boolean wrappable = false;
 	    
 	    /* fix for odd attribute indentation bug triggered by long values */
@@ -1217,8 +1217,8 @@ public class PPrint
         checkWrapIndent(fout, indent);
 
         if (attr.value == null) {
-        	boolean isB = attr.isBoolAttribute();
-        	boolean scriptAttr = attr.isEvent();
+        	final boolean isB = attr.isBoolAttribute();
+        	final boolean scriptAttr = attr.isEvent();
         	
             if (xmlOut) {
                 printAttrValue(fout, indent, isB ? attr.attribute : "", attr.delim, false, scriptAttr);
@@ -1281,7 +1281,7 @@ public class PPrint
         if (!node.hasCM(Dict.CM_INLINE)) {
             return true;
         }
-        Node prev = node.prev;
+        final Node prev = node.prev;
         if (prev != null) {
             if (prev.isText()) {
             	return lexer.textNodeEndWithSpace(prev);
@@ -1307,10 +1307,10 @@ public class PPrint
      * @param node
      */
     private void printTag(final Lexer lexer, final Out fout, final short mode, final int indent, final Node node) {
-        boolean uc = configuration.isUpperCaseTags();
-        boolean xhtmlOut = configuration.isXHTML();
-        boolean xmlOut = configuration.isXmlOut();
-        String s = node.element;
+        final boolean uc = configuration.isUpperCaseTags();
+        final boolean xhtmlOut = configuration.isXHTML();
+        final boolean xmlOut = configuration.isXmlOut();
+        final String s = node.element;
         
         addChar('<');
 
@@ -1334,7 +1334,7 @@ public class PPrint
         addChar('>');
 
         if ((node.type != NodeType.StartEndTag || xhtmlOut) && (mode & PREFORMATTED) == 0) {
-        	int wraplen = configuration.getWraplen();
+        	final int wraplen = configuration.getWraplen();
         	checkWrapIndent(fout, indent);
             if (indent + linelen < wraplen) {
             	/* wrap after start tag if is <br/> or if it's not inline.
@@ -1362,7 +1362,7 @@ public class PPrint
      * @param indent
      * @param node
      */
-    private void printEndTag(short mode, int indent, Node node)
+    private void printEndTag(final short mode, final int indent, final Node node)
     {
         String p;
 
@@ -1410,10 +1410,10 @@ public class PPrint
      * @param node
      */
     private void printDocType(final Lexer lexer, final Out fout, final int indent, final Node node) {
-    	int wraplen = configuration.getWraplen();
-        int spaces = configuration.getSpaces();
-        AttVal fpi = node.getAttrByName("PUBLIC");
-        AttVal sys = node.getAttrByName("SYSTEM");
+    	final int wraplen = configuration.getWraplen();
+        final int spaces = configuration.getSpaces();
+        final AttVal fpi = node.getAttrByName("PUBLIC");
+        final AttVal sys = node.getAttrByName("SYSTEM");
         
         /* todo: handle non-ASCII characters in FPI / SI / node->element */
 
@@ -1541,7 +1541,7 @@ public class PPrint
      */
     private void printAsp(final Lexer lexer, final Out fout, final int indent, final Node node)
     {
-        int savewraplen = this.configuration.getWraplen();
+        final int savewraplen = this.configuration.getWraplen();
 
         // disable wrapping if so requested
 
@@ -1569,7 +1569,7 @@ public class PPrint
      */
     private void printJste(final Lexer lexer, final Out fout, final int indent, final Node node)
     {
-        int savewraplen = this.configuration.getWraplen();
+        final int savewraplen = this.configuration.getWraplen();
 
         // disable wrapping if so requested
 
@@ -1597,7 +1597,7 @@ public class PPrint
      */
     private void printPhp(final Lexer lexer, final Out fout, final int indent, final Node node)
     {
-        int savewraplen = this.configuration.getWraplen();
+        final int savewraplen = this.configuration.getWraplen();
 
         // disable wrapping if so requested
 
@@ -1624,7 +1624,7 @@ public class PPrint
      */
     private void printCDATA(final Lexer lexer, final Out fout, int indent, final Node node)
     {
-        int savewraplen = this.configuration.getWraplen();
+        final int savewraplen = this.configuration.getWraplen();
 
         if (!this.configuration.isIndentCdata())
         {
@@ -1662,7 +1662,7 @@ public class PPrint
      */
     private void printSection(final Lexer lexer, final Out fout, final int indent, final Node node)
     {
-        int savewraplen = this.configuration.getWraplen();
+        final int savewraplen = this.configuration.getWraplen();
 
         // disable wrapping if so requested
 
@@ -1689,7 +1689,7 @@ public class PPrint
      * @param node Node
      * @return <code>true</code> if node is inside an HEAD tag
      */
-    private boolean insideHead(Node node)
+    private boolean insideHead(final Node node)
     {
         if (node.is(TagId.HEAD))
         {
@@ -1713,7 +1713,7 @@ public class PPrint
     	if ((mode & (CDATA|COMMENT)) != 0 && node.isText() && node.end > node.start) {
     		int ch, ix = node.end - 1;
     		// Skip non-newline whitespace
-            while (ix >= node.start && (ch = (lexer.lexbuf[ix] & 0xff)) != 0
+            while (ix >= node.start && (ch = lexer.lexbuf[ix] & 0xff) != 0
                     && (ch == ' ' || ch == '\t' || ch == '\r')) {
                 --ix;
             }
@@ -1725,11 +1725,11 @@ public class PPrint
     }
     
     private int textStartsWithWhitespace(final Lexer lexer, final Node node, final int start, final int mode) {
-        assert(node != null);
+        assert node != null;
         if ((mode & (CDATA|COMMENT)) != 0 && node.isText() && node.end > node.start && start >= node.start) {
             int ch, ix = start;
             /* Skip whitespace. */
-            while (ix < node.end && (ch = (lexer.lexbuf[ix] & 0xff)) != 0
+            while (ix < node.end && (ch = lexer.lexbuf[ix] & 0xff) != 0
                     && (ch==' ' || ch=='\t' || ch=='\r')) {
                 ++ix;
             }
@@ -1745,7 +1745,7 @@ public class PPrint
      * @param node Node
      * @return <code>true</code> if node contains a CDATA section
      */
-    static boolean hasCDATA(Node node)
+    static boolean hasCDATA(final Node node)
     {
         // Scan forward through the textarray. Since the characters we're
         // looking for are < 0x7f, we don't have to do any UTF-8 decoding.
@@ -1755,10 +1755,10 @@ public class PPrint
             return false;
         }
 
-        int len = node.end - node.start + 1;
-        String start = TidyUtils.getString(node.textarray, node.start, len);
+        final int len = node.end - node.start + 1;
+        final String start = TidyUtils.getString(node.textarray, node.start, len);
 
-        int indexOfCData = start.indexOf(CDATA_START);
+        final int indexOfCData = start.indexOf(CDATA_START);
         return indexOfCData > -1 && indexOfCData <= len;
     }
 
@@ -1790,7 +1790,7 @@ public class PPrint
      * @param lexer
      * @param node
      */
-    private void printScriptStyle(Out fout, short mode, int indent, Lexer lexer, Node node)
+    private void printScriptStyle(final Out fout, final short mode, final int indent, final Lexer lexer, final Node node)
     {
         Node content;
         String commentStart = DEFAULT_COMMENT_START;
@@ -1809,7 +1809,7 @@ public class PPrint
 
 		if (xhtmlOut && node.content != null)
         {
-            AttVal type = node.getAttrById(AttrId.TYPE);
+            final AttVal type = node.getAttrById(AttrId.TYPE);
             if (type != null)
             {
                 if ("text/javascript".equalsIgnoreCase(type.value))
@@ -1833,7 +1833,7 @@ public class PPrint
             if (!hasCData)
             {
                 // disable wrapping
-                int savewrap = lexer.configuration.getWraplen();
+                final int savewrap = lexer.configuration.getWraplen();
                 lexer.configuration.setWraplen(0xFFFFFF); // a very large number
 
                 linelen = addAsciiString(commentStart, linelen);
@@ -1868,7 +1868,7 @@ public class PPrint
             if (!hasCData)
             {
                 // disable wrapping
-                int savewrap = lexer.configuration.getWraplen();
+                final int savewrap = lexer.configuration.getWraplen();
                 lexer.configuration.setWraplen(0xFFFFFF); // a very large number
 
                 linelen = addAsciiString(commentStart, linelen);
@@ -1954,7 +1954,7 @@ public class PPrint
      * @param root
      * @param xml
      */
-    void printBody(Out fout, Lexer lexer, Node root, boolean xml)
+    void printBody(final Out fout, final Lexer lexer, final Node root, final boolean xml)
     {
         if (root == null)
         {
@@ -1963,7 +1963,7 @@ public class PPrint
 
         // Feature request #434940 - fix by Dave Raggett/Ignacio Vazquez-Abrams 21 Jun 01
         // Sebastiano Vigna <vigna@dsi.unimi.it>
-        Node body = root.findBody();
+        final Node body = root.findBody();
 
         if (body != null)
         {
@@ -1982,11 +1982,11 @@ public class PPrint
      * @param lexer
      * @param node
      */
-    public void printTree(Out fout, short mode, int indent, Lexer lexer, Node node)
+    public void printTree(final Out fout, final short mode, int indent, final Lexer lexer, final Node node)
     {
         Node content, last;
-        int spaces = configuration.getSpaces();
-        boolean xhtml = configuration.isXHTML();
+        final int spaces = configuration.getSpaces();
+        final boolean xhtml = configuration.isXHTML();
 
         if (node == null) {
             return;
@@ -2028,7 +2028,7 @@ public class PPrint
             printPhp(lexer, fout, indent, node);
         }
         else if (node.hasCM(Dict.CM_EMPTY)
-        		|| (node.type == NodeType.StartEndTag && !xhtml)) {
+        		|| node.type == NodeType.StartEndTag && !xhtml) {
             if (!node.hasCM(Dict.CM_INLINE)) {
                 condFlushLine(fout, indent);
             }
@@ -2053,7 +2053,7 @@ public class PPrint
 	            if (node.is(TagId.PARAM) || node.is(TagId.AREA)) {
 	                condFlushLine(fout, indent);
 	            }
-	            else if ((node.is(TagId.BR) && (mode & PREFORMATTED) == 0) || node.is(TagId.HR)) {
+	            else if (node.is(TagId.BR) && (mode & PREFORMATTED) == 0 || node.is(TagId.HR)) {
 	                flushLine(fout, indent);
 	            }
             }
@@ -2160,7 +2160,7 @@ public class PPrint
                     	}
                     }
                     else if (node.hasCM(Dict.CM_HTML) || node.is(TagId.NOFRAMES)
-                    		|| (node.hasCM(Dict.CM_HEAD) && !node.is(TagId.TITLE))) {
+                    		|| node.hasCM(Dict.CM_HEAD) && !node.is(TagId.TITLE)) {
                         flushLine(fout, contentIndent);
                     }
                 }
@@ -2178,8 +2178,8 @@ public class PPrint
                 }
 
                 // don't flush line for td and th
-                if (shouldIndent(node) || (!hideend && (node.hasCM(Dict.CM_HTML) || node.is(TagId.NOFRAMES)
-                		|| (node.hasCM(Dict.CM_HEAD) && !node.is(TagId.TITLE))))) {
+                if (shouldIndent(node) || !hideend && (node.hasCM(Dict.CM_HTML) || node.is(TagId.NOFRAMES)
+                		|| node.hasCM(Dict.CM_HEAD) && !node.is(TagId.TITLE))) {
                     condFlushLine(fout, indent);
                     if (!hideend || !node.hasCM(Dict.CM_OPT)) {
                         printEndTag(mode, indent, node);
@@ -2213,16 +2213,16 @@ public class PPrint
      * @param lexer
      * @param node
      */
-    public void printXMLTree(Out fout, short mode, int indent, Lexer lexer, Node node)
+    public void printXMLTree(final Out fout, final short mode, int indent, final Lexer lexer, final Node node)
     {
-        TagTable tt = this.configuration.tt;
+        final TagTable tt = this.configuration.tt;
 
         if (node == null)
         {
             return;
         }
 
-        if (node.type == NodeType.TextNode || (node.type == NodeType.CDATATag && lexer.configuration.isEscapeCdata()))
+        if (node.type == NodeType.TextNode || node.type == NodeType.CDATATag && lexer.configuration.isEscapeCdata())
         {
             printText(lexer, fout, mode, indent, node);
         }
@@ -2382,16 +2382,16 @@ public class PPrint
      * @param root
      * @param duration
      */
-    public void addTransitionEffect(Lexer lexer, Node root, double duration)
+    public void addTransitionEffect(final Lexer lexer, final Node root, final double duration)
     {
-        Node head = root.findHEAD();
+        final Node head = root.findHEAD();
         String transition;
 
-        transition = "blendTrans(Duration=" + (new Double(duration)).toString() + ")";
+        transition = "blendTrans(Duration=" + new Double(duration).toString() + ")";
 
         if (head != null)
         {
-            Node meta = lexer.inferredTag(TagId.META);
+            final Node meta = lexer.inferredTag(TagId.META);
             meta.addAttribute("http-equiv", "Page-Enter");
             meta.addAttribute("content", transition);
             head.insertNodeAtStart(meta);

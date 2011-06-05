@@ -70,13 +70,13 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
     /**
      * A DOM Document has its own TagTable.
      */
-    private TagTable tt;
+    private final TagTable tt;
 
     /**
      * Instantiates a new Dom document with a default tag table.
      * @param adaptee tidy Node
      */
-    protected DOMDocumentImpl(Node adaptee)
+    protected DOMDocumentImpl(final Node adaptee)
     {
         super(adaptee);
         this.tt = new TagTable();
@@ -156,9 +156,9 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
     /**
      * @see org.w3c.dom.Document#createElement
      */
-    public org.w3c.dom.Element createElement(String tagName) throws DOMException
+    public org.w3c.dom.Element createElement(final String tagName) throws DOMException
     {
-        Node node = new Node(NodeType.StartEndTag, null, 0, 0, tagName, this.tt);
+        final Node node = new Node(NodeType.StartEndTag, null, 0, 0, tagName, this.tt);
         if (node.tag == null) // Fix Bug 121206
         {
             node.tag = TagTable.XML_TAGS;
@@ -178,20 +178,20 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
     /**
      * @see org.w3c.dom.Document#createTextNode
      */
-    public org.w3c.dom.Text createTextNode(String data)
+    public org.w3c.dom.Text createTextNode(final String data)
     {
-        byte[] textarray = TidyUtils.getBytes(data);
-        Node node = new Node(NodeType.TextNode, textarray, 0, textarray.length);
+        final byte[] textarray = TidyUtils.getBytes(data);
+        final Node node = new Node(NodeType.TextNode, textarray, 0, textarray.length);
         return (org.w3c.dom.Text) node.getAdapter();
     }
 
     /**
      * @see org.w3c.dom.Document#createComment
      */
-    public org.w3c.dom.Comment createComment(String data)
+    public org.w3c.dom.Comment createComment(final String data)
     {
-        byte[] textarray = TidyUtils.getBytes(data);
-        Node node = new Node(NodeType.CommentTag, textarray, 0, textarray.length);
+        final byte[] textarray = TidyUtils.getBytes(data);
+        final Node node = new Node(NodeType.CommentTag, textarray, 0, textarray.length);
         return (org.w3c.dom.Comment) node.getAdapter();
     }
 
@@ -199,7 +199,7 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
      * @todo DOM level 2 createCDATASection() Not supported. Throws NOT_SUPPORTED_ERR.
      * @see org.w3c.dom.Document#createCDATASection
      */
-    public org.w3c.dom.CDATASection createCDATASection(String data) throws DOMException
+    public org.w3c.dom.CDATASection createCDATASection(final String data) throws DOMException
     {
         // NOT_SUPPORTED_ERR: Raised if this document is an HTML document.
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "HTML document");
@@ -209,7 +209,7 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
      * @todo DOM level 2 createProcessingInstruction() Not supported. Throws NOT_SUPPORTED_ERR.
      * @see org.w3c.dom.Document#createProcessingInstruction
      */
-    public org.w3c.dom.ProcessingInstruction createProcessingInstruction(String target, String data)
+    public org.w3c.dom.ProcessingInstruction createProcessingInstruction(final String target, final String data)
         throws DOMException
     {
         // NOT_SUPPORTED_ERR: Raised if this document is an HTML document.
@@ -219,9 +219,9 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
     /**
      * @see org.w3c.dom.Document#createAttribute
      */
-    public org.w3c.dom.Attr createAttribute(String name) throws DOMException
+    public org.w3c.dom.Attr createAttribute(final String name) throws DOMException
     {
-        AttVal av = new AttVal(null, null, '"', name, null);
+        final AttVal av = new AttVal(null, null, '"', name, null);
         av.dict = AttributeTable.getDefaultAttributeTable().findAttribute(av);
         return av.getAdapter();
     }
@@ -230,7 +230,7 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
      * @todo DOM level 2 createEntityReference() Not supported. Throws NOT_SUPPORTED_ERR.
      * @see org.w3c.dom.Document#createEntityReference
      */
-    public org.w3c.dom.EntityReference createEntityReference(String name) throws DOMException
+    public org.w3c.dom.EntityReference createEntityReference(final String name) throws DOMException
     {
         // NOT_SUPPORTED_ERR: Raised if this document is an HTML document
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "createEntityReference not supported");
@@ -239,7 +239,7 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
     /**
      * @see org.w3c.dom.Document#getElementsByTagName
      */
-    public org.w3c.dom.NodeList getElementsByTagName(String tagname)
+    public org.w3c.dom.NodeList getElementsByTagName(final String tagname)
     {
         return new DOMNodeListByTagNameImpl(this.adaptee, tagname);
     }
@@ -248,7 +248,7 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
      * @todo DOM level 2 importNode() Not supported. Throws NOT_SUPPORTED_ERR.
      * @see org.w3c.dom.Document#importNode(org.w3c.dom.Node, boolean)
      */
-    public org.w3c.dom.Node importNode(org.w3c.dom.Node importedNode, boolean deep) throws org.w3c.dom.DOMException
+    public org.w3c.dom.Node importNode(final org.w3c.dom.Node importedNode, final boolean deep) throws org.w3c.dom.DOMException
     {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "importNode not supported");
     }
@@ -257,7 +257,7 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
      * @todo DOM level 2 createAttributeNS() Not supported. Throws NOT_SUPPORTED_ERR.
      * @see org.w3c.dom.Document#createAttributeNS(java.lang.String, java.lang.String)
      */
-    public org.w3c.dom.Attr createAttributeNS(String namespaceURI, String qualifiedName)
+    public org.w3c.dom.Attr createAttributeNS(final String namespaceURI, final String qualifiedName)
         throws org.w3c.dom.DOMException
     {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "createAttributeNS not supported");
@@ -267,7 +267,7 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
      * @todo DOM level 2 createElementNS() Not supported. Throws NOT_SUPPORTED_ERR.
      * @see org.w3c.dom.Document#createElementNS(java.lang.String, java.lang.String)
      */
-    public org.w3c.dom.Element createElementNS(String namespaceURI, String qualifiedName)
+    public org.w3c.dom.Element createElementNS(final String namespaceURI, final String qualifiedName)
         throws org.w3c.dom.DOMException
     {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "createElementNS not supported");
@@ -277,7 +277,7 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
      * @todo DOM level 2 getElementsByTagNameNS() Not supported. Throws NOT_SUPPORTED_ERR.
      * @see org.w3c.dom.Document#getElementsByTagNameNS(java.lang.String, java.lang.String)
      */
-    public org.w3c.dom.NodeList getElementsByTagNameNS(String namespaceURI, String localName)
+    public org.w3c.dom.NodeList getElementsByTagNameNS(final String namespaceURI, final String localName)
     {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "getElementsByTagNameNS not supported");
     }
@@ -286,7 +286,7 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
      * @todo DOM level 2 getElementById() Not implemented. Returns null.
      * @see org.w3c.dom.Document#getElementById(java.lang.String)
      */
-    public org.w3c.dom.Element getElementById(String elementId)
+    public org.w3c.dom.Element getElementById(final String elementId)
     {
         return null;
     }
@@ -295,7 +295,7 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
      * @todo DOM level 3 adoptNode() Not implemented.
      * @see org.w3c.dom.Document#adoptNode(org.w3c.dom.Node)
      */
-    public org.w3c.dom.Node adoptNode(org.w3c.dom.Node source) throws DOMException
+    public org.w3c.dom.Node adoptNode(final org.w3c.dom.Node source) throws DOMException
     {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "DOM method not supported");
     }
@@ -378,7 +378,7 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
      * @todo DOM level 3 renameNode() Not implemented. Throws NOT_SUPPORTED_ERR.
      * @see org.w3c.dom.Document#renameNode(org.w3c.dom.Node, java.lang.String, java.lang.String)
      */
-    public org.w3c.dom.Node renameNode(org.w3c.dom.Node n, String namespaceURI, String qualifiedName)
+    public org.w3c.dom.Node renameNode(final org.w3c.dom.Node n, final String namespaceURI, final String qualifiedName)
         throws DOMException
     {
         throw new DOMException(DOMException.NOT_SUPPORTED_ERR, "DOM method not supported");
@@ -388,7 +388,7 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
      * @todo DOM level 3 setDocumentURI() Not implemented. Do nothing.
      * @see org.w3c.dom.Document#setDocumentURI(java.lang.String)
      */
-    public void setDocumentURI(String documentURI)
+    public void setDocumentURI(final String documentURI)
     {
         // do nothing
     }
@@ -397,7 +397,7 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
      * @todo DOM level 3 setStrictErrorChecking() Not implemented. Do nothing.
      * @see org.w3c.dom.Document#setStrictErrorChecking(boolean)
      */
-    public void setStrictErrorChecking(boolean strictErrorChecking)
+    public void setStrictErrorChecking(final boolean strictErrorChecking)
     {
         // do nothing
     }
@@ -406,7 +406,7 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
      * @todo DOM level 3 setXmlStandalone() Not implemented. Do nothing.
      * @see org.w3c.dom.Document#setXmlStandalone(boolean)
      */
-    public void setXmlStandalone(boolean xmlStandalone) throws DOMException
+    public void setXmlStandalone(final boolean xmlStandalone) throws DOMException
     {
         // do nothing
     }
@@ -415,7 +415,7 @@ public class DOMDocumentImpl extends DOMNodeImpl implements org.w3c.dom.Document
      * @todo DOM level 3 setXmlVersion() Not implemented. Do nothing.
      * @see org.w3c.dom.Document#setXmlVersion(java.lang.String)
      */
-    public void setXmlVersion(String xmlVersion) throws DOMException
+    public void setXmlVersion(final String xmlVersion) throws DOMException
     {
         // do nothing
     }

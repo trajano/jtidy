@@ -15,7 +15,7 @@ public final class TidyTests {
         final Scanner sc;
         try {
 			sc = new Scanner(tests.openStream());
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
         final String base = new File(tests.getFile()).getParent() + '/';

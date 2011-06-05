@@ -65,29 +65,29 @@ public final class TidyMessage
     /**
      * Line in the source file (can be 0 if the message is not related to a particular line, such as a summary message).
      */
-    private int line;
+    private final int line;
 
     /**
      * Column in the source file (can be 0 if the message is not related to a particular column, such as a summary
      * message).
      */
-    private int column;
+    private final int column;
 
     /**
      * Level for this message. Can be TidyMessage.Level.SUMMARY | TidyMessage.Level.INFO | TidyMessage.Level.WARNING |
      * TidyMessage.Level.ERROR.
      */
-    private Level level;
+    private final Level level;
 
     /**
      * Formatted text for this message.
      */
-    private String message;
+    private final String message;
 
     /**
      * Tidy internal error code.
      */
-    private int errorCode;
+    private final int errorCode;
 
     /**
      * Instantiates a new message.
@@ -97,7 +97,7 @@ public final class TidyMessage
      * @param level severity
      * @param message message text
      */
-    public TidyMessage(int errorCode, int line, int column, Level level, String message)
+    public TidyMessage(final int errorCode, final int line, final int column, final Level level, final String message)
     {
         this.errorCode = errorCode;
         this.line = line;

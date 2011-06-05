@@ -429,7 +429,7 @@ public class Accessibility {
 	}
 
 	private static int brightness(final int rgb[]) {
-		return ((rgb[0] * 299) + (rgb[1] * 587) + (rgb[2] * 114)) / 1000;
+		return (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000;
 	}
 
 	private static boolean compareColors(final int rgbBG[], final int rgbFG[]) {
@@ -469,9 +469,9 @@ public class Accessibility {
 		*/
 		/* Must be 7 characters in the RGB value (including '#') */
 		if (color.length() == 7 && color.charAt(0) == '#') {
-			rgb[0] = (ctox(color.charAt(1)) * 16) + ctox(color.charAt(2));
-			rgb[1] = (ctox(color.charAt(3)) * 16) + ctox(color.charAt(4));
-			rgb[2] = (ctox(color.charAt(5)) * 16) + ctox(color.charAt(6));
+			rgb[0] = ctox(color.charAt(1)) * 16 + ctox(color.charAt(2));
+			rgb[1] = ctox(color.charAt(3)) * 16 + ctox(color.charAt(4));
+			rgb[2] = ctox(color.charAt(5)) * 16 + ctox(color.charAt(6));
 			return true;
 		}
 		return false;
@@ -1202,10 +1202,10 @@ public class Accessibility {
 									*/
 									if (temp.is(TagId.TH)) {
 										for (AttVal av = temp.attributes; av != null; av = av.next) {
-											if (av.is(AttrId.COLSPAN) && (Integer.parseInt(av.value) > 1)) {
+											if (av.is(AttrId.COLSPAN) && Integer.parseInt(av.value) > 1) {
 												validColSpanColumns = false;
 											}
-											if (av.is(AttrId.ROWSPAN) && (Integer.parseInt(av.value) > 1)) {
+											if (av.is(AttrId.ROWSPAN) && Integer.parseInt(av.value) > 1) {
 												validColSpanRows = false;
 											}
 										}
@@ -2333,7 +2333,7 @@ public class Accessibility {
 			** emit warnings LIST_USAGE_INVALID_UL or
 			** warning LIST_USAGE_INVALID_OL tests
 			*/
-			if (node.parent == null || (!node.parent.is(TagId.OL) && !node.parent.is(TagId.UL))) {
+			if (node.parent == null || !node.parent.is(TagId.OL) && !node.parent.is(TagId.UL)) {
 				lexer.report.accessWarning(lexer, node, AccessErrorCode.LIST_USAGE_INVALID_LI);
 			}
 			else if (node.implicit && node.parent != null && (node.parent.is(TagId.OL) || node.parent.is(TagId.UL))) {

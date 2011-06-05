@@ -343,7 +343,7 @@ public final class EntityTable
     /**
      * Entity map.
      */
-    private Map<String, Entity> entityMap = new HashMap<String, Entity>();
+    private final Map<String, Entity> entityMap = new HashMap<String, Entity>();
 
     /**
      * use getDefaultEntityTable to get an entity table instance.
@@ -358,7 +358,7 @@ public final class EntityTable
      * @param ent entity
      * @return installed Entity
      */
-    private Entity install(Entity ent)
+    private Entity install(final Entity ent)
     {
         return this.entityMap.put(ent.getName(), ent);
     }
@@ -368,7 +368,7 @@ public final class EntityTable
      * @param name entity name
      * @return entity
      */
-    public Entity lookup(String name)
+    public Entity lookup(final String name)
     {
         return this.entityMap.get(name);
     }
@@ -379,7 +379,7 @@ public final class EntityTable
      * @return entity code or 0 for unknown entity names
      */
     public Entity entityInfo(final String name, final boolean isXml) {
-    	assert(name != null && name.charAt(0) == '&');
+    	assert name != null && name.charAt(0) == '&';
 
         // numeric entitity: name = "&#" followed by number
         if (name.length() > 1 && name.charAt(1) == '#') {
@@ -387,13 +387,13 @@ public final class EntityTable
 
             // 'x' prefix denotes hexadecimal number format
             try {
-                if (name.length() >= 4 && (name.charAt(2) == 'x' || (!isXml && name.charAt(2) == 'X'))) {
+                if (name.length() >= 4 && (name.charAt(2) == 'x' || !isXml && name.charAt(2) == 'X')) {
                     c = Integer.parseInt(name.substring(3), 16);
                 }
                 else if (name.length() >= 3) {
                     c = Integer.parseInt(name.substring(2));
                 }
-            } catch (NumberFormatException e) {
+            } catch (final NumberFormatException e) {
                 // ignore
             }
             return new Entity(name, VERS_ALL, c);
@@ -408,10 +408,10 @@ public final class EntityTable
      * @param code entity code
      * @return entity name or null for unknown entity codes
      */
-    public String entityName(short code)
+    public String entityName(final short code)
     {
         String name = null;
-        for (Entity ent : entityMap.values())
+        for (final Entity ent : entityMap.values())
         {
             if (ent.getCode() == code)
             {

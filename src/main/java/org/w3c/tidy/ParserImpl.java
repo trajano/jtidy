@@ -184,7 +184,7 @@ public final class ParserImpl
      * @param node
      * @param mode
      */
-    protected static void parseTag(Lexer lexer, Node node, short mode)
+    protected static void parseTag(final Lexer lexer, final Node node, final short mode)
     {
         // Fix by GLP 2000-12-21. Need to reset insertspace if this
         // is both a non-inline and empty tag (base, link, meta, isindex, hr, area).
@@ -216,7 +216,7 @@ public final class ParserImpl
      * @param element
      * @param node
      */
-    protected static void moveToHead(Lexer lexer, Node element, Node node)
+    protected static void moveToHead(final Lexer lexer, Node element, final Node node)
     {
         Node head;
         node.removeNode(); // make sure that node is isolated
@@ -272,7 +272,7 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-        public void parse(Lexer lexer, Node html, short mode)
+        public void parse(final Lexer lexer, final Node html, final short mode)
         {
             Node node, head;
             Node frameset = null;
@@ -504,7 +504,7 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-        public void parse(Lexer lexer, Node head, short mode)
+        public void parse(final Lexer lexer, final Node head, final short mode)
         {
             Node node;
             int hasTitle = 0;
@@ -600,7 +600,7 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-        public void parse(Lexer lexer, Node title, short mode)
+        public void parse(final Lexer lexer, final Node title, final short mode)
         {
             Node node;
 
@@ -670,7 +670,7 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-    	public void parse(Lexer lexer, Node script, short mode) {
+    	public void parse(final Lexer lexer, final Node script, final short mode) {
             Node node = lexer.getCDATA(script);
             if (node != null) {
                 script.insertNodeAtEnd(node);
@@ -699,7 +699,7 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-        public void parse(Lexer lexer, Node body, short mode)
+        public void parse(final Lexer lexer, final Node body, short mode)
         {
             Node node;
             boolean checkstack, iswhitenode;
@@ -842,7 +842,7 @@ public final class ParserImpl
 
                 lexer.excludeBlocks = false;
 
-                if ((!((node.tag.model & Dict.CM_BLOCK) != 0) && !((node.tag.model & Dict.CM_INLINE) != 0))
+                if (!((node.tag.model & Dict.CM_BLOCK) != 0) && !((node.tag.model & Dict.CM_INLINE) != 0)
                     || node.is(TagId.INPUT))
                 {
                     // avoid this error message being issued twice
@@ -929,7 +929,7 @@ public final class ParserImpl
 
                 if (node.type == NodeType.StartTag || node.type == NodeType.StartEndTag)
                 {
-                    if (((node.tag.model & Dict.CM_INLINE) != 0) && !((node.tag.model & Dict.CM_MIXED) != 0))
+                    if ((node.tag.model & Dict.CM_INLINE) != 0 && !((node.tag.model & Dict.CM_MIXED) != 0))
                     {
                         // HTML4 strict doesn't allow inline content here
                         // but HTML2 does allow img elements as children of body
@@ -986,7 +986,7 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-        public void parse(Lexer lexer, Node frameset, short mode)
+        public void parse(final Lexer lexer, final Node frameset, final short mode)
         {
             Node node;
 
@@ -1060,10 +1060,10 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-        public void parse(Lexer lexer, Node element, short mode)
+        public void parse(final Lexer lexer, Node element, short mode)
         {
             Node node, parent;
-            TagTable tt = lexer.configuration.tt;
+            final TagTable tt = lexer.configuration.tt;
 
             if (TidyUtils.toBoolean(element.tag.model & Dict.CM_EMPTY))
             {
@@ -1170,7 +1170,7 @@ public final class ParserImpl
                     && !node.implicit
                     && !element.implicit
                     && node.tag != null
-                    && ((node.tag.model & Dict.CM_INLINE) != 0)
+                    && (node.tag.model & Dict.CM_INLINE) != 0
                     && !node.is(TagId.A)
                     && !node.is(TagId.FONT)
                     && !node.is(TagId.BIG)
@@ -1623,7 +1623,7 @@ public final class ParserImpl
     public static class ParseList implements Parser
     {
 
-        public void parse(Lexer lexer, Node list, short mode)
+        public void parse(final Lexer lexer, final Node list, final short mode)
         {
             Node node;
             Node parent;
@@ -1746,11 +1746,11 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-        public void parse(Lexer lexer, Node element, short mode)
+        public void parse(final Lexer lexer, final Node element, final short mode)
         {
             if (lexer.isvoyager)
             {
-                Node node = lexer.getToken(mode);
+                final Node node = lexer.getToken(mode);
                 if (node != null && !(node.type == NodeType.EndTag && node.tag == element.tag))
                 {
                     lexer.report.warning(lexer, element, node, ErrorCode.ELEMENT_NOT_EMPTY);
@@ -1769,7 +1769,7 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-        public void parse(Lexer lexer, Node list, short mode)
+        public void parse(final Lexer lexer, Node list, final short mode)
         {
             Node node, parent;
 
@@ -1910,7 +1910,7 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-        public void parse(Lexer lexer, Node pre, short mode)
+        public void parse(final Lexer lexer, Node pre, final short mode)
         {
             Node node;
 
@@ -2054,14 +2054,14 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-        public void parse(Lexer lexer, Node element, short mode)
+        public void parse(final Lexer lexer, final Node element, short mode)
         {
             // element is node created by the lexer upon seeing the start tag, or by the parser when the start tag is
             // inferred.
             Node node, parent;
             boolean checkstack;
             int istackbase = 0;
-            TagTable tt = lexer.configuration.tt;
+            final TagTable tt = lexer.configuration.tt;
 
             checkstack = true;
 
@@ -2222,7 +2222,7 @@ public final class ParserImpl
                 // allow PARAM elements?
                 if (node.is(TagId.PARAM))
                 {
-                    if (((element.tag.model & Dict.CM_PARAM) != 0)
+                    if ((element.tag.model & Dict.CM_PARAM) != 0
                         && (node.type == NodeType.StartTag || node.type == NodeType.StartEndTag))
                     {
                         element.insertNodeAtEnd(node);
@@ -2237,7 +2237,7 @@ public final class ParserImpl
                 // allow AREA elements?
                 if (node.is(TagId.AREA))
                 {
-                    if ((element.is(TagId.MAP)) && (node.type == NodeType.StartTag || node.type == NodeType.StartEndTag))
+                    if (element.is(TagId.MAP) && (node.type == NodeType.StartTag || node.type == NodeType.StartEndTag))
                     {
                         element.insertNodeAtEnd(node);
                         continue;
@@ -2515,7 +2515,7 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-        public void parse(Lexer lexer, Node table, short mode)
+        public void parse(final Lexer lexer, final Node table, final short mode)
         {
             Node node, parent;
             int istackbase;
@@ -2587,8 +2587,8 @@ public final class ParserImpl
                         continue;
                     }
 
-                    if ((node.tag != null && (node.tag.model & (Dict.CM_TABLE | Dict.CM_ROW)) != 0)
-                        || (node.tag != null && (node.tag.model & (Dict.CM_BLOCK | Dict.CM_INLINE)) != 0))
+                    if (node.tag != null && (node.tag.model & (Dict.CM_TABLE | Dict.CM_ROW)) != 0
+                        || node.tag != null && (node.tag.model & (Dict.CM_BLOCK | Dict.CM_INLINE)) != 0)
                     {
                         lexer.report.warning(lexer, table, node, ErrorCode.DISCARDING_UNEXPECTED);
                         continue;
@@ -2641,7 +2641,7 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-        public void parse(Lexer lexer, Node colgroup, short mode)
+        public void parse(final Lexer lexer, final Node colgroup, final short mode)
         {
             Node node, parent;
 
@@ -2728,7 +2728,7 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-        public void parse(Lexer lexer, Node rowgroup, short mode)
+        public void parse(final Lexer lexer, final Node rowgroup, final short mode)
         {
             Node node, parent;
 
@@ -2811,7 +2811,7 @@ public final class ParserImpl
                 {
 
                     if (node.is(TagId.FORM)
-                        || (node.tag != null && (node.tag.model & (Dict.CM_BLOCK | Dict.CM_INLINE)) != 0))
+                        || node.tag != null && (node.tag.model & (Dict.CM_BLOCK | Dict.CM_INLINE)) != 0)
                     {
                         if (node.is(TagId.FORM))
                         {
@@ -2855,7 +2855,7 @@ public final class ParserImpl
                     continue;
                 }
 
-                if (!(node.is(TagId.TR)))
+                if (!node.is(TagId.TR))
                 {
                     node = lexer.inferredTag(TagId.TR);
                     lexer.report.warning(lexer, rowgroup, node, ErrorCode.MISSING_STARTTAG);
@@ -2878,7 +2878,7 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-        public void parse(Lexer lexer, Node row, short mode)
+        public void parse(final Lexer lexer, final Node row, final short mode)
         {
             Node node, parent;
             boolean excludeState;
@@ -2907,14 +2907,14 @@ public final class ParserImpl
                 // if this is the end tag for an ancestor element then infer end tag for this element
                 if (node.type == NodeType.EndTag)
                 {
-                	if ((node.hasCM(Dict.CM_HTML | Dict.CM_TABLE) || node.is(TagId.TABLE)
-                            && row.isDescendantOf(node.getId()))) {
+                	if (node.hasCM(Dict.CM_HTML | Dict.CM_TABLE) || node.is(TagId.TABLE)
+                            && row.isDescendantOf(node.getId())) {
                 		lexer.ungetToken();
                 		return;
                 	}
                 	
                     if (node.is(TagId.FORM)
-                        || (node.tag != null && (node.tag.model & (Dict.CM_BLOCK | Dict.CM_INLINE)) != 0))
+                        || node.tag != null && (node.tag.model & (Dict.CM_BLOCK | Dict.CM_INLINE)) != 0)
                     {
                         if (node.is(TagId.FORM))
                         {
@@ -3040,7 +3040,7 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-        public void parse(Lexer lexer, Node noframes, short mode)
+        public void parse(final Lexer lexer, final Node noframes, short mode)
         {
             Node node;
 
@@ -3056,7 +3056,7 @@ public final class ParserImpl
                     return;
                 }
 
-                if ((node.is(TagId.FRAME) || node.is(TagId.FRAMESET)))
+                if (node.is(TagId.FRAME) || node.is(TagId.FRAMESET))
                 {
 
                     Node.trimSpaces(lexer, noframes);
@@ -3094,7 +3094,7 @@ public final class ParserImpl
 
                 if (node.is(TagId.BODY) && node.type == NodeType.StartTag)
                 {
-                    boolean seenbody = lexer.seenEndBody;
+                    final boolean seenbody = lexer.seenEndBody;
                     noframes.insertNodeAtEnd(node);
                     parseTag(lexer, node, Lexer.IGNORE_WHITESPACE); // MixedContent
 
@@ -3107,9 +3107,9 @@ public final class ParserImpl
                 }
 
                 // implicit body element inferred
-                if (node.type == NodeType.TextNode || (node.tag != null && node.type != NodeType.EndTag))
+                if (node.type == NodeType.TextNode || node.tag != null && node.type != NodeType.EndTag)
                 {
-                	Node body = lexer.root.findBody();
+                	final Node body = lexer.root.findBody();
                     if (body != null || lexer.seenEndBody) {
                         if (body == null) {
                         	lexer.report.warning(lexer, noframes, node, ErrorCode.DISCARDING_UNEXPECTED);
@@ -3156,7 +3156,7 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-        public void parse(Lexer lexer, Node field, short mode)
+        public void parse(final Lexer lexer, final Node field, final short mode)
         {
             Node node;
 
@@ -3203,7 +3203,7 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-        public void parse(Lexer lexer, Node field, short mode)
+        public void parse(final Lexer lexer, final Node field, short mode)
         {
             Node node;
 
@@ -3253,7 +3253,7 @@ public final class ParserImpl
                 // for textarea should all cases of < and & be escaped?
                 // discard inline tags e.g. font
                 if (node.tag != null
-                    && ((node.tag.model & Dict.CM_INLINE) != 0)
+                    && (node.tag.model & Dict.CM_INLINE) != 0
                     && (node.tag.model & Dict.CM_FIELD) == 0) // #487283 - fix by Lee Passey 25 Jan 02
                 {
                     lexer.report.warning(lexer, field, node, ErrorCode.DISCARDING_UNEXPECTED);
@@ -3288,7 +3288,7 @@ public final class ParserImpl
         /**
          * @see org.w3c.tidy.Parser#parse(org.w3c.tidy.Lexer, org.w3c.tidy.Node, short)
          */
-        public void parse(Lexer lexer, Node field, short mode)
+        public void parse(final Lexer lexer, final Node field, final short mode)
         {
             Node node;
 
@@ -3362,7 +3362,7 @@ public final class ParserImpl
                 attributeChecks(lexer, node.content);
             }
 
-            assert(next != node); /* http://tidy.sf.net/issue/1603538 */
+            assert next != node; /* http://tidy.sf.net/issue/1603538 */
             node = next;
         }
     }
@@ -3490,12 +3490,12 @@ public final class ParserImpl
 
             if (node.isText() && cleanLeadingWhitespace(node)) {
                 while (node.start < node.end && TidyUtils.isWhite((char) lexer.lexbuf[node.start])) {
-                    ++(node.start);
+                    ++node.start;
                 }
             }
             if (node.isText() && cleanTrailingWhitespace(lexer, node)) {
                 while (node.end > node.start && TidyUtils.isWhite((char) lexer.lexbuf[node.end - 1])) {
-                    --(node.end);
+                    --node.end;
                 }
             }
             if (node.isText() && !(node.start < node.end)) {
@@ -3515,19 +3515,19 @@ public final class ParserImpl
     }
     
     private static void encloseBodyText(final Lexer lexer) {
-        Node body = lexer.root.findBody();
+        final Node body = lexer.root.findBody();
         if (body == null) { 
             return;
         }
         Node node = body.content;
 
         while (node != null) {
-            if ((node.isText() && !node.isBlank(lexer)) ||
-            		(node.isElement() && nodeCMIsOnlyInline(node))) {
-                Node p = lexer.inferredTag(TagId.P);
+            if (node.isText() && !node.isBlank(lexer) ||
+            		node.isElement() && nodeCMIsOnlyInline(node)) {
+                final Node p = lexer.inferredTag(TagId.P);
                 Node.insertNodeBeforeElement(node, p);
                 while (node != null && (!node.isElement() || nodeCMIsOnlyInline(node))) {
-                    Node next = node.next;
+                    final Node next = node.next;
                     node.removeNode();
                     p.insertNodeAtEnd(node);
                     node = next;
@@ -3544,7 +3544,7 @@ public final class ParserImpl
       When requested, text nodes in these elements are wrapped in <p>. */
     private static void encloseBlockText(final Lexer lexer, Node node) {
         while (node != null) {
-            Node next = node.next;
+            final Node next = node.next;
 
             if (node.content != null) {
                 encloseBlockText(lexer, node.content);
@@ -3557,12 +3557,12 @@ public final class ParserImpl
             }
             Node block = node.content;
 
-            if ((block.isText() && !block.isBlank(lexer)) ||
-            		(block.isElement() && nodeCMIsOnlyInline(block))) {
-            	Node p = lexer.inferredTag(TagId.P);
+            if (block.isText() && !block.isBlank(lexer) ||
+            		block.isElement() && nodeCMIsOnlyInline(block)) {
+            	final Node p = lexer.inferredTag(TagId.P);
                 Node.insertNodeBeforeElement(block, p);
                 while (block != null && (!block.isElement() || nodeCMIsOnlyInline(block))) {
-                    Node tempNext = block.next;
+                    final Node tempNext = block.next;
                     block.removeNode();
                     p.insertNodeAtEnd(block);
                     block = tempNext;
@@ -3577,7 +3577,7 @@ public final class ParserImpl
     /**
      * HTML is the top level element.
      */
-    public static Node parseDocument(Lexer lexer)
+    public static Node parseDocument(final Lexer lexer)
     {
         Node node, document, html;
         Node doctype = null;
@@ -3673,7 +3673,7 @@ public final class ParserImpl
         }
         
         if (lexer.root.findTITLE() == null) {
-            Node head = lexer.root.findHEAD();
+            final Node head = lexer.root.findHEAD();
             lexer.report.warning(lexer, head, null, ErrorCode.MISSING_TITLE_ELEMENT);
             head.insertNodeAtEnd(lexer.inferredTag(TagId.TITLE));
         }
@@ -3706,7 +3706,7 @@ public final class ParserImpl
      * <code>null</code>, in which case this test is bypassed.
      * @return <code>true</code> or <code>false</code>, as explained above.
      */
-    public static boolean XMLPreserveWhiteSpace(Node element, TagTable tt)
+    public static boolean XMLPreserveWhiteSpace(final Node element, final TagTable tt)
     {
         AttVal attribute;
 
@@ -3737,7 +3737,7 @@ public final class ParserImpl
             return true;
         }
 
-        if ((tt != null) && (tt.findParser(element) == PRE))
+        if (tt != null && tt.findParser(element) == PRE)
         {
             return true;
         }
@@ -3754,7 +3754,7 @@ public final class ParserImpl
     /**
      * XML documents.
      */
-    public static void parseXMLElement(Lexer lexer, Node element, short mode)
+    public static void parseXMLElement(final Lexer lexer, final Node element, short mode)
     {
         Node node;
 
@@ -3827,7 +3827,7 @@ public final class ParserImpl
         }
     }
 
-    public static Node parseXMLDocument(Lexer lexer)
+    public static Node parseXMLDocument(final Lexer lexer)
     {
         Node node, document, doctype;
 

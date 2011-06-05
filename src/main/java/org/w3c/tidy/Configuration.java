@@ -84,73 +84,85 @@ public class Configuration implements Serializable
      * character encoding = RAW.
      * @deprecated use <code>Tidy.setRawOut(true)</code> for raw output
      */
-    public static final int RAW = 0;
+    @Deprecated
+	public static final int RAW = 0;
 
     /**
      * character encoding = ASCII.
      * @deprecated
      */
-    public static final int ASCII = 1;
+    @Deprecated
+	public static final int ASCII = 1;
 
     /**
      * character encoding = LATIN1.
      * @deprecated
      */
-    public static final int LATIN1 = 2;
+    @Deprecated
+	public static final int LATIN1 = 2;
 
     /**
      * character encoding = UTF8.
      * @deprecated
      */
-    public static final int UTF8 = 3;
+    @Deprecated
+	public static final int UTF8 = 3;
 
     /**
      * character encoding = ISO2022.
      * @deprecated
      */
-    public static final int ISO2022 = 4;
+    @Deprecated
+	public static final int ISO2022 = 4;
 
     /**
      * character encoding = MACROMAN.
      * @deprecated
      */
-    public static final int MACROMAN = 5;
+    @Deprecated
+	public static final int MACROMAN = 5;
 
     /**
      * character encoding = UTF16LE.
      * @deprecated
      */
-    public static final int UTF16LE = 6;
+    @Deprecated
+	public static final int UTF16LE = 6;
 
     /**
      * character encoding = UTF16BE.
      * @deprecated
      */
-    public static final int UTF16BE = 7;
+    @Deprecated
+	public static final int UTF16BE = 7;
 
     /**
      * character encoding = UTF16.
      * @deprecated
      */
-    public static final int UTF16 = 8;
+    @Deprecated
+	public static final int UTF16 = 8;
 
     /**
      * character encoding = WIN1252.
      * @deprecated
      */
-    public static final int WIN1252 = 9;
+    @Deprecated
+	public static final int WIN1252 = 9;
 
     /**
      * character encoding = BIG5.
      * @deprecated
      */
-    public static final int BIG5 = 10;
+    @Deprecated
+	public static final int BIG5 = 10;
 
     /**
      * character encoding = SHIFTJIS.
      * @deprecated
      */
-    public static final int SHIFTJIS = 11;
+    @Deprecated
+	public static final int SHIFTJIS = 11;
 
     /**
      * Convert from deprecated tidy encoding constant to standard java encoding name.
@@ -310,13 +322,13 @@ public class Configuration implements Serializable
     /**
      * configuration properties.
      */
-    private transient Properties properties = new Properties();
+    private transient final Properties properties = new Properties();
 
     /**
      * Instantiates a new Configuration. This method should be called by Tidy only.
      * @param report Report instance
      */
-    protected Configuration(Report report)
+    protected Configuration(final Report report)
     {
         this.report = report;
     }
@@ -325,13 +337,13 @@ public class Configuration implements Serializable
      * adds configuration Properties.
      * @param p Properties
      */
-    public void addProps(Properties p)
+    public void addProps(final Properties p)
     {
-        Enumeration<?> propEnum = p.propertyNames();
+        final Enumeration<?> propEnum = p.propertyNames();
         while (propEnum.hasMoreElements())
         {
-            String key = (String) propEnum.nextElement();
-            String value = p.getProperty(key);
+            final String key = (String) propEnum.nextElement();
+            final String value = p.getProperty(key);
             properties.put(key, value);
         }
         parseProps();
@@ -341,13 +353,13 @@ public class Configuration implements Serializable
      * Parses a property file.
      * @param filename file name
      */
-    public void parseFile(String filename)
+    public void parseFile(final String filename)
     {
         try
         {
             properties.load(new FileInputStream(filename));
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             System.err.println(filename + " " + e.toString());
             return;
@@ -360,7 +372,7 @@ public class Configuration implements Serializable
      * @param name configuration parameter name
      * @return <code>true</code> if the given String is a valid config option
      */
-    public static boolean isKnownOption(String name)
+    public static boolean isKnownOption(final String name)
     {
         return name != null && Options.getOption(name) != null;
     }
@@ -370,21 +382,21 @@ public class Configuration implements Serializable
      */
     private void parseProps()
     {
-        for (Object o : properties.keySet())
+        for (final Object o : properties.keySet())
         {
-        	String key = (String) o;
+        	final String key = (String) o;
         	if (key.startsWith("//")) {
             	continue;
             }
-        	Option flag = Options.getOption(key);
+        	final Option flag = Options.getOption(key);
             if (flag == null)
             {
                 report.unknownOption(key);
                 continue;
             }
 
-            String stringValue = properties.getProperty(key);
-            Object value = flag.getParser().parse(stringValue, flag, this);
+            final String stringValue = properties.getProperty(key);
+            final Object value = flag.getParser().parse(stringValue, flag, this);
             options.put(flag, value);
         }
     }
@@ -404,7 +416,7 @@ public class Configuration implements Serializable
             inenc = "ISO8859_1";
             outenc = "ASCII";
         }
-        for (String s : ENCODING_NAMES) {
+        for (final String s : ENCODING_NAMES) {
         	if (s.equals(enc)) {
         		inenc = outenc = enc;
         		break;
@@ -480,9 +492,9 @@ public class Configuration implements Serializable
      * @param errout where to write
      * @param showActualConfiguration print actual configuration values
      */
-    public void printConfigOptions(Writer errout, boolean showActualConfiguration)
+    public void printConfigOptions(final Writer errout, final boolean showActualConfiguration)
     {
-        String pad = "                                                                               ";
+        final String pad = "                                                                               ";
         try
         {
             errout.write("\nConfiguration File Settings:\n\n");
@@ -498,7 +510,7 @@ public class Configuration implements Serializable
 
             errout.write("=========================== =========  ========================================\n");
 
-			for (Option configItem : Options.getOptions()) {
+			for (final Option configItem : Options.getOptions()) {
 				final ParseProperty parser = configItem.getParser();
                 if (parser == null) {
                 	continue;
@@ -528,7 +540,7 @@ public class Configuration implements Serializable
             }
             errout.flush();
         }
-        catch (IOException e)
+        catch (final IOException e)
         {
             throw new RuntimeException(e.getMessage());
         }
@@ -577,7 +589,7 @@ public class Configuration implements Serializable
      * Setter for <code>inOutCharEncodingName</code>.
      * @param encoding The CharEncodingName to set.
      */
-    protected void setInOutEncodingName(String encoding)
+    protected void setInOutEncodingName(final String encoding)
     {
         setInCharEncodingName(encoding);
         setOutCharEncodingName(encoding);
@@ -588,7 +600,8 @@ public class Configuration implements Serializable
      * @param encoding The outCharEncoding to set.
      * @deprecated use setOutCharEncodingName(String)
      */
-    protected void setOutCharEncoding(int encoding)
+    @Deprecated
+	protected void setOutCharEncoding(final int encoding)
     {
         setOutCharEncodingName(convertCharEncoding(encoding));
     }
@@ -598,7 +611,8 @@ public class Configuration implements Serializable
      * @param encoding The inCharEncoding to set.
      * @deprecated use setInCharEncodingName(String)
      */
-    protected void setInCharEncoding(int encoding)
+    @Deprecated
+	protected void setInCharEncoding(final int encoding)
     {
         setInCharEncodingName(convertCharEncoding(encoding));
     }
@@ -608,7 +622,7 @@ public class Configuration implements Serializable
      * @param code encoding code
      * @return encoding name
      */
-    protected String convertCharEncoding(int code)
+    protected String convertCharEncoding(final int code)
     {
         if (code != 0 && code < ENCODING_NAMES.length)
         {
@@ -1221,7 +1235,7 @@ public class Configuration implements Serializable
 		return (LineEnding) getOptionEnum(Option.Newline);
 	}
 
-	protected void setRawOut(boolean rawOut) {
+	protected void setRawOut(final boolean rawOut) {
 		this.rawOut = rawOut;
 	}
 
