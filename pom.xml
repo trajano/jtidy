@@ -5,7 +5,7 @@
   <groupId>net.sf.jtidy</groupId>
   <artifactId>jtidy</artifactId>
   <name>JTidy</name>
-  <version>9.0-SNAPSHOT</version>
+  <version>9.0-trajano-SNAPSHOT</version>
   <description>
     JTidy is a Java port of HTML Tidy, a HTML syntax checker and pretty printer. Like its non-Java cousin, JTidy can be used as a tool for cleaning up malformed and faulty HTML. In addition, JTidy provides a DOM interface to the document that is being processed, which effectively makes you able to use JTidy as a DOM parser for real-world HTML.
   </description>
@@ -94,14 +94,24 @@
       </roles>
       <timezone>0</timezone>
     </developer>
+    <developer>
+      <id>trajano</id>
+      <name>Archimedes Trajano</name>
+      <email>developer AT trajano.net</email>
+      <organization>trajano.net</organization>
+      <roles>
+        <role>developer</role>
+      </roles>
+      <timezone>0</timezone>
+    </developer>
   </developers>
   <licenses>
     <license />
   </licenses>
   <scm>
-    <connection>scm:svn:https://jtidy.svn.sourceforge.net/svnroot/jtidy/branches/CodeUpdateAndJava5/</connection>
-    <developerConnection>scm:svn:https://jtidy.svn.sourceforge.net/svnroot/jtidy/branches/CodeUpdateAndJava5/</developerConnection>
-    <url>http://svn.sourceforge.net/viewcvs.cgi/jtidy/branches/CodeUpdateAndJava5/</url>
+    <connection>scm:git:git@github.com:trajano/jtidy.git</connection>
+    <developerConnection>scm:git:git@github.com:trajano/jtidy.git</developerConnection>
+    <url>https://github.com/trajano/jtidy</url>
   </scm>
   <organization>
     <name>sourceforge</name>
@@ -175,6 +185,14 @@
           </archive>
         </configuration>
       </plugin>
+      <plugin>
+      	<groupId>org.apache.maven.plugins</groupId>
+      	<artifactId>maven-resources-plugin</artifactId>
+      	<version>2.5</version>
+        <configuration>
+        	<encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
@@ -195,6 +213,20 @@
       <artifactId>log4j</artifactId>
       <version>1.2.15</version>
       <scope>test</scope>
+      <exclusions>
+      	<exclusion>
+      		<artifactId>jms</artifactId>
+      		<groupId>javax.jms</groupId>
+      	</exclusion>
+      	<exclusion>
+      		<artifactId>jmxri</artifactId>
+      		<groupId>com.sun.jmx</groupId>
+      	</exclusion>
+      	<exclusion>
+      		<artifactId>jmxtools</artifactId>
+      		<groupId>com.sun.jdmk</groupId>
+      	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

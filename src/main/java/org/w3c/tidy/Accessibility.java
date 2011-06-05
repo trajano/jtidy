@@ -92,9 +92,9 @@ public class Accessibility {
 	private int otherListElements;
 
 	/* For 'USEMAP' identifier */
-	private boolean hasUseMap;
-	private boolean hasName;
-	private boolean hasMap;
+	//private boolean hasUseMap;
+	//private boolean hasName;
+	//private boolean hasMap;
 
 	/* For tracking nodes that are deleted from the original parse tree - TRT */
 	/* Node *access_tree; */
@@ -138,7 +138,7 @@ public class Accessibility {
 		final String ext = getFileExtension(iType);
 
 		/* Compare it to the array of known image file extensions */
-		for (String s : imageExtensions) {
+		for (final String s : imageExtensions) {
 			if (ext.equalsIgnoreCase(s)) {
 				return true;
 			}
@@ -176,7 +176,7 @@ public class Accessibility {
 	private static boolean isValidSrcExtension(final String sType) {
 		final String ext = getFileExtension(sType);
 
-		for (String s : frameExtensions) {
+		for (final String s : frameExtensions) {
 			if (ext.equalsIgnoreCase(s)) {
 				return true;
 			}
@@ -195,7 +195,7 @@ public class Accessibility {
 	private static boolean isValidMediaExtension(final String sType) {
 		final String ext = getFileExtension(sType);
 
-		for (String s : mediaExtensions) {
+		for (final String s : mediaExtensions) {
 			if (ext.equalsIgnoreCase(s)) {
 				return true;
 			}
@@ -373,7 +373,7 @@ public class Accessibility {
 	*********************************************************************/
 
 	private void checkColorContrast(final Lexer lexer, final Node node) {
-		int rgbBG[] = {255,255,255};   /* Black text on white BG */
+		final int rgbBG[] = {255,255,255};   /* Black text on white BG */
 
 		if (level3Enabled()) {
 			boolean gotBG = true;
@@ -408,7 +408,7 @@ public class Accessibility {
 					break;
 				}
 				if (errcode != null && hasValue(av)) {
-					int rgbFG[] = {0, 0, 0};  /* Black text */
+					final int rgbFG[] = {0, 0, 0};  /* Black text */
 
 					if (getRgb(av.value, rgbFG) && !compareColors(rgbBG, rgbFG)) {
 						lexer.report.accessWarning(lexer, node, errcode);
@@ -433,11 +433,11 @@ public class Accessibility {
 	}
 
 	private static boolean compareColors(final int rgbBG[], final int rgbFG[]) {
-		int brightBG = brightness(rgbBG);
-		int brightFG = brightness(rgbFG);
+		final int brightBG = brightness(rgbBG);
+		final int brightFG = brightness(rgbFG);
 
-		int diffBright = minmax(brightBG, brightFG);
-		int diffColor = minmax(rgbBG[0], rgbFG[0]) + minmax(rgbBG[1], rgbFG[1]) + minmax(rgbBG[2], rgbFG[2]);
+		final int diffBright = minmax(brightBG, brightFG);
+		final int diffColor = minmax(rgbBG[0], rgbFG[0]) + minmax(rgbBG[1], rgbFG[1]) + minmax(rgbBG[2], rgbFG[2]);
 
 		return diffBright > 180 && diffColor > 500;
 	}
@@ -563,7 +563,7 @@ public class Accessibility {
 				else if (av.is(AttrId.WIDTH)) {
 					/* Longdesc attribute needed if width attribute is not present. */
 					if (hasValue(av)) {
-						int width = Integer.parseInt(av.value);
+						final int width = Integer.parseInt(av.value);
 						if (width < 30) {
 							hasValidWidthBullet = true;
 						}
@@ -600,7 +600,7 @@ public class Accessibility {
 				*/
 				else if (av.is(AttrId.USEMAP)) {
 					if (hasValue(av)) {
-						hasUseMap = true;
+						// hasUseMap = true;
 					}
 				}
 				else if (av.is(AttrId.ISMAP)) {
@@ -622,7 +622,7 @@ public class Accessibility {
 				*/
 				if (node.content != null && node.content.tag == null) {
 					/* Number of characters found within the text node */
-					String word = textFromOneNode(lexer, node.content);
+					final String word = textFromOneNode(lexer, node.content);
 					if (word.equals("d") || word.equals("D")) {
 						hasDLINK = true;
 					}
@@ -644,7 +644,7 @@ public class Accessibility {
 					*/
 					if (node.content != null && node.content.tag == null) {
 						/* Number of characters found within the text node */
-						String word = textFromOneNode(lexer, node.content);
+						final String word = textFromOneNode(lexer, node.content);
 
 						if (word.equals("d") || word.equals("D")) {
 							hasDLINK = true;
@@ -746,7 +746,7 @@ public class Accessibility {
 
 			if (node.content != null) {
 				if (!node.content.isText()) {
-					Node tnode = node.content;
+					final Node tnode = node.content;
 
 					for (AttVal av = tnode.attributes; av != null; av = av.next) {
 						if (av.is(AttrId.ALT)) {
@@ -907,7 +907,7 @@ public class Accessibility {
 				/* Must be of valid sound file type */
 				if (av.is(AttrId.HREF)) {
 					if (hasValue(av)) {
-						String ext = getFileExtension (av.value);
+						final String ext = getFileExtension (av.value);
 
 						/* Checks to see if multimedia is used */
 						if (isValidMediaExtension(av.value)) {
@@ -919,11 +919,11 @@ public class Accessibility {
 							that is present which gives the description.
 						*/
 						if (ext.length() < 6 && ext.length() > 0) {
-							AccessErrorCode errcode = isSoundFile(av.value);
+							final AccessErrorCode errcode = isSoundFile(av.value);
 							if (errcode != null) {
 								if (node.next != null) {
 									if (node.next.tag == null) {
-										String word = textFromOneNode(lexer, node.next);
+										final String word = textFromOneNode(lexer, node.next);
 
 										/* Must contain at least one letter in the text */
 										if (!isWhitespace(word)) {
@@ -957,7 +957,7 @@ public class Accessibility {
 
 		if (level2Enabled()) {
 			if (node.content != null && node.content.tag == null) {
-				String word = textFromOneNode(lexer, node.content);
+				final String word = textFromOneNode(lexer, node.content);
 				if (word != null && !isWhitespace(word)) {
 					if (word.equals("more")) {
 						hasTriggeredLink = true;
@@ -1066,7 +1066,7 @@ public class Accessibility {
 			if (node.content.is(TagId.TH)) {
 				hasTH = true;
 				if (node.content.content.isText()) {
-					String word = textFromOneNode(lexer, node.content.content);
+					final String word = textFromOneNode(lexer, node.content.content);
 					if (!isWhitespace(word)) {
 						numValidTH++;
 					}
@@ -1102,7 +1102,7 @@ public class Accessibility {
 			for (Node tnode = node.content; tnode != null; tnode = tnode.next) {
 				if (tnode.is(TagId.TH)) {
 					if (tnode.content.isText()) {
-						String word = textFromOneNode(lexer, tnode.content);
+						final String word = textFromOneNode(lexer, tnode.content);
 						if (!isWhitespace(word)) {
 							numTH++;
 						}
@@ -1281,7 +1281,7 @@ public class Accessibility {
 		if (level2Enabled()) {
 			/* Table must have a CAPTION describing the purpose of the table */
 			if (node.content.is(TagId.CAPTION)) {
-				Node tnode = node.content;
+				final Node tnode = node.content;
 				String word = null;
 
 				if (tnode.content != null && tnode.content.tag == null) {
@@ -1641,7 +1641,7 @@ public class Accessibility {
 			** valid heading increase size.  E.g. H1 . H1, H2.  H3 . H3, H4
 			*/
 			if (node.isHeader()) {
-				int level = node.getHeaderLevel();
+				final int level = node.getHeaderLevel();
 				isValidIncrease = true;
 
 				for (Node temp = node.next; temp != null; temp = temp.next) {
