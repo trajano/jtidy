@@ -129,6 +129,7 @@ public class Attribute
      * Don't wrap this attribute?
      * @return <code>true</code>= don't wrap
      */
+    @Deprecated
     public boolean isNowrap()
     {
         return this.nowrap;
