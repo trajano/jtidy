@@ -4033,11 +4033,6 @@ public class Lexer
         String voyagerName;
 
         /**
-         * profile.
-         */
-        String profile;
-
-        /**
          * code.
          */
         short code;
@@ -4053,7 +4048,6 @@ public class Lexer
         {
             this.name = name;
             this.voyagerName = voyagerName;
-            this.profile = profile;
             this.code = code;
         }
     }
